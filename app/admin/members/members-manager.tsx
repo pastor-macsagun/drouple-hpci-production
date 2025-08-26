@@ -10,13 +10,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/ui/use-toast'
-import { Edit, Plus, Search, RefreshCw, UserX, Copy } from 'lucide-react'
+import { Edit, Plus, Search, RefreshCw, UserX, Copy, Download } from 'lucide-react'
 import { 
   listMembers, 
   createMember, 
   updateMember, 
   deactivateMember,
-  resetPassword 
+  resetPassword,
+  exportMembersCsv 
 } from './actions'
 
 interface Member {
@@ -225,6 +226,39 @@ export function MembersManager({
     })
   }, [generatedPassword, toast])
 
+  const handleExportCsv = useCallback(async () => {
+    try {
+      const response = await exportMembersCsv({ churchId: selectedChurch || undefined })
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = response.headers.get('content-disposition')?.split('filename=')[1]?.replace(/"/g, '') || 'members.csv'
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        toast({
+          title: 'Success',
+          description: 'Members exported successfully'
+        })
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to export members',
+          variant: 'destructive'
+        })
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'An error occurred while exporting',
+        variant: 'destructive'
+      })
+    }
+  }, [selectedChurch, toast])
+
   const getStatusBadgeColor = (status: MemberStatus) => {
     switch (status) {
       case 'ACTIVE': return 'bg-green-100 text-green-800'
@@ -280,6 +314,11 @@ export function MembersManager({
           </Select>
         )}
 
+        <Button onClick={handleExportCsv} variant="outline" className="gap-2">
+          <Download className="h-4 w-4" />
+          Export CSV
+        </Button>
+        
         <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" />
           Add Member

@@ -62,7 +62,32 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (isAuthPage && isAuth) {
-    return NextResponse.redirect(new URL("/dashboard", req.url))
+    return NextResponse.redirect(new URL("/", req.url))
+  }
+
+  // Role-based access control
+  if (isAuth && session?.user) {
+    const userRole = session.user.role
+    
+    // Super admin routes
+    if (pathname.startsWith("/super") && userRole !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/", req.url))
+    }
+    
+    // Admin routes (ADMIN, PASTOR, SUPER_ADMIN)
+    if (pathname.startsWith("/admin") && !["ADMIN", "PASTOR", "SUPER_ADMIN"].includes(userRole)) {
+      return NextResponse.redirect(new URL("/", req.url))
+    }
+    
+    // VIP routes
+    if (pathname.startsWith("/vip") && userRole !== "VIP") {
+      return NextResponse.redirect(new URL("/", req.url))
+    }
+    
+    // Leader routes
+    if (pathname.startsWith("/leader") && userRole !== "LEADER") {
+      return NextResponse.redirect(new URL("/", req.url))
+    }
   }
 
   return NextResponse.next()

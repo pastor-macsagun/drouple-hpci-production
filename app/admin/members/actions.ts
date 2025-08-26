@@ -347,3 +347,71 @@ export async function getLocalChurches() {
     return { success: false, error: 'Failed to get churches' }
   }
 }
+
+export async function exportMembersCsv({ churchId }: { churchId?: string } = {}) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return new Response('Unauthorized', { status: 401 })
+    }
+
+    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+      return new Response('Forbidden', { status: 403 })
+    }
+
+    const whereClause: any = {}
+    
+    if (session.user.role === 'SUPER_ADMIN') {
+      if (churchId) {
+        whereClause.tenantId = churchId
+      }
+    } else {
+      whereClause.tenantId = session.user.tenantId
+    }
+
+    const members = await prisma.user.findMany({
+      where: whereClause,
+      include: {
+        tenant: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    const csvHeaders = ['Name', 'Email', 'Role', 'Status', 'Church', 'Created At']
+    const csvRows = members.map(member => [
+      member.name || '',
+      member.email,
+      member.role,
+      member.memberStatus,
+      member.tenant?.name || '',
+      new Date(member.createdAt).toLocaleDateString()
+    ])
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n')
+
+    const churchName = churchId ? 
+      (await prisma.localChurch.findUnique({ where: { id: churchId } }))?.name || 'Unknown' :
+      'All_Churches'
+    
+    const filename = `members-${churchName.replace(/\s+/g, '_')}-${new Date().toISOString().split('T')[0]}.csv`
+
+    return new Response(csvContent, {
+      headers: {
+        'Content-Type': 'text/csv',
+        'Content-Disposition': `attachment; filename="${filename}"`
+      }
+    })
+  } catch (error) {
+    console.error('Export members CSV error:', error)
+    return new Response('Internal Server Error', { status: 500 })
+  }
+}

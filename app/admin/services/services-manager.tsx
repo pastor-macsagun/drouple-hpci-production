@@ -58,6 +58,8 @@ export function ServicesManager({
     title: '',
     localChurchId: userChurchId || churches[0]?.id || ''
   })
+  
+  const [selectedChurchFilter, setSelectedChurchFilter] = useState<string>('')
 
   const handleCreateService = () => {
     startTransition(async () => {
@@ -117,9 +119,21 @@ export function ServicesManager({
     if (!cursor || !hasMore) return
     
     startTransition(async () => {
-      const result = await listServices({ cursor })
+      const result = await listServices({ cursor, churchId: selectedChurchFilter || undefined })
       if (result.success && result.data) {
         setServices([...services, ...result.data.items])
+        setCursor(result.data.nextCursor)
+        setHasMore(result.data.hasMore)
+      }
+    })
+  }
+
+  const handleChurchFilterChange = (churchId: string) => {
+    setSelectedChurchFilter(churchId)
+    startTransition(async () => {
+      const result = await listServices({ churchId: churchId || undefined })
+      if (result.success && result.data) {
+        setServices(result.data.items)
         setCursor(result.data.nextCursor)
         setHasMore(result.data.hasMore)
       }
@@ -139,7 +153,25 @@ export function ServicesManager({
 
   return (
     <>
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex justify-between items-center">
+        {userRole === UserRole.SUPER_ADMIN && churches.length > 1 && (
+          <div className="flex items-center gap-2">
+            <Label htmlFor="church-filter">Filter by Church:</Label>
+            <Select value={selectedChurchFilter} onValueChange={handleChurchFilterChange}>
+              <SelectTrigger id="church-filter" className="w-48">
+                <SelectValue placeholder="All Churches" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Churches</SelectItem>
+                {churches.map((church) => (
+                  <SelectItem key={church.id} value={church.id}>
+                    {church.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <Button onClick={() => setCreateDialogOpen(true)}>
           Create Service
         </Button>
@@ -211,54 +243,65 @@ export function ServicesManager({
           <DialogHeader>
             <DialogTitle>Create Service</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                value={newService.date}
-                onChange={(e) => setNewService({ ...newService, date: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="time">Time</Label>
-              <Input
-                id="time"
-                type="time"
-                value={newService.time}
-                onChange={(e) => setNewService({ ...newService, time: e.target.value })}
-                required
-              />
-            </div>
-            {userRole === UserRole.SUPER_ADMIN && churches.length > 1 && (
+          <form 
+            id="create-service-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCreateService()
+            }}
+          >
+            <div className="space-y-4">
               <div>
-                <Label htmlFor="church">Local Church</Label>
-                <Select
-                  value={newService.localChurchId}
-                  onValueChange={(value) => setNewService({ ...newService, localChurchId: value })}
-                >
-                  <SelectTrigger id="church">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {churches.map((church) => (
-                      <SelectItem key={church.id} value={church.id}>
-                        {church.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={newService.date}
+                  onChange={(e) => setNewService({ ...newService, date: e.target.value })}
+                  required
+                />
               </div>
-            )}
-          </div>
+              <div>
+                <Label htmlFor="time">Time</Label>
+                <Input
+                  id="time"
+                  name="time"
+                  type="time"
+                  value={newService.time}
+                  onChange={(e) => setNewService({ ...newService, time: e.target.value })}
+                  required
+                />
+              </div>
+              {userRole === UserRole.SUPER_ADMIN && churches.length > 1 && (
+                <div>
+                  <Label htmlFor="church">Local Church</Label>
+                  <Select
+                    value={newService.localChurchId}
+                    onValueChange={(value) => setNewService({ ...newService, localChurchId: value })}
+                  >
+                    <SelectTrigger id="church">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {churches.map((church) => (
+                        <SelectItem key={church.id} value={church.id}>
+                          {church.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          </form>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
               Cancel
             </Button>
             <Button 
-              onClick={handleCreateService} 
+              type="submit" 
+              form="create-service-form"
               disabled={isLoading || !newService.date}
             >
               Create

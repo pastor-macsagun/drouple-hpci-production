@@ -14,6 +14,12 @@ export default async function HomePage() {
         redirect("/super");
       case UserRole.ADMIN:
       case UserRole.PASTOR:
+        redirect("/admin");
+      case UserRole.VIP:
+        redirect("/vip");
+      case UserRole.LEADER:
+        redirect("/leader");
+      case UserRole.MEMBER:
       default:
         redirect("/dashboard");
     }

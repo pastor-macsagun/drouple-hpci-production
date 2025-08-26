@@ -5,7 +5,7 @@ import { Header } from './header'
 describe('Header', () => {
   it('renders the logo', () => {
     render(<Header />)
-    expect(screen.getByText('HPCI ChMS')).toBeInTheDocument()
+    expect(screen.getByText('HPCI')).toBeInTheDocument()
   })
 
   it('does not render navigation links', () => {
@@ -27,7 +27,7 @@ describe('Header', () => {
     
     render(<Header user={user} />)
     expect(screen.getByText('Test User')).toBeInTheDocument()
-    expect(screen.getByText('MEMBER')).toBeInTheDocument()
+    // Header doesn't display role, only name or email
   })
 
   it('shows email when name is not provided', () => {

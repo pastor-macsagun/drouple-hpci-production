@@ -72,6 +72,8 @@ export function LifeGroupsManager({
     localChurchId: userChurchId || churches[0]?.id || '',
     description: ''
   })
+  
+  const [selectedChurchFilter, setSelectedChurchFilter] = useState<string>('')
 
   const handleCreateLifeGroup = () => {
     startTransition(async () => {
@@ -136,9 +138,21 @@ export function LifeGroupsManager({
     if (!cursor || !hasMore) return
     
     startTransition(async () => {
-      const result = await listLifeGroups({ cursor })
+      const result = await listLifeGroups({ cursor, churchId: selectedChurchFilter || undefined })
       if (result.success && result.data) {
         setLifeGroups([...lifeGroups, ...result.data.items])
+        setCursor(result.data.nextCursor)
+        setHasMore(result.data.hasMore)
+      }
+    })
+  }
+
+  const handleChurchFilterChange = (churchId: string) => {
+    setSelectedChurchFilter(churchId)
+    startTransition(async () => {
+      const result = await listLifeGroups({ churchId: churchId || undefined })
+      if (result.success && result.data) {
+        setLifeGroups(result.data.items)
         setCursor(result.data.nextCursor)
         setHasMore(result.data.hasMore)
       }
@@ -158,7 +172,25 @@ export function LifeGroupsManager({
 
   return (
     <>
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex justify-between items-center">
+        {userRole === UserRole.SUPER_ADMIN && churches.length > 1 && (
+          <div className="flex items-center gap-2">
+            <Label htmlFor="church-filter">Filter by Church:</Label>
+            <Select value={selectedChurchFilter} onValueChange={handleChurchFilterChange}>
+              <SelectTrigger id="church-filter" className="w-48">
+                <SelectValue placeholder="All Churches" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Churches</SelectItem>
+                {churches.map((church) => (
+                  <SelectItem key={church.id} value={church.id}>
+                    {church.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <Button onClick={() => setCreateDialogOpen(true)}>
           Create LifeGroup
         </Button>
@@ -232,90 +264,103 @@ export function LifeGroupsManager({
           <DialogHeader>
             <DialogTitle>Create LifeGroup</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                value={newLifeGroup.name}
-                onChange={(e) => setNewLifeGroup({ ...newLifeGroup, name: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="leader">Leader</Label>
-              <Select
-                value={newLifeGroup.leaderId}
-                onValueChange={(value) => setNewLifeGroup({ ...newLifeGroup, leaderId: value })}
-              >
-                <SelectTrigger id="leader">
-                  <SelectValue placeholder="Select a leader" />
-                </SelectTrigger>
-                <SelectContent>
-                  {leaders.map((leader) => (
-                    <SelectItem key={leader.id} value={leader.id}>
-                      {leader.name || leader.email}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="schedule">Schedule</Label>
-              <Input
-                id="schedule"
-                value={newLifeGroup.schedule}
-                onChange={(e) => setNewLifeGroup({ ...newLifeGroup, schedule: e.target.value })}
-                placeholder="e.g., Every Tuesday 7PM"
-              />
-            </div>
-            <div>
-              <Label htmlFor="capacity">Capacity</Label>
-              <Input
-                id="capacity"
-                type="number"
-                min="1"
-                value={newLifeGroup.capacity}
-                onChange={(e) => setNewLifeGroup({ ...newLifeGroup, capacity: parseInt(e.target.value) || 10 })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={newLifeGroup.description}
-                onChange={(e) => setNewLifeGroup({ ...newLifeGroup, description: e.target.value })}
-                placeholder="Optional description"
-              />
-            </div>
-            {userRole === UserRole.SUPER_ADMIN && churches.length > 1 && (
+          <form 
+            id="create-lifegroup-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleCreateLifeGroup()
+            }}
+          >
+            <div className="space-y-4">
               <div>
-                <Label htmlFor="church">Local Church</Label>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={newLifeGroup.name}
+                  onChange={(e) => setNewLifeGroup({ ...newLifeGroup, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="leader">Leader</Label>
                 <Select
-                  value={newLifeGroup.localChurchId}
-                  onValueChange={(value) => setNewLifeGroup({ ...newLifeGroup, localChurchId: value })}
+                  value={newLifeGroup.leaderId}
+                  onValueChange={(value) => setNewLifeGroup({ ...newLifeGroup, leaderId: value })}
                 >
-                  <SelectTrigger id="church">
-                    <SelectValue />
+                  <SelectTrigger id="leader">
+                    <SelectValue placeholder="Select a leader" />
                   </SelectTrigger>
                   <SelectContent>
-                    {churches.map((church) => (
-                      <SelectItem key={church.id} value={church.id}>
-                        {church.name}
+                    {leaders.map((leader) => (
+                      <SelectItem key={leader.id} value={leader.id}>
+                        {leader.name || leader.email}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            )}
-          </div>
+              <div>
+                <Label htmlFor="schedule">Schedule</Label>
+                <Input
+                  id="schedule"
+                  name="schedule"
+                  value={newLifeGroup.schedule}
+                  onChange={(e) => setNewLifeGroup({ ...newLifeGroup, schedule: e.target.value })}
+                  placeholder="e.g., Every Tuesday 7PM"
+                />
+              </div>
+              <div>
+                <Label htmlFor="capacity">Capacity</Label>
+                <Input
+                  id="capacity"
+                  name="capacity"
+                  type="number"
+                  min="1"
+                  value={newLifeGroup.capacity}
+                  onChange={(e) => setNewLifeGroup({ ...newLifeGroup, capacity: parseInt(e.target.value) || 10 })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={newLifeGroup.description}
+                  onChange={(e) => setNewLifeGroup({ ...newLifeGroup, description: e.target.value })}
+                  placeholder="Optional description"
+                />
+              </div>
+              {userRole === UserRole.SUPER_ADMIN && churches.length > 1 && (
+                <div>
+                  <Label htmlFor="church">Local Church</Label>
+                  <Select
+                    value={newLifeGroup.localChurchId}
+                    onValueChange={(value) => setNewLifeGroup({ ...newLifeGroup, localChurchId: value })}
+                  >
+                    <SelectTrigger id="church">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {churches.map((church) => (
+                        <SelectItem key={church.id} value={church.id}>
+                          {church.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          </form>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
               Cancel
             </Button>
             <Button 
-              onClick={handleCreateLifeGroup} 
+              type="submit" 
+              form="create-lifegroup-form"
               disabled={isLoading || !newLifeGroup.name || !newLifeGroup.leaderId}
             >
               Create
