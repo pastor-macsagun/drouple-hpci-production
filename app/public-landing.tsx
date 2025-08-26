@@ -27,18 +27,18 @@ export default function LandingPage() {
 
       <main id="main" className="min-h-screen bg-white dark:bg-gray-950">
         {/* ENHANCED HERO WITH ANIMATED BACKGROUNDS */}
-        <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950/30">
+        <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50/30 dark:from-blue-950 dark:via-gray-900 dark:to-green-950/30">
           {/* Animated background elements */}
           <div className="absolute inset-0">
             {/* Floating gradient orbs */}
-            <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 dark:from-blue-600/10 dark:to-indigo-600/10 rounded-full blur-3xl animate-pulse [animation-duration:4s]"></div>
-            <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-purple-200/15 to-pink-200/15 dark:from-purple-600/8 dark:to-pink-600/8 rounded-full blur-3xl animate-pulse [animation-duration:6s] [animation-delay:1s]"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-200/10 to-blue-200/10 dark:from-cyan-600/5 dark:to-blue-600/5 rounded-full blur-3xl animate-spin [animation-duration:20s]"></div>
+            <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-cyan-200/20 dark:from-blue-600/10 dark:to-cyan-600/10 rounded-full blur-3xl animate-pulse [animation-duration:4s]"></div>
+            <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-green-200/15 to-emerald-200/15 dark:from-green-600/8 dark:to-emerald-600/8 rounded-full blur-3xl animate-pulse [animation-duration:6s] [animation-delay:1s]"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-200/10 to-green-200/10 dark:from-blue-600/5 dark:to-green-600/5 rounded-full blur-3xl animate-spin [animation-duration:20s]"></div>
             
             {/* Moving geometric shapes */}
             <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-blue-400/30 rounded-full animate-bounce [animation-duration:3s]"></div>
-            <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-indigo-400/40 rounded-full animate-ping [animation-duration:4s]"></div>
-            <div className="absolute top-1/3 left-3/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-pulse [animation-duration:5s]"></div>
+            <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-green-400/40 rounded-full animate-ping [animation-duration:4s]"></div>
+            <div className="absolute top-1/3 left-3/4 w-1.5 h-1.5 bg-cyan-400/30 rounded-full animate-pulse [animation-duration:5s]"></div>
           </div>
           
           {/* Subtle geometric grid */}
@@ -48,8 +48,8 @@ export default function LandingPage() {
 
           <div className="relative z-10 max-w-6xl mx-auto text-center">
             {/* Minimal badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium border border-blue-100 dark:border-blue-800/30">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-950/20 dark:to-green-950/20 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium border border-blue-200/50 dark:border-blue-700/30">
+              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-full animate-pulse"></div>
               Introducing Drouple
             </div>
 
@@ -57,7 +57,7 @@ export default function LandingPage() {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight tracking-tight">
               Ministry without
               <br />
-              <span className="text-blue-600 dark:text-blue-400">the mess</span>
+              <span className="bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 bg-clip-text text-transparent">the mess</span>
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
@@ -69,7 +69,7 @@ export default function LandingPage() {
               <Button 
                 asChild 
                 size="lg" 
-                className="group relative px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+                className="group relative px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
               >
                 <Link href="/auth/signin">
                   <span className="relative z-10 flex items-center gap-2">
@@ -80,7 +80,7 @@ export default function LandingPage() {
                 </Link>
               </Button>
               
-              <button className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-lg font-medium">
+              <button className="text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-blue-600 hover:to-green-600 hover:bg-clip-text hover:text-transparent transition-all duration-300 text-lg font-medium">
                 See how it works →
               </button>
             </div>
@@ -104,11 +104,11 @@ export default function LandingPage() {
         </section>
 
         {/* PROBLEM SECTION - ENHANCED WITH SUBTLE ANIMATION */}
-        <section className="relative py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+        <section className="relative py-24 bg-gradient-to-b from-blue-50/30 to-white dark:from-blue-900/20 dark:to-gray-800 overflow-hidden">
           {/* Subtle animated background */}
           <div className="absolute inset-0">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100/20 to-orange-100/20 dark:from-red-900/10 dark:to-orange-900/10 rounded-full blur-3xl animate-pulse [animation-duration:7s]"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-100/15 to-yellow-100/15 dark:from-orange-900/8 dark:to-yellow-900/8 rounded-full blur-3xl animate-pulse [animation-duration:5s] [animation-delay:2s]"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-100/20 to-cyan-100/20 dark:from-blue-900/10 dark:to-cyan-900/10 rounded-full blur-3xl animate-pulse [animation-duration:7s]"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-green-100/15 to-emerald-100/15 dark:from-green-900/8 dark:to-emerald-900/8 rounded-full blur-3xl animate-pulse [animation-duration:5s] [animation-delay:2s]"></div>
           </div>
           
           <div className="relative max-w-6xl mx-auto px-4 z-10">
@@ -133,8 +133,8 @@ export default function LandingPage() {
                   "No mobile-first design for busy volunteers"
                 ].map((problem, index) => (
                   <div key={index} className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     </div>
                     <p className="text-gray-700 dark:text-gray-300 text-lg">{problem}</p>
                   </div>
@@ -148,10 +148,10 @@ export default function LandingPage() {
                     {/* Animated icon */}
                     <div className="relative inline-block mb-6">
                       <div className="text-7xl animate-bounce [animation-duration:3s]">🤔</div>
-                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400/60 rounded-full animate-ping [animation-duration:2s]"></div>
+                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-400/60 rounded-full animate-ping [animation-duration:2s]"></div>
                     </div>
                     
-                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 via-red-700 to-gray-900 dark:from-white dark:via-red-300 dark:to-white bg-clip-text text-transparent">
+                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-blue-700 via-cyan-600 to-blue-700 dark:from-blue-300 dark:via-cyan-300 dark:to-blue-300 bg-clip-text text-transparent">
                       Sound familiar?
                     </h3>
                     
@@ -161,9 +161,9 @@ export default function LandingPage() {
                     
                     {/* Subtle indicators */}
                     <div className="flex justify-center gap-2 mt-6">
-                      <div className="w-2 h-2 bg-red-400/60 rounded-full animate-pulse [animation-delay:0s]"></div>
-                      <div className="w-2 h-2 bg-orange-400/60 rounded-full animate-pulse [animation-delay:0.5s]"></div>
-                      <div className="w-2 h-2 bg-yellow-400/60 rounded-full animate-pulse [animation-delay:1s]"></div>
+                      <div className="w-2 h-2 bg-blue-400/60 rounded-full animate-pulse [animation-delay:0s]"></div>
+                      <div className="w-2 h-2 bg-cyan-400/60 rounded-full animate-pulse [animation-delay:0.5s]"></div>
+                      <div className="w-2 h-2 bg-green-400/60 rounded-full animate-pulse [animation-delay:1s]"></div>
                     </div>
                   </div>
                 </div>
@@ -173,15 +173,15 @@ export default function LandingPage() {
         </section>
 
         {/* THE SOLUTION - ENHANCED WITH MOVEMENT */}
-        <section className="relative py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900 overflow-hidden">
+        <section className="relative py-24 bg-gradient-to-b from-white to-green-50/30 dark:from-gray-950 dark:to-green-900/20 overflow-hidden">
           {/* Animated background elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-10 left-1/4 w-56 h-56 bg-gradient-to-r from-green-100/20 to-emerald-100/20 dark:from-green-900/10 dark:to-emerald-900/10 rounded-full blur-3xl animate-pulse [animation-duration:6s]"></div>
-            <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-gradient-to-r from-blue-100/15 to-cyan-100/15 dark:from-blue-900/8 dark:to-cyan-900/8 rounded-full blur-3xl animate-pulse [animation-duration:8s] [animation-delay:1.5s]"></div>
+            <div className="absolute top-10 left-1/4 w-56 h-56 bg-gradient-to-r from-green-200/20 to-emerald-200/20 dark:from-green-800/10 dark:to-emerald-800/10 rounded-full blur-3xl animate-pulse [animation-duration:6s]"></div>
+            <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-gradient-to-r from-blue-200/15 to-cyan-200/15 dark:from-blue-800/8 dark:to-cyan-800/8 rounded-full blur-3xl animate-pulse [animation-duration:8s] [animation-delay:1.5s]"></div>
             
             {/* Floating particles */}
-            <div className="absolute top-1/4 right-1/3 w-1 h-1 bg-green-400/40 rounded-full animate-ping [animation-duration:6s]"></div>
-            <div className="absolute bottom-1/3 left-1/3 w-1.5 h-1.5 bg-blue-400/30 rounded-full animate-bounce [animation-duration:4s] [animation-delay:1s]"></div>
+            <div className="absolute top-1/4 right-1/3 w-1 h-1 bg-green-500/40 rounded-full animate-ping [animation-duration:6s]"></div>
+            <div className="absolute bottom-1/3 left-1/3 w-1.5 h-1.5 bg-blue-500/30 rounded-full animate-bounce [animation-duration:4s] [animation-delay:1s]"></div>
           </div>
           
           <div className="relative max-w-6xl mx-auto px-4 z-10">
@@ -223,15 +223,15 @@ export default function LandingPage() {
         </section>
 
         {/* FEATURES - WITH DYNAMIC BACKGROUNDS */}
-        <section className="relative py-24 bg-gradient-to-b from-gray-50 to-blue-50/30 dark:from-gray-900 dark:to-indigo-950/20 overflow-hidden">
+        <section className="relative py-24 bg-gradient-to-b from-blue-50/40 to-green-50/30 dark:from-blue-950/20 dark:to-green-950/20 overflow-hidden">
           {/* Dynamic background elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 right-20 w-80 h-80 bg-gradient-to-bl from-indigo-100/20 to-purple-100/20 dark:from-indigo-900/10 dark:to-purple-900/10 rounded-full blur-3xl animate-spin [animation-duration:25s]"></div>
-            <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tr from-blue-100/15 to-cyan-100/15 dark:from-blue-900/8 dark:to-cyan-900/8 rounded-full blur-3xl animate-pulse [animation-duration:9s]"></div>
+            <div className="absolute top-20 right-20 w-80 h-80 bg-gradient-to-bl from-blue-200/20 to-green-200/20 dark:from-blue-800/10 dark:to-green-800/10 rounded-full blur-3xl animate-spin [animation-duration:25s]"></div>
+            <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tr from-cyan-200/15 to-emerald-200/15 dark:from-cyan-800/8 dark:to-emerald-800/8 rounded-full blur-3xl animate-pulse [animation-duration:9s]"></div>
             
             {/* Grid overlay with animation */}
             <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]">
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24px,rgba(59,130,246,0.1)_25px,rgba(59,130,246,0.1)_26px,transparent_27px),linear-gradient(-45deg,transparent_24px,rgba(99,102,241,0.1)_25px,rgba(99,102,241,0.1)_26px,transparent_27px)] bg-[length:50px_50px] animate-pulse [animation-duration:12s]"></div>
+              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24px,rgba(59,130,246,0.1)_25px,rgba(59,130,246,0.1)_26px,transparent_27px),linear-gradient(-45deg,transparent_24px,rgba(34,197,94,0.1)_25px,rgba(34,197,94,0.1)_26px,transparent_27px)] bg-[length:50px_50px] animate-pulse [animation-duration:12s]"></div>
             </div>
           </div>
           
@@ -289,15 +289,15 @@ export default function LandingPage() {
         </section>
 
         {/* CLOSING - WITH ELEGANT ANIMATION */}
-        <section className="relative py-24 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-gray-950 dark:via-gray-900/50 dark:to-gray-950 overflow-hidden">
+        <section className="relative py-24 bg-gradient-to-b from-white via-blue-50/30 to-green-50/20 dark:from-gray-950 dark:via-blue-900/20 dark:to-green-950/20 overflow-hidden">
           {/* Elegant closing animation */}
           <div className="absolute inset-0">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-100/10 via-indigo-100/5 to-purple-100/10 dark:from-blue-900/5 dark:via-indigo-900/3 dark:to-purple-900/5 rounded-full blur-3xl animate-spin [animation-duration:30s]"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-100/10 via-cyan-100/5 to-green-100/10 dark:from-blue-900/5 dark:via-cyan-900/3 dark:to-green-900/5 rounded-full blur-3xl animate-spin [animation-duration:30s]"></div>
             
             {/* Success indicators */}
-            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-green-400/40 rounded-full animate-ping [animation-duration:8s]"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-1.5 h-1.5 bg-blue-400/30 rounded-full animate-pulse [animation-duration:6s]"></div>
-            <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-indigo-400/50 rounded-full animate-bounce [animation-duration:5s] [animation-delay:2s]"></div>
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-green-500/40 rounded-full animate-ping [animation-duration:8s]"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-1.5 h-1.5 bg-blue-500/30 rounded-full animate-pulse [animation-duration:6s]"></div>
+            <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-cyan-500/50 rounded-full animate-bounce [animation-duration:5s] [animation-delay:2s]"></div>
           </div>
           
           <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
@@ -314,7 +314,7 @@ export default function LandingPage() {
               <Button 
                 asChild 
                 size="lg" 
-                className="group relative px-10 py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+                className="group relative px-10 py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
               >
                 <Link href="/auth/signin">
                   <span className="relative z-10 flex items-center gap-3">
@@ -326,7 +326,20 @@ export default function LandingPage() {
               </Button>
               
               <p className="text-gray-500 dark:text-gray-400">
-                No setup fees • No long contracts • No complicated training
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  No setup fees
+                </span>
+                •
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse [animation-delay:0.5s]"></span>
+                  No long contracts
+                </span>
+                •
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse [animation-delay:1s]"></span>
+                  No complicated training
+                </span>
               </p>
             </div>
           </div>
