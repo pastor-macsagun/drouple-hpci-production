@@ -1,0 +1,55 @@
+{
+  "timestamp": "LOCALTEST-1756189915874",
+  "users": [
+    {
+      "email": "LOCALTEST-1756189915874-qa.superadmin@hpci",
+      "role": "SUPER_ADMIN",
+      "church": null,
+      "password": "Qa!Sup#2025",
+      "name": "QA Super Admin"
+    },
+    {
+      "email": "LOCALTEST-1756189915874-qa.admin.manila@hpci",
+      "role": "ADMIN",
+      "church": "local_manila",
+      "password": "Qa!AdmMnl#2025",
+      "name": "QA Admin Manila"
+    },
+    {
+      "email": "LOCALTEST-1756189915874-qa.admin.cebu@hpci",
+      "role": "ADMIN",
+      "church": "local_cebu",
+      "password": "Qa!AdmCbu#2025",
+      "name": "QA Admin Cebu"
+    },
+    {
+      "email": "LOCALTEST-1756189915874-qa.leader.manila@hpci",
+      "role": "LEADER",
+      "church": "local_manila",
+      "password": "Qa!LeadMnl#2025",
+      "name": "QA Leader Manila"
+    },
+    {
+      "email": "LOCALTEST-1756189915874-qa.member.manila@hpci",
+      "role": "MEMBER",
+      "church": "local_manila",
+      "password": "Qa!MemMnl#2025",
+      "name": "QA Member Manila"
+    },
+    {
+      "email": "LOCALTEST-1756189915874-qa.vip.manila@hpci",
+      "role": "VIP",
+      "church": "local_manila",
+      "password": "Qa!VipMnl#2025",
+      "name": "QA VIP Manila"
+    }
+  ],
+  "created": [
+    "LOCALTEST-1756189915874-qa.superadmin@hpci",
+    "LOCALTEST-1756189915874-qa.admin.manila@hpci",
+    "LOCALTEST-1756189915874-qa.admin.cebu@hpci",
+    "LOCALTEST-1756189915874-qa.leader.manila@hpci",
+    "LOCALTEST-1756189915874-qa.member.manila@hpci",
+    "LOCALTEST-1756189915874-qa.vip.manila@hpci"
+  ]
+}

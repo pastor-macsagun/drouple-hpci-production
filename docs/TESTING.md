@@ -478,6 +478,89 @@ When adding new features:
 4. Ensure all tests pass locally
 5. Include test results in PR description
 
+## Local Full-System Validation
+
+### Overview
+
+The local validation system provides comprehensive end-to-end testing of the complete HPCI-ChMS application in a local development environment. This validation covers all critical system functions including authentication, authorization, multi-tenancy, CRUD operations, and security.
+
+### Running Full-System Validation
+
+```bash
+# Prerequisites
+npm install
+npx playwright install
+npm run seed
+npm run dev
+
+# Run validation script
+npx tsx validate-system.ts
+```
+
+### Validation Coverage
+
+The full-system validation tests:
+
+1. **Authentication & RBAC** - All role logins and permission enforcement
+2. **Multi-Tenant Isolation** - Manila/Cebu church data separation
+3. **CRUD Operations** - Create, read, update, delete across all entities
+4. **Member Workflows** - Directory, profile, check-in, events access
+5. **VIP Management** - First-timer logging and status tracking
+6. **CSV Exports** - Data export functionality across admin interfaces
+7. **Security Headers** - Comprehensive security policy validation
+8. **Error Handling** - 404 pages and proper error boundaries
+9. **Data Integrity** - Duplicate prevention and constraint validation
+
+### Automated Screenshot Collection
+
+The validation system automatically captures screenshots at key validation points:
+
+```typescript
+// Screenshots captured during validation
+- Super Admin login and dashboard
+- Manila/Cebu admin isolation verification
+- Member workflow pages (directory, profile, check-in, events)
+- VIP dashboard and functionality
+- 404 error page handling
+```
+
+### Validation Report
+
+Upon completion, the system generates:
+
+- **LOCAL_VALIDATION_REPORT.md** - Comprehensive test results
+- **test-artifacts/** - Screenshots and evidence files
+- **Pass/Fail status** for each validation phase
+
+### Multi-Role Testing Approach
+
+The validation uses separate browser contexts for each role to ensure proper isolation:
+
+```typescript
+// Role-based testing patterns
+const roleTests = [
+  { email: 'admin.manila@test.com', expectedPath: '/admin', role: 'ADMIN' },
+  { email: 'leader.manila@test.com', expectedPath: '/leader', role: 'LEADER' },
+  { email: 'member1@test.com', expectedPath: '/dashboard', role: 'MEMBER' },
+  { email: 'vip.manila@test.com', expectedPath: '/vip', role: 'VIP' }
+]
+```
+
+### Evidence Collection
+
+- All screenshots stored with timestamped filenames
+- Test artifacts preserved for manual review
+- Detailed logs of each validation phase
+- Security header capture and analysis
+
+### Integration with Development Workflow
+
+The local validation can be run:
+- Before production deployments
+- After major feature implementations
+- When validating security updates
+- As part of release verification
+
 ## Resources
 
 - [Vitest Documentation](https://vitest.dev/)

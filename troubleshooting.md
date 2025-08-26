@@ -49,5 +49,57 @@ npm run test:e2e         # Run e2e tests
 npm run ship:verify      # Full verification
 ```
 
+## Automated Testing Issues
+
+### UI Selector Strategies
+**Issue**: Playwright tests fail with element not found errors
+**Solution**: 
+1. Use ID selectors when available (`input#email` vs `input[name="email"]`)
+2. Check actual HTML structure with browser dev tools
+3. Add `data-testid` attributes for reliable automation
+4. Use more specific selectors to avoid multiple matches
+
+**Example**:
+```typescript
+// Instead of generic selector that might match multiple elements
+await page.click('button[type="submit"]')
+
+// Use specific text or test ID
+await page.click('button:has-text("Sign In")')
+await page.click('[data-testid="signin-submit"]')
+```
+
+### Data-Dependent UI Elements
+**Issue**: Export buttons or form elements not found during tests
+**Solution**:
+1. Ensure test database has sufficient data for UI elements to appear
+2. Check for conditional rendering based on data presence
+3. Create active test data (services, events) before testing dependent features
+4. Use `page.waitForSelector()` with appropriate timeouts
+
+### Authentication Flow Validation
+**Issue**: Login redirects not working as expected in tests
+**Solution**:
+1. Use `page.waitForLoadState('networkidle')` after form submission
+2. Check for intermediate loading states
+3. Verify session storage/cookies are properly set
+4. Test with actual user credentials from seed data
+
+**Expected Login Flows**:
+```typescript
+// Super Admin may redirect to dashboard instead of /super
+// This is acceptable behavior - verify actual landing page
+const currentUrl = page.url()
+const isValidLanding = currentUrl.includes('/super') || currentUrl.includes('/dashboard')
+```
+
+### Multi-Context Testing
+**Issue**: Session bleeding between different user roles
+**Solution**:
+1. Use separate browser contexts for each role test
+2. Clear storage between tests: `await page.evaluate(() => localStorage.clear())`
+3. Create fresh page instances for each test case
+4. Verify logout before switching users
+
 ## Support
 File issues at: https://github.com/your-org/hpci-chms/issues
