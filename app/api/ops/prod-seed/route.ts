@@ -9,8 +9,8 @@ export async function POST(request: NextRequest) {
   console.log('[PROD-SEED] Access attempt at:', new Date().toISOString());
   
   try {
-    // Guard 1: Check for production environment
-    if (process.env.NODE_ENV !== 'production') {
+    // Guard 1: Check for production deployment (Vercel sets VERCEL env var)
+    if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
       console.warn('[PROD-SEED] Blocked: Not in production environment');
       return NextResponse.json(
         { error: 'This endpoint is only available in production' },
