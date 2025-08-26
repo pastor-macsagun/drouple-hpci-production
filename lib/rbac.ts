@@ -183,3 +183,70 @@ export function canManageEntity(
 
   return rolePermissions.includes(action)
 }
+
+/**
+ * Repository Guard: Get accessible church IDs for the current user
+ * Returns:
+ * - undefined/null → throws explicit error
+ * - [] (empty array) → return query that yields zero results
+ * - [churchIds] → return array of accessible church IDs
+ */
+export async function getAccessibleChurchIds(
+  user?: { role: UserRole; tenantId?: string | null } | null
+): Promise<string[]> {
+  if (!user) {
+    throw new Error('No user provided for tenant scoping')
+  }
+
+  if (!user.tenantId) {
+    throw new Error('User has no tenantId - cannot determine accessible churches')
+  }
+
+  // Super admin can access all churches if no specific constraint
+  if (user.role === UserRole.SUPER_ADMIN) {
+    // For super admin without specific church filter, return all church IDs
+    const churches = await db.localChurch.findMany({
+      select: { id: true }
+    })
+    return churches.map(c => c.id)
+  }
+
+  // All other roles can only access their own church
+  return [user.tenantId]
+}
+
+/**
+ * Repository Guard: Create tenant-scoped WHERE clause for Prisma queries
+ */
+export async function createTenantWhereClause(
+  user?: { role: UserRole; tenantId?: string | null } | null,
+  additionalWhere: Record<string, any> = {},
+  churchIdOverride?: string
+): Promise<Record<string, any>> {
+  const accessibleChurchIds = await getAccessibleChurchIds(user)
+  
+  // If specific church override provided (e.g., super admin filtering)
+  if (churchIdOverride) {
+    if (!accessibleChurchIds.includes(churchIdOverride)) {
+      throw new Error(`Access denied: cannot access church ${churchIdOverride}`)
+    }
+    return {
+      ...additionalWhere,
+      tenantId: churchIdOverride
+    }
+  }
+
+  // Single church access
+  if (accessibleChurchIds.length === 1) {
+    return {
+      ...additionalWhere,
+      tenantId: accessibleChurchIds[0]
+    }
+  }
+
+  // Multiple church access (super admin)
+  return {
+    ...additionalWhere,
+    tenantId: { in: accessibleChurchIds }
+  }
+}

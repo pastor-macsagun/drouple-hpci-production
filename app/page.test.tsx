@@ -21,9 +21,8 @@ describe('HomePage', () => {
     render(Component)
     
     // Check for key brand elements
-    expect(screen.getAllByText('drouple')).toHaveLength(2) // nav + footer
-    expect(screen.getByText('Church management')).toBeDefined()
-    expect(screen.getByText('made simple')).toBeDefined()
+    expect(screen.getByText('Drouple — Built for the Church')).toBeDefined()
+    expect(screen.getByText(/Churches struggle with disconnected tools/)).toBeDefined()
     expect(screen.getAllByText('Sign In').length).toBeGreaterThanOrEqual(1)
   })
 })

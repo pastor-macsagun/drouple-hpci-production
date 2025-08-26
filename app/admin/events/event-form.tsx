@@ -90,7 +90,7 @@ export function EventForm({ event, localChurches }: EventFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" data-testid="event-form">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Event Name *</Label>
@@ -251,7 +251,7 @@ export function EventForm({ event, localChurches }: EventFormProps) {
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} data-testid="submit-event">
           {isSubmitting ? 'Saving...' : event ? 'Update Event' : 'Create Event'}
         </Button>
       </div>

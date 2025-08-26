@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { createTenantWhereClause } from '@/lib/rbac'
 
 export async function listServices({ 
   churchId,
@@ -23,9 +24,11 @@ export async function listServices({
       return { success: false, error: 'Unauthorized' }
     }
 
-    const whereClause = session.user.role === 'SUPER_ADMIN' 
-      ? churchId ? { localChurchId: churchId } : {}
-      : { localChurchId: session.user.tenantId || undefined }
+    // Apply tenant scoping - note: Service model uses localChurchId instead of tenantId
+    const baseTenantWhere = await createTenantWhereClause(session.user, {}, churchId)
+    const whereClause = {
+      localChurchId: baseTenantWhere.tenantId
+    }
 
     const services = await prisma.service.findMany({
       where: whereClause,

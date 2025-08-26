@@ -151,16 +151,25 @@ export const authOptions: any = {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async redirect({ token, baseUrl }: any) {
-      // Redirect based on role
-      if (token?.role === UserRole.SUPER_ADMIN) {
-        return `${baseUrl}/super`
+      // Redirect based on role - match the logic from app/page.tsx
+      if (token?.role) {
+        switch (token.role) {
+          case UserRole.SUPER_ADMIN:
+            return `${baseUrl}/super`
+          case UserRole.ADMIN:
+          case UserRole.PASTOR:
+            return `${baseUrl}/admin`
+          case UserRole.VIP:
+            return `${baseUrl}/vip`
+          case UserRole.LEADER:
+            return `${baseUrl}/leader`
+          case UserRole.MEMBER:
+          default:
+            return `${baseUrl}/dashboard`
+        }
       }
       
-      // For other roles, redirect to dashboard with local church
-      if (token?.primaryLocalChurchId) {
-        return `${baseUrl}/dashboard?lc=${token.primaryLocalChurchId}`
-      }
-      
+      // Fallback to dashboard for users without role
       return `${baseUrl}/dashboard`
     }
   },

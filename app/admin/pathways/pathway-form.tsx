@@ -81,7 +81,7 @@ export default function PathwayForm({ tenantId, pathway }: PathwayFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="pathway-form">
         <FormField
           control={form.control}
           name="name"
@@ -161,13 +161,14 @@ export default function PathwayForm({ tenantId, pathway }: PathwayFormProps) {
         />
 
         <div className="flex gap-4">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} data-testid="submit-pathway">
             {isSubmitting ? 'Saving...' : pathway ? 'Update' : 'Create'} Pathway
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push('/admin/pathways')}
+            data-testid="cancel-pathway"
           >
             Cancel
           </Button>

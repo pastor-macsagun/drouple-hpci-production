@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { MembershipStatus, RequestStatus, UserRole } from '@prisma/client'
+import { createTenantWhereClause } from '@/lib/rbac'
 
 export async function listLifeGroups({ 
   churchId,
@@ -24,9 +25,11 @@ export async function listLifeGroups({
       return { success: false, error: 'Unauthorized' }
     }
 
-    const whereClause = session.user.role === 'SUPER_ADMIN' 
-      ? churchId ? { localChurchId: churchId } : {}
-      : { localChurchId: session.user.tenantId || undefined }
+    // Apply tenant scoping - note: LifeGroup model uses localChurchId instead of tenantId
+    const baseTenantWhere = await createTenantWhereClause(session.user, {}, churchId)
+    const whereClause = {
+      localChurchId: baseTenantWhere.tenantId
+    }
 
     const lifeGroups = await prisma.lifeGroup.findMany({
       where: whereClause,
@@ -736,9 +739,8 @@ export async function getLeaders({ churchId }: { churchId?: string } = {}) {
       return { success: false, error: 'Unauthorized' }
     }
 
-    const whereClause = session.user.role === 'SUPER_ADMIN'
-      ? churchId ? { tenantId: churchId } : {}
-      : { tenantId: session.user.tenantId || undefined }
+    // Apply tenant scoping using repository guard
+    const whereClause = await createTenantWhereClause(session.user, {}, churchId)
 
     const leaders = await prisma.user.findMany({
       where: {
@@ -775,14 +777,15 @@ export async function getLocalChurches() {
       return { success: false, error: 'Unauthorized' }
     }
 
-    const churches = session.user.role === 'SUPER_ADMIN'
-      ? await prisma.localChurch.findMany({
-          orderBy: { name: 'asc' }
-        })
-      : await prisma.localChurch.findMany({
-          where: { id: session.user.tenantId || undefined },
-          orderBy: { name: 'asc' }
-        })
+    // Apply tenant scoping for local churches
+    const accessibleChurchIds = session.user.role === 'SUPER_ADMIN' 
+      ? {} 
+      : { id: session.user.tenantId! } // Use ! since we verified auth above
+
+    const churches = await prisma.localChurch.findMany({
+      where: accessibleChurchIds,
+      orderBy: { name: 'asc' }
+    })
 
     return { success: true, data: churches }
   } catch (error) {

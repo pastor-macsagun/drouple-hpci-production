@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { UserRole, MemberStatus } from '@prisma/client'
 import { z } from 'zod'
 import { generateSecurePassword, hashPassword } from '@/lib/password'
+import { createTenantWhereClause } from '@/lib/rbac'
 
 const createMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -43,23 +44,20 @@ export async function listMembers({
       return { success: false, error: 'Unauthorized' }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const whereClause: any = {}
-    
-    if (session.user.role === 'SUPER_ADMIN') {
-      if (churchId) {
-        whereClause.tenantId = churchId
-      }
-    } else {
-      whereClause.tenantId = session.user.tenantId || undefined
-    }
-
-    if (search) {
-      whereClause.OR = [
+    // Build search conditions
+    const searchWhere = search ? {
+      OR: [
         { name: { contains: search, mode: 'insensitive' } },
         { email: { contains: search, mode: 'insensitive' } }
       ]
-    }
+    } : {}
+
+    // Apply tenant scoping using repository guard
+    const whereClause = await createTenantWhereClause(
+      session.user, 
+      searchWhere, 
+      churchId // church override for super admin filtering
+    )
 
     const members = await prisma.user.findMany({
       where: whereClause,
@@ -360,16 +358,12 @@ export async function exportMembersCsv({ churchId }: { churchId?: string } = {})
       return new Response('Forbidden', { status: 403 })
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const whereClause: any = {}
-    
-    if (session.user.role === 'SUPER_ADMIN') {
-      if (churchId) {
-        whereClause.tenantId = churchId
-      }
-    } else {
-      whereClause.tenantId = session.user.tenantId
-    }
+    // Apply tenant scoping using repository guard
+    const whereClause = await createTenantWhereClause(
+      session.user, 
+      {}, 
+      churchId // church override for super admin filtering
+    )
 
     const members = await prisma.user.findMany({
       where: whereClause,

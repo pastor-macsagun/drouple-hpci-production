@@ -89,6 +89,17 @@ HPCI-ChMS is a multi-church management system designed to handle:
 
 ## Recent Achievements
 
+- ✅ **Critical Security Fixes** (Aug 26, 2025)
+  - Fixed CRITICAL tenant isolation failure preventing Manila admins from seeing Cebu data
+  - Fixed MAJOR role-based redirects ensuring users land on correct pages after login
+  - Fixed MINOR modal selector conflicts improving E2E test stability
+  - Added repository guards with `getAccessibleChurchIds()` and `createTenantWhereClause()`
+  - Updated admin actions in members, services, lifegroups with proper tenant scoping
+  - Fixed NextAuth redirect callback to handle all roles (SUPER_ADMIN→/super, ADMIN→/admin, VIP→/vip, etc.)
+  - Added stable test selectors to forms and modals (`data-testid` attributes)
+  - All fixes verified with comprehensive regression testing (531 unit tests pass)
+  - Full documentation at docs/security-fixes-aug-2025.md
+
 - ✅ **Modern UI/UX Redesign** (Aug 24, 2025)
   - Complete visual overhaul with sacred blue + soft gold color scheme
   - Dark mode support with system preference detection

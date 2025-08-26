@@ -13,6 +13,14 @@ vi.mock('@/lib/auth', () => ({
   auth: vi.fn()
 }))
 
+vi.mock('@/app/lib/db', () => ({
+  db: {
+    localChurch: {
+      findMany: vi.fn()
+    }
+  }
+}))
+
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     user: {
@@ -38,6 +46,7 @@ vi.mock('next/cache', () => ({
 
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { db } from '@/app/lib/db'
 
 describe('Member Management Actions', () => {
   beforeEach(() => {
@@ -85,9 +94,17 @@ describe('Member Management Actions', () => {
       const mockSession = { 
         user: { 
           id: 'super1', 
-          role: UserRole.SUPER_ADMIN 
+          role: UserRole.SUPER_ADMIN,
+          tenantId: 'church1' // Super admin still needs a tenantId for scoping
         } 
       }
+
+      // Mock the database call for getAllChurches
+      const mockChurches = [
+        { id: 'church1' },
+        { id: 'church2' }
+      ]
+      vi.mocked(db.localChurch.findMany).mockResolvedValue(mockChurches)
 
       vi.mocked(auth).mockResolvedValue(mockSession as any)
       vi.mocked(prisma.user.findMany).mockResolvedValue([])
@@ -96,7 +113,7 @@ describe('Member Management Actions', () => {
 
       expect(prisma.user.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: {}
+          where: { tenantId: { in: ['church1', 'church2'] } }
         })
       )
     })
