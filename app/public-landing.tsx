@@ -26,11 +26,24 @@ export default function LandingPage() {
       </a>
 
       <main id="main" className="min-h-screen bg-white dark:bg-gray-950">
-        {/* CLEAN MINIMALIST HERO */}
-        <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
-          {/* Subtle geometric patterns */}
-          <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KPGcgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4=')] bg-repeat"></div>
+        {/* ENHANCED HERO WITH ANIMATED BACKGROUNDS */}
+        <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950/30">
+          {/* Animated background elements */}
+          <div className="absolute inset-0">
+            {/* Floating gradient orbs */}
+            <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 dark:from-blue-600/10 dark:to-indigo-600/10 rounded-full blur-3xl animate-pulse [animation-duration:4s]"></div>
+            <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-purple-200/15 to-pink-200/15 dark:from-purple-600/8 dark:to-pink-600/8 rounded-full blur-3xl animate-pulse [animation-duration:6s] [animation-delay:1s]"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-200/10 to-blue-200/10 dark:from-cyan-600/5 dark:to-blue-600/5 rounded-full blur-3xl animate-spin [animation-duration:20s]"></div>
+            
+            {/* Moving geometric shapes */}
+            <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-blue-400/30 rounded-full animate-bounce [animation-duration:3s]"></div>
+            <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-indigo-400/40 rounded-full animate-ping [animation-duration:4s]"></div>
+            <div className="absolute top-1/3 left-3/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-pulse [animation-duration:5s]"></div>
+          </div>
+          
+          {/* Subtle geometric grid */}
+          <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.08]">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KPGcgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjEiPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4=')] bg-repeat animate-pulse [animation-duration:8s]"></div>
           </div>
 
           <div className="relative z-10 max-w-6xl mx-auto text-center">
@@ -56,10 +69,14 @@ export default function LandingPage() {
               <Button 
                 asChild 
                 size="lg" 
-                className="px-8 py-4 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                className="group relative px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
               >
                 <Link href="/auth/signin">
-                  Get Started
+                  <span className="relative z-10 flex items-center gap-2">
+                    Get Started
+                    <div className="w-2 h-2 bg-white/80 rounded-full group-hover:animate-ping"></div>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
               </Button>
               
@@ -68,25 +85,33 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Clean feature preview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto opacity-75">
+            {/* Enhanced feature preview with cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {[
-                { icon: "⚡", label: "Setup in minutes" },
-                { icon: "🎯", label: "Built for churches" },
-                { icon: "🔒", label: "Secure by design" },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-3 justify-center">
-                  <span className="text-2xl">{item.icon}</span>
-                  <span className="text-gray-700 dark:text-gray-300 font-medium">{item.label}</span>
+                { icon: "⚡", label: "Setup in minutes", desc: "Get your church online in under 30 minutes" },
+                { icon: "🎯", label: "Built for churches", desc: "Designed specifically for ministry workflows" },
+                { icon: "🔒", label: "Secure by design", desc: "Enterprise-grade security for your data" },
+              ].map((item, index) => (
+                <div key={item.label} className="group bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                     style={{ animationDelay: `${index * 200}ms` }}>
+                  <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{item.label}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* PROBLEM SECTION - CLEAN APPROACH */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-6xl mx-auto px-4">
+        {/* PROBLEM SECTION - ENHANCED WITH SUBTLE ANIMATION */}
+        <section className="relative py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+          {/* Subtle animated background */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100/20 to-orange-100/20 dark:from-red-900/10 dark:to-orange-900/10 rounded-full blur-3xl animate-pulse [animation-duration:7s]"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-100/15 to-yellow-100/15 dark:from-orange-900/8 dark:to-yellow-900/8 rounded-full blur-3xl animate-pulse [animation-duration:5s] [animation-delay:2s]"></div>
+          </div>
+          
+          <div className="relative max-w-6xl mx-auto px-4 z-10">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                 Why church software is broken
@@ -116,17 +141,30 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* Visual element */}
+              {/* Enhanced visual element with animation */}
               <div className="relative">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">🤔</div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]">
+                  <div className="text-center relative">
+                    {/* Animated icon */}
+                    <div className="relative inline-block mb-6">
+                      <div className="text-7xl animate-bounce [animation-duration:3s]">🤔</div>
+                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400/60 rounded-full animate-ping [animation-duration:2s]"></div>
+                    </div>
+                    
+                    <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 via-red-700 to-gray-900 dark:from-white dark:via-red-300 dark:to-white bg-clip-text text-transparent">
                       Sound familiar?
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    
+                    <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                       You&apos;re spending more time managing your management system than actually doing ministry.
                     </p>
+                    
+                    {/* Subtle indicators */}
+                    <div className="flex justify-center gap-2 mt-6">
+                      <div className="w-2 h-2 bg-red-400/60 rounded-full animate-pulse [animation-delay:0s]"></div>
+                      <div className="w-2 h-2 bg-orange-400/60 rounded-full animate-pulse [animation-delay:0.5s]"></div>
+                      <div className="w-2 h-2 bg-yellow-400/60 rounded-full animate-pulse [animation-delay:1s]"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -134,9 +172,19 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* THE SOLUTION - DIRECT APPROACH */}
-        <section className="py-24 bg-white dark:bg-gray-950">
-          <div className="max-w-6xl mx-auto px-4">
+        {/* THE SOLUTION - ENHANCED WITH MOVEMENT */}
+        <section className="relative py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900 overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-10 left-1/4 w-56 h-56 bg-gradient-to-r from-green-100/20 to-emerald-100/20 dark:from-green-900/10 dark:to-emerald-900/10 rounded-full blur-3xl animate-pulse [animation-duration:6s]"></div>
+            <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-gradient-to-r from-blue-100/15 to-cyan-100/15 dark:from-blue-900/8 dark:to-cyan-900/8 rounded-full blur-3xl animate-pulse [animation-duration:8s] [animation-delay:1.5s]"></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/4 right-1/3 w-1 h-1 bg-green-400/40 rounded-full animate-ping [animation-duration:6s]"></div>
+            <div className="absolute bottom-1/3 left-1/3 w-1.5 h-1.5 bg-blue-400/30 rounded-full animate-bounce [animation-duration:4s] [animation-delay:1s]"></div>
+          </div>
+          
+          <div className="relative max-w-6xl mx-auto px-4 z-10">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                 Here&apos;s our approach
@@ -174,9 +222,20 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* FEATURES - FEATURE-FOCUSED */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-6xl mx-auto px-4">
+        {/* FEATURES - WITH DYNAMIC BACKGROUNDS */}
+        <section className="relative py-24 bg-gradient-to-b from-gray-50 to-blue-50/30 dark:from-gray-900 dark:to-indigo-950/20 overflow-hidden">
+          {/* Dynamic background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-20 right-20 w-80 h-80 bg-gradient-to-bl from-indigo-100/20 to-purple-100/20 dark:from-indigo-900/10 dark:to-purple-900/10 rounded-full blur-3xl animate-spin [animation-duration:25s]"></div>
+            <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tr from-blue-100/15 to-cyan-100/15 dark:from-blue-900/8 dark:to-cyan-900/8 rounded-full blur-3xl animate-pulse [animation-duration:9s]"></div>
+            
+            {/* Grid overlay with animation */}
+            <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]">
+              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24px,rgba(59,130,246,0.1)_25px,rgba(59,130,246,0.1)_26px,transparent_27px),linear-gradient(-45deg,transparent_24px,rgba(99,102,241,0.1)_25px,rgba(99,102,241,0.1)_26px,transparent_27px)] bg-[length:50px_50px] animate-pulse [animation-duration:12s]"></div>
+            </div>
+          </div>
+          
+          <div className="relative max-w-6xl mx-auto px-4 z-10">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                 What you get with Drouple
@@ -219,7 +278,7 @@ export default function LandingPage() {
                   desc: "Everyone sees what they need to see. Privacy controls that actually make sense for churches."
                 }
               ].map((feature) => (
-                <div key={feature.title} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+                <div key={feature.title} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg hover:bg-white/90 dark:hover:bg-gray-800/90 transition-all duration-300 hover:scale-[1.02]">
                   <div className="text-3xl mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
                   <p className="text-gray-600 dark:text-gray-300">{feature.desc}</p>
@@ -229,9 +288,19 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* CLOSING - PERSONAL APPROACH */}
-        <section className="py-24 bg-white dark:bg-gray-950">
-          <div className="max-w-4xl mx-auto px-4 text-center">
+        {/* CLOSING - WITH ELEGANT ANIMATION */}
+        <section className="relative py-24 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-gray-950 dark:via-gray-900/50 dark:to-gray-950 overflow-hidden">
+          {/* Elegant closing animation */}
+          <div className="absolute inset-0">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-100/10 via-indigo-100/5 to-purple-100/10 dark:from-blue-900/5 dark:via-indigo-900/3 dark:to-purple-900/5 rounded-full blur-3xl animate-spin [animation-duration:30s]"></div>
+            
+            {/* Success indicators */}
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-green-400/40 rounded-full animate-ping [animation-duration:8s]"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-1.5 h-1.5 bg-blue-400/30 rounded-full animate-pulse [animation-duration:6s]"></div>
+            <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-indigo-400/50 rounded-full animate-bounce [animation-duration:5s] [animation-delay:2s]"></div>
+          </div>
+          
+          <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
               Get back to ministry
             </h2>
@@ -245,10 +314,14 @@ export default function LandingPage() {
               <Button 
                 asChild 
                 size="lg" 
-                className="px-8 py-4 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                className="group relative px-10 py-5 text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
               >
                 <Link href="/auth/signin">
-                  Start Using Drouple
+                  <span className="relative z-10 flex items-center gap-3">
+                    Start Using Drouple
+                    <div className="w-3 h-3 bg-white/90 rounded-full group-hover:animate-bounce"></div>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -skew-x-12 group-hover:translate-x-full transition-transform duration-1000"></div>
                 </Link>
               </Button>
               
