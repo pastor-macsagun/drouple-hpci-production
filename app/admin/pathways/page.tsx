@@ -58,11 +58,11 @@ export default async function PathwaysPage() {
 
       <div className="space-y-6">
         {pathways.map((pathway) => (
-          <div key={pathway.id} className="border rounded-lg p-6">
+          <div key={pathway.id} className="border rounded-xl p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-xl font-semibold">{pathway.name}</h2>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-ink-muted mt-1">
                   {pathway.description}
                 </p>
                 <div className="flex gap-2 mt-2">
@@ -108,7 +108,7 @@ export default async function PathwaysPage() {
                       <TableRow key={step.id}>
                         <TableCell>{step.orderIndex + 1}</TableCell>
                         <TableCell className="font-medium">{step.name}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
+                        <TableCell className="text-sm text-ink-muted">
                           {step.description}
                         </TableCell>
                       </TableRow>
@@ -123,7 +123,7 @@ export default async function PathwaysPage() {
 
       {pathways.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No pathways created yet.</p>
+          <p className="text-ink-muted">No pathways created yet.</p>
         </div>
       )}
       </div>

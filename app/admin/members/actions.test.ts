@@ -333,7 +333,7 @@ describe('Member Management Actions', () => {
       expect(result.success).toBe(true)
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: 'member1' },
-        data: { emailVerified: null }
+        data: { memberStatus: 'INACTIVE' }
       })
     })
   })
@@ -395,10 +395,13 @@ describe('Member Management Actions', () => {
       expect(result.success).toBe(true)
       expect(result.data).toEqual(mockChurches)
       expect(prisma.localChurch.findMany).toHaveBeenCalledWith({
-        where: { churchId: 'church1' },
-        select: { id: true, name: true }
+        where: { id: 'church1' },
+        select: { id: true, name: true },
+        orderBy: { name: 'asc' }
       })
-      expect(result.data).toContain('HPCI Manila')
+      expect(result.data).toEqual(expect.arrayContaining([
+        expect.objectContaining({ name: 'HPCI Manila' })
+      ]))
     })
   })
 

@@ -104,6 +104,7 @@ export async function createService({
     revalidatePath('/admin/services')
     return { success: true, data: service }
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((error as any)?.code === 'P2002') {
       return { success: false, error: 'Service already exists for this date' }
     }

@@ -1,0 +1,192 @@
+[
+  {
+    "route": "/",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/auth/signin",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/auth/signin",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/dashboard",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/dashboard",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/members",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/members",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/members/member1@test.com",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/members/member1@test.com",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/profile",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/profile",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/events",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/events",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/lifegroups",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/lifegroups",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/pathways",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/pathways",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/checkin",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/checkin",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/vip/firsttimers",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/vip/firsttimers",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/admin",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/admin",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/admin/services",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/admin/services",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/admin/lifegroups",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/admin/lifegroups",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/admin/events",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/admin/events",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/admin/pathways",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/admin/pathways",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/super",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/super",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/super/churches",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/super/churches",
+    "mode": "dark",
+    "violations": []
+  },
+  {
+    "route": "/super/local-churches",
+    "mode": "light",
+    "violations": []
+  },
+  {
+    "route": "/super/local-churches",
+    "mode": "dark",
+    "violations": []
+  }
+]

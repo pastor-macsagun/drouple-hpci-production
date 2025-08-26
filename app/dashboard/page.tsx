@@ -53,56 +53,56 @@ export default async function DashboardPage() {
           <>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Churches</CardTitle>
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Churches</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-xl">
                   <Building2 className="h-4 w-4 text-primary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats.totalChurches}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-ink-muted mt-1">
                   <span className="text-success">+12%</span> from last month
                 </p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Locations</CardTitle>
-                <div className="p-2 bg-secondary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Locations</CardTitle>
+                <div className="p-2 bg-secondary/10 rounded-xl">
                   <Church className="h-4 w-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats.totalLocalChurches}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-ink-muted mt-1">
                   <span className="text-success">+2</span> new branches
                 </p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Total Users</CardTitle>
-                <div className="p-2 bg-info/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Total Users</CardTitle>
+                <div className="p-2 bg-info/10 rounded-xl">
                   <Users className="h-4 w-4 text-info" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats.totalMembers}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-ink-muted mt-1">
                   <span className="text-success">+185</span> this week
                 </p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Active Today</CardTitle>
-                <div className="p-2 bg-success/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Active Today</CardTitle>
+                <div className="p-2 bg-success/10 rounded-xl">
                   <TrendingUp className="h-4 w-4 text-success" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">142</div>
-                <p className="text-xs text-muted-foreground mt-1">Currently online</p>
+                <p className="text-xs text-ink-muted mt-1">Currently online</p>
               </CardContent>
             </Card>
           </>
@@ -113,50 +113,50 @@ export default async function DashboardPage() {
           <>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Members</CardTitle>
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Members</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-xl">
                   <Users className="h-4 w-4 text-primary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats.totalMembers}</div>
-                <p className="text-xs text-muted-foreground mt-1">Active in your church</p>
+                <p className="text-xs text-ink-muted mt-1">Active in your church</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">This Sunday</CardTitle>
-                <div className="p-2 bg-secondary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">This Sunday</CardTitle>
+                <div className="p-2 bg-secondary/10 rounded-xl">
                   <UserCheck className="h-4 w-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">234</div>
-                <p className="text-xs text-muted-foreground mt-1">Expected attendance</p>
+                <p className="text-xs text-ink-muted mt-1">Expected attendance</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">LifeGroups</CardTitle>
-                <div className="p-2 bg-info/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">LifeGroups</CardTitle>
+                <div className="p-2 bg-info/10 rounded-xl">
                   <Heart className="h-4 w-4 text-info" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground mt-1">Active groups</p>
+                <p className="text-xs text-ink-muted mt-1">Active groups</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Events</CardTitle>
-                <div className="p-2 bg-success/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Events</CardTitle>
+                <div className="p-2 bg-success/10 rounded-xl">
                   <Calendar className="h-4 w-4 text-success" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">8</div>
-                <p className="text-xs text-muted-foreground mt-1">This month</p>
+                <p className="text-xs text-ink-muted mt-1">This month</p>
               </CardContent>
             </Card>
           </>
@@ -167,50 +167,50 @@ export default async function DashboardPage() {
           <>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">First Timers</CardTitle>
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">First Timers</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-xl">
                   <UserPlus className="h-4 w-4 text-primary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">23</div>
-                <p className="text-xs text-muted-foreground mt-1">This month</p>
+                <p className="text-xs text-ink-muted mt-1">This month</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Gospel Shared</CardTitle>
-                <div className="p-2 bg-secondary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Gospel Shared</CardTitle>
+                <div className="p-2 bg-secondary/10 rounded-xl">
                   <Heart className="h-4 w-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">18</div>
-                <p className="text-xs text-muted-foreground mt-1">78% conversion rate</p>
+                <p className="text-xs text-ink-muted mt-1">78% conversion rate</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">ROOTS Enrolled</CardTitle>
-                <div className="p-2 bg-info/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">ROOTS Enrolled</CardTitle>
+                <div className="p-2 bg-info/10 rounded-xl">
                   <Route className="h-4 w-4 text-info" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">15</div>
-                <p className="text-xs text-muted-foreground mt-1">Active in pathway</p>
+                <p className="text-xs text-ink-muted mt-1">Active in pathway</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Follow-ups</CardTitle>
-                <div className="p-2 bg-warning/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Follow-ups</CardTitle>
+                <div className="p-2 bg-warning/10 rounded-xl">
                   <UserCheck className="h-4 w-4 text-warning" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">5</div>
-                <p className="text-xs text-muted-foreground mt-1">Pending this week</p>
+                <p className="text-xs text-ink-muted mt-1">Pending this week</p>
               </CardContent>
             </Card>
           </>
@@ -221,50 +221,50 @@ export default async function DashboardPage() {
           <>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">My Groups</CardTitle>
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">My Groups</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-xl">
                   <Users className="h-4 w-4 text-primary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">3</div>
-                <p className="text-xs text-muted-foreground mt-1">Active LifeGroups</p>
+                <p className="text-xs text-ink-muted mt-1">Active LifeGroups</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Members</CardTitle>
-                <div className="p-2 bg-secondary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Members</CardTitle>
+                <div className="p-2 bg-secondary/10 rounded-xl">
                   <Heart className="h-4 w-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">42</div>
-                <p className="text-xs text-muted-foreground mt-1">Under your care</p>
+                <p className="text-xs text-ink-muted mt-1">Under your care</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Attendance</CardTitle>
-                <div className="p-2 bg-success/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Attendance</CardTitle>
+                <div className="p-2 bg-success/10 rounded-xl">
                   <TrendingUp className="h-4 w-4 text-success" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">89%</div>
-                <p className="text-xs text-muted-foreground mt-1">Average this month</p>
+                <p className="text-xs text-ink-muted mt-1">Average this month</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Next Meeting</CardTitle>
-                <div className="p-2 bg-info/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Next Meeting</CardTitle>
+                <div className="p-2 bg-info/10 rounded-xl">
                   <Calendar className="h-4 w-4 text-info" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">Tomorrow</div>
-                <p className="text-xs text-muted-foreground mt-1">7:00 PM</p>
+                <p className="text-xs text-ink-muted mt-1">7:00 PM</p>
               </CardContent>
             </Card>
           </>
@@ -275,50 +275,50 @@ export default async function DashboardPage() {
           <>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Check-ins</CardTitle>
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Check-ins</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-xl">
                   <UserCheck className="h-4 w-4 text-primary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground mt-1">This year</p>
+                <p className="text-xs text-ink-muted mt-1">This year</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">LifeGroups</CardTitle>
-                <div className="p-2 bg-secondary/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">LifeGroups</CardTitle>
+                <div className="p-2 bg-secondary/10 rounded-xl">
                   <Users className="h-4 w-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">2</div>
-                <p className="text-xs text-muted-foreground mt-1">Active membership</p>
+                <p className="text-xs text-ink-muted mt-1">Active membership</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Events</CardTitle>
-                <div className="p-2 bg-info/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Events</CardTitle>
+                <div className="p-2 bg-info/10 rounded-xl">
                   <Calendar className="h-4 w-4 text-info" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">3</div>
-                <p className="text-xs text-muted-foreground mt-1">RSVP&apos;d this month</p>
+                <p className="text-xs text-ink-muted mt-1">RSVP&apos;d this month</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Pathway</CardTitle>
-                <div className="p-2 bg-success/10 rounded-lg">
+                <CardTitle className="text-sm font-semibold text-ink-muted">Pathway</CardTitle>
+                <div className="p-2 bg-success/10 rounded-xl">
                   <Route className="h-4 w-4 text-success" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">75%</div>
-                <p className="text-xs text-muted-foreground mt-1">ROOTS progress</p>
+                <p className="text-xs text-ink-muted mt-1">ROOTS progress</p>
               </CardContent>
             </Card>
           </>
@@ -415,30 +415,30 @@ export default async function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <div className="p-2 bg-primary/10 rounded-xl">
                   <UserCheck className="h-3 w-3 text-primary" />
                 </div>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm font-medium">New check-in</p>
-                  <p className="text-xs text-muted-foreground">John Doe checked in • 2 hours ago</p>
+                  <p className="text-xs text-ink-muted">John Doe checked in • 2 hours ago</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="p-2 bg-secondary/10 rounded-lg">
+                <div className="p-2 bg-secondary/10 rounded-xl">
                   <Calendar className="h-3 w-3 text-secondary" />
                 </div>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm font-medium">Event reminder</p>
-                  <p className="text-xs text-muted-foreground">Youth Night tomorrow • 7 PM</p>
+                  <p className="text-xs text-ink-muted">Youth Night tomorrow • 7 PM</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="p-2 bg-info/10 rounded-lg">
+                <div className="p-2 bg-info/10 rounded-xl">
                   <Users className="h-3 w-3 text-info" />
                 </div>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm font-medium">LifeGroup update</p>
-                  <p className="text-xs text-muted-foreground">5 new members joined • Yesterday</p>
+                  <p className="text-xs text-ink-muted">5 new members joined • Yesterday</p>
                 </div>
               </div>
             </div>

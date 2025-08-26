@@ -6,7 +6,9 @@ import { LifeGroupCard } from "./lifegroup-card";
 import { Users } from "lucide-react";
 
 interface LifeGroupsTabsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   myGroups: any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   availableGroups: any[]
   isAdmin: boolean
 }

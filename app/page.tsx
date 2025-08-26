@@ -1,7 +1,20 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/rbac";
 import { UserRole } from "@prisma/client";
+import { Metadata } from "next";
 import LandingPage from "./public-landing";
+
+export const metadata: Metadata = {
+  title: "Drouple",
+  description:
+    "Church management made simple. Beautiful tools for modern ministry.",
+  openGraph: {
+    title: "Drouple",
+    description:
+      "Church management made simple. Beautiful tools for modern ministry.",
+    type: "website",
+  },
+};
 
 export default async function HomePage() {
   const user = await getCurrentUser();

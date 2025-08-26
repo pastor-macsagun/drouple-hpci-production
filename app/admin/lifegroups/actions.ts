@@ -700,7 +700,9 @@ export async function exportAttendanceCsv({ lifeGroupId }: { lifeGroupId: string
       ['Date', 'Total Present', 'Attendees']
     ]
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lifeGroup.attendanceSessions.forEach((session: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const attendees = session.attendances.map((a: any) => a.user.name || a.user.email).join(', ')
       rows.push([
         session.date.toLocaleDateString(),

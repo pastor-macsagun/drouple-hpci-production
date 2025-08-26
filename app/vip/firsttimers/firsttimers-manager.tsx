@@ -132,6 +132,7 @@ export function FirstTimersManager({
         ...formData,
         assignedVipId: formData.assignedVipId || undefined,
       })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setFirstTimers([newFirstTimer as any, ...firstTimers])
       setIsCreating(false)
       setFormData({ name: '', email: '', phone: '', assignedVipId: '', notes: '' })
@@ -150,6 +151,7 @@ export function FirstTimersManager({
       const updated = await updateFirstTimer(id, { [field]: value })
       setFirstTimers(
         firstTimers.map((ft) =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ft.id === id ? { ...ft, ...updated } as any : ft
         )
       )
@@ -171,6 +173,7 @@ export function FirstTimersManager({
       })
       setFirstTimers(
         firstTimers.map((ft) =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ft.id === selectedFirstTimer.id ? { ...ft, ...updated } as any : ft
         )
       )
@@ -188,6 +191,7 @@ export function FirstTimersManager({
       const updated = await updateFirstTimer(id, { assignedVipId })
       setFirstTimers(
         firstTimers.map((ft) =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ft.id === id ? { ...ft, ...updated } as any : ft
         )
       )

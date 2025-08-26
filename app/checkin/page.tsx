@@ -30,7 +30,7 @@ export default async function CheckInPage() {
         />
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-ink-muted">
               <Calendar className="h-5 w-5" />
               <CardTitle>No Service Today</CardTitle>
             </div>
@@ -39,7 +39,7 @@ export default async function CheckInPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-ink-muted">
               Today is {format(new Date(), 'EEEE, MMMM d, yyyy')}
             </p>
           </CardContent>

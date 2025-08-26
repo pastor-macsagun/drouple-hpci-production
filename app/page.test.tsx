@@ -20,9 +20,10 @@ describe('HomePage', () => {
     const Component = await HomePage()
     render(Component)
     
-    expect(screen.getByText('HPCI ChMS')).toBeDefined()
-    expect(screen.getByText('Church Management System')).toBeDefined()
-    expect(screen.getByText('Sign In')).toBeDefined()
-    expect(screen.getByText('Dashboard')).toBeDefined()
+    // Check for key brand elements
+    expect(screen.getAllByText('drouple')).toHaveLength(2) // nav + footer
+    expect(screen.getByText('Church management')).toBeDefined()
+    expect(screen.getByText('made simple')).toBeDefined()
+    expect(screen.getAllByText('Sign In').length).toBeGreaterThanOrEqual(1)
   })
 })

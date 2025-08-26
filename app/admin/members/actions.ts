@@ -43,6 +43,7 @@ export async function listMembers({
       return { success: false, error: 'Unauthorized' }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const whereClause: any = {}
     
     if (session.user.role === 'SUPER_ADMIN') {
@@ -359,6 +360,7 @@ export async function exportMembersCsv({ churchId }: { churchId?: string } = {})
       return new Response('Forbidden', { status: 403 })
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const whereClause: any = {}
     
     if (session.user.role === 'SUPER_ADMIN') {

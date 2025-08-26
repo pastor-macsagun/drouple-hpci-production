@@ -37,44 +37,44 @@ export default async function SuperDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Churches</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <Building2 className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalChurches}</div>
-            <p className="text-xs text-muted-foreground">Active church organizations</p>
+            <p className="text-xs text-ink-muted">Active church organizations</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Local Churches</CardTitle>
-            <Church className="h-4 w-4 text-muted-foreground" />
+            <Church className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalLocalChurches}</div>
-            <p className="text-xs text-muted-foreground">Branch locations</p>
+            <p className="text-xs text-ink-muted">Branch locations</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalMembers}</div>
-            <p className="text-xs text-muted-foreground">Registered users platform-wide</p>
+            <p className="text-xs text-ink-muted">Registered users platform-wide</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Events</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalEvents}</div>
-            <p className="text-xs text-muted-foreground">Events across all churches</p>
+            <p className="text-xs text-ink-muted">Events across all churches</p>
           </CardContent>
         </Card>
       </div>
@@ -118,7 +118,7 @@ export default async function SuperDashboardPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Last Backup</span>
-                <span className="text-sm text-muted-foreground">Auto-managed</span>
+                <span className="text-sm text-ink-muted">Auto-managed</span>
               </div>
             </div>
           </CardContent>

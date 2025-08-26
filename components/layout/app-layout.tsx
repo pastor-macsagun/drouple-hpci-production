@@ -19,7 +19,7 @@ export function AppLayout({ children, user, showSidebar = true }: AppLayoutProps
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-bg">
       <Header
         user={user}
         showMenuButton={showSidebar}
@@ -38,13 +38,13 @@ export function AppLayout({ children, user, showSidebar = true }: AppLayoutProps
             {sidebarOpen && (
               <>
                 <div
-                  className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+                  className="fixed inset-0 z-40 bg-surface/80 backdrop-blur-sm lg:hidden"
                   onClick={() => setSidebarOpen(false)}
                 />
                 <div className="fixed inset-y-0 left-0 z-50 lg:hidden">
                   <Sidebar
                     user={user}
-                    className="h-full shadow-2xl"
+                    className="h-full shadow-lg"
                     onClose={() => setSidebarOpen(false)}
                   />
                 </div>
@@ -53,7 +53,7 @@ export function AppLayout({ children, user, showSidebar = true }: AppLayoutProps
           </>
         )}
 
-        <main id="main-content" className="flex-1 overflow-y-auto bg-muted/30">
+        <main id="main-content" className="flex-1 overflow-y-auto bg-surface">
           <div className="page-container">{children}</div>
         </main>
       </div>

@@ -26,13 +26,13 @@ export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProp
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="flex h-14 items-center px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-bg/95 backdrop-blur supports-[backdrop-filter]:bg-bg/80">
+      <div className="flex h-14 items-center px-4 sm:px-6">
         {showMenuButton && (
           <Button
             variant="ghost"
             size="icon"
-            className="mr-2 lg:hidden hover:bg-accent"
+            className="mr-2 lg:hidden hover:bg-elevated focus-ring"
             onClick={onMenuClick}
           >
             <Menu className="h-5 w-5" />
@@ -41,8 +41,8 @@ export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProp
         )}
 
         <div className="mr-4 flex lg:hidden">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">HPCI</span>
+          <Link href="/" className="flex items-center space-x-2 focus-ring rounded">
+            <span className="text-lg font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">HPCI</span>
           </Link>
         </div>
 
@@ -52,7 +52,7 @@ export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProp
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="hover:bg-accent"
+              className="hover:bg-elevated focus-ring"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -65,7 +65,7 @@ export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProp
           
           {user && (
             <div className="hidden sm:flex items-center space-x-3">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-ink-muted">
                 {user.name || user.email}
               </span>
             </div>

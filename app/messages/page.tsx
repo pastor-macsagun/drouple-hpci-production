@@ -86,7 +86,7 @@ export default async function MessagesPage({
         <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Messages</h1>
-          <p className="text-gray-600">
+          <p className="text-ink-muted">
             {unreadCount > 0 && `${unreadCount} unread • `}
             {messages.length} {filter === 'inbox' ? 'received' : 'sent'}
           </p>
@@ -107,7 +107,7 @@ export default async function MessagesPage({
                 <Link
                   href="/messages?filter=inbox"
                   className={`flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium ${
-                    filter === 'inbox' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50'
+                    filter === 'inbox' ? 'bg-elevated text-ink' : 'text-ink-muted hover:bg-elevated/50'
                   }`}
                 >
                   <span className="flex items-center">
@@ -115,7 +115,7 @@ export default async function MessagesPage({
                     Inbox
                   </span>
                   {unreadCount > 0 && (
-                    <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">
+                    <span className="bg-accent text-white text-xs rounded-full px-2 py-0.5">
                       {unreadCount}
                     </span>
                   )}
@@ -123,7 +123,7 @@ export default async function MessagesPage({
                 <Link
                   href="/messages?filter=sent"
                   className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                    filter === 'sent' ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50'
+                    filter === 'sent' ? 'bg-elevated text-ink' : 'text-ink-muted hover:bg-elevated/50'
                   }`}
                 >
                   <Send className="h-4 w-4 mr-2" />
@@ -138,7 +138,7 @@ export default async function MessagesPage({
           <Card>
             <CardHeader>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
                 <Input
                   placeholder="Search messages..."
                   className="pl-10"
@@ -148,11 +148,11 @@ export default async function MessagesPage({
             <CardContent>
               {messages.length === 0 ? (
                 <div className="text-center py-12">
-                  <MessageSquare className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">
+                  <MessageSquare className="mx-auto h-12 w-12 text-ink-muted" />
+                  <h3 className="mt-2 text-sm font-medium text-ink">
                     No messages
                   </h3>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-ink-muted">
                     {filter === 'inbox' ? 'Your inbox is empty' : 'You haven\'t sent any messages'}
                   </p>
                 </div>
@@ -170,7 +170,7 @@ export default async function MessagesPage({
                         href={`/messages/${message.id}`}
                         className="block"
                       >
-                        <div className={`p-4 rounded-lg border hover:bg-gray-50 transition-colors ${
+                        <div className={`p-4 rounded-lg border hover:bg-elevated/50 transition-colors ${
                           !message.isRead && filter === 'inbox' ? 'bg-blue-50 border-blue-200' : ''
                         }`}>
                           <div className="flex items-start space-x-3">
@@ -179,27 +179,27 @@ export default async function MessagesPage({
                             )}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <p className={`text-sm font-medium text-gray-900 ${
+                                <p className={`text-sm font-medium text-ink ${
                                   !message.isRead && filter === 'inbox' ? 'font-bold' : ''
                                 }`}>
                                   {otherUser.name || otherUser.email}
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-ink-muted">
                                   {new Date(message.createdAt).toLocaleDateString()}
                                 </p>
                               </div>
                               {message.subject && (
-                                <p className={`text-sm text-gray-900 mt-1 ${
+                                <p className={`text-sm text-ink mt-1 ${
                                   !message.isRead && filter === 'inbox' ? 'font-semibold' : ''
                                 }`}>
                                   {message.subject}
                                 </p>
                               )}
-                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                              <p className="text-sm text-ink-muted mt-1 line-clamp-2">
                                 {message.content}
                               </p>
                               {hasReplies && (
-                                <p className="text-xs text-gray-500 mt-2">
+                                <p className="text-xs text-ink-muted mt-2">
                                   {message.replies.length} {message.replies.length === 1 ? 'reply' : 'replies'}
                                 </p>
                               )}

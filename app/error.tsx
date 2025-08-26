@@ -18,7 +18,7 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
@@ -27,11 +27,11 @@ export default function Error({
           <CardTitle className="text-2xl">Something went wrong!</CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
-          <p className="text-gray-600">
+          <p className="text-ink-muted">
             An unexpected error occurred. We apologize for the inconvenience.
           </p>
           {error.digest && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-ink-muted">
               Error ID: {error.digest}
             </p>
           )}

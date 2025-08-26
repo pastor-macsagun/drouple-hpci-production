@@ -76,7 +76,7 @@ export default async function MembersPage({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Member Directory</h1>
-            <p className="text-gray-600">Browse and connect with church members</p>
+            <p className="text-ink-muted">Browse and connect with church members</p>
           </div>
           <Link href="/profile">
             <Button>Edit My Profile</Button>
@@ -87,7 +87,7 @@ export default async function MembersPage({
         <CardHeader>
           <form className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
               <Input
                 name="q"
                 placeholder="Search by name, email, or city..."
@@ -101,9 +101,9 @@ export default async function MembersPage({
         <CardContent>
           {members.length === 0 ? (
             <div className="text-center py-12">
-              <Users className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No members found</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <Users className="mx-auto h-12 w-12 text-ink-muted" />
+              <h3 className="mt-2 text-sm font-medium text-ink">No members found</h3>
+              <p className="mt-1 text-sm text-ink-muted">
                 Try adjusting your search criteria
               </p>
             </div>
@@ -113,42 +113,42 @@ export default async function MembersPage({
                 <Card key={member.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-4">
                     <div className="flex items-start space-x-4">
-                      <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
+                      <div className="h-12 w-12 rounded-full bg-elevated flex items-center justify-center">
                         {member.image ? (
                           <Image src={member.image} alt={member.name || ''} width={48} height={48} className="rounded-full" />
                         ) : (
-                          <span className="text-lg font-semibold text-gray-600">
+                          <span className="text-lg font-semibold text-ink-muted">
                             {member.name?.charAt(0) || member.email.charAt(0).toUpperCase()}
                           </span>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <Link href={`/members/${member.id}`} className="hover:underline">
-                          <h3 className="text-sm font-medium text-gray-900 truncate">
+                          <h3 className="text-sm font-medium text-ink truncate">
                             {member.name || 'Unnamed Member'}
                           </h3>
                         </Link>
-                        <p className="text-xs text-gray-500 capitalize">{member.role.toLowerCase()}</p>
+                        <p className="text-xs text-ink-muted capitalize">{member.role.toLowerCase()}</p>
                         
                         {member.bio && (
-                          <p className="mt-1 text-sm text-gray-600 line-clamp-2">{member.bio}</p>
+                          <p className="mt-1 text-sm text-ink-muted line-clamp-2">{member.bio}</p>
                         )}
                         
                         <div className="mt-2 space-y-1">
                           {member.allowContact && member.email && (
-                            <div className="flex items-center text-xs text-gray-500">
+                            <div className="flex items-center text-xs text-ink-muted">
                               <Mail className="h-3 w-3 mr-1" />
                               {member.email}
                             </div>
                           )}
                           {member.allowContact && member.phone && (
-                            <div className="flex items-center text-xs text-gray-500">
+                            <div className="flex items-center text-xs text-ink-muted">
                               <Phone className="h-3 w-3 mr-1" />
                               {member.phone}
                             </div>
                           )}
                           {member.city && (
-                            <div className="flex items-center text-xs text-gray-500">
+                            <div className="flex items-center text-xs text-ink-muted">
                               <MapPin className="h-3 w-3 mr-1" />
                               {member.city}
                             </div>

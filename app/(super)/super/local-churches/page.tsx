@@ -131,7 +131,7 @@ export default async function SuperLocalChurchesPage() {
                       type="submit" 
                       variant="outline" 
                       size="sm"
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 focus-ring"
                     >
                       <Archive className="mr-2 h-4 w-4" />
                       Archive

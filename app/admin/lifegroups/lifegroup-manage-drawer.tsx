@@ -200,7 +200,7 @@ export function LifeGroupManageDrawer({ lifeGroupId, open, onClose }: LifeGroupM
   return (
     <>
       <div 
-        className="fixed inset-0 bg-black/50 z-50" 
+        className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50" 
         onClick={onClose}
         aria-label="Close drawer"
       />

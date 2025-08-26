@@ -92,15 +92,15 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
           <p>Click the link below to accept the invitation and set up your account:</p>
           <p style="margin: 30px 0;">
             <a href="${inviteUrl}" 
-               style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+               style="background-color: rgb(37, 99, 235); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               Accept Invitation
             </a>
           </p>
-          <p style="color: #666; font-size: 14px;">
+          <p style="color: rgb(71, 85, 105); font-size: 14px;">
             This invitation link will expire in 24 hours.
           </p>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-          <p style="color: #999; font-size: 12px;">
+          <hr style="border: none; border-top: 1px solid rgb(226, 232, 240); margin: 30px 0;">
+          <p style="color: rgb(161, 161, 170); font-size: 12px;">
             If you did not expect this invitation, you can safely ignore this email.
           </p>
         </div>

@@ -31,7 +31,7 @@ export default async function VipFirstTimersPage() {
       <div className="container py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold">First Timers</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-ink-muted mt-2">
             Manage and track follow-up with first-time visitors
           </p>
         </div>

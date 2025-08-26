@@ -40,7 +40,7 @@ export function AttendanceList({ serviceId, serviceName }: AttendanceListProps) 
     // Poll for updates every 5 seconds
     const interval = setInterval(fetchAttendance, 5000)
     return () => clearInterval(interval)
-  }, [serviceId])
+  }, [serviceId, fetchAttendance])
 
   const exportCSV = () => {
     const headers = ['Name', 'Email', 'Checked In At', 'New Believer']

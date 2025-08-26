@@ -31,6 +31,7 @@ export async function getFirstTimers() {
     UserRole.PASTOR,
     UserRole.ADMIN,
     UserRole.VIP
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ].includes(user.role as any)
   
   if (!hasVipAccess) {
@@ -98,6 +99,7 @@ export async function createFirstTimer(data: z.infer<typeof createFirstTimerSche
     UserRole.PASTOR,
     UserRole.ADMIN,
     UserRole.VIP
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ].includes(user.role as any)
   
   if (!hasVipAccess) {
@@ -193,6 +195,7 @@ export async function updateFirstTimer(
     UserRole.PASTOR,
     UserRole.ADMIN,
     UserRole.VIP
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ].includes(user.role as any)
   
   if (!hasVipAccess) {
@@ -303,6 +306,7 @@ export async function markBelieverInactive(membershipId: string) {
     UserRole.PASTOR,
     UserRole.ADMIN,
     UserRole.VIP
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ].includes(user.role as any)
   
   if (!hasVipAccess) {

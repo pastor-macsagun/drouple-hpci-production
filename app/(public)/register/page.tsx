@@ -23,14 +23,14 @@ export default async function RegisterPage() {
   })
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
             <UserPlus className="h-8 w-8 text-blue-600" />
           </div>
           <CardTitle className="text-2xl">Member Registration</CardTitle>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-ink-muted mt-2">
             Join your local church community
           </p>
         </CardHeader>
@@ -67,7 +67,7 @@ export default async function RegisterPage() {
                 placeholder="Minimum 8 characters"
                 minLength={8}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-ink-muted mt-1">
                 At least 8 characters with mixed case, number, and symbol
               </p>
             </div>
@@ -120,7 +120,7 @@ export default async function RegisterPage() {
             </Button>
 
             <div className="text-center text-sm">
-              <span className="text-gray-600">Already have an account? </span>
+              <span className="text-ink-muted">Already have an account? </span>
               <Link href="/auth/signin" className="text-blue-600 hover:underline">
                 Sign In
               </Link>

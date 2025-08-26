@@ -47,7 +47,7 @@ export default async function PathwaysPage() {
 
   return (
     <AppLayout user={user}>
-      <div className="container mx-auto py-8">
+      <div className="page-container">
         <h1 className="text-3xl font-bold mb-6">My Pathways</h1>
 
         {progressData.length === 0 && (
@@ -97,13 +97,13 @@ export default async function PathwaysPage() {
                   {steps.map((step, index) => (
                     <div
                       key={step.id}
-                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors"
+                      className="flex items-start gap-3 p-3 rounded-xl hover:bg-accent/50 transition-colors"
                     >
                       <div className="mt-0.5">
                         {step.completed ? (
                           <CheckCircle2 className="h-5 w-5 text-green-600" />
                         ) : (
-                          <Circle className="h-5 w-5 text-muted-foreground" />
+                          <Circle className="h-5 w-5 text-ink-muted" />
                         )}
                       </div>
                       <div className="flex-1">
@@ -111,12 +111,12 @@ export default async function PathwaysPage() {
                           Step {index + 1}: {step.name}
                         </div>
                         {step.description && (
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-ink-muted mt-1">
                             {step.description}
                           </p>
                         )}
                         {step.completedAt && (
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-xs text-ink-muted mt-1">
                             Completed on {new Date(step.completedAt).toLocaleDateString()}
                           </p>
                         )}

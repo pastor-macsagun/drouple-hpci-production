@@ -68,7 +68,7 @@ export function LeaderView({ lifeGroupId, lifeGroupName }: LeaderViewProps) {
 
   useEffect(() => {
     fetchData()
-  }, [lifeGroupId])
+  }, [lifeGroupId, fetchData])
 
   const handleApprove = async (requestId: string) => {
     const result = await approveRequest(requestId)

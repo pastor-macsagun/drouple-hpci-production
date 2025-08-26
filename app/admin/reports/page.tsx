@@ -132,6 +132,7 @@ async function getDashboardStats(tenantId: string) {
     completed: 0
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   believerStatusCounts.forEach((status: any) => {
     const key = status.believerStatus.toLowerCase() as 'active' | 'inactive' | 'completed'
     believerStats[key] = status._count
@@ -241,11 +242,11 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalMembers}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-ink-muted">
               +{stats.newMembers} new this month
             </p>
           </CardContent>
@@ -254,7 +255,7 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Weekly Attendance</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
+            <UserCheck className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.recentCheckins}</div>
@@ -272,7 +273,7 @@ export default async function ReportsPage() {
               ) : (
                 <span className="text-gray-500">No change</span>
               )}
-              <span className="ml-1 text-muted-foreground">vs last week</span>
+              <span className="ml-1 text-ink-muted">vs last week</span>
             </div>
           </CardContent>
         </Card>
@@ -280,11 +281,11 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Life Groups</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.activeLifeGroups}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-ink-muted">
               Avg {stats.weeklyAttendanceAvg} attendees/week
             </p>
           </CardContent>
@@ -293,11 +294,11 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.upcomingEvents}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-ink-muted">
               {stats.pathwayEnrollments} pathway enrollments
             </p>
           </CardContent>
@@ -306,7 +307,7 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">New Believers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-ink-muted" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

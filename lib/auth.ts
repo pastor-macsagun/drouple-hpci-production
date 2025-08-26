@@ -18,6 +18,7 @@ export const authOptions: any = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async authorize(credentials: any, req: any) {
         const email = credentials?.email as string
         const password = credentials?.password as string
@@ -27,7 +28,9 @@ export const authOptions: any = {
         }
 
         // Get client IP for rate limiting
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const ip = (req as any).headers?.["x-forwarded-for"] || 
+                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                    (req as any).headers?.["x-real-ip"] || 
                    "unknown"
         const ipAddress = Array.isArray(ip) ? ip[0] : ip.split(",")[0].trim()

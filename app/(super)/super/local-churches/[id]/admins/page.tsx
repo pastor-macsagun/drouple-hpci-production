@@ -87,7 +87,7 @@ export default async function ManageAdminsPage({ params }: { params: Promise<{ i
                         type="submit"
                         variant="outline"
                         size="sm"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 focus-ring"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

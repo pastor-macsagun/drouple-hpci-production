@@ -23,7 +23,7 @@ export default async function AdminDashboard() {
       <div className="container py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-ink-muted mt-2">
             Manage your church operations and oversee all ministry activities
           </p>
         </div>
@@ -33,13 +33,13 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
+                <div className="p-2 bg-blue-100 rounded-xl">
                   <Users className="h-6 w-6 text-blue-600" />
                 </div>
                 <h3 className="font-semibold">Members</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Manage member accounts, roles, and church assignments
             </p>
             <Button asChild className="w-full">
@@ -51,13 +51,13 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
+                <div className="p-2 bg-purple-100 rounded-xl">
                   <Calendar className="h-6 w-6 text-purple-600" />
                 </div>
                 <h3 className="font-semibold">Services</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Create services, track attendance, and manage check-ins
             </p>
             <Button asChild className="w-full">
@@ -69,13 +69,13 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
+                <div className="p-2 bg-green-100 rounded-xl">
                   <Heart className="h-6 w-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold">LifeGroups</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Create and manage life groups, leaders, and memberships
             </p>
             <Button asChild className="w-full">
@@ -87,13 +87,13 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
+                <div className="p-2 bg-orange-100 rounded-xl">
                   <MapPin className="h-6 w-6 text-orange-600" />
                 </div>
                 <h3 className="font-semibold">Events</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Organize church events, manage RSVPs, and track attendance
             </p>
             <Button asChild className="w-full">
@@ -105,13 +105,13 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-100 rounded-lg">
+                <div className="p-2 bg-indigo-100 rounded-xl">
                   <Settings className="h-6 w-6 text-indigo-600" />
                 </div>
                 <h3 className="font-semibold">Pathways</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Manage discipleship pathways and track member progress
             </p>
             <Button asChild className="w-full">
@@ -123,13 +123,13 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
+                <div className="p-2 bg-red-100 rounded-xl">
                   <BarChart3 className="h-6 w-6 text-red-600" />
                 </div>
                 <h3 className="font-semibold">Reports</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               View analytics and generate reports for ministry oversight
             </p>
             <Button asChild className="w-full">

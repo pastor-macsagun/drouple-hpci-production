@@ -92,11 +92,11 @@ export default async function ProfilePage() {
 
   return (
     <AppLayout user={user}>
-      <div className="min-h-screen p-8">
+      <div className="page-container">
         <div className="max-w-2xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Profile</h1>
-            <p className="text-muted-foreground">Manage your account settings</p>
+            <p className="text-ink-muted">Manage your account settings</p>
           </div>
 
           <div className="grid gap-4">
@@ -153,18 +153,18 @@ export default async function ProfilePage() {
                   {user.memberships.map((membership) => (
                     <div
                       key={membership.id}
-                      className="border rounded-lg p-3 space-y-1"
+                      className="border rounded-xl p-3 space-y-1"
                     >
                       <div className="font-medium">{membership.localChurch.name}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-ink-muted">
                         Role: {membership.role}
                       </div>
                       {membership.localChurch.address && (
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm text-ink-muted">
                           {membership.localChurch.address}, {membership.localChurch.city}
                         </div>
                       )}
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-ink-muted">
                         Joined: {new Date(membership.joinedAt).toLocaleDateString()}
                       </div>
                     </div>

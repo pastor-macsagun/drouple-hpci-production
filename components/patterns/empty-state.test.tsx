@@ -72,7 +72,8 @@ describe('EmptyState', () => {
       />
     )
     
-    const emptyState = container.querySelector('.empty-state')
+    const emptyState = container.firstChild as HTMLElement
+    expect(emptyState).not.toBeNull()
     expect(emptyState).toHaveClass('custom-class')
   })
 

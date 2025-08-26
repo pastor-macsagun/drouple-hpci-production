@@ -87,7 +87,7 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-500" />
+                    <Calendar className="h-4 w-4 text-ink-muted" />
                     <div className="text-sm">
                       <p className="font-medium">Date & Time</p>
                       <p>{startDate.toLocaleString()}</p>
@@ -96,7 +96,7 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
 
                   {event.location && (
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <MapPin className="h-4 w-4 text-ink-muted" />
                       <div className="text-sm">
                         <p className="font-medium">Location</p>
                         <p>{event.location}</p>
@@ -107,7 +107,7 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-gray-500" />
+                    <Users className="h-4 w-4 text-ink-muted" />
                     <div className="text-sm">
                       <p className="font-medium">Capacity</p>
                       <p>{event.capacity} total spots</p>
@@ -116,7 +116,7 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
 
                   {event.requiresPayment && event.feeAmount && (
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <DollarSign className="h-4 w-4 text-ink-muted" />
                       <div className="text-sm">
                         <p className="font-medium">Fee</p>
                         <p>${event.feeAmount.toFixed(2)} per person</p>
@@ -145,19 +145,19 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Going</span>
+                <span className="text-sm text-ink-muted">Going</span>
                 <span className="font-medium">{goingCount}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Waitlist</span>
+                <span className="text-sm text-ink-muted">Waitlist</span>
                 <span className="font-medium">{waitlistCount}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Total Registered</span>
+                <span className="text-sm text-ink-muted">Total Registered</span>
                 <span className="font-medium">{goingCount + waitlistCount}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Spots Available</span>
+                <span className="text-sm text-ink-muted">Spots Available</span>
                 <span className="font-medium">{Math.max(0, event.capacity - goingCount)}</span>
               </div>
             </CardContent>
@@ -170,11 +170,11 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Paid</span>
+                  <span className="text-sm text-ink-muted">Paid</span>
                   <span className="font-medium">{paidCount}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Pending</span>
+                  <span className="text-sm text-ink-muted">Pending</span>
                   <span className="font-medium">{goingCount - paidCount}</span>
                 </div>
                 <div className="border-t pt-3">
@@ -195,7 +195,7 @@ export default async function AdminEventDetailPage({ params }: { params: Promise
             </CardHeader>
             <CardContent className="space-y-2">
               {event.visibleToRoles.length === 0 ? (
-                <p className="text-sm text-gray-600">Visible to all members</p>
+                <p className="text-sm text-ink-muted">Visible to all members</p>
               ) : (
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Restricted to:</p>

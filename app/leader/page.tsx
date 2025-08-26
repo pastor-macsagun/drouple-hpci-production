@@ -23,7 +23,7 @@ export default async function LeaderDashboard() {
       <div className="container py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Leader Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-ink-muted mt-2">
             Lead your ministry and manage your assigned responsibilities
           </p>
         </div>
@@ -33,13 +33,13 @@ export default async function LeaderDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
+                <div className="p-2 bg-green-100 rounded-xl">
                   <Heart className="h-6 w-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold">My LifeGroups</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Manage your life groups, track attendance, and approve new members
             </p>
             <Button asChild className="w-full">
@@ -51,13 +51,13 @@ export default async function LeaderDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
+                <div className="p-2 bg-purple-100 rounded-xl">
                   <UserCheck className="h-6 w-6 text-purple-600" />
                 </div>
                 <h3 className="font-semibold">Check-in</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Personal check-in for services and ministry events
             </p>
             <Button asChild className="w-full">
@@ -69,13 +69,13 @@ export default async function LeaderDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
+                <div className="p-2 bg-blue-100 rounded-xl">
                   <Users className="h-6 w-6 text-blue-600" />
                 </div>
                 <h3 className="font-semibold">Members</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               View member directory and contact information for ministry
             </p>
             <Button asChild className="w-full">
@@ -87,13 +87,13 @@ export default async function LeaderDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
+                <div className="p-2 bg-orange-100 rounded-xl">
                   <Calendar className="h-6 w-6 text-orange-600" />
                 </div>
                 <h3 className="font-semibold">Events</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               View upcoming events and manage your ministry calendar
             </p>
             <Button asChild className="w-full">
@@ -105,13 +105,13 @@ export default async function LeaderDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-100 rounded-lg">
+                <div className="p-2 bg-indigo-100 rounded-xl">
                   <BookOpen className="h-6 w-6 text-indigo-600" />
                 </div>
                 <h3 className="font-semibold">Discipleship</h3>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               Track your own spiritual growth and help others in their journey
             </p>
             <Button asChild className="w-full">

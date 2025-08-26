@@ -44,7 +44,7 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
@@ -77,7 +77,7 @@ export default function ChangePasswordPage() {
                 required
                 minLength={8}
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-ink-muted mt-1">
                 Must be at least 8 characters
               </p>
             </div>

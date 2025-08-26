@@ -159,22 +159,22 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "flex h-full flex-col bg-card transition-all duration-300 border-r border-border/50",
+        "flex h-full flex-col bg-surface transition-all duration-base ease-standard border-r border-border",
         collapsed ? "w-16" : "w-64",
         className
       )}
     >
-      <div className="flex h-14 items-center justify-between px-4 border-b border-border/50">
+      <div className="flex h-14 items-center justify-between px-4 sm:px-6 border-b border-border">
         {!collapsed && (
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">HPCI</span>
+          <Link href="/" className="flex items-center space-x-2 focus-ring rounded">
+            <span className="text-xl font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">HPCI</span>
           </Link>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex hover:bg-accent"
+          className="hidden lg:flex hover:bg-elevated focus-ring"
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
@@ -184,7 +184,7 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
         </Button>
       </div>
 
-      <nav className="flex-1 space-y-1 px-2 py-4">
+      <nav className="flex-1 space-y-1 px-2 py-5">
         {filteredNavigation.map((item) => {
           const Icon = item.icon;
           return (
@@ -193,10 +193,10 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-fast focus-ring",
                 isActive(item.href)
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "hover:bg-accent hover:text-accent-foreground",
+                  ? "bg-elevated text-ink shadow-sm"
+                  : "hover:bg-elevated/50 text-ink-muted hover:text-ink",
                 collapsed && "justify-center"
               )}
               title={collapsed ? item.name : undefined}
@@ -212,10 +212,10 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
 
         {filteredVipNavigation.length > 0 && (
           <>
-            <div className="my-4 border-t border-border/50" />
+            <div className="my-5 border-t border-border" />
             <div className={cn("px-3 py-2", collapsed && "px-0")}>
               {!collapsed && (
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                   VIP Team
                 </p>
               )}
@@ -249,10 +249,10 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
 
         {filteredAdminNavigation.length > 0 && (
           <>
-            <div className="my-4 border-t border-border/50" />
+            <div className="my-5 border-t border-border" />
             <div className={cn("px-3 py-2", collapsed && "px-0")}>
               {!collapsed && (
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                   Administration
                 </p>
               )}
@@ -286,10 +286,10 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
 
         {filteredSuperAdminNavigation.length > 0 && (
           <>
-            <div className="my-4 border-t border-border/50" />
+            <div className="my-5 border-t border-border" />
             <div className={cn("px-3 py-2", collapsed && "px-0")}>
               {!collapsed && (
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                   Super Admin
                 </p>
               )}
@@ -322,7 +322,7 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
         )}
       </nav>
 
-      <div className="border-t border-border/50 px-2 py-4">
+      <div className="border-t border-border px-2 py-4">
         {filteredBottomNavigation.map((item) => {
           const Icon = item.icon;
           return (
@@ -331,10 +331,10 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-fast focus-ring",
                 isActive(item.href)
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "hover:bg-accent hover:text-accent-foreground",
+                  ? "bg-elevated text-ink shadow-sm"
+                  : "hover:bg-elevated/50 text-ink-muted hover:text-ink",
                 collapsed && "justify-center"
               )}
               title={collapsed ? item.name : undefined}
@@ -353,7 +353,7 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
             type="submit"
             variant="ghost"
             className={cn(
-              "w-full justify-start gap-3 px-3",
+              "w-full justify-start gap-3 px-3 hover:bg-elevated/50 focus-ring",
               collapsed && "justify-center px-0"
             )}
             title={collapsed ? "Sign Out" : undefined}
@@ -364,12 +364,12 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
         </form>
 
         {user && !collapsed && (
-          <div className="mt-4 px-3 py-2 border-t border-border/50">
-            <p className="text-xs font-medium text-foreground truncate">
+          <div className="mt-4 px-3 py-2 border-t border-border">
+            <p className="text-xs font-medium text-ink truncate">
               {user.name || user.email}
             </p>
             {user.role && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent mt-1">
                 {user.role}
               </span>
             )}

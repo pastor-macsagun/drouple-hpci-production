@@ -4,116 +4,103 @@
 
 @layer base {
   :root {
-    /* Neutral Base Colors - Clean & Modern */
-    --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
-    
-    /* Primary Accent - Sacred Blue */
-    --primary: 217 91% 48%;
-    --primary-foreground: 0 0% 100%;
-    
-    /* Secondary & Support Colors - Soft Gold */
-    --secondary: 43 74% 66%;
-    --secondary-foreground: 220 13% 18%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 217 19% 94%;
-    --accent-foreground: 220 13% 18%;
-    
-    /* Semantic Colors */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --success: 142 71% 45%;
-    --success-foreground: 210 40% 98%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 222.2 47.4% 11.2%;
-    --info: 199 89% 48%;
-    --info-foreground: 210 40% 98%;
-    
-    /* Borders & Inputs */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 266 100% 50%;
-    
-    /* Border Radius */
-    --radius: 0.5rem;
-    --radius-sm: 0.25rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    
-    /* Spacing Scale */
-    --space-xs: 0.25rem;
-    --space-sm: 0.5rem;
-    --space-md: 1rem;
-    --space-lg: 1.5rem;
-    --space-xl: 2rem;
-    --space-2xl: 3rem;
-    --space-3xl: 4rem;
-    
-    /* Container */
-    --container-xs: 20rem;
-    --container-sm: 24rem;
-    --container-md: 28rem;
-    --container-lg: 32rem;
-    --container-xl: 36rem;
-    --container-2xl: 42rem;
-    --container-3xl: 48rem;
-    --container-4xl: 56rem;
-    --container-5xl: 64rem;
-    --container-6xl: 72rem;
-    --container-full: 100%;
-    
-    /* Typography */
-    --font-sans: var(--font-inter), system-ui, sans-serif;
-    --font-mono: ui-monospace, monospace;
-    
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-    
-    /* Z-index Scale */
-    --z-base: 0;
-    --z-dropdown: 10;
-    --z-sticky: 20;
-    --z-overlay: 30;
-    --z-modal: 40;
-    --z-popover: 50;
-    --z-tooltip: 60;
+    /* Base surfaces & text */
+    --color-bg: 255 255 255;         /* white */
+    --color-surface: 248 250 252;    /* slate-50-ish */
+    --color-elevated: 241 245 249;   /* slate-100-ish */
+    --color-ink: 17 24 39;           /* slate-900-ish */
+    --color-ink-muted: 71 85 105;    /* slate-600-ish */
+
+    /* Accent */
+    --color-accent: 37 99 235;       /* blue-600 */
+    --color-accent-ink: 255 255 255; /* on accent */
+
+    /* State */
+    --color-success: 22 163 74;
+    --color-warning: 202 138 4;
+    --color-danger: 220 38 38;
+
+    /* Borders & outlines */
+    --color-border: 226 232 240;     /* slate-200-ish */
+    --color-ring: 37 99 235;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
+    /* Shadows (soft) */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 10px 24px rgba(0,0,0,0.10);
+
+    /* Spacing scale (example baseline) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* Motion */
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --duration-fast: 150ms;
+    --duration-base: 200ms;
+    --duration-slow: 250ms;
+
+    /* Legacy shadcn compatibility - convert RGB to HSL */
+    --background: 0 0% 100%;              /* white */
+    --foreground: 222 84% 4.9%;           /* slate-900 */
+    --card: 210 40% 98%;                  /* slate-50 */
+    --card-foreground: 222 84% 4.9%;     /* slate-900 */
+    --popover: 210 40% 98%;               /* slate-50 */
+    --popover-foreground: 222 84% 4.9%;  /* slate-900 */
+    --primary: 221 83% 53%;               /* blue-600 */
+    --primary-foreground: 210 40% 98%;   /* white */
+    --secondary: 214 32% 91%;             /* slate-100 */
+    --secondary-foreground: 222 84% 4.9%; /* slate-900 */
+    --muted: 214 32% 91%;                 /* slate-100 */
+    --muted-foreground: 215 16% 47%;     /* slate-600 */
+    --accent: 214 32% 91%;                /* slate-100 */
+    --accent-foreground: 222 84% 4.9%;   /* slate-900 */
+    --destructive: 0 84% 60%;             /* red-500 */
+    --destructive-foreground: 210 40% 98%; /* white */
+    --border: 214 32% 91%;                /* slate-200 */
+    --input: 214 32% 91%;                 /* slate-200 */
+    --ring: 221 83% 53%;                  /* blue-600 */
+    --radius: var(--radius-md);
   }
 
-  .dark {
-    --background: 220 26% 11%;
-    --foreground: 210 20% 98%;
-    --card: 220 26% 14%;
-    --card-foreground: 210 20% 98%;
-    --popover: 220 26% 14%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 220 26% 11%;
-    --secondary: 43 74% 55%;
-    --secondary-foreground: 220 26% 11%;
-    --muted: 220 26% 18%;
-    --muted-foreground: 220 9% 60%;
-    --accent: 220 26% 20%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 210 20% 98%;
-    --success: 142 71% 45%;
-    --success-foreground: 210 20% 98%;
-    --warning: 38 92% 55%;
-    --warning-foreground: 220 26% 11%;
-    --info: 199 89% 55%;
-    --info-foreground: 220 26% 11%;
-    --border: 220 26% 20%;
-    --input: 220 26% 20%;
-    --ring: 217 91% 60%;
+  [data-theme="dark"] {
+    --color-bg: 9 9 11;             /* zinc-950-ish */
+    --color-surface: 17 17 20;      /* deep surface */
+    --color-elevated: 24 24 27;     /* zinc-800-ish */
+    --color-ink: 250 250 250;
+    --color-ink-muted: 161 161 170; /* zinc-400-ish */
+
+    --color-border: 39 39 42;       /* zinc-800 */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.45);
+    --shadow-lg: 0 10px 24px rgba(0,0,0,0.55);
+
+    /* Legacy shadcn compatibility for dark mode - convert RGB to HSL */
+    --background: 224 71% 4%;             /* zinc-950 */
+    --foreground: 213 31% 91%;            /* zinc-100 */
+    --card: 222 84% 4.9%;                 /* zinc-900 */
+    --card-foreground: 213 31% 91%;       /* zinc-100 */
+    --popover: 222 84% 4.9%;              /* zinc-900 */
+    --popover-foreground: 213 31% 91%;    /* zinc-100 */
+    --secondary: 215 28% 17%;             /* zinc-800 */
+    --secondary-foreground: 213 31% 91%;  /* zinc-100 */
+    --muted: 215 28% 17%;                 /* zinc-800 */
+    --muted-foreground: 240 5% 65%;       /* zinc-400 */
+    --accent: 215 28% 17%;                /* zinc-800 */
+    --accent-foreground: 213 31% 91%;     /* zinc-100 */
+    --border: 215 28% 17%;                /* zinc-800 */
+    --input: 215 28% 17%;                 /* zinc-800 */
   }
 }
 
@@ -122,8 +109,19 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    color: rgb(var(--color-ink));
+    background-color: rgb(var(--color-bg));
+    @apply antialiased;
   }
+
+  /* Headings – confident but calm */
+  h1 { @apply text-4xl sm:text-5xl font-semibold tracking-tight; }
+  h2 { @apply text-2xl sm:text-3xl font-semibold; }
+  h3 { @apply text-lg font-medium; }
+  p  { @apply leading-relaxed; }
+
+  /* Muted text utility */
+  .text-muted { color: rgb(var(--color-ink-muted)); }
   
   /* Responsive Container */
   .container {
@@ -138,9 +136,23 @@
 }
 
 @layer components {
+  /* Primitive Components */
+  .card {
+    @apply rounded-xl border border-border bg-surface shadow;
+  }
+  
+  .panel {
+    @apply rounded-xl bg-elevated shadow-lg;
+  }
+  
+  /* Focus Styles - ensure all interactive elements have consistent focus */
+  .focus-ring {
+    @apply focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none;
+  }
+  
   /* Page Layouts */
   .page-container {
-    @apply container py-4 px-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8;
+    @apply mx-auto max-w-content px-4 sm:px-6 py-4 sm:py-5;
   }
   
   .page-header {
@@ -148,11 +160,24 @@
   }
   
   .page-title {
-    @apply text-2xl sm:text-3xl font-bold tracking-tight;
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight;
   }
   
   .page-description {
-    @apply text-muted-foreground mt-2;
+    @apply text-muted mt-2;
+  }
+  
+  /* Card Patterns */
+  .card-header {
+    @apply p-4 sm:p-6 border-b border-border;
+  }
+  
+  .card-content {
+    @apply p-4 sm:p-6;
+  }
+  
+  .card-footer {
+    @apply p-4 sm:p-6 border-t border-border bg-elevated/50;
   }
   
   /* Empty States */
@@ -161,7 +186,7 @@
   }
   
   .empty-state-icon {
-    @apply h-12 w-12 text-muted-foreground mb-4;
+    @apply h-12 w-12 text-ink-muted mb-4;
   }
   
   .empty-state-title {
@@ -169,25 +194,29 @@
   }
   
   .empty-state-description {
-    @apply text-sm text-muted-foreground max-w-sm;
+    @apply text-sm text-ink-muted max-w-sm;
   }
   
   /* List Patterns */
   .list-container {
-    @apply space-y-4;
+    @apply space-y-3 sm:space-y-4;
   }
   
   .list-item {
-    @apply block transition-colors hover:bg-accent/50 rounded-lg;
+    @apply block transition-colors hover:bg-elevated/50 rounded-xl p-3 sm:p-4;
   }
   
   /* Table Patterns */
   .table-container {
-    @apply overflow-x-auto rounded-lg border;
+    @apply overflow-x-auto rounded-xl border border-border;
+  }
+  
+  .table-row {
+    @apply transition-colors hover:bg-elevated/50;
   }
   
   .table-filters {
-    @apply flex flex-col sm:flex-row gap-4 mb-4;
+    @apply flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4;
   }
   
   /* Grid Patterns */
@@ -208,11 +237,21 @@
     @apply bg-warning/10 text-warning;
   }
   
-  .badge-destructive {
-    @apply bg-destructive/10 text-destructive;
+  .badge-danger {
+    @apply bg-danger/10 text-danger;
   }
   
-  .badge-info {
-    @apply bg-info/10 text-info;
+  /* Form Patterns */
+  .form-group {
+    @apply space-y-3 sm:space-y-4;
+  }
+  
+  .form-section {
+    @apply card p-4 sm:p-6 space-y-3 sm:space-y-4;
+  }
+
+  /* Theming Utilities */
+  .gradient-hero {
+    background: radial-gradient(40rem 40rem at 50% -10%, rgba(37, 99, 235, 0.08), transparent);
   }
 }

@@ -165,7 +165,7 @@ describe('Data Integrity Constraints', () => {
         FROM information_schema.table_constraints tc
         JOIN information_schema.key_column_usage kcu 
           ON tc.constraint_name = kcu.constraint_name
-        WHERE tc.table_name = 'Checkin' 
+        WHERE tc.table_name = 'checkins' 
           AND tc.constraint_type = 'UNIQUE'
         ORDER BY kcu.ordinal_position;
       `
@@ -176,7 +176,7 @@ describe('Data Integrity Constraints', () => {
       )
       
       if (!hasUniqueConstraint) {
-        console.warn('⚠️ Missing unique constraint on Checkin(serviceId, userId)')
+        console.warn('⚠️ Missing unique constraint on checkins(serviceId, userId)')
       }
     })
 
@@ -186,14 +186,14 @@ describe('Data Integrity Constraints', () => {
           indexname,
           indexdef
         FROM pg_indexes
-        WHERE tablename = 'User'
+        WHERE tablename = 'users'
           AND indexdef LIKE '%tenantId%';
       `
       
       const results = await prisma.$queryRawUnsafe(query) as any[]
       
       if (results.length === 0) {
-        console.warn('⚠️ Missing index on User.tenantId')
+        console.warn('⚠️ Missing index on users.tenantId')
       }
     })
 
@@ -203,14 +203,14 @@ describe('Data Integrity Constraints', () => {
           indexname,
           indexdef
         FROM pg_indexes
-        WHERE tablename = 'EventRsvp'
+        WHERE tablename = 'event_rsvps'
           AND (indexdef LIKE '%eventId%' AND indexdef LIKE '%userId%');
       `
       
       const results = await prisma.$queryRawUnsafe(query) as any[]
       
       if (results.length === 0) {
-        console.warn('⚠️ Missing composite index on EventRsvp(eventId, userId)')
+        console.warn('⚠️ Missing composite index on event_rsvps(eventId, userId)')
       }
     })
   })

@@ -263,8 +263,8 @@ export function MembersManager({
     switch (status) {
       case 'ACTIVE': return 'bg-green-100 text-green-800'
       case 'PENDING': return 'bg-yellow-100 text-yellow-800'
-      case 'INACTIVE': return 'bg-gray-100 text-gray-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'INACTIVE': return 'bg-elevated text-ink'
+      default: return 'bg-elevated text-ink'
     }
   }
 
@@ -275,7 +275,7 @@ export function MembersManager({
       case 'ADMIN': return 'bg-blue-100 text-blue-800'
       case 'VIP': return 'bg-yellow-100 text-yellow-800'
       case 'LEADER': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
+      default: return 'bg-elevated text-ink'
     }
   }
 
@@ -284,7 +284,7 @@ export function MembersManager({
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-ink-muted h-4 w-4" />
             <Input
               placeholder="Search by name or email..."
               value={search}
