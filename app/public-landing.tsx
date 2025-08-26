@@ -1,280 +1,134 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen font-['Inter'] bg-surface">
-      {/* Clean Navigation */}
-      <nav className="px-6 py-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-ink rounded-xl flex items-center justify-center">
-              <span className="text-surface text-lg font-bold">D</span>
-            </div>
-            <span className="text-2xl font-medium text-ink">drouple</span>
+    <main className="min-h-screen bg-[color:rgb(var(--color-bg))] text-[color:rgb(var(--color-ink))]">
+      {/* Hero Section */}
+      <section className="bg-[radial-gradient(40rem_40rem_at_50%_-10%,rgba(37,99,235,0.08),transparent)] mx-auto max-w-content px-4 sm:px-6 py-12">
+        <div className="text-center space-y-8 max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-[color:rgb(var(--color-ink))]">
+            Drouple — Built for the Church
+          </h1>
+          <div className="space-y-4 max-w-2xl mx-auto">
+            <p className="text-lg text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+              Churches struggle with disconnected tools, scattered spreadsheets, and complex systems that pull focus away from ministry.
+            </p>
+            <p className="text-lg text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+              Drouple provides one secure, ministry-first platform that brings everything together so you can focus on what matters most — people.
+            </p>
           </div>
-          <Button 
-            asChild 
-            className="bg-ink text-surface hover:bg-ink/90 rounded-lg px-6 py-2 text-sm font-medium shadow-sm"
-          >
+          <div className="pt-4">
+            <Button asChild className="bg-[color:rgb(var(--color-accent))] text-[color:rgb(var(--color-accent-ink))] hover:bg-[color:rgb(var(--color-accent))]/90 rounded-xl px-8 py-3 text-lg font-medium shadow-md">
+              <Link href="/auth/signin">Sign In</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem Section */}
+      <section className="mx-auto max-w-content px-4 sm:px-6 py-12">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-semibold mb-8 text-center">The Challenges We See</h2>
+          <div className="space-y-6 text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+            <p>
+              Every Sunday, dedicated volunteers shuffle through stacks of paper, updating spreadsheets by hand, 
+              and sending countless emails just to track who showed up. First-time visitors slip through the cracks 
+              because follow-up happens through sticky notes and good intentions.
+            </p>
+            <p>
+              LifeGroup leaders juggle group rosters through text messages, while discipleship progress gets tracked 
+              in personal notebooks that only one person can read. When staff changes happen, years of relationship 
+              data walks out the door.
+            </p>
+            <p>
+              Event coordination becomes a full-time job of managing Facebook groups, Google Forms, and email threads. 
+              Meanwhile, admin teams spend more time wrestling with systems than actually caring for people.
+            </p>
+            <p>
+              Sound familiar? We&apos;ve been there too.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="bg-[color:rgb(var(--color-surface))] mx-auto max-w-content px-4 sm:px-6 py-12">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-semibold mb-8 text-center">Where Drouple Fits</h2>
+          <div className="space-y-6 text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+            <p>
+              Drouple is not another business CRM trying to fit church life into corporate boxes. 
+              It&apos;s a tool built from the ground up for ministry — designed by people who understand 
+              the unique rhythms of church community.
+            </p>
+            <p>
+              We help you track members, coordinate LifeGroups, manage events, and guide discipleship 
+              pathways — all in one place that actually makes sense for how churches operate. No more 
+              juggling five different platforms or losing information in the handoff.
+            </p>
+            <p>
+              This isn&apos;t about efficiency for efficiency&apos;s sake. It&apos;s about creating margin so pastors, 
+              leaders, and teams can spend less time on administrative work and more time doing what 
+              they&apos;re called to do — caring for people and building God&apos;s kingdom.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Snapshot Section */}
+      <section className="mx-auto max-w-content px-4 sm:px-6 py-12">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-semibold mb-12 text-center">Key Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="p-6 space-y-4 rounded-xl shadow-md bg-[color:rgb(var(--color-surface))]">
+              <h3 className="text-lg font-medium">Member Care</h3>
+              <p className="text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+                Keep secure member directories, manage profiles with privacy controls, and maintain 
+                one source of truth for all your people data.
+              </p>
+            </Card>
+            
+            <Card className="p-6 space-y-4 rounded-xl shadow-md bg-[color:rgb(var(--color-surface))]">
+              <h3 className="text-lg font-medium">VIP Team</h3>
+              <p className="text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+                Never lose track of first-timers again. Track gospel conversations, follow up systematically, 
+                and guide new believers through ROOTS discipleship.
+              </p>
+            </Card>
+            
+            <Card className="p-6 space-y-4 rounded-xl shadow-md bg-[color:rgb(var(--color-surface))]">
+              <h3 className="text-lg font-medium">Discipleship Pathways</h3>
+              <p className="text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+                Guide members through ROOTS foundations, VINES growth groups, and RETREAT experiences 
+                with clear progress tracking and automatic enrollment.
+              </p>
+            </Card>
+            
+            <Card className="p-6 space-y-4 rounded-xl shadow-md bg-[color:rgb(var(--color-surface))]">
+              <h3 className="text-lg font-medium">Multi-Church Ready</h3>
+              <p className="text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
+                One secure platform serves multiple local churches while keeping data completely isolated 
+                and giving each community full autonomy.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Closing Section */}
+      <section className="bg-[color:rgb(var(--color-surface))] mx-auto max-w-content px-4 sm:px-6 py-12">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <p className="text-lg text-[color:rgb(var(--color-ink-muted))] leading-relaxed max-w-2xl mx-auto">
+            Drouple exists to serve the church. Built with simplicity, security, and ministry in mind — 
+            because your calling is too important to get bogged down in administrative complexity.
+          </p>
+          <Button asChild className="bg-[color:rgb(var(--color-accent))] text-[color:rgb(var(--color-accent-ink))] hover:bg-[color:rgb(var(--color-accent))]/90 rounded-xl px-8 py-3 text-lg font-medium shadow-md">
             <Link href="/auth/signin">Sign In</Link>
           </Button>
         </div>
-      </nav>
-
-      {/* Hero Section - Clean & Minimal */}
-      <section className="px-6 py-20">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="space-y-6">
-            <h1 className="text-5xl md:text-7xl font-bold text-ink leading-tight tracking-tight">
-              Church management
-              <br />
-              <span className="text-ink-muted">made simple</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-ink-muted font-light max-w-2xl mx-auto leading-relaxed">
-              Stop juggling spreadsheets, emails, and paper forms. Drouple brings all your church operations into one unified platform.
-            </p>
-          </div>
-          
-          <div className="pt-8">
-            <Button 
-              asChild 
-              className="bg-ink text-surface hover:bg-ink/90 rounded-xl px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all"
-            >
-              <Link href="/auth/signin">Sign In</Link>
-            </Button>
-          </div>
-        </div>
       </section>
-
-      {/* Problems We Solve */}
-      <section className="px-6 py-20 bg-elevated">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-ink mb-6">
-              Common church problems, solved
-            </h2>
-            <p className="text-xl text-ink-muted max-w-2xl mx-auto">
-              We built Drouple to address the real challenges churches face every week
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
-            {[
-              {
-                problem: "Scattered attendance tracking",
-                solution: "Sunday Check-In",
-                description: "Stop using paper sign-in sheets or multiple systems. Members check themselves in, admins see real-time attendance data.",
-                icon: "📱"
-              },
-              {
-                problem: "LifeGroup chaos",
-                solution: "LifeGroup Management",
-                description: "No more email chains for group membership. Handle join requests, track attendance, and manage groups in one place.",
-                icon: "👥"
-              },
-              {
-                problem: "Event coordination headaches",
-                solution: "Events & RSVP System",
-                description: "Replace Facebook events and Google Forms. Create events, manage RSVPs, handle waitlists, and track payments seamlessly.",
-                icon: "📅"
-              },
-              {
-                problem: "Lost first-time visitors",
-                solution: "VIP Team System",
-                description: "Ensure no first-timer falls through the cracks. Track gospel conversations and discipleship progress from day one.",
-                icon: "⭐"
-              },
-              {
-                problem: "Member data scattered everywhere",
-                solution: "Unified Member Directory",
-                description: "One source of truth for all member information. Assign roles, manage permissions, and maintain accurate records.",
-                icon: "👤"
-              },
-              {
-                problem: "Discipleship tracking by memory",
-                solution: "Pathway Management",
-                description: "Stop relying on memory for discipleship progress. Track ROOTS, VINES, and RETREAT completion automatically.",
-                icon: "📈"
-              }
-            ].map((item, i) => (
-              <div key={i} className="bg-surface rounded-xl p-8 shadow-sm border border-border">
-                <div className="text-4xl mb-6">{item.icon}</div>
-                <div className="space-y-4">
-                  <div className="text-sm text-red-600 font-medium">Problem: {item.problem}</div>
-                  <h3 className="text-xl font-semibold text-ink">
-                    {item.solution}
-                  </h3>
-                  <p className="text-ink-muted leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Drouple */}
-      <section className="px-6 py-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-ink mb-6">
-            Why we built Drouple
-          </h2>
-          <div className="space-y-6 text-xl text-ink-muted leading-relaxed">
-            <p>
-              Church staff spend countless hours managing spreadsheets, coordinating through emails, 
-              and trying to keep track of member information across multiple platforms.
-            </p>
-            <p>
-              We experienced this firsthand and knew there had to be a better way. Drouple consolidates 
-              everything into one platform that actually works the way churches operate.
-            </p>
-            <p className="text-ink font-medium">
-              Simple. Unified. Built specifically for churches.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Technical Specs - Clean Cards */}
-      <section className="px-6 py-20 bg-elevated">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold text-ink mb-6">
-              Built for developers
-            </h2>
-            <p className="text-xl text-ink-muted">
-              Modern architecture, comprehensive testing, production-ready
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "Frontend",
-                items: ["Next.js 15.1.3", "React 19", "TypeScript", "Tailwind CSS"]
-              },
-              {
-                title: "Backend", 
-                items: ["Neon Postgres", "Prisma ORM", "NextAuth v5", "Zod validation"]
-              },
-              {
-                title: "Testing",
-                items: ["Vitest", "Playwright", "50% coverage", "GitHub Actions"]
-              },
-              {
-                title: "Architecture",
-                items: ["Multi-tenant", "RBAC", "Server Components", "Edge deployment"]
-              }
-            ].map((tech, i) => (
-              <div key={i} className="bg-surface rounded-xl p-6 shadow-sm border border-border">
-                <h3 className="text-lg font-semibold text-ink mb-4">
-                  {tech.title}
-                </h3>
-                <ul className="space-y-2">
-                  {tech.items.map((item, j) => (
-                    <li key={j} className="text-ink-muted text-sm">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* RBAC Roles */}
-          <div className="mt-20 text-center">
-            <h3 className="text-2xl font-semibold text-ink mb-8">Role-Based Access Control</h3>
-            <div className="flex flex-wrap justify-center gap-3">
-              {['SUPER_ADMIN', 'PASTOR', 'ADMIN', 'VIP', 'LEADER', 'MEMBER'].map((role, i) => (
-                <div key={i} className="px-4 py-2 bg-surface border border-border rounded-lg text-ink font-mono text-sm shadow-sm">
-                  {role}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section - Clean & Focused */}
-      <section className="px-6 py-20">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-surface rounded-3xl p-12 shadow-lg border border-border">
-            <h2 className="text-4xl md:text-5xl font-bold text-ink mb-6">
-              Ready to simplify your church management?
-            </h2>
-            <p className="text-xl text-ink-muted mb-10 leading-relaxed">
-              Stop juggling multiple systems and spreadsheets. See what Drouple can do for your church.
-            </p>
-            
-            <Button 
-              asChild 
-              className="bg-ink text-surface hover:bg-ink/90 rounded-xl px-8 py-4 text-lg font-medium shadow-lg"
-            >
-              <Link href="/auth/signin">Sign In</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer - Clean & Minimal */}
-      <footer className="px-6 py-16 bg-elevated">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-ink rounded-xl flex items-center justify-center">
-                  <span className="text-surface text-lg font-bold">D</span>
-                </div>
-                <span className="text-2xl font-medium text-ink">drouple</span>
-              </div>
-              <p className="text-ink-muted leading-relaxed">
-                Church management made simple. Beautiful tools for modern ministry.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-ink mb-4">Features</h4>
-              <ul className="space-y-2 text-ink-muted">
-                <li>Sunday Check-In</li>
-                <li>LifeGroups</li>
-                <li>Events & RSVP</li>
-                <li>Member Management</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-ink mb-4">Support</h4>
-              <ul className="space-y-2 text-ink-muted">
-                <li>Help Center</li>
-                <li>Documentation</li>
-                <li>Contact Us</li>
-                <li>Status</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-ink mb-4">Company</h4>
-              <ul className="space-y-2 text-ink-muted">
-                <li>About</li>
-                <li>Blog</li>
-                <li>Privacy</li>
-                <li>Terms</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-border">
-            <div className="text-ink-muted text-sm mb-4 md:mb-0">
-              © 2025 Drouple. All rights reserved.
-            </div>
-            <div className="text-ink-muted text-sm">
-              Built with care for ministry
-            </div>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
