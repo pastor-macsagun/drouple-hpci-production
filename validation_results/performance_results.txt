@@ -1,0 +1,55 @@
+============================================================
+PERFORMANCE & LOAD TIME TEST
+Timestamp: Tue Aug 26 11:27:06 PST 2025
+============================================================
+
+## PAGE LOAD TIME TEST
+----------------------------------------
+
+Testing Landing Page (/):
+  Total Time: 0.190724s
+  Time to First Byte: 0.280871s
+  Page Size: 11KB
+  Rating: ✅ Good (<2s)
+
+Testing Events Page (/events):
+  Total Time: 0.168185s
+  Time to First Byte: 0.185264s
+  Page Size: 18KB
+  Rating: ✅ Good (<2s)
+
+Testing Sign In Page (/auth/signin):
+  Total Time: 0.154494s
+  Time to First Byte: 0.139946s
+  Page Size: 10KB
+  Rating: ✅ Good (<2s)
+
+Testing Dashboard (/dashboard):
+  Total Time: 0.140366s
+  Time to First Byte: 0.135625s
+  Page Size: 0KB
+  Rating: ✅ Good (<2s)
+
+Testing Admin Services (/admin/services):
+  Total Time: 0.185657s
+  Time to First Byte: 0.162886s
+  Page Size: 7KB
+  Rating: ✅ Good (<2s)
+
+Testing Admin LifeGroups (/admin/lifegroups):
+  Total Time: 0.177929s
+  Time to First Byte: 0.228857s
+  Page Size: 7KB
+  Rating: ✅ Good (<2s)
+
+## API ENDPOINT PERFORMANCE TEST
+----------------------------------------
+
+Testing Health Check (/api/health):
+  Response Time: 4.025004s
+  HTTP Status: 200
+  Rating: ⚠️ Check performance
+
+============================================================
+Test completed at Tue Aug 26 11:27:17 PST 2025
+============================================================

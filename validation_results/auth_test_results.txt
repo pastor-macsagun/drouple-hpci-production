@@ -1,0 +1,38 @@
+============================================================
+GLOBAL SMOKE TESTS - Authentication
+Timestamp: Tue Aug 26 11:23:24 PST 2025
+============================================================
+
+----------------------------------------
+Testing SUPER_ADMIN (superadmin@test.com)
+----------------------------------------
+Login page accessible: ❌ FAIL (HTTP 404)
+Dashboard route check: ✅ Route exists
+
+----------------------------------------
+Testing ADMIN (admin.manila@test.com)
+----------------------------------------
+Login page accessible: ❌ FAIL (HTTP 404)
+Dashboard route check: ⚠️ WARNING (HTTP 404)
+
+----------------------------------------
+Testing LEADER (leader.manila@test.com)
+----------------------------------------
+Login page accessible: ❌ FAIL (HTTP 404)
+Dashboard route check: ✅ Route exists
+
+----------------------------------------
+Testing MEMBER (member1@test.com)
+----------------------------------------
+Login page accessible: ❌ FAIL (HTTP 404)
+Dashboard route check: ✅ Route exists
+
+----------------------------------------
+Testing VIP (vip.manila@test.com)
+----------------------------------------
+Login page accessible: ❌ FAIL (HTTP 404)
+Dashboard route check: ✅ Route exists
+
+============================================================
+Test completed at Tue Aug 26 11:23:34 PST 2025
+============================================================
