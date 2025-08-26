@@ -130,7 +130,7 @@ export function FirstTimersManager({
     try {
       const newFirstTimer = await createFirstTimer({
         ...formData,
-        assignedVipId: formData.assignedVipId === 'none' ? null : formData.assignedVipId || undefined,
+        assignedVipId: formData.assignedVipId === 'none' ? undefined : formData.assignedVipId,
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setFirstTimers([newFirstTimer as any, ...firstTimers])
