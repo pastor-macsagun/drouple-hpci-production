@@ -73,7 +73,7 @@ export function LifeGroupsManager({
     description: ''
   })
   
-  const [selectedChurchFilter, setSelectedChurchFilter] = useState<string>('')
+  const [selectedChurchFilter, setSelectedChurchFilter] = useState<string>('all')
 
   const handleCreateLifeGroup = () => {
     startTransition(async () => {
@@ -150,7 +150,7 @@ export function LifeGroupsManager({
   const handleChurchFilterChange = (churchId: string) => {
     setSelectedChurchFilter(churchId)
     startTransition(async () => {
-      const result = await listLifeGroups({ churchId: churchId || undefined })
+      const result = await listLifeGroups({ churchId: churchId === 'all' ? undefined : churchId || undefined })
       if (result.success && result.data) {
         setLifeGroups(result.data.items)
         setCursor(result.data.nextCursor)
@@ -181,7 +181,7 @@ export function LifeGroupsManager({
                 <SelectValue placeholder="All Churches" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Churches</SelectItem>
+                <SelectItem value="all">All Churches</SelectItem>
                 {churches.map((church) => (
                   <SelectItem key={church.id} value={church.id}>
                     {church.name}

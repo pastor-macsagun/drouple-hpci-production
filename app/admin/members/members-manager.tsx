@@ -63,7 +63,7 @@ export function MembersManager({
   const [cursor, setCursor] = useState(initialMembers.nextCursor)
   const [hasMore, setHasMore] = useState(initialMembers.hasMore)
   const [search, setSearch] = useState('')
-  const [selectedChurch, setSelectedChurch] = useState(userRole === 'SUPER_ADMIN' ? '' : userChurchId || '')
+  const [selectedChurch, setSelectedChurch] = useState(userRole === 'SUPER_ADMIN' ? 'all' : userChurchId || '')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
@@ -90,7 +90,7 @@ export function MembersManager({
     startTransition(async () => {
       const result = await listMembers({ 
         search, 
-        churchId: selectedChurch || undefined 
+        churchId: selectedChurch === 'all' ? undefined : selectedChurch || undefined 
       })
       if (result.success && result.data) {
         setMembers(result.data.items)
@@ -107,7 +107,7 @@ export function MembersManager({
       const result = await listMembers({ 
         search, 
         cursor,
-        churchId: selectedChurch || undefined 
+        churchId: selectedChurch === 'all' ? undefined : selectedChurch || undefined 
       })
       if (result.success && result.data) {
         setMembers(prev => [...prev, ...result.data.items])
@@ -228,7 +228,7 @@ export function MembersManager({
 
   const handleExportCsv = useCallback(async () => {
     try {
-      const response = await exportMembersCsv({ churchId: selectedChurch || undefined })
+      const response = await exportMembersCsv({ churchId: selectedChurch === 'all' ? undefined : selectedChurch || undefined })
       if (response.ok) {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -304,7 +304,7 @@ export function MembersManager({
               <SelectValue placeholder="All Churches" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Churches</SelectItem>
+              <SelectItem value="all">All Churches</SelectItem>
               {churches.map(church => (
                 <SelectItem key={church.id} value={church.id}>
                   {church.name}

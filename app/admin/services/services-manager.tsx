@@ -59,7 +59,7 @@ export function ServicesManager({
     localChurchId: userChurchId || churches[0]?.id || ''
   })
   
-  const [selectedChurchFilter, setSelectedChurchFilter] = useState<string>('')
+  const [selectedChurchFilter, setSelectedChurchFilter] = useState<string>('all')
 
   const handleCreateService = () => {
     startTransition(async () => {
@@ -131,7 +131,7 @@ export function ServicesManager({
   const handleChurchFilterChange = (churchId: string) => {
     setSelectedChurchFilter(churchId)
     startTransition(async () => {
-      const result = await listServices({ churchId: churchId || undefined })
+      const result = await listServices({ churchId: churchId === 'all' ? undefined : churchId || undefined })
       if (result.success && result.data) {
         setServices(result.data.items)
         setCursor(result.data.nextCursor)
@@ -162,7 +162,7 @@ export function ServicesManager({
                 <SelectValue placeholder="All Churches" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Churches</SelectItem>
+                <SelectItem value="all">All Churches</SelectItem>
                 {churches.map((church) => (
                   <SelectItem key={church.id} value={church.id}>
                     {church.name}

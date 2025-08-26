@@ -104,7 +104,7 @@ export function FirstTimersManager({
     name: '',
     email: '',
     phone: '',
-    assignedVipId: '',
+    assignedVipId: 'none',
     notes: '',
   })
 
@@ -130,12 +130,12 @@ export function FirstTimersManager({
     try {
       const newFirstTimer = await createFirstTimer({
         ...formData,
-        assignedVipId: formData.assignedVipId || undefined,
+        assignedVipId: formData.assignedVipId === 'none' ? null : formData.assignedVipId || undefined,
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setFirstTimers([newFirstTimer as any, ...firstTimers])
       setIsCreating(false)
-      setFormData({ name: '', email: '', phone: '', assignedVipId: '', notes: '' })
+      setFormData({ name: '', email: '', phone: '', assignedVipId: 'none', notes: '' })
       toast.success('First timer created successfully')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to create first timer')
@@ -340,7 +340,7 @@ export function FirstTimersManager({
                     <SelectValue placeholder="Select VIP member" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {vipMembers.map((vip) => (
                       <SelectItem key={vip.id} value={vip.id}>
                         {vip.name || vip.email} ({vip.role})
