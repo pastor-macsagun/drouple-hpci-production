@@ -8,82 +8,48 @@ datasource db {
   directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
-enum UserRole {
-  SUPER_ADMIN
-  PASTOR
-  ADMIN
-  VIP
-  LEADER
-  MEMBER
-}
-
-enum ProfileVisibility {
-  PUBLIC
-  MEMBERS
-  LEADERS
-  PRIVATE
-}
-
-enum BelieverStatus {
-  ACTIVE
-  INACTIVE
-  COMPLETED
-}
-
-enum MemberStatus {
-  PENDING
-  ACTIVE
-  INACTIVE
-}
-
 model User {
-  id                 String    @id @default(cuid())
-  email              String    @unique
-  emailVerified      DateTime?
-  name               String?
-  image              String?
-  role               UserRole  @default(MEMBER)
-  tenantId           String?
-  isNewBeliever      Boolean   @default(false)
-  
-  // Authentication
-  passwordHash       String?
-  memberStatus       MemberStatus @default(PENDING)
-  mustChangePassword Boolean   @default(true)
-  
-  // Profile fields
-  phone              String?
-  bio                String?   @db.Text
-  dateOfBirth        DateTime?
-  address            String?
-  city               String?
-  zipCode            String?
-  emergencyContact   String?
-  emergencyPhone     String?
-  joinedAt           DateTime  @default(now())
-  profileVisibility  ProfileVisibility @default(MEMBERS)
-  allowContact       Boolean   @default(true)
-  
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  accounts                 Account[]
-  sessions                 Session[]
-  memberships              Membership[]
-  auditLogs                AuditLog[]
-  checkins                 Checkin[]
-  ledLifeGroups           LifeGroup[]              @relation("LifeGroupLeader")
-  lifeGroupMemberships    LifeGroupMembership[]
-  lifeGroupMemberRequests LifeGroupMemberRequest[]
-  lifeGroupAttendances    LifeGroupAttendance[]
+  id                      String                   @id @default(cuid())
+  email                   String                   @unique
+  emailVerified           DateTime?
+  name                    String?
+  image                   String?
+  role                    UserRole                 @default(MEMBER)
+  tenantId                String?
+  isNewBeliever           Boolean                  @default(false)
+  passwordHash            String?
+  memberStatus            MemberStatus             @default(PENDING)
+  mustChangePassword      Boolean                  @default(true)
+  phone                   String?
+  bio                     String?
+  dateOfBirth             DateTime?
+  address                 String?
+  city                    String?
+  zipCode                 String?
+  emergencyContact        String?
+  emergencyPhone          String?
+  joinedAt                DateTime                 @default(now())
+  profileVisibility       ProfileVisibility        @default(MEMBERS)
+  allowContact            Boolean                  @default(true)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  accounts                Account[]
+  announcements           Announcement[]
+  auditLogs               AuditLog[]
+  checkins                Checkin[]
   eventRsvps              EventRsvp[]
+  assignedFirstTimers     FirstTimer[]             @relation("VipAssignments")
+  firstTimer              FirstTimer?              @relation("FirstTimerMember")
+  lifeGroupAttendances    LifeGroupAttendance[]
+  lifeGroupMemberRequests LifeGroupMemberRequest[]
+  lifeGroupMemberships    LifeGroupMembership[]
+  ledLifeGroups           LifeGroup[]              @relation("LifeGroupLeader")
+  memberships             Membership[]
+  receivedMessages        Message[]                @relation("ReceivedMessages")
+  sentMessages            Message[]                @relation("SentMessages")
   pathwayEnrollments      PathwayEnrollment[]
   pathwayProgress         PathwayProgress[]
-  announcements           Announcement[]
-  sentMessages            Message[]        @relation("SentMessages")
-  receivedMessages        Message[]        @relation("ReceivedMessages")
-  firstTimer              FirstTimer?      @relation("FirstTimerMember")
-  assignedFirstTimers     FirstTimer[]     @relation("VipAssignments")
+  sessions                Session[]
 
   @@index([tenantId])
   @@index([tenantId, role])
@@ -102,15 +68,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -140,38 +105,36 @@ model VerificationToken {
 }
 
 model Church {
-  id           String    @id @default(cuid())
-  name         String    @unique
-  description  String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
+  id            String        @id @default(cuid())
+  name          String        @unique
+  description   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   localChurches LocalChurch[]
 
   @@map("churches")
 }
 
 model LocalChurch {
-  id          String    @id @default(cuid())
-  name        String
-  address     String?
-  city        String?
-  state       String?
-  zipCode     String?
-  country     String?
-  phone       String?
-  email       String?
-  churchId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  church      Church       @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  memberships Membership[]
-  auditLogs   AuditLog[]
-  services    Service[]
-  lifeGroups  LifeGroup[]
-  events        Event[]
+  id            String         @id @default(cuid())
+  name          String
+  address       String?
+  city          String?
+  state         String?
+  zipCode       String?
+  country       String?
+  phone         String?
+  email         String?
+  churchId      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   announcements Announcement[]
+  auditLogs     AuditLog[]
+  events        Event[]
+  lifeGroups    LifeGroup[]
+  church        Church         @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  memberships   Membership[]
+  services      Service[]
 
   @@unique([churchId, name])
   @@index([churchId])
@@ -179,19 +142,18 @@ model LocalChurch {
 }
 
 model Membership {
-  id            String          @id @default(cuid())
-  userId        String
-  localChurchId String
-  role          UserRole        @default(MEMBER)
-  isNewBeliever Boolean         @default(false)
+  id             String         @id @default(cuid())
+  userId         String
+  localChurchId  String
+  role           UserRole       @default(MEMBER)
+  isNewBeliever  Boolean        @default(false)
   believerStatus BelieverStatus @default(ACTIVE)
-  joinedAt      DateTime        @default(now())
-  leftAt        DateTime?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  localChurch  LocalChurch  @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
+  joinedAt       DateTime       @default(now())
+  leftAt         DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  localChurch    LocalChurch    @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, localChurchId])
   @@index([localChurchId])
@@ -209,9 +171,8 @@ model AuditLog {
   localChurchId String?
   meta          Json?
   createdAt     DateTime     @default(now())
-
-  actor        User          @relation(fields: [actorId], references: [id], onDelete: Cascade)
-  localChurch  LocalChurch?  @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
+  actor         User         @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  localChurch   LocalChurch? @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
 
   @@index([actorId])
   @@index([entity, entityId])
@@ -220,14 +181,13 @@ model AuditLog {
 }
 
 model Service {
-  id            String       @id @default(cuid())
+  id            String      @id @default(cuid())
   date          DateTime
   localChurchId String
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  localChurch   LocalChurch  @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   checkins      Checkin[]
+  localChurch   LocalChurch @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
 
   @@unique([localChurchId, date])
   @@index([localChurchId])
@@ -236,14 +196,13 @@ model Service {
 }
 
 model Checkin {
-  id              String       @id @default(cuid())
-  serviceId       String
-  userId          String
-  isNewBeliever   Boolean      @default(false)
-  checkedInAt     DateTime     @default(now())
-
-  service         Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  serviceId     String
+  userId        String
+  isNewBeliever Boolean  @default(false)
+  checkedInAt   DateTime @default(now())
+  service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([serviceId, userId])
   @@index([serviceId])
@@ -253,21 +212,20 @@ model Checkin {
 }
 
 model LifeGroup {
-  id            String       @id @default(cuid())
-  name          String
-  description   String?
-  capacity      Int
-  leaderId      String
-  localChurchId String
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  leader           User                      @relation("LifeGroupLeader", fields: [leaderId], references: [id])
-  localChurch      LocalChurch               @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
-  memberships      LifeGroupMembership[]
-  memberRequests   LifeGroupMemberRequest[]
+  id                 String                       @id @default(cuid())
+  name               String
+  description        String?
+  capacity           Int
+  leaderId           String
+  localChurchId      String
+  isActive           Boolean                      @default(true)
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
   attendanceSessions LifeGroupAttendanceSession[]
+  memberRequests     LifeGroupMemberRequest[]
+  memberships        LifeGroupMembership[]
+  leader             User                         @relation("LifeGroupLeader", fields: [leaderId], references: [id])
+  localChurch        LocalChurch                  @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
 
   @@unique([localChurchId, name])
   @@index([leaderId])
@@ -275,30 +233,17 @@ model LifeGroup {
   @@map("life_groups")
 }
 
-enum MembershipStatus {
-  ACTIVE
-  INACTIVE
-  LEFT
-}
-
-enum RequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 model LifeGroupMembership {
-  id           String            @id @default(cuid())
-  lifeGroupId  String
-  userId       String
-  status       MembershipStatus  @default(ACTIVE)
-  joinedAt     DateTime          @default(now())
-  leftAt       DateTime?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-
-  lifeGroup    LifeGroup         @relation(fields: [lifeGroupId], references: [id], onDelete: Cascade)
-  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String           @id @default(cuid())
+  lifeGroupId String
+  userId      String
+  status      MembershipStatus @default(ACTIVE)
+  joinedAt    DateTime         @default(now())
+  leftAt      DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  lifeGroup   LifeGroup        @relation(fields: [lifeGroupId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([lifeGroupId, userId])
   @@index([userId])
@@ -307,17 +252,16 @@ model LifeGroupMembership {
 }
 
 model LifeGroupMemberRequest {
-  id           String        @id @default(cuid())
-  lifeGroupId  String
-  userId       String
-  status       RequestStatus @default(PENDING)
-  message      String?
-  requestedAt  DateTime      @default(now())
-  processedAt  DateTime?
-  processedBy  String?
-
-  lifeGroup    LifeGroup     @relation(fields: [lifeGroupId], references: [id], onDelete: Cascade)
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String        @id @default(cuid())
+  lifeGroupId String
+  userId      String
+  status      RequestStatus @default(PENDING)
+  message     String?
+  requestedAt DateTime      @default(now())
+  processedAt DateTime?
+  processedBy String?
+  lifeGroup   LifeGroup     @relation(fields: [lifeGroupId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([lifeGroupId, userId, status])
   @@index([userId])
@@ -327,15 +271,14 @@ model LifeGroupMemberRequest {
 }
 
 model LifeGroupAttendanceSession {
-  id           String       @id @default(cuid())
-  lifeGroupId  String
-  date         DateTime
-  notes        String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-
-  lifeGroup    LifeGroup    @relation(fields: [lifeGroupId], references: [id], onDelete: Cascade)
-  attendances  LifeGroupAttendance[]
+  id          String                @id @default(cuid())
+  lifeGroupId String
+  date        DateTime
+  notes       String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  lifeGroup   LifeGroup             @relation(fields: [lifeGroupId], references: [id], onDelete: Cascade)
+  attendances LifeGroupAttendance[]
 
   @@unique([lifeGroupId, date])
   @@index([lifeGroupId])
@@ -344,14 +287,13 @@ model LifeGroupAttendanceSession {
 }
 
 model LifeGroupAttendance {
-  id          String       @id @default(cuid())
-  sessionId   String
-  userId      String
-  present     Boolean      @default(true)
-  markedAt    DateTime     @default(now())
-
-  session     LifeGroupAttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String                     @id @default(cuid())
+  sessionId String
+  userId    String
+  present   Boolean                    @default(true)
+  markedAt  DateTime                   @default(now())
+  session   LifeGroupAttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user      User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, userId])
   @@index([sessionId])
@@ -359,36 +301,24 @@ model LifeGroupAttendance {
   @@map("life_group_attendances")
 }
 
-enum EventScope {
-  LOCAL_CHURCH
-  WHOLE_CHURCH
-}
-
-enum RsvpStatus {
-  GOING
-  WAITLIST
-  CANCELLED
-}
-
 model Event {
-  id            String       @id @default(cuid())
-  name          String
-  description   String?
-  startDateTime DateTime
-  endDateTime   DateTime
-  location      String?
-  capacity      Int
-  scope         EventScope   @default(LOCAL_CHURCH)
-  localChurchId String?
-  requiresPayment Boolean    @default(false)
-  feeAmount     Float?
-  visibleToRoles UserRole[]  @default([])
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  localChurch   LocalChurch? @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
-  rsvps         EventRsvp[]
+  id              String       @id @default(cuid())
+  name            String
+  description     String?
+  startDateTime   DateTime
+  endDateTime     DateTime
+  location        String?
+  capacity        Int
+  scope           EventScope   @default(LOCAL_CHURCH)
+  localChurchId   String?
+  requiresPayment Boolean      @default(false)
+  feeAmount       Float?
+  visibleToRoles  UserRole[]   @default([])
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  rsvps           EventRsvp[]
+  localChurch     LocalChurch? @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
 
   @@index([localChurchId])
   @@index([startDateTime])
@@ -397,17 +327,16 @@ model Event {
 }
 
 model EventRsvp {
-  id            String       @id @default(cuid())
-  eventId       String
-  userId        String
-  status        RsvpStatus   @default(GOING)
-  hasPaid       Boolean      @default(false)
-  rsvpAt        DateTime     @default(now())
-  cancelledAt   DateTime?
-  updatedAt     DateTime     @updatedAt
-
-  event         Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String     @id @default(cuid())
+  eventId     String
+  userId      String
+  status      RsvpStatus @default(GOING)
+  hasPaid     Boolean    @default(false)
+  rsvpAt      DateTime   @default(now())
+  cancelledAt DateTime?
+  updatedAt   DateTime   @updatedAt
+  event       Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId])
   @@index([eventId, userId])
@@ -417,30 +346,17 @@ model EventRsvp {
   @@map("event_rsvps")
 }
 
-enum PathwayType {
-  ROOTS
-  VINES
-  RETREAT
-}
-
-enum EnrollmentStatus {
-  ENROLLED
-  COMPLETED
-  DROPPED
-}
-
 model Pathway {
-  id            String       @id @default(cuid())
-  name          String
-  description   String?
-  type          PathwayType
-  tenantId      String
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  steps         PathwayStep[]
-  enrollments   PathwayEnrollment[]
+  id          String              @id @default(cuid())
+  name        String
+  description String?
+  type        PathwayType
+  tenantId    String
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  enrollments PathwayEnrollment[]
+  steps       PathwayStep[]
 
   @@unique([tenantId, type])
   @@index([tenantId])
@@ -448,16 +364,15 @@ model Pathway {
 }
 
 model PathwayStep {
-  id            String       @id @default(cuid())
-  pathwayId     String
-  name          String
-  description   String?
-  orderIndex    Int
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  pathway       Pathway      @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
-  progress      PathwayProgress[]
+  id          String            @id @default(cuid())
+  pathwayId   String
+  name        String
+  description String?
+  orderIndex  Int
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  progress    PathwayProgress[]
+  pathway     Pathway           @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
 
   @@unique([pathwayId, orderIndex])
   @@index([pathwayId])
@@ -465,18 +380,17 @@ model PathwayStep {
 }
 
 model PathwayEnrollment {
-  id            String           @id @default(cuid())
-  pathwayId     String
-  userId        String
-  status        EnrollmentStatus @default(ENROLLED)
-  enrolledAt    DateTime         @default(now())
-  completedAt   DateTime?
-  droppedAt     DateTime?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-
-  pathway       Pathway          @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String           @id @default(cuid())
+  pathwayId   String
+  userId      String
+  status      EnrollmentStatus @default(ENROLLED)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+  droppedAt   DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  pathway     Pathway          @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([pathwayId, userId])
   @@index([userId])
@@ -486,15 +400,14 @@ model PathwayEnrollment {
 }
 
 model PathwayProgress {
-  id            String       @id @default(cuid())
-  stepId        String
-  userId        String
-  completedAt   DateTime     @default(now())
-  completedBy   String?
-  notes         String?
-
-  step          PathwayStep  @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String      @id @default(cuid())
+  stepId      String
+  userId      String
+  completedAt DateTime    @default(now())
+  completedBy String?
+  notes       String?
+  step        PathwayStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([stepId, userId])
   @@index([userId])
@@ -502,24 +415,10 @@ model PathwayProgress {
   @@map("pathway_progress")
 }
 
-enum AnnouncementScope {
-  PUBLIC
-  MEMBERS
-  LEADERS
-  ADMINS
-}
-
-enum AnnouncementPriority {
-  LOW
-  NORMAL
-  HIGH
-  URGENT
-}
-
 model Announcement {
   id            String               @id @default(cuid())
   title         String
-  content       String               @db.Text
+  content       String
   authorId      String
   localChurchId String
   scope         AnnouncementScope    @default(MEMBERS)
@@ -529,7 +428,6 @@ model Announcement {
   expiresAt     DateTime?
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
-
   author        User                 @relation(fields: [authorId], references: [id])
   localChurch   LocalChurch          @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
 
@@ -546,16 +444,15 @@ model Message {
   senderId        String
   recipientId     String
   subject         String?
-  content         String    @db.Text
+  content         String
   isRead          Boolean   @default(false)
   readAt          DateTime?
   parentMessageId String?
   createdAt       DateTime  @default(now())
-
-  sender          User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
-  recipient       User      @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
   parentMessage   Message?  @relation("MessageReplies", fields: [parentMessageId], references: [id], onDelete: Cascade)
   replies         Message[] @relation("MessageReplies")
+  recipient       User      @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+  sender          User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([senderId])
   @@index([recipientId])
@@ -566,19 +463,96 @@ model Message {
 }
 
 model FirstTimer {
-  id              String   @id @default(cuid())
-  memberId        String   @unique
-  member          User     @relation("FirstTimerMember", fields: [memberId], references: [id], onDelete: Cascade)
-  gospelShared    Boolean  @default(false)
-  rootsCompleted  Boolean  @default(false)
-  assignedVipId   String?
-  assignedVip     User?    @relation("VipAssignments", fields: [assignedVipId], references: [id], onDelete: SetNull)
-  notes           String?  @db.Text
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  memberId       String   @unique
+  gospelShared   Boolean  @default(false)
+  rootsCompleted Boolean  @default(false)
+  assignedVipId  String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  assignedVip    User?    @relation("VipAssignments", fields: [assignedVipId], references: [id])
+  member         User     @relation("FirstTimerMember", fields: [memberId], references: [id], onDelete: Cascade)
 
   @@index([assignedVipId])
   @@index([gospelShared])
   @@index([rootsCompleted])
   @@map("first_timers")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  PASTOR
+  ADMIN
+  VIP
+  LEADER
+  MEMBER
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  MEMBERS
+  LEADERS
+  PRIVATE
+}
+
+enum BelieverStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum MemberStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INACTIVE
+  LEFT
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventScope {
+  LOCAL_CHURCH
+  WHOLE_CHURCH
+}
+
+enum RsvpStatus {
+  GOING
+  WAITLIST
+  CANCELLED
+}
+
+enum PathwayType {
+  ROOTS
+  VINES
+  RETREAT
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  COMPLETED
+  DROPPED
+}
+
+enum AnnouncementScope {
+  PUBLIC
+  MEMBERS
+  LEADERS
+  ADMINS
+}
+
+enum AnnouncementPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }

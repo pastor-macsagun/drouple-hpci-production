@@ -136,6 +136,7 @@ describe('Logger', () => {
   describe('production mode', () => {
     it('should not log debug in production', () => {
       const originalEnv = process.env.NODE_ENV
+      // @ts-expect-error NODE_ENV is readonly but we need to test different environments
       process.env.NODE_ENV = 'production'
       
       const prodLogger = createLogger()
@@ -145,6 +146,7 @@ describe('Logger', () => {
       expect(console.debug).not.toHaveBeenCalled()
       expect(console.info).toHaveBeenCalled()
       
+      // @ts-expect-error NODE_ENV is readonly but we need to test different environments
       process.env.NODE_ENV = originalEnv
     })
   })
@@ -152,6 +154,7 @@ describe('Logger', () => {
   describe('structured logging', () => {
     it('should format logs as JSON in production', () => {
       const originalEnv = process.env.NODE_ENV
+      // @ts-expect-error NODE_ENV is readonly but we need to test different environments
       process.env.NODE_ENV = 'production'
       
       const prodLogger = createLogger({ json: true })
@@ -164,6 +167,7 @@ describe('Logger', () => {
         expect.stringContaining('"userId":"123"')
       )
       
+      // @ts-expect-error NODE_ENV is readonly but we need to test different environments
       process.env.NODE_ENV = originalEnv
     })
   })

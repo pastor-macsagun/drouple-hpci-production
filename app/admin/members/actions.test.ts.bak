@@ -159,6 +159,7 @@ describe('Member Management Actions', () => {
         email: 'jane@test.com',
         role: UserRole.MEMBER,
         tenantId: 'church1',
+        isActive: true
       }
 
       vi.mocked(auth).mockResolvedValue(mockSession as any)
@@ -201,6 +202,7 @@ describe('Member Management Actions', () => {
         email: 'existing@test.com',
         role: UserRole.MEMBER,
         tenantId: 'church1',
+        isActive: true
       })
 
       expect(result.success).toBe(false)
@@ -223,6 +225,7 @@ describe('Member Management Actions', () => {
         email: 'jane@test.com',
         role: UserRole.MEMBER,
         tenantId: 'church2',
+        isActive: true
       })
 
       expect(result.success).toBe(false)

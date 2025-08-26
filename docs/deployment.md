@@ -18,8 +18,10 @@ This document outlines the deployment procedures for the HPCI Church Management 
 
 ### Production
 - **URL**: https://hpci-chms.vercel.app
-- **Database**: Neon production database
+- **Database**: Neon production database (pooled connections)
 - **Purpose**: Live environment for end users
+- **Last Deployment**: Aug 26, 2025
+- **Region**: Singapore (sin1)
 
 ## Deployment Process
 
@@ -125,9 +127,50 @@ psql $DATABASE_URL < backup_file.sql
 
 ## Environment Variables
 
-### Required Variables
-- `DATABASE_URL` - PostgreSQL connection string (pooled)
-- `DATABASE_URL_UNPOOLED` - Direct database connection
+### Production Requirements (Aug 26, 2025)
+
+```bash
+# Required
+DATABASE_URL=postgres://...?sslmode=require&pgbouncer=true  # Pooled connection
+DATABASE_URL_UNPOOLED=postgres://...?sslmode=require        # Direct connection
+NEXTAUTH_URL=https://your-production-domain.com
+NEXTAUTH_SECRET=<32+ character random string>
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL=noreply@your-domain.com
+
+# Security & Performance
+RATE_LIMIT_ENABLED=true
+SENTRY_DSN=https://...@sentry.io/...
+
+# Optional
+NODE_ENV=production
+```
+
+### Commands Used in Latest Deployment
+
+```bash
+# Environment sanity check
+npm run env:sanity
+
+# Build verification
+npm ci
+npm run typecheck
+npm run lint
+npm run build
+
+# Deployment with Vercel
+vercel --prod
+
+# Post-deployment verification
+curl https://your-domain.com/api/health
+```
+
+### Security Headers (vercel.json)
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: DENY
+- X-XSS-Protection: 1; mode=block
+- Referrer-Policy: strict-origin-when-cross-origin
+- Strict-Transport-Security: max-age=31536000; includeSubDomains
 - `NEXTAUTH_URL` - Application URL
 - `NEXTAUTH_SECRET` - Authentication secret
 - `RESEND_API_KEY` - Email service API key

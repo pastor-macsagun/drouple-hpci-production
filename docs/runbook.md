@@ -86,18 +86,37 @@ curl https://your-domain.com/api/auth/providers
 ### Step 4: Smoke Tests
 
 1. **Authentication Flow**
-   - [ ] Sign in with email magic link
-   - [ ] Receive and click verification email
-   - [ ] Successfully authenticate
+   - [ ] Sign in page loads without rate limiting (GET /auth/signin)
+   - [ ] Can attempt login 5 times per minute
+   - [ ] 6th login attempt returns 429 with Retry-After header
+   - [ ] Successfully authenticate with valid credentials
 
-2. **Role-Based Access**
+2. **Rate Limiting Verification**
+   ```bash
+   # Verify auth pages are NOT rate limited on GET
+   for i in {1..10}; do
+     curl -s -o /dev/null -w "%{http_code}\n" https://your-domain.com/auth/signin
+   done
+   # Should all return 200, never 429
+   
+   # Verify POST login has proper limits
+   for i in {1..6}; do
+     curl -X POST https://your-domain.com/api/auth/callback/credentials \
+       -H "Content-Type: application/json" \
+       -d '{"email":"test@example.com","password":"wrong"}' \
+       -i | grep -E "(HTTP|X-RateLimit|Retry-After)"
+   done
+   # 6th attempt should return 429 with headers
+   ```
+
+3. **Role-Based Access**
    - [ ] Super Admin can access /super
    - [ ] Church Admin can access /admin
    - [ ] Member can access /dashboard
    - [ ] Proper redirects for unauthorized access
 
-3. **Core Features**
-   - [ ] Sunday Check-in works
+4. **Core Features**
+   - [ ] Sunday Check-in works (1 per 5 minutes limit)
    - [ ] Life Groups display correctly
    - [ ] Events RSVP functional
    - [ ] Pathways enrollment works

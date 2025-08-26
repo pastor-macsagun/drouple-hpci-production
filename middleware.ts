@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server"
-import { rateLimiters, getClientIp } from "@/lib/rate-limit"
+import { getClientIp } from "@/lib/rate-limit"
+import { checkRateLimitWithHeaders } from "@/lib/rate-limit-policies"
 import { getSession } from "@/lib/edge/session-cookie"
 
 export default async function middleware(req: NextRequest) {
@@ -8,48 +9,54 @@ export default async function middleware(req: NextRequest) {
   const isAuthPage = req.nextUrl.pathname.startsWith("/auth")
   const isDashboard = req.nextUrl.pathname.startsWith("/dashboard")
   const pathname = req.nextUrl.pathname
+  const method = req.method
 
-  // Apply rate limiting to sensitive endpoints
-  if (process.env.NODE_ENV === 'production') {
+  // Apply endpoint-specific rate limiting in production
+  if (process.env.NODE_ENV === 'production' || process.env.RATE_LIMIT_ENABLED === 'true') {
     const ip = getClientIp(req.headers)
     
-    // Strict rate limiting for auth endpoints
-    if (pathname.startsWith('/auth') || pathname === '/register') {
-      const rateLimitKey = rateLimiters.auth.key(['auth', ip])
-      const { success, reset } = await rateLimiters.auth.check(rateLimitKey)
-      
-      if (!success) {
-        return new NextResponse('Too many requests. Please try again later.', {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.ceil((reset.getTime() - Date.now()) / 1000)),
-            'X-RateLimit-Limit': '3',
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': reset.toISOString(),
-          },
-        })
+    // Extract email from request body for auth endpoints (if applicable)
+    let email: string | undefined
+    if (method === 'POST' && pathname.startsWith('/api/auth')) {
+      try {
+        const clonedRequest = req.clone()
+        const body = await clonedRequest.text()
+        const params = new URLSearchParams(body)
+        email = params.get('email') || params.get('username') || undefined
+      } catch {
+        // If we can't parse the body, continue without email
       }
     }
     
-    // General API rate limiting
-    if (pathname.startsWith('/api')) {
-      const rateLimitKey = rateLimiters.api.key(['api', ip])
-      const { success, remaining, limit, reset } = await rateLimiters.api.check(rateLimitKey)
-      
-      if (!success) {
-        return new NextResponse('API rate limit exceeded', {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.ceil((reset.getTime() - Date.now()) / 1000)),
-            'X-RateLimit-Limit': String(limit),
-            'X-RateLimit-Remaining': String(remaining),
-            'X-RateLimit-Reset': reset.toISOString(),
-          },
-        })
-      }
+    // Check rate limit with new policy system
+    const { allowed, headers, message } = await checkRateLimitWithHeaders(
+      pathname,
+      method,
+      ip,
+      email
+    )
+    
+    // If rate limited, return 429 with proper headers
+    if (!allowed) {
+      return new NextResponse(message || 'Too many requests', {
+        status: 429,
+        headers: {
+          'Content-Type': 'text/plain',
+          ...headers
+        }
+      })
+    }
+    
+    // Add rate limit headers to successful responses for transparency
+    if (Object.keys(headers).length > 0) {
+      const response = NextResponse.next()
+      Object.entries(headers).forEach(([key, value]) => {
+        response.headers.set(key, value)
+      })
     }
   }
 
+  // Authentication redirects
   if (isDashboard && !isAuth) {
     return NextResponse.redirect(new URL("/auth/signin", req.url))
   }
