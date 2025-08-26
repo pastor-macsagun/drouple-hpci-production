@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run type check
+        run: npx tsc --noEmit
+      
+      - name: Run linter
+        run: npm run lint
+      
+      - name: Run unit tests with coverage
+        run: npm run test:unit:coverage
+        continue-on-error: false
+      
+      - name: Check coverage thresholds
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+            const coverage = require('./coverage/coverage-summary.json');
+            const total = coverage.total;
+            const thresholds = { statements: 80, branches: 80, functions: 80, lines: 80 };
+            let failed = false;
+            
+            console.log('Coverage Summary:');
+            console.log('================');
+            for (const metric of ['statements', 'branches', 'functions', 'lines']) {
+              const pct = total[metric].pct;
+              const status = pct >= thresholds[metric] ? '✅' : '❌';
+              console.log(\`\${status} \${metric}: \${pct.toFixed(2)}% (threshold: \${thresholds[metric]}%)\`);
+              if (pct < thresholds[metric]) failed = true;
+            }
+            
+            if (failed) {
+              console.error('\\n❌ Coverage thresholds not met!');
+              process.exit(1);
+            } else {
+              console.log('\\n✅ All coverage thresholds met!');
+            }
+            "
+          fi
+      
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vitest-coverage-report
+          path: coverage/
+          retention-days: 30
+      
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/test
+          DATABASE_URL_UNPOOLED: postgresql://user:pass@localhost:5432/test
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: test-secret-key-for-ci
+          EMAIL_SERVER_HOST: smtp.example.com
+          EMAIL_SERVER_PORT: 587
+          EMAIL_SERVER_USER: test@example.com
+          EMAIL_SERVER_PASSWORD: test-password
+          EMAIL_FROM: noreply@example.com
+          RESEND_API_KEY: re_test_key
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright install-deps
+      
+      - name: Setup database
+        run: |
+          npm run db:push
+          npm run db:seed
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/test
+      
+      - name: Run Playwright tests
+        run: npm run test:e2e:ci
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/test
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: test-secret-key-for-ci
+          EMAIL_SERVER_HOST: smtp.example.com
+          EMAIL_SERVER_PORT: 587
+          EMAIL_SERVER_USER: test@example.com
+          EMAIL_SERVER_PASSWORD: test-password
+          EMAIL_FROM: noreply@example.com
+          RESEND_API_KEY: re_test_key
+      
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      
+      - name: Upload Playwright test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 30

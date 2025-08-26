@@ -1,0 +1,284 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { UserRole } from '@prisma/client'
+
+// Mock Next.js specific imports
+vi.mock('next/navigation', () => ({
+  redirect: vi.fn(),
+  revalidatePath: vi.fn()
+}))
+
+vi.mock('@/lib/auth', () => ({
+  auth: vi.fn()
+}))
+
+// Mock dependencies
+vi.mock('@/app/lib/db', () => ({
+  db: {
+    lifeGroup: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    lifeGroupMembership: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
+    lifeGroupMemberRequest: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn(),
+    },
+    lifeGroupAttendanceSession: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+    },
+    lifeGroupAttendance: {
+      findMany: vi.fn(),
+      createMany: vi.fn(),
+    },
+    user: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
+    $transaction: vi.fn(),
+  },
+}))
+
+vi.mock('@/lib/rbac', () => ({
+  getCurrentUser: vi.fn(),
+  requireRole: vi.fn(),
+}))
+
+// Import after mocks
+import { 
+  getLifeGroups, 
+  createLifeGroup, 
+  updateLifeGroup,
+  deleteLifeGroup,
+  approveRequest,
+  rejectRequest,
+  removeMember,
+  createAttendanceSession
+} from './actions'
+import { db } from '@/app/lib/db'
+import { getCurrentUser, requireRole } from '@/lib/rbac'
+
+describe('LifeGroup Admin Actions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  const mockAdmin = {
+    id: 'admin1',
+    email: 'admin@test.com',
+    role: UserRole.ADMIN,
+    tenantId: 'church1',
+    memberships: [
+      { localChurchId: 'local1' }
+    ],
+  }
+
+  describe('getLifeGroups', () => {
+    it('should fetch life groups for the tenant', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroup.findMany).mockResolvedValue([
+        {
+          id: 'lg1',
+          name: 'Test Group',
+          localChurchId: 'local1',
+        }
+      ] as any)
+
+      const result = await getLifeGroups()
+      
+      expect(result.success).toBe(true)
+      expect(result.data).toHaveLength(1)
+      expect(db.lifeGroup.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { localChurchId: 'local1' }
+        })
+      )
+    })
+  })
+
+  describe('createLifeGroup', () => {
+    it('should create a new life group', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroup.create).mockResolvedValue({
+        id: 'lg1',
+        name: 'New Group',
+        capacity: 12,
+        leaderId: 'leader1',
+        localChurchId: 'local1',
+      } as any)
+
+      const result = await createLifeGroup({
+        name: 'New Group',
+        description: 'Test description',
+        capacity: 12,
+        leaderId: 'leader1',
+      })
+      
+      expect(result.success).toBe(true)
+      expect(db.lifeGroup.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          name: 'New Group',
+          capacity: 12,
+          leaderId: 'leader1',
+          localChurchId: 'local1',
+        })
+      })
+    })
+
+    it('should require admin role', async () => {
+      vi.mocked(requireRole).mockRejectedValue(new Error('Unauthorized'))
+
+      const result = await createLifeGroup({
+        name: 'New Group',
+        description: 'Test',
+        capacity: 12,
+        leaderId: 'leader1',
+      })
+      
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Unauthorized')
+    })
+  })
+
+  describe('approveRequest', () => {
+    it('should approve request when capacity available', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroupMemberRequest.findFirst).mockResolvedValue({
+        id: 'req1',
+        lifeGroupId: 'lg1',
+        userId: 'user1',
+        status: 'PENDING',
+      } as any)
+      vi.mocked(db.lifeGroup.findUnique).mockResolvedValue({
+        id: 'lg1',
+        capacity: 10,
+        localChurchId: 'local1',
+      } as any)
+      vi.mocked(db.lifeGroupMembership.count).mockResolvedValue(5)
+      
+      vi.mocked(db.$transaction).mockImplementation(async (fn) => {
+        return fn(db)
+      })
+
+      const result = await approveRequest('req1')
+      
+      expect(result.success).toBe(true)
+      expect(db.$transaction).toHaveBeenCalled()
+    })
+
+    it('should reject when at capacity', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroupMemberRequest.findFirst).mockResolvedValue({
+        id: 'req1',
+        lifeGroupId: 'lg1',
+        userId: 'user1',
+        status: 'PENDING',
+      } as any)
+      vi.mocked(db.lifeGroup.findUnique).mockResolvedValue({
+        id: 'lg1',
+        capacity: 10,
+        localChurchId: 'local1',
+      } as any)
+      vi.mocked(db.lifeGroupMembership.count).mockResolvedValue(10) // At capacity
+
+      const result = await approveRequest('req1')
+      
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('capacity')
+    })
+  })
+
+  describe('removeMember', () => {
+    it('should remove member from life group', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroupMembership.findFirst).mockResolvedValue({
+        id: 'mem1',
+        lifeGroupId: 'lg1',
+        userId: 'user1',
+        status: 'ACTIVE',
+      } as any)
+      vi.mocked(db.lifeGroup.findUnique).mockResolvedValue({
+        id: 'lg1',
+        localChurchId: 'local1',
+      } as any)
+      vi.mocked(db.lifeGroupMembership.update).mockResolvedValue({
+        id: 'mem1',
+        status: 'LEFT',
+      } as any)
+
+      const result = await removeMember('lg1', 'user1')
+      
+      expect(result.success).toBe(true)
+      expect(db.lifeGroupMembership.update).toHaveBeenCalledWith({
+        where: { id: 'mem1' },
+        data: expect.objectContaining({
+          status: 'LEFT',
+          leftAt: expect.any(Date),
+        })
+      })
+    })
+  })
+
+  describe('createAttendanceSession', () => {
+    it('should create attendance session with member records', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroup.findUnique).mockResolvedValue({
+        id: 'lg1',
+        localChurchId: 'local1',
+      } as any)
+      vi.mocked(db.lifeGroupMembership.findMany).mockResolvedValue([
+        { userId: 'user1' },
+        { userId: 'user2' },
+      ] as any)
+      
+      vi.mocked(db.$transaction).mockImplementation(async (fn) => {
+        return {
+          session: { id: 'session1' },
+          attendance: { count: 2 }
+        }
+      })
+
+      const result = await createAttendanceSession({
+        lifeGroupId: 'lg1',
+        date: new Date(),
+        presentUserIds: ['user1'],
+        notes: 'Test session',
+      })
+      
+      expect(result.success).toBe(true)
+      expect(db.$transaction).toHaveBeenCalled()
+    })
+  })
+
+  describe('deleteLifeGroup', () => {
+    it('should delete life group', async () => {
+      vi.mocked(requireRole).mockResolvedValue(mockAdmin as any)
+      vi.mocked(db.lifeGroup.findUnique).mockResolvedValue({
+        id: 'lg1',
+        localChurchId: 'local1',
+      } as any)
+      vi.mocked(db.lifeGroup.delete).mockResolvedValue({
+        id: 'lg1',
+      } as any)
+
+      const result = await deleteLifeGroup('lg1')
+      
+      expect(result.success).toBe(true)
+      expect(db.lifeGroup.delete).toHaveBeenCalledWith({
+        where: { id: 'lg1' }
+      })
+    })
+  })
+})

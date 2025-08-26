@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Neutral Base Colors - Clean & Modern */
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+    
+    /* Primary Accent - Sacred Blue */
+    --primary: 217 91% 48%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary & Support Colors - Soft Gold */
+    --secondary: 43 74% 66%;
+    --secondary-foreground: 220 13% 18%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 217 19% 94%;
+    --accent-foreground: 220 13% 18%;
+    
+    /* Semantic Colors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 222.2 47.4% 11.2%;
+    --info: 199 89% 48%;
+    --info-foreground: 210 40% 98%;
+    
+    /* Borders & Inputs */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 266 100% 50%;
+    
+    /* Border Radius */
+    --radius: 0.5rem;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    
+    /* Spacing Scale */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+    
+    /* Container */
+    --container-xs: 20rem;
+    --container-sm: 24rem;
+    --container-md: 28rem;
+    --container-lg: 32rem;
+    --container-xl: 36rem;
+    --container-2xl: 42rem;
+    --container-3xl: 48rem;
+    --container-4xl: 56rem;
+    --container-5xl: 64rem;
+    --container-6xl: 72rem;
+    --container-full: 100%;
+    
+    /* Typography */
+    --font-sans: var(--font-inter), system-ui, sans-serif;
+    --font-mono: ui-monospace, monospace;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    
+    /* Z-index Scale */
+    --z-base: 0;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-overlay: 30;
+    --z-modal: 40;
+    --z-popover: 50;
+    --z-tooltip: 60;
+  }
+
+  .dark {
+    --background: 220 26% 11%;
+    --foreground: 210 20% 98%;
+    --card: 220 26% 14%;
+    --card-foreground: 210 20% 98%;
+    --popover: 220 26% 14%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 26% 11%;
+    --secondary: 43 74% 55%;
+    --secondary-foreground: 220 26% 11%;
+    --muted: 220 26% 18%;
+    --muted-foreground: 220 9% 60%;
+    --accent: 220 26% 20%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 20% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 210 20% 98%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 220 26% 11%;
+    --info: 199 89% 55%;
+    --info-foreground: 220 26% 11%;
+    --border: 220 26% 20%;
+    --input: 220 26% 20%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  /* Responsive Container */
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: var(--container-6xl);
+  }
+  
+  /* Focus Styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  }
+}
+
+@layer components {
+  /* Page Layouts */
+  .page-container {
+    @apply container py-4 px-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8;
+  }
+  
+  .page-header {
+    @apply mb-6 sm:mb-8;
+  }
+  
+  .page-title {
+    @apply text-2xl sm:text-3xl font-bold tracking-tight;
+  }
+  
+  .page-description {
+    @apply text-muted-foreground mt-2;
+  }
+  
+  /* Empty States */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 px-4 text-center;
+  }
+  
+  .empty-state-icon {
+    @apply h-12 w-12 text-muted-foreground mb-4;
+  }
+  
+  .empty-state-title {
+    @apply text-lg font-semibold mb-2;
+  }
+  
+  .empty-state-description {
+    @apply text-sm text-muted-foreground max-w-sm;
+  }
+  
+  /* List Patterns */
+  .list-container {
+    @apply space-y-4;
+  }
+  
+  .list-item {
+    @apply block transition-colors hover:bg-accent/50 rounded-lg;
+  }
+  
+  /* Table Patterns */
+  .table-container {
+    @apply overflow-x-auto rounded-lg border;
+  }
+  
+  .table-filters {
+    @apply flex flex-col sm:flex-row gap-4 mb-4;
+  }
+  
+  /* Grid Patterns */
+  .card-grid {
+    @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  /* Status Badges */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .badge-success {
+    @apply bg-success/10 text-success;
+  }
+  
+  .badge-warning {
+    @apply bg-warning/10 text-warning;
+  }
+  
+  .badge-destructive {
+    @apply bg-destructive/10 text-destructive;
+  }
+  
+  .badge-info {
+    @apply bg-info/10 text-info;
+  }
+}

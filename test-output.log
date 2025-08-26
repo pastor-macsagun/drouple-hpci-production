@@ -1,0 +1,87 @@
+🔧 Setting up test database...
+
+> hpci-chms@0.1.0 seed
+> prisma db push --force-reset && tsx prisma/seed.ts
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "hpci_chms", schema "public" at "localhost:5432"
+
+The PostgreSQL database "hpci_chms" schema "public" at "localhost:5432" was successfully reset.
+
+🚀  Your database is now in sync with your Prisma schema. Done in 99ms
+
+Running generate... (Use --skip-generate to skip the generators)
+[2K[1A[2K[GRunning generate... - Prisma Client
+[2K[1A[2K[G✔ Generated Prisma Client (v6.14.0) to ./node_modules/@prisma/client in 78ms
+
+🌱 Starting database seed...
+✅ Cleared existing data
+✅ Created churches
+📝 Default password for all users: Hpci!Test2025
+✅ Created users
+✅ Created memberships
+✅ Created life groups
+✅ Created events
+✅ Created services and check-ins
+✅ Created pathways and enrollments
+🎉 Database seeding completed successfully!
+
+📋 Test Accounts:
+Super Admin: superadmin@test.com
+Church Admin (Manila): admin.manila@test.com
+Church Admin (Cebu): admin.cebu@test.com
+Leader (Manila): leader.manila@test.com
+Leader (Cebu): leader.cebu@test.com
+Members: member1@test.com - member10@test.com
+✅ Test database ready
+
+Running 3 tests using 3 workers
+
+
+Check-In:
+  Status: PASS
+  Heading: Check-In
+  Interactive elements: true
+  Placeholder text: false
+Check-In: Placeholder detected: true, Sidebar visible: true
+Check-In heading: Check-In
+Check-In: Placeholder detected: true, Sidebar visible: true
+
+LifeGroups:
+  Status: PASS
+  Heading: LifeGroups
+  Interactive elements: true
+  Placeholder text: false
+LifeGroups: Placeholder detected: true, Sidebar visible: true
+Admin Services: Member access blocked (redirected: true)
+
+Admin Services:
+  Status: PASS
+  Heading: Admin Services
+  Interactive elements: true
+  Placeholder text: false
+LifeGroups heading: LifeGroups
+LifeGroups: Placeholder detected: true, Sidebar visible: true
+Admin LifeGroups: Member access blocked (redirected: true)
+
+Admin LifeGroups:
+  Status: PASS
+  Heading: Admin LifeGroups
+  Interactive elements: true
+  Placeholder text: false
+
+=== SUMMARY ===
+Check-In: PASS
+LifeGroups: PASS
+Admin Services: PASS
+Admin LifeGroups: PASS
+  ✓  3 [chromium] › e2e/existence-check.spec.ts:121:7 › @existence-check Page Existence Verification › Detect actual vs placeholder implementation (6.0s)
+  ✓  1 [chromium] › e2e/existence-check.spec.ts:66:7 › @existence-check Page Existence Verification › MEMBER can access member pages (6.1s)
+Admin Services heading: Admin Services
+Admin Services: Placeholder detected: false, Sidebar visible: true
+Admin LifeGroups heading: Admin LifeGroups
+Admin LifeGroups: Placeholder detected: false, Sidebar visible: true
+  ✓  2 [chromium] › e2e/existence-check.spec.ts:21:7 › @existence-check Page Existence Verification › SUPER_ADMIN can access all pages (7.0s)
+
+  3 passed (9.8s)

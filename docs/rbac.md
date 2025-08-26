@@ -1,0 +1,226 @@
+# RBAC (Role-Based Access Control) System
+
+## Overview
+
+The HPCI-ChMS implements a hierarchical RBAC system with multi-tenancy support. Each user has a global role and can have church-specific memberships with potentially different roles.
+
+## Role Hierarchy
+
+```
+SUPER_ADMIN (6)
+    ↓
+PASTOR (5)
+    ↓
+ADMIN (4)
+    ↓
+VIP (3)
+    ↓
+LEADER (2)
+    ↓
+MEMBER (1)
+```
+
+Higher-level roles inherit all permissions of lower-level roles.
+
+## Database Models
+
+### Church
+- Represents a parent church organization (e.g., HPCI)
+- Has multiple LocalChurches
+
+### LocalChurch
+- Represents a physical church location
+- Belongs to a Church
+- Has members through Membership model
+- All data is scoped to LocalChurch for multi-tenancy
+
+### Membership
+- Links Users to LocalChurches
+- Contains church-specific role
+- Tracks join/leave dates
+
+### AuditLog
+- Records all administrative actions
+- Includes actor, action, entity, and metadata
+- Scoped by localChurchId when applicable
+
+## RBAC Helper Functions
+
+### `requireRole(role, options?)`
+Ensures the current user has the required role or higher.
+
+```typescript
+// Require CHURCH_ADMIN globally
+const user = await requireRole(UserRole.CHURCH_ADMIN)
+
+// Require LEADER in specific church
+const user = await requireRole(UserRole.LEADER, {
+  localChurchId: 'church-id'
+})
+```
+
+### `assertTenant(entity, localChurchId)`
+Verifies an entity belongs to the specified church.
+
+```typescript
+const event = await prisma.event.findUnique({ where: { id } })
+assertTenant(event, user.localChurchId)
+```
+
+### `scopeQueryByChurch(query, user)`
+Automatically scopes database queries by user's church memberships.
+
+```typescript
+const query = { where: { active: true } }
+const scopedQuery = await scopeQueryByChurch(query, user)
+// Query now includes localChurchId filter
+```
+
+### `logAudit(params)`
+Records administrative actions for compliance and debugging.
+
+```typescript
+await logAudit({
+  actorId: user.id,
+  action: 'CREATE_EVENT',
+  entity: 'Event',
+  entityId: event.id,
+  localChurchId: event.localChurchId,
+  meta: { title: event.title }
+})
+```
+
+## Implementation Examples
+
+### Server Action with RBAC
+
+```typescript
+async function createEvent(data: EventData) {
+  'use server'
+  
+  // Require LEADER role in the target church
+  const user = await requireRole(UserRole.LEADER, {
+    localChurchId: data.localChurchId
+  })
+  
+  const event = await prisma.event.create({
+    data: {
+      ...data,
+      createdById: user.id
+    }
+  })
+  
+  await logAudit({
+    actorId: user.id,
+    action: 'CREATE_EVENT',
+    entity: 'Event',
+    entityId: event.id,
+    localChurchId: event.localChurchId,
+    meta: { title: event.title }
+  })
+  
+  return event
+}
+```
+
+### Multi-Church Query
+
+```typescript
+async function getMembers() {
+  const user = await getCurrentUser()
+  
+  if (user.role === UserRole.SUPER_ADMIN) {
+    // Super admin sees all
+    return prisma.user.findMany()
+  }
+  
+  // Others see only their church members
+  const churchIds = user.memberships.map(m => m.localChurchId)
+  return prisma.membership.findMany({
+    where: {
+      localChurchId: { in: churchIds }
+    },
+    include: { user: true }
+  })
+}
+```
+
+## Security Considerations
+
+1. **Always verify church membership** before allowing data access
+2. **Use assertTenant()** to prevent cross-church data leaks
+3. **Log all administrative actions** via AuditLog
+4. **Super Admins bypass** church-level checks but actions are still logged
+5. **Default to least privilege** - start with MEMBER role
+
+## Admin Member Management
+
+### Permissions
+
+- **SUPER_ADMIN**: Full access to all members across all churches
+  - Can create, edit, activate/deactivate any member
+  - Can assign any role including SUPER_ADMIN
+  - Can transfer members between churches
+  - Can perform bulk operations on any members
+
+- **PASTOR**: Full access to members within their church
+  - Can create, edit, activate/deactivate members in their church
+  - Can assign roles up to PASTOR level
+  - Can perform bulk operations on church members
+  - Cannot transfer members to other churches
+
+- **ADMIN**: Full access to members within their church  
+  - Can create, edit, activate/deactivate members in their church
+  - Can assign roles up to ADMIN level
+  - Can perform bulk operations on church members
+  - Cannot transfer members to other churches
+
+- **VIP**: Read-only access to member list
+  - Can view member information for follow-up purposes
+  - Cannot create, edit, or deactivate members
+  - Can filter and search members
+
+### Features
+
+1. **Member CRUD Operations**
+   - Create new member accounts manually
+   - Edit member details (name, email, role)
+   - Activate/deactivate member accounts
+   - Assign and update member roles
+
+2. **Bulk Operations**
+   - Select multiple members for bulk actions
+   - Bulk activate/deactivate members
+   - Respects role and tenant permissions
+
+3. **Search and Filter**
+   - Search by name or email
+   - Filter by church (SUPER_ADMIN only)
+   - Server-side pagination for performance
+
+4. **Export Functionality**
+   - Export member list to CSV format
+   - Includes name, email, role, status, church, contact info
+   - Respects tenant isolation rules
+
+### Security Considerations
+
+- All operations respect multi-tenant isolation
+- Role hierarchy enforced at action level
+- Email uniqueness validated across system
+- Audit logging for all administrative actions
+- Prevention of self-role elevation
+
+## Testing
+
+Run RBAC tests:
+```bash
+npm run test lib/rbac.test.ts
+```
+
+Test coverage includes:
+- Role hierarchy validation
+- Cross-tenant write prevention
+- Membership verification
+- Audit logging
+- Member management operations

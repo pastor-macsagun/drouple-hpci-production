@@ -1,0 +1,57 @@
+[
+  {
+    "page": "Home",
+    "path": "/",
+    "memberSection": [],
+    "adminSection": [],
+    "superAdminSection": [],
+    "bottomSection": [],
+    "issues": [
+      "CRITICAL: No sidebar found on page"
+    ]
+  },
+  {
+    "page": "Dashboard",
+    "path": "/dashboard",
+    "memberSection": [],
+    "adminSection": [],
+    "superAdminSection": [],
+    "bottomSection": [],
+    "issues": [
+      "CRITICAL: No sidebar found on page"
+    ]
+  },
+  {
+    "page": "Check-In",
+    "path": "/checkin",
+    "memberSection": [],
+    "adminSection": [],
+    "superAdminSection": [],
+    "bottomSection": [],
+    "issues": [
+      "CRITICAL: No sidebar found on page"
+    ]
+  },
+  {
+    "page": "Events",
+    "path": "/events",
+    "memberSection": [
+      "Dashboard",
+      "Check-In",
+      "Events",
+      "LifeGroups",
+      "Pathways"
+    ],
+    "adminSection": [],
+    "superAdminSection": [],
+    "bottomSection": [
+      "Profile",
+      "Sign Out"
+    ],
+    "issues": [
+      "Missing: Entire Administration Section",
+      "Missing: Entire Super Admin Section"
+    ],
+    "screenshot": "docs/verification/screenshots/sidebar-events.png"
+  }
+]
