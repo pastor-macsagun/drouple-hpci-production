@@ -480,6 +480,15 @@ model FirstTimer {
   @@map("first_timers")
 }
 
+model KeyValue {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("key_values")
+}
+
 enum UserRole {
   SUPER_ADMIN
   PASTOR
@@ -555,13 +564,4 @@ enum AnnouncementPriority {
   NORMAL
   HIGH
   URGENT
-}
-
-model KeyValue {
-  key       String   @id
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("key_values")
 }

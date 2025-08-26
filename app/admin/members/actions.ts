@@ -371,25 +371,18 @@ export async function exportMembersCsv({ churchId }: { churchId?: string } = {})
 
     const members = await prisma.user.findMany({
       where: whereClause,
-      include: {
-        tenant: {
-          select: {
-            name: true
-          }
-        }
-      },
       orderBy: {
         createdAt: 'desc'
       }
     })
 
-    const csvHeaders = ['Name', 'Email', 'Role', 'Status', 'Church', 'Created At']
+    const csvHeaders = ['Name', 'Email', 'Role', 'Status', 'Tenant ID', 'Created At']
     const csvRows = members.map(member => [
       member.name || '',
       member.email,
       member.role,
       member.memberStatus,
-      member.tenant?.name || '',
+      member.tenantId || '',
       new Date(member.createdAt).toLocaleDateString()
     ])
 

@@ -5,7 +5,7 @@ import { UserRole } from "@prisma/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { UserHeart, Users, Calendar, BookOpen } from "lucide-react";
+import { Heart, Users, Calendar, BookOpen } from "lucide-react";
 
 export default async function VipDashboard() {
   const user = await getCurrentUser();
@@ -34,7 +34,7 @@ export default async function VipDashboard() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-pink-100 rounded-lg">
-                  <UserHeart className="h-6 w-6 text-pink-600" />
+                  <Heart className="h-6 w-6 text-pink-600" />
                 </div>
                 <h3 className="font-semibold">First Timers</h3>
               </div>

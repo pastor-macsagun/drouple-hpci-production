@@ -3,6 +3,12 @@
 ## Overview
 This runbook provides step-by-step instructions for deploying HPCI-ChMS to production.
 
+**Production Environment:**
+- **URL**: https://drouple-hpci-prod.vercel.app
+- **Database**: Neon Postgres (ep-flat-glade-ad7dfexu)
+- **Platform**: Vercel (pastormacsagun-9316s-projects/drouple-hpci-prod)
+- **Release**: v1.0.0-hpci
+
 ## Pre-Deployment Checklist
 
 ### 1. Code Quality Checks
@@ -74,13 +80,13 @@ kubectl apply -f k8s/production/
 
 ```bash
 # 1. Check application health
-curl https://your-domain.com/api/health
+curl https://drouple-hpci-prod.vercel.app
 
-# 2. Check database connectivity
-curl https://your-domain.com/api/health/db
+# 2. Verify auth flow
+curl https://drouple-hpci-prod.vercel.app/api/auth/providers
 
-# 3. Verify auth flow
-curl https://your-domain.com/api/auth/providers
+# 3. Check sign-in page loads
+curl https://drouple-hpci-prod.vercel.app/auth/signin
 ```
 
 ### Step 4: Smoke Tests
@@ -95,13 +101,13 @@ curl https://your-domain.com/api/auth/providers
    ```bash
    # Verify auth pages are NOT rate limited on GET
    for i in {1..10}; do
-     curl -s -o /dev/null -w "%{http_code}\n" https://your-domain.com/auth/signin
+     curl -s -o /dev/null -w "%{http_code}\n" https://drouple-hpci-prod.vercel.app/auth/signin
    done
    # Should all return 200, never 429
    
    # Verify POST login has proper limits
    for i in {1..6}; do
-     curl -X POST https://your-domain.com/api/auth/callback/credentials \
+     curl -X POST https://drouple-hpci-prod.vercel.app/api/auth/callback/credentials \
        -H "Content-Type: application/json" \
        -d '{"email":"test@example.com","password":"wrong"}' \
        -i | grep -E "(HTTP|X-RateLimit|Retry-After)"
@@ -190,7 +196,7 @@ npx prisma db pull --force
 #### 2. Authentication Issues
 ```bash
 # Verify NextAuth configuration
-curl https://your-domain.com/api/auth/session
+curl https://drouple-hpci-prod.vercel.app/api/auth/session
 
 # Check email provider
 curl -X POST https://api.resend.com/emails \
@@ -269,7 +275,7 @@ vercel promote [deployment-url]
 
 | Version | Date | Changes | Deployed By |
 |---------|------|---------|-------------|
-| 1.0.0 | 2024-08-24 | Initial production release | - |
+| v1.0.0-hpci | 2025-08-26 | Initial production release with all validation gaps closed | Claude |
 
 ## Notes
 

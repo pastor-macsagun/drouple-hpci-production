@@ -67,7 +67,7 @@ export default async function middleware(req: NextRequest) {
 
   // Role-based access control
   if (isAuth && session?.user) {
-    const userRole = session.user.role
+    const userRole = (session.user as any).role
     
     // Super admin routes
     if (pathname.startsWith("/super") && userRole !== "SUPER_ADMIN") {
