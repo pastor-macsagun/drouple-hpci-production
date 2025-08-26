@@ -2,137 +2,181 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
-// One-time production seed endpoint for QA validation
-// This endpoint will only run ONCE and then permanently lock itself
+// Runtime configuration for API route
+export const runtime = 'nodejs';
 
-export async function POST(request: NextRequest) {
-  console.log('[PROD-SEED] Access attempt at:', new Date().toISOString());
+// GET endpoint for debug (token-gated)
+export async function GET(request: NextRequest) {
+  const token = request.headers.get('X-Seed-Token');
+  const expectedToken = process.env.PROD_QA_SEED_TOKEN;
+  
+  if (!token || !expectedToken || token !== expectedToken) {
+    return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
+  }
   
   try {
-    // Guard 1: Check for production deployment (Vercel sets VERCEL env var)
-    if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
-      console.warn('[PROD-SEED] Blocked: Not in production environment');
-      return NextResponse.json(
-        { error: 'This endpoint is only available in production' },
-        { status: 403 }
-      );
-    }
-
-    // Guard 2: Check for seed token in environment
-    const expectedToken = process.env.PROD_QA_SEED_TOKEN;
-    if (!expectedToken) {
-      console.error('[PROD-SEED] Blocked: PROD_QA_SEED_TOKEN not configured');
-      return NextResponse.json(
-        { error: 'Seed endpoint not configured' },
-        { status: 503 }
-      );
-    }
-
-    // Guard 3: Validate request token
-    const requestToken = request.headers.get('X-Seed-Token');
-    if (!requestToken || requestToken !== expectedToken) {
-      console.warn('[PROD-SEED] Blocked: Invalid token');
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Guard 4: Check if seed has already been run
-    // Using a simple key-value approach with the User table
-    const seedMarker = await prisma.user.findFirst({
-      where: { email: '__PROD_SEED_RAN__' }
+    // Check if seed has been run
+    const seedRun = await prisma.user.findFirst({
+      where: { email: '__PROD_SEED_LOCK__' }
     });
+    
+    return NextResponse.json({ 
+      ok: true, 
+      locked: !!seedRun,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    return NextResponse.json({ ok: false, error: 'database error' }, { status: 500 });
+  }
+}
 
-    if (seedMarker) {
-      console.warn('[PROD-SEED] Blocked: Seed already ran at', seedMarker.createdAt);
-      return NextResponse.json(
-        { 
-          error: 'Seed has already been executed',
-          ranAt: seedMarker.createdAt
-        },
-        { status: 409 }
-      );
+// POST endpoint for one-time seeding
+export async function POST(request: NextRequest) {
+  console.log('[PROD-SEED] POST attempt at:', new Date().toISOString());
+  
+  // Guard 1: Check token
+  const token = request.headers.get('X-Seed-Token');
+  const expectedToken = process.env.PROD_QA_SEED_TOKEN;
+  
+  if (!token || !expectedToken || token !== expectedToken) {
+    console.warn('[PROD-SEED] Unauthorized: invalid token');
+    return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
+  }
+  
+  // Guard 2: Production only (Vercel always sets NODE_ENV=production)
+  if (!process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+    console.warn('[PROD-SEED] Blocked: not production');
+    return NextResponse.json({ ok: false, error: 'prod only' }, { status: 403 });
+  }
+  
+  try {
+    // Guard 3: Check if already ran
+    const existingLock = await prisma.user.findFirst({
+      where: { email: '__PROD_SEED_LOCK__' }
+    });
+    
+    if (existingLock) {
+      console.warn('[PROD-SEED] Already ran at:', existingLock.createdAt);
+      return NextResponse.json({ 
+        ok: false, 
+        error: 'already-ran',
+        ranAt: existingLock.createdAt 
+      }, { status: 409 });
     }
-
-    console.log('[PROD-SEED] Starting one-time production seed...');
-
-    // Begin transaction for atomic operation
+    
+    console.log('[PROD-SEED] Starting one-time seed...');
+    
+    // Transaction for atomic operation
     const result = await prisma.$transaction(async (tx) => {
-      // Create seed marker to prevent re-runs
-      await tx.user.create({
+      // Create lock record first
+      const lock = await tx.user.create({
         data: {
-          email: '__PROD_SEED_RAN__',
-          name: 'Seed Lock Marker',
+          email: '__PROD_SEED_LOCK__',
+          name: 'Seed Lock',
           password: await bcrypt.hash('not-a-real-account', 10),
           role: 'MEMBER',
           tenantId: 'system',
-          memberStatus: 'INACTIVE'
+          memberStatus: 'INACTIVE',
+          mustChangePassword: false
         }
       });
-
-      // Get or verify tenant IDs
-      const manilaChurch = await tx.church.findFirst({
+      
+      // Get or verify churches
+      let manilaChurch = await tx.church.findFirst({
         where: { id: 'clxtest002' }
       });
       
-      const cebuChurch = await tx.church.findFirst({
+      if (!manilaChurch) {
+        manilaChurch = await tx.church.create({
+          data: {
+            id: 'clxtest002',
+            name: 'HPCI Manila',
+            city: 'Manila',
+            tenantId: 'hpci'
+          }
+        });
+      }
+      
+      let cebuChurch = await tx.church.findFirst({
         where: { id: 'clxtest003' }
       });
-
-      if (!manilaChurch || !cebuChurch) {
-        throw new Error('Required churches (Manila/Cebu) not found');
+      
+      if (!cebuChurch) {
+        cebuChurch = await tx.church.create({
+          data: {
+            id: 'clxtest003',
+            name: 'HPCI Cebu',
+            city: 'Cebu',
+            tenantId: 'hpci'
+          }
+        });
       }
-
-      // Test account configurations
-      const testAccounts = [
+      
+      // QA Test accounts
+      const accounts = [
         {
           email: 'qa.superadmin@hpci',
           name: 'QA Super Admin',
           password: 'QA!Sup3rAdmin#2025',
           role: 'SUPER_ADMIN' as const,
-          tenantId: 'hpci'
+          tenantId: 'hpci',
+          churchId: null
         },
         {
           email: 'qa.admin.manila@hpci',
           name: 'QA Admin Manila',
           password: 'QA!AdmMNL#2025',
           role: 'ADMIN' as const,
-          tenantId: manilaChurch.id
+          tenantId: manilaChurch.id,
+          churchId: manilaChurch.id
         },
         {
           email: 'qa.admin.cebu@hpci',
           name: 'QA Admin Cebu',
           password: 'QA!AdmCBU#2025',
           role: 'ADMIN' as const,
-          tenantId: cebuChurch.id
+          tenantId: cebuChurch.id,
+          churchId: cebuChurch.id
         },
         {
           email: 'qa.leader.manila@hpci',
           name: 'QA Leader Manila',
           password: 'QA!LeadMNL#2025',
           role: 'LEADER' as const,
-          tenantId: manilaChurch.id
+          tenantId: manilaChurch.id,
+          churchId: manilaChurch.id
         },
         {
           email: 'qa.member.manila@hpci',
           name: 'QA Member Manila',
           password: 'QA!MemMNL#2025',
           role: 'MEMBER' as const,
-          tenantId: manilaChurch.id
+          tenantId: manilaChurch.id,
+          churchId: manilaChurch.id
         },
         {
           email: 'qa.vip.manila@hpci',
           name: 'QA VIP Manila',
           password: 'QA!VipMNL#2025',
           role: 'VIP' as const,
-          tenantId: manilaChurch.id
+          tenantId: manilaChurch.id,
+          churchId: manilaChurch.id
         }
       ];
-
-      // Create test users
+      
       const createdUsers = [];
-      for (const account of testAccounts) {
+      
+      for (const account of accounts) {
+        // Check if user already exists
+        const existing = await tx.user.findUnique({
+          where: { email: account.email }
+        });
+        
+        if (existing) {
+          console.log(`[PROD-SEED] User ${account.email} already exists, skipping`);
+          continue;
+        }
+        
         const hashedPassword = await bcrypt.hash(account.password, 10);
         
         const user = await tx.user.create({
@@ -144,70 +188,50 @@ export async function POST(request: NextRequest) {
             tenantId: account.tenantId,
             memberStatus: 'ACTIVE',
             mustChangePassword: false
-          },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            role: true,
-            tenantId: true
           }
         });
-
-        // Create membership record for non-super-admin users
-        if (account.role !== 'SUPER_ADMIN') {
+        
+        // Create membership for non-super-admin
+        if (account.churchId) {
           await tx.membership.create({
             data: {
               userId: user.id,
-              churchId: account.tenantId,
+              churchId: account.churchId,
               membershipDate: new Date(),
               status: 'ACTIVE'
             }
           });
         }
-
+        
         createdUsers.push({
-          ...user,
-          password: account.password // Return plaintext for testing reference
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
         });
       }
-
+      
       return {
+        lockId: lock.id,
         users: createdUsers,
-        ranAt: new Date().toISOString()
+        ranAt: lock.createdAt
       };
     });
-
-    console.log('[PROD-SEED] Successfully created test accounts:', result.users.map(u => u.email));
-
+    
+    console.log('[PROD-SEED] Success! Created users:', result.users.map(u => u.email));
+    
     return NextResponse.json({
       ok: true,
-      ...result,
-      note: 'Test accounts created. Delete this route after validation tests complete.',
-      cleanup: 'Run cleanup script to remove all qa.*@hpci accounts after testing'
+      users: result.users,
+      ranAt: result.ranAt,
+      message: 'QA accounts created successfully'
     });
-
+    
   } catch (error) {
     console.error('[PROD-SEED] Error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Seed operation failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ 
+      ok: false, 
+      error: error instanceof Error ? error.message : 'unknown error'
+    }, { status: 500 });
   }
-}
-
-// Block all other methods
-export async function GET() {
-  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
-}
-
-export async function PUT() {
-  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
-}
-
-export async function DELETE() {
-  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }
