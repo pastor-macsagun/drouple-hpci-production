@@ -24,7 +24,7 @@ HPCI-ChMS is a multi-church management system designed to handle:
 1. **App Router**: Using Next.js 15 App Router for better performance and DX
 2. **Server Components**: Default to RSC, client components only when needed
 3. **Database**: Pooled connections for serverless compatibility
-4. **Auth Strategy**: JWT with email magic links for passwordless auth
+4. **Auth Strategy**: JWT with Credentials Provider (email + bcrypt password)
 5. **Multi-tenancy**: User.tenantId field for church isolation
 
 ## Development Workflow

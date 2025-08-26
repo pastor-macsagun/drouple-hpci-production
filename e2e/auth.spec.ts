@@ -1,18 +1,18 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Authentication', () => {
-  test.describe('Magic link flow', () => {
-    test('shows magic link login page', async ({ page }) => {
+  test.describe('Credentials login flow', () => {
+    test('shows email and password login page', async ({ page }) => {
       await page.goto('/auth/signin')
       
       // Should show email input
       await expect(page.getByLabel(/email/i)).toBeVisible()
       
-      // Should have sign in button
-      await expect(page.getByRole('button', { name: /sign in.*email/i })).toBeVisible()
+      // Should show password field
+      await expect(page.getByLabel(/password/i)).toBeVisible()
       
-      // Should not show password field (passwordless)
-      await expect(page.getByLabel(/password/i)).not.toBeVisible()
+      // Should have sign in button
+      await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible()
     })
 
     test('validates email format', async ({ page }) => {
@@ -20,22 +20,42 @@ test.describe('Authentication', () => {
       
       // Invalid email
       await page.getByLabel(/email/i).fill('invalid-email')
+      await page.getByLabel(/password/i).fill('password123')
       await page.getByRole('button', { name: /sign in/i }).click()
       
       // Should show validation error
       await expect(page.getByText(/valid email|invalid/i)).toBeVisible()
     })
 
-    test('shows verify request page after submission', async ({ page }) => {
+    test('requires both email and password', async ({ page }) => {
       await page.goto('/auth/signin')
       
-      // Valid email
+      // Only email
       await page.getByLabel(/email/i).fill('test@example.com')
       await page.getByRole('button', { name: /sign in/i }).click()
       
-      // Should redirect to verify page
-      await expect(page).toHaveURL(/verify-request/)
-      await expect(page.getByText(/check.*email/i)).toBeVisible()
+      // Should not proceed without password
+      await expect(page).toHaveURL(/auth\/signin/)
+      
+      // Clear and try with only password
+      await page.getByLabel(/email/i).clear()
+      await page.getByLabel(/password/i).fill('password123')
+      await page.getByRole('button', { name: /sign in/i }).click()
+      
+      // Should not proceed without email
+      await expect(page).toHaveURL(/auth\/signin/)
+    })
+
+    test('shows error for invalid credentials', async ({ page }) => {
+      await page.goto('/auth/signin')
+      
+      // Invalid credentials
+      await page.getByLabel(/email/i).fill('nonexistent@example.com')
+      await page.getByLabel(/password/i).fill('wrongpassword')
+      await page.getByRole('button', { name: /sign in/i }).click()
+      
+      // Should show error message
+      await expect(page.getByText(/invalid.*password|incorrect/i)).toBeVisible()
     })
   })
 
@@ -90,6 +110,7 @@ test.describe('Authentication', () => {
       // Required fields
       await expect(page.getByLabel(/name/i)).toBeVisible()
       await expect(page.getByLabel(/email/i)).toBeVisible()
+      await expect(page.getByLabel(/password/i)).toBeVisible()
       await expect(page.getByLabel(/church/i)).toBeVisible()
     })
 
@@ -116,6 +137,7 @@ test.describe('Authentication', () => {
       // Use existing email
       await page.getByLabel(/name/i).fill('Test User')
       await page.getByLabel(/email/i).fill('member1@test.com') // Existing user
+      await page.getByLabel(/password/i).fill('Password123!')
       await page.getByLabel(/church/i).selectOption({ index: 1 })
       
       await page.getByRole('button', { name: /register/i }).click()
@@ -126,22 +148,20 @@ test.describe('Authentication', () => {
   })
 
   test.describe('Rate limiting', () => {
-    test('enforces rate limits on authentication attempts', async ({ page }) => {
+    test('enforces rate limits on login attempts', async ({ page }) => {
       await page.goto('/auth/signin')
       
-      // Rapid sign-in attempts
-      for (let i = 0; i < 10; i++) {
-        await page.getByLabel(/email/i).fill(`test${i}@example.com`)
+      // Multiple failed login attempts with same email
+      const email = 'ratelimit@test.com'
+      for (let i = 0; i < 6; i++) {
+        await page.getByLabel(/email/i).fill(email)
+        await page.getByLabel(/password/i).fill(`wrongpass${i}`)
         await page.getByRole('button', { name: /sign in/i }).click()
         await page.waitForTimeout(100)
       }
       
-      // Should eventually show rate limit message
-      const rateLimitMessage = page.getByText(/too many|slow down|try again later/i)
-      // Rate limiting might be enforced server-side
-      if (await rateLimitMessage.isVisible()) {
-        await expect(rateLimitMessage).toBeVisible()
-      }
+      // Should show rate limit message after 5 attempts
+      await expect(page.getByText(/too many.*attempts|try again later/i)).toBeVisible()
     })
 
     test('rate limits registration attempts', async ({ page }) => {
@@ -151,6 +171,7 @@ test.describe('Authentication', () => {
       for (let i = 0; i < 5; i++) {
         await page.getByLabel(/name/i).fill(`Test ${i}`)
         await page.getByLabel(/email/i).fill(`rapid${i}@test.com`)
+        await page.getByLabel(/password/i).fill('Password123!')
         await page.getByLabel(/church/i).selectOption({ index: 1 })
         await page.getByRole('button', { name: /register/i }).click()
         await page.waitForTimeout(100)
@@ -164,18 +185,27 @@ test.describe('Authentication', () => {
     })
   })
 
-  test.describe('Dev login helper', () => {
-    test('dev login should be disabled in production', async ({ page }) => {
-      // Check if there's a dev login route
-      await page.goto('/api/auth/dev-login', { waitUntil: 'domcontentloaded' })
+  test.describe('Password security', () => {
+    test('password field masks input', async ({ page }) => {
+      await page.goto('/auth/signin')
       
-      // Should return 404 or error in production
-      const response = await page.evaluate(() => document.body.textContent)
+      const passwordField = page.getByLabel(/password/i)
+      await expect(passwordField).toHaveAttribute('type', 'password')
+    })
+
+    test('registration enforces password requirements', async ({ page }) => {
+      await page.goto('/register')
       
-      // In production, this should not exist
-      if (process.env.NODE_ENV === 'production') {
-        expect(response).toMatch(/not found|404|error/i)
-      }
+      // Weak password
+      await page.getByLabel(/name/i).fill('Test User')
+      await page.getByLabel(/email/i).fill('newuser@test.com')
+      await page.getByLabel(/password/i).fill('weak')
+      await page.getByLabel(/church/i).selectOption({ index: 1 })
+      
+      await page.getByRole('button', { name: /register/i }).click()
+      
+      // Should show password requirements error
+      await expect(page.getByText(/password.*must|at least.*characters/i)).toBeVisible()
     })
   })
 

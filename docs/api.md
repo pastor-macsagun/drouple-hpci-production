@@ -6,7 +6,7 @@ HPCI-ChMS uses server actions and route handlers for API functionality. All acti
 
 ## Authentication
 
-Authentication is handled via NextAuth with magic link email authentication. Sessions are JWT-based.
+Authentication is handled via NextAuth with Credentials Provider (email + password). Sessions are JWT-based with bcrypt password hashing.
 
 ## Error Handling
 
@@ -244,7 +244,7 @@ registerMember(data: {
 - Creates new user account
 - Creates membership for selected local church
 - Auto-enrolls in ROOTS pathway if new believer
-- Sends welcome email with magic link
+- Creates account with hashed password
 
 ### Church Management (SUPER_ADMIN only)
 
@@ -466,7 +466,7 @@ The following endpoints have rate limiting:
 
 - `/checkin` - 1 check-in per email per service
 - `/register` - 3 attempts per email per hour
-- Magic link requests - 5 per email per hour
+- Login attempts - 5 per email per 15 minutes
 
 ## CSV Export
 

@@ -191,11 +191,11 @@ The app will automatically deploy on push to main branch.
 
 ## Authentication Flow
 
-1. User enters email on sign-in page
-2. System sends magic link via Resend
-3. User clicks link to authenticate
-4. Session created with JWT strategy
-5. User redirected to dashboard
+1. User enters email and password on sign-in page
+2. System validates credentials using bcrypt
+3. Session created with JWT strategy
+4. User redirected to dashboard based on role
+5. Rate limiting prevents brute force attacks
 
 ## Testing
 
