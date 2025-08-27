@@ -11,8 +11,8 @@ export const API_VERSIONS = {
 
 export type ApiVersion = keyof typeof API_VERSIONS
 
-export const CURRENT_VERSION: ApiVersion = 'v1'
-export const SUPPORTED_VERSIONS: ApiVersion[] = ['v1']
+export const CURRENT_VERSION: ApiVersion = 'v2'
+export const SUPPORTED_VERSIONS: ApiVersion[] = ['v1', 'v2']
 
 /**
  * Middleware to handle API versioning

@@ -194,6 +194,7 @@ model Service {
   @@unique([localChurchId, date])
   @@index([localChurchId])
   @@index([date])
+  @@index([localChurchId, date], name: "service_church_date_idx")
   @@map("services")
 }
 
@@ -345,6 +346,7 @@ model EventRsvp {
   @@index([eventId])
   @@index([userId])
   @@index([status])
+  @@index([eventId, status], name: "rsvp_event_status_idx")
   @@map("event_rsvps")
 }
 
@@ -398,6 +400,7 @@ model PathwayEnrollment {
   @@index([userId])
   @@index([pathwayId])
   @@index([status])
+  @@index([userId, status], name: "enroll_user_status_idx")
   @@map("pathway_enrollments")
 }
 

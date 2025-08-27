@@ -247,7 +247,7 @@ describe('Member Management Actions', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result.error).toBe('Email already registered')
+      expect(result.error).toBe('This email address is already registered')
     })
 
     it('should prevent cross-church creation for non-super admins', async () => {

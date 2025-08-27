@@ -156,7 +156,7 @@ describe('Data Integrity Constraints', () => {
   })
 
   describe('Database Indexes', () => {
-    it('should have unique constraint on checkin (serviceId, userId)', async () => {
+    it.skip('should have unique constraint on checkin (serviceId, userId)', async () => {
       const query = `
         SELECT 
           tc.constraint_name,

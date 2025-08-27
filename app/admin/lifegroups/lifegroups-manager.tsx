@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -254,7 +255,14 @@ export function LifeGroupsManager({
             disabled={isLoading}
             variant="outline"
           >
-            Load More
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              'Load More'
+            )}
           </Button>
         </div>
       )}
@@ -364,7 +372,14 @@ export function LifeGroupsManager({
               form="create-lifegroup-form"
               disabled={isLoading || !newLifeGroup.name || !newLifeGroup.leaderId}
             >
-              Create
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -385,7 +400,14 @@ export function LifeGroupsManager({
               onClick={() => deleteDialogOpen && handleDeleteLifeGroup(deleteDialogOpen)}
               disabled={isLoading}
             >
-              Delete
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

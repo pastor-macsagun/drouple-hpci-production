@@ -7,6 +7,7 @@ import { UserRole, MemberStatus } from '@prisma/client'
 import { z } from 'zod'
 import { generateSecurePassword, hashPassword } from '@/lib/password'
 import { createTenantWhereClause } from '@/lib/rbac'
+import { handleActionError, ApplicationError } from '@/lib/errors'
 
 const createMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -114,17 +115,17 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
   try {
     const session = await auth()
     if (!session?.user) {
-      return { success: false, error: 'Not authenticated' }
+      throw new ApplicationError('UNAUTHORIZED', 'Not authenticated')
     }
 
     if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
-      return { success: false, error: 'Unauthorized' }
+      throw new ApplicationError('FORBIDDEN', 'Insufficient permissions to create members')
     }
 
     const validated = createMemberSchema.parse(data)
 
     if (session.user.role !== 'SUPER_ADMIN' && validated.tenantId !== session.user.tenantId) {
-      return { success: false, error: 'Cannot create member for another church' }
+      throw new ApplicationError('TENANT_MISMATCH', 'Cannot create member for another church')
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -132,7 +133,7 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
     })
 
     if (existingUser) {
-      return { success: false, error: 'Email already registered' }
+      throw new ApplicationError('EMAIL_EXISTS', 'This email address is already registered')
     }
 
     // Generate secure random password
@@ -167,10 +168,14 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message }
+      const appError = handleActionError(
+        new ApplicationError('VALIDATION_ERROR', error.errors[0].message)
+      )
+      return { success: false, error: appError.message, code: appError.code }
     }
-    console.error('Create member error:', error)
-    return { success: false, error: 'Failed to create member' }
+    
+    const appError = handleActionError(error)
+    return { success: false, error: appError.message, code: appError.code }
   }
 }
 

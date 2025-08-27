@@ -24,7 +24,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "seed": "prisma db push --force-reset && tsx prisma/seed.ts",
     "seed:verify": "tsx scripts/verify-seeds.ts",
-    "env:sanity": "node scripts/env-sanity.js",
+    "env:sanity": "tsx scripts/env-sanity.ts",
+    "analyze": "ANALYZE=true next build --config next.config.bundle.js",
     "db:test:up": "docker compose -f docker-compose.test.yml up -d",
     "db:test:down": "docker compose -f docker-compose.test.yml down -v",
     "test:prepare": "dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- npm run seed",
@@ -67,6 +68,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
+    "@next/bundle-analyzer": "^15.5.2",
     "@playwright/test": "^1.49.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.1.0",

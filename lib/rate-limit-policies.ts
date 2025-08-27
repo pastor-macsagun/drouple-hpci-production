@@ -11,45 +11,79 @@ export interface EndpointPolicy {
   keyStrategy: 'ip' | 'ip-email' | 'ip-path'
 }
 
-// Create specific rate limiters with appropriate windows
+// Valid rate limiting window values
+type WindowOption = '1m' | '5m' | '15m' | '1h' | '1d' | '24h'
+
+function getWindowValue(envValue: string | undefined, defaultValue: WindowOption): WindowOption {
+  const validWindows: WindowOption[] = ['1m', '5m', '15m', '1h', '1d', '24h']
+  const value = envValue || defaultValue
+  return validWindows.includes(value as WindowOption) ? (value as WindowOption) : defaultValue
+}
+
+// Environment-configurable rate limiting values with sensible defaults
+const RL_CONFIG = {
+  // Auth limits
+  AUTH_MIN_REQUESTS: parseInt(process.env.RL_AUTH_MIN_REQUESTS ?? '5', 10),
+  AUTH_MIN_WINDOW: getWindowValue(process.env.RL_AUTH_MIN_WINDOW, '1m'),
+  AUTH_HOUR_REQUESTS: parseInt(process.env.RL_AUTH_HOUR_REQUESTS ?? '20', 10),
+  AUTH_HOUR_WINDOW: getWindowValue(process.env.RL_AUTH_HOUR_WINDOW, '1h'),
+  
+  // Registration limits
+  REGISTER_REQUESTS: parseInt(process.env.RL_REGISTER_REQUESTS ?? '3', 10),
+  REGISTER_WINDOW: getWindowValue(process.env.RL_REGISTER_WINDOW, '1h'),
+  
+  // Check-in limits
+  CHECKIN_REQUESTS: parseInt(process.env.RL_CHECKIN_REQUESTS ?? '1', 10),
+  CHECKIN_WINDOW: getWindowValue(process.env.RL_CHECKIN_WINDOW, '5m'),
+  
+  // General API limits
+  API_REQUESTS: parseInt(process.env.RL_API_REQUESTS ?? '100', 10),
+  API_WINDOW: getWindowValue(process.env.RL_API_WINDOW, '15m'),
+  
+  // Export limits
+  EXPORT_REQUESTS: parseInt(process.env.RL_EXPORT_REQUESTS ?? '10', 10),
+  EXPORT_WINDOW: getWindowValue(process.env.RL_EXPORT_WINDOW, '1h')
+}
+
+// Create specific rate limiters with environment-configurable values
 const limiters = {
-  // Auth POST requests: 5/min, 20/hour
+  // Auth POST requests: configurable/min and configurable/hour
   authLoginMinute: rateLimiter({
-    requests: 5,
-    window: '1m',
+    requests: RL_CONFIG.AUTH_MIN_REQUESTS,
+    window: RL_CONFIG.AUTH_MIN_WINDOW,
     algorithm: 'sliding-window'
   }),
   authLoginHour: rateLimiter({
-    requests: 20,
-    window: '1h',
+    requests: RL_CONFIG.AUTH_HOUR_REQUESTS,
+    window: RL_CONFIG.AUTH_HOUR_WINDOW,
     algorithm: 'sliding-window'
   }),
   
-  // Registration POST: 3/hour
+  // Registration POST: configurable/hour
   registerHour: rateLimiter({
-    requests: 3,
-    window: '1h',
+    requests: RL_CONFIG.REGISTER_REQUESTS,
+    window: RL_CONFIG.REGISTER_WINDOW,
     algorithm: 'sliding-window'
   }),
   
-  // Check-in: 1 per 5 minutes
+  // Check-in: configurable per configurable window
   checkin: rateLimiter({
-    requests: 1,
-    window: '5m',
+    requests: RL_CONFIG.CHECKIN_REQUESTS,
+    window: RL_CONFIG.CHECKIN_WINDOW,
     algorithm: 'sliding-window'
   }),
   
-  // General API: 100 per 15 minutes
+  // General API: configurable per configurable window
   api: rateLimiter({
-    requests: 100,
-    window: '15m',
+    requests: RL_CONFIG.API_REQUESTS,
+    window: RL_CONFIG.API_WINDOW,
     algorithm: 'sliding-window'
   }),
   
-  // CSV exports: 10 per hour
+  // CSV exports: configurable per hour
   export: rateLimiter({
-    requests: 10,
-    window: '1h',
+    requests: RL_CONFIG.EXPORT_REQUESTS,
+    window: RL_CONFIG.EXPORT_WINDOW,
     algorithm: 'sliding-window'
   })
 }

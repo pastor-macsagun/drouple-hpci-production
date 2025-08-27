@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -209,10 +210,13 @@ export default function TwoFactorAuthPage() {
                   </Alert>
                   
                   <div className="flex justify-center p-4 bg-white rounded-lg">
-                    <img 
+                    <Image 
                       src={setupData.qrCodeDataURL} 
                       alt="2FA QR Code" 
-                      className="max-w-48"
+                      width={192}
+                      height={192}
+                      className="max-w-48 h-auto"
+                      unoptimized={true}
                     />
                   </div>
                   

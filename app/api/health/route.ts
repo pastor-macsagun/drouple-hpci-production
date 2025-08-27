@@ -1,20 +1,14 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { checkDatabaseHealth } from '@/lib/prisma';
 
 export async function GET() {
-  const prisma = new PrismaClient();
-  
   try {
-    // Test database connectivity with timeout
-    const startTime = Date.now();
-    await Promise.race([
-      prisma.$queryRaw`SELECT 1`,
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database timeout')), 5000)
-      )
-    ]);
-    const dbResponseTime = Date.now() - startTime;
-    await prisma.$disconnect();
+    // Use centralized database health check
+    const healthResult = await checkDatabaseHealth();
+    
+    if (!healthResult.healthy) {
+      throw new Error('Database health check failed');
+    }
     
     return NextResponse.json({
       ok: true,
@@ -22,12 +16,10 @@ export async function GET() {
       time: new Date().toISOString(),
       service: "hpci-chms",
       db: "up",
-      dbResponseTime: `${dbResponseTime}ms`,
+      dbResponseTime: `${healthResult.latencyMs}ms`,
       version: process.env.npm_package_version || "unknown"
     });
   } catch (error) {
-    await prisma.$disconnect();
-    
     return NextResponse.json({
       ok: false,
       status: "unhealthy", 
