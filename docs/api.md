@@ -310,20 +310,20 @@ createLocalChurch(data: {
 }): Promise<ActionResponse<LocalChurch>>
 ```
 
-#### Invite Admin
+#### Create Admin Account
 ```typescript
 inviteAdmin(
   localChurchId: string,
-  data: {
-    email: string
-    name?: string
-    role: 'PASTOR' | 'ADMIN'
-  }
-): Promise<ActionResponse>
+  formData: FormData
+): Promise<ActionResponse<{
+  credentials?: { email: string; password: string }
+}>>
 ```
-- Creates user if doesn't exist
-- Sends invitation email
+- Creates user account with generated temporary password
+- Returns credentials for secure manual distribution
 - Creates membership with specified role
+- Sets `mustChangePassword: true` flag for forced password change
+- **Note**: No longer sends emails - uses password generation system
 
 ### LifeGroup Actions
 

@@ -194,6 +194,7 @@ Role-based redirects are handled in two places:
   - Can assign any role including SUPER_ADMIN
   - Can transfer members between churches
   - Can perform bulk operations on any members
+  - **Can create admin accounts** using password generation system (see [Admin Account Creation](./admin-invitation-workflow.md))
 
 - **PASTOR**: Full access to members within their church
   - Can create, edit, activate/deactivate members in their church
@@ -242,6 +243,52 @@ Role-based redirects are handled in two places:
 - Email uniqueness validated across system
 - Audit logging for all administrative actions
 - Prevention of self-role elevation
+
+## Admin Account Creation System
+
+### Overview
+Super Admins can create admin accounts for local churches using a secure password generation system. This replaces the previous email-based invitation flow.
+
+### Access Control
+- **Only SUPER_ADMIN** can create admin accounts
+- Can assign **ADMIN** or **PASTOR** roles only
+- Cannot create additional SUPER_ADMIN accounts through this system
+
+### Security Features
+- Generated temporary passwords (format: `Swift-Mountain-847`)
+- `mustChangePassword: true` flag forces immediate password change
+- Middleware enforces password change before system access
+- Credentials displayed only once in secure modal
+- Complete audit trail of account creation
+
+### Workflow
+1. Super Admin navigates to `/super/local-churches/[id]/admins`
+2. Fills form with email, name (optional), and role
+3. System generates secure temporary password
+4. Creates user account with `mustChangePassword` flag
+5. Creates membership linking user to local church
+6. Displays credentials in modal for secure distribution
+7. Admin logs in and is forced to change password
+8. Role-based redirect to appropriate dashboard
+
+### RBAC Enforcement
+```typescript
+// Server action example
+export async function inviteAdmin(localChurchId: string, formData: FormData) {
+  // RBAC check - only SUPER_ADMIN allowed
+  await requireRole(UserRole.SUPER_ADMIN)
+  
+  // Role validation - can only assign ADMIN or PASTOR
+  if (![UserRole.ADMIN, UserRole.PASTOR].includes(validated.role)) {
+    return { success: false, error: "Invalid role assignment" }
+  }
+  
+  // Account creation logic...
+  // Audit logging...
+}
+```
+
+For complete implementation details, see [Admin Account Creation Workflow](./admin-invitation-workflow.md).
 
 ## Testing
 

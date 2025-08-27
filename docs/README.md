@@ -16,6 +16,7 @@ Welcome to the HPCI Church Management System documentation. This guide provides 
 - **[Database Optimization](./database-optimization.md)** - Performance indexes and query optimization
 
 ### Feature Documentation
+- **[Admin Account Creation](./admin-invitation-workflow.md)** - Super Admin workflow for creating church admin accounts with password generation
 - **[VIP Team Management](./vip-team.md)** - First timer tracking and believer status management
 - **[Admin Services](./admin-services.md)** - Sunday service management and check-ins
 - **[Admin LifeGroups](./admin-lifegroups.md)** - Small group management system
@@ -28,7 +29,10 @@ Welcome to the HPCI Church Management System documentation. This guide provides 
 - **[Visual Audit Reports](./design/visual-audit/)** - Accessibility and design consistency reports
 
 ### Development & Testing
-- **[Testing Guide](./TESTING.md)** - Unit testing, E2E testing, and coverage requirements
+- **[Testing Guide](./TESTING.md)** - Complete testing architecture and 4-phase production verification
+- **[🚀 Testing Quick Start](./testing/READ_ME_FIRST.md)** - **START HERE** for running tests locally
+- **[📋 Production Readiness Checklist](./testing/production-readiness-checklist.md)** - Complete pre-deployment verification process
+- **[Testing Documentation Index](./testing/README.md)** - All testing resources and navigation
 - **[Error Handling](./errors.md)** - Error patterns and troubleshooting
 - **[Logging](./logging.md)** - Structured logging implementation
 - **[Rate Limiting](./rate-limiting.md)** - API rate limiting configuration
@@ -43,6 +47,7 @@ Welcome to the HPCI Church Management System documentation. This guide provides 
 - **[Shippability Checklist](./shippability-checklist.md)** - Pre-release verification
 
 ### Recent Updates & Achievements
+- **[Admin Account Creation System](./admin-invitation-workflow.md)** - NEW: Password generation system replaces email invitations (Aug 2025)
 - **[Production Readiness Sprint Summary](./gap-fix-sprint-completion-summary-aug-2025.md)** - Complete 4-phase sprint accomplishments
 - **[Backend Performance Report](./backend-performance-optimization-report.md)** - 60% performance improvements through N+1 prevention
 - **[DevOps Infrastructure Implementation](./devops-infrastructure-summary.md)** - Enterprise CI/CD pipeline and monitoring
@@ -64,8 +69,9 @@ Welcome to the HPCI Church Management System documentation. This guide provides 
 ### For Developers
 1. Start with [Development Setup](./dev-setup.md)
 2. Review [API Reference](./api.md) and [RBAC System](./rbac.md)
-3. Check [Testing Guide](./TESTING.md) for TDD practices
-4. See [Error Handling](./errors.md) for debugging help
+3. Check [Admin Account Creation](./admin-invitation-workflow.md) for Super Admin workflows
+4. Check [Testing Guide](./TESTING.md) for TDD practices
+5. See [Error Handling](./errors.md) for debugging help
 
 ### For DevOps/Administrators
 1. Start with [Production Deployment Guide](./production-deployment-guide.md)
@@ -81,8 +87,9 @@ Welcome to the HPCI Church Management System documentation. This guide provides 
 
 ### For Church Staff
 1. Start with [Project Overview](../README.md)
-2. Review feature documentation for specific modules
-3. Check [Members Management](./members.md) for user management
+2. Review [Admin Account Creation](./admin-invitation-workflow.md) for Super Admin workflows
+3. Review feature documentation for specific modules
+4. Check [Members Management](./members.md) for user management
 
 ## 📊 System Status (Aug 27, 2025) - PRODUCTION READY ✅
 

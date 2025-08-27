@@ -1,28 +1,31 @@
-# Admin Invitation Flow Documentation
+# Admin Account Creation System Documentation
 
 ## Overview
 
-The admin invitation flow allows Super Administrators to invite and assign church administrators (Pastors and Admins) to local churches. This system handles both existing and new users seamlessly.
+**IMPORTANT:** This document describes the UPDATED admin invitation system that uses password generation instead of email invitations. For complete details, see [Admin Invitation Workflow](./admin-invitation-workflow.md).
 
-## Process Flow
+The admin invitation system allows Super Administrators to create and assign church administrators (Pastors and Admins) to local churches. The system generates temporary passwords that must be changed on first login, providing better security control and immediate access.
+
+## Updated Process Flow
 
 ```mermaid
 flowchart TD
-    A[Super Admin initiates invite] --> B{User exists?}
-    B -->|Yes| C[Add membership]
-    B -->|No| D[Create user stub]
-    D --> E[Generate magic link]
-    E --> F[Send invitation email]
-    C --> G[Send notification email]
-    F --> H[User clicks link]
-    H --> I[Verify token]
-    I --> J[Complete profile]
-    J --> K[Access dashboard]
+    A[Super Admin initiates account creation] --> B[Fill invitation form]
+    B --> C[Generate temporary password]
+    C --> D[Create user account with mustChangePassword flag]
+    D --> E[Create membership with specified role]
+    E --> F[Display credentials in modal]
+    F --> G[Super Admin distributes credentials securely]
+    G --> H[Admin receives credentials]
+    H --> I[Admin logs in with temporary password]
+    I --> J[Forced redirect to change password]
+    J --> K[Admin sets new secure password]
+    K --> L[Access dashboard based on role]
 ```
 
 ## Implementation Details
 
-### 1. Invitation Initiation
+### 1. Admin Account Creation
 
 Super Admin accesses: `/super/local-churches/[id]/admins`
 
@@ -31,104 +34,148 @@ Form fields:
 - Name (optional)
 - Role (PASTOR or ADMIN)
 
-### 2. User Creation Logic
+**New Workflow**: Instead of sending emails, the system generates temporary passwords and displays them in a secure modal for manual distribution.
 
-#### Existing User
+### 2. Updated User Creation Logic
+
+#### New System (Password Generation)
 ```typescript
-if (userExists) {
-  // Add/update membership
-  await db.membership.upsert({
-    where: { userId_localChurchId: {...} },
-    create: { userId, localChurchId, role },
-    update: { role }
-  })
+export async function inviteAdmin(localChurchId: string, formData: FormData): Promise<{
+  success: boolean
+  credentials?: { email: string; password: string }
+  error?: string
+}> {
+  // Generate secure temporary password
+  const temporaryPassword = generateTemporaryPassword() // e.g., "Swift-Mountain-847"
+  const passwordHash = await bcrypt.hash(temporaryPassword, 12)
   
-  // Send notification
-  await sendRoleGrantEmail(user.email, role, localChurch)
-}
-```
-
-#### New User
-```typescript
-if (!userExists) {
-  // Create user stub
+  // Create user account
   const user = await db.user.create({
     data: {
       email,
       name,
       role,
-      tenantId: church.id
+      tenantId: church.id,
+      passwordHash,
+      mustChangePassword: true // Force password change on first login
     }
   })
   
-  // Create verification token
-  const token = generateToken()
-  await db.verificationToken.create({
-    data: { identifier: email, token, expires }
+  // Create membership
+  await db.membership.create({
+    data: {
+      userId: user.id,
+      localChurchId,
+      role
+    }
   })
   
-  // Send invitation
-  await sendInvitationEmail(email, token, role, localChurch)
+  // Return credentials for secure display
+  return {
+    success: true,
+    credentials: {
+      email: user.email,
+      password: temporaryPassword
+    }
+  }
 }
 ```
 
-### 3. Email Templates
+### 3. Password Generation System
 
-#### Invitation Email (New User)
-```html
-Subject: Invitation to join [LocalChurch] as [Role]
-
-You have been invited to join [LocalChurch] as a church [role].
-
-Click the link below to accept the invitation and set up your account:
-[Accept Invitation Button -> Magic Link URL]
-
-This invitation link will expire in 24 hours.
-```
-
-#### Notification Email (Existing User)
-```html
-Subject: New role assigned at [LocalChurch]
-
-You have been granted [Role] access to [LocalChurch].
-
-You can now access administrative features when you sign in.
-[Sign In Button]
-```
-
-### 4. Token Verification
-
-Magic link format:
-```
-/auth/verify-request?token=TOKEN&email=EMAIL
-```
-
-Verification process:
-1. Validate token exists and not expired
-2. Match token with email
-3. Mark email as verified
-4. Delete used token
-5. Create session
-6. Redirect to dashboard
-
-### 5. Membership Management
-
-#### Adding Admin
+#### Temporary Password Format
 ```typescript
-export async function inviteAdmin(localChurchId: string, data: InviteData) {
+// Generates readable passwords like: "Swift-Mountain-847"
+export function generateTemporaryPassword(): string {
+  const adjectives = ['Swift', 'Bright', 'Clear', 'Strong', ...]
+  const nouns = ['River', 'Mountain', 'Eagle', 'Lion', ...]
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
+  const noun = nouns[Math.floor(Math.random() * nouns.length)]
+  const number = Math.floor(Math.random() * 900) + 100
+  return `${adjective}-${noun}-${number}`
+}
+```
+
+#### Credentials Display
+The system shows generated credentials in a secure modal with:
+- Email address
+- Temporary password
+- Copy functionality for both individual fields and combined credentials
+- Security warning about password change requirement
+- One-time display (credentials not shown again)
+
+### 4. First Login Process
+
+#### Forced Password Change Flow
+1. Admin receives credentials from Super Admin
+2. Admin logs in at `/auth/signin` with temporary password
+3. Middleware detects `mustChangePassword: true` flag
+4. Automatic redirect to `/auth/change-password`
+5. Admin cannot access any other routes until password is changed
+6. After password change, `mustChangePassword` is set to `false`
+7. Role-based redirect to appropriate dashboard:
+   - SUPER_ADMIN → `/super`
+   - ADMIN/PASTOR → `/admin`
+   - VIP → `/vip`
+   - Others → `/dashboard`
+
+### 5. Updated Membership Management
+
+#### Creating Admin Account
+```typescript
+export async function inviteAdmin(localChurchId: string, formData: FormData) {
   // Validation
-  const validated = inviteAdminSchema.parse(data)
+  const validated = inviteAdminSchema.parse({
+    email: formData.get('email'),
+    name: formData.get('name'),
+    role: formData.get('role')
+  })
   
   // Permission check
   await requireRole(UserRole.SUPER_ADMIN)
   
-  // Process invitation
-  const user = await findOrCreateUser(validated.email)
-  await createMembership(user.id, localChurchId, validated.role)
-  await sendAppropriateEmail(user, localChurch, validated.role)
+  // Check for existing user
+  const existingUser = await db.user.findUnique({
+    where: { email: validated.email }
+  })
+  if (existingUser) {
+    return { success: false, error: "User with this email already exists" }
+  }
+  
+  // Generate temporary password and create account
+  const temporaryPassword = generateTemporaryPassword()
+  const passwordHash = await bcrypt.hash(temporaryPassword, 12)
+  
+  // Create user and membership
+  const user = await db.user.create({
+    data: {
+      email: validated.email,
+      name: validated.name,
+      role: validated.role,
+      tenantId: localChurch.church.id,
+      passwordHash,
+      mustChangePassword: true
+    }
+  })
+  
+  await db.membership.create({
+    data: {
+      userId: user.id,
+      localChurchId,
+      role: validated.role
+    }
+  })
   
   // Audit log
-  await logAdminGrant(actor, user, localChurch, validated.role)
+  await logAdminGrant(currentUser.id, user, localChurch, validated.role)
+  
+  return {
+    success: true,
+    credentials: {
+      email: user.email,
+      password: temporaryPassword
+    }
+  }
 }
 ```
 
@@ -150,21 +197,22 @@ export async function removeAdmin(membershipId: string) {
 
 ## Security Considerations
 
-### Token Security
-- Tokens are cryptographically random (32 bytes)
-- Tokens expire after 24 hours
-- Tokens are single-use
-- Tokens are deleted after use
+### Password Security
+- Temporary passwords are cryptographically secure but human-readable
+- Passwords are hashed with bcrypt (strength: 12)
+- `mustChangePassword` flag forces immediate password change
+- Users cannot access system until password is changed
 
 ### Permission Checks
-- Only SUPER_ADMIN can invite admins
+- Only SUPER_ADMIN can create admin accounts
 - Role assignment limited to PASTOR and ADMIN
-- Cannot assign SUPER_ADMIN role via invitation
+- Cannot assign SUPER_ADMIN role via this system
 
-### Email Validation
-- Email format validated with Zod
-- Duplicate invitations are idempotent
-- Failed email sends are logged
+### Access Control
+- Middleware enforces password change before system access
+- Credentials are displayed only once in secure modal
+- No email dependency eliminates delivery vulnerabilities
+- Direct credential distribution provides better control
 
 ## Database Schema
 
@@ -172,13 +220,15 @@ export async function removeAdmin(membershipId: string) {
 
 ```prisma
 model User {
-  id            String
-  email         String @unique
-  name          String?
-  role          UserRole
-  tenantId      String?
-  emailVerified DateTime?
-  memberships   Membership[]
+  id                String
+  email             String @unique
+  name              String?
+  role              UserRole
+  tenantId          String?
+  passwordHash      String?
+  mustChangePassword Boolean @default(true)
+  emailVerified     DateTime?
+  memberships       Membership[]
 }
 
 model Membership {
@@ -190,31 +240,27 @@ model Membership {
   @@unique([userId, localChurchId])
 }
 
-model VerificationToken {
-  identifier String
-  token      String @unique
-  expires    DateTime
-  
-  @@unique([identifier, token])
-}
+// VerificationToken table no longer used for admin invitations
+// but maintained for other authentication flows
 ```
 
 ## Audit Trail
 
-All admin invitations are logged:
+All admin account creations are logged:
 
 ```typescript
 await db.auditLog.create({
   data: {
     actorId: superAdmin.id,
-    action: 'GRANT_ROLE',
-    entity: 'Membership',
+    action: 'CREATE_ADMIN_ACCOUNT',
+    entity: 'User',
     entityId: user.id,
     localChurchId: localChurch.id,
     meta: {
       email: user.email,
       role: grantedRole,
-      invitationSent: true
+      passwordGenerated: true,
+      mustChangePassword: true
     }
   }
 })
@@ -227,51 +273,63 @@ await db.auditLog.create({
 | Invalid email | VALIDATION_ERROR | Correct email format |
 | Church not found | NOT_FOUND | Verify church exists |
 | Insufficient permissions | FORBIDDEN | Contact Super Admin |
-| Email service failure | SERVER_ERROR | Retry invitation |
-| Expired token | EXPIRED_TOKEN | Request new invitation |
+| Email already exists | DUPLICATE_ENTRY | Check existing accounts |
+| Password generation failure | SERVER_ERROR | Retry account creation |
 
 ## UI Components
 
 ### Admin List View
 - Display current admins with roles
-- Show invitation pending status
+- Show account status (active, password change required)
 - Remove admin button (with confirmation)
 
-### Invitation Form
+### Account Creation Form
 - Email input with validation
 - Role selector (PASTOR/ADMIN)
 - Optional name field
-- Send invitation button
+- Create Admin Account button
 
 ### Success States
-- "Invitation sent successfully"
+- "Admin account created successfully"
+- Credentials display modal with copy functionality
 - "Admin added to church"
-- "Role updated successfully"
 
 ## Testing
 
 ### Unit Tests
 ```typescript
-describe('Admin Invitation', () => {
-  it('should create user stub for new email')
-  it('should add membership for existing user')
-  it('should send appropriate email type')
+describe('Admin Account Creation', () => {
+  it('should generate secure temporary password')
+  it('should create user with mustChangePassword flag')
+  it('should create membership for new admin')
   it('should prevent non-super-admin access')
-  it('should handle duplicate invitations')
+  it('should prevent duplicate email creation')
+  it('should return credentials for display')
 })
 ```
 
 ### E2E Tests
 ```typescript
-test('Complete invitation flow', async ({ page }) => {
-  // Super admin invites new admin
-  await inviteAdmin('admin@new.com', 'ADMIN')
+test('Complete admin creation and first login flow', async ({ page }) => {
+  // Super admin creates new admin account
+  const credentials = await createAdminAccount('admin@new.com', 'ADMIN')
   
-  // Recipient clicks magic link
-  await page.goto(magicLinkUrl)
+  // New admin logs in with temporary password
+  await page.goto('/auth/signin')
+  await page.fill('#email', credentials.email)
+  await page.fill('#password', credentials.password)
+  await page.click('button[type="submit"]')
   
-  // Verify redirected to dashboard
-  await expect(page).toHaveURL('/dashboard')
+  // Verify forced redirect to change password
+  await expect(page).toHaveURL('/auth/change-password')
+  
+  // Admin changes password
+  await page.fill('#newPassword', 'NewSecurePassword123!')
+  await page.fill('#confirmPassword', 'NewSecurePassword123!')
+  await page.click('button[type="submit"]')
+  
+  // Verify redirected to admin dashboard
+  await expect(page).toHaveURL('/admin')
   
   // Verify has admin access
   await page.goto('/admin/members')
@@ -284,16 +342,31 @@ test('Complete invitation flow', async ({ page }) => {
 1. **Always validate email format** before creating users
 2. **Use database transactions** for user + membership creation
 3. **Log all role assignments** for audit purposes
-4. **Set appropriate token expiry** (24 hours recommended)
-5. **Provide clear email templates** with church branding
-6. **Handle edge cases gracefully** (expired tokens, duplicate invites)
-7. **Test email delivery** in staging environment
+4. **Distribute credentials securely** through encrypted channels
+5. **Emphasize temporary password nature** to recipients
+6. **Handle edge cases gracefully** (duplicate emails, generation failures)
+7. **Test password generation variety** to ensure randomness
+8. **Verify forced password change flow** in all environments
 
 ## Future Enhancements
 
-- Bulk invitation upload (CSV)
-- Invitation tracking dashboard
-- Customizable email templates per church
-- Role-specific onboarding flows
+- Bulk admin account creation (CSV upload)
+- Admin account management dashboard
+- Configurable password complexity requirements
+- Role-specific onboarding flows after password change
 - Automatic role expiration
-- Delegate invitation ability to PASTOR role
+- Delegate account creation ability to PASTOR role
+- Integration with secure messaging systems for credential distribution
+- Password strength analysis and recommendations
+
+## Migration from Email-Based System
+
+This system replaces the previous email-based invitation system. Key benefits:
+
+- **Eliminated Dependencies**: No reliance on email delivery or DNS
+- **Improved Security**: Direct password control and forced changes
+- **Better User Experience**: Immediate access with simple login flow
+- **Enhanced Audit Trail**: Complete visibility into account creation
+- **Reduced Support Issues**: No email delivery problems or expired tokens
+
+For complete implementation details, see [Admin Invitation Workflow](./admin-invitation-workflow.md).

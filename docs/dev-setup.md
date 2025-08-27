@@ -118,6 +118,8 @@ This creates:
 - **Members**: `member1@test.com` through `member10@test.com`
 - Password for all test accounts: `Hpci!Test2025`
 
+**Note**: In production, Super Admins create admin accounts using the password generation system. See [Admin Account Creation](./admin-invitation-workflow.md) for the production workflow.
+
 #### Database Health Check
 ```bash
 # Verify database connection and schema
