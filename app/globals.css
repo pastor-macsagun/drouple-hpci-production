@@ -11,14 +11,17 @@
     --color-ink: 17 24 39;           /* slate-900-ish */
     --color-ink-muted: 71 85 105;    /* slate-600-ish */
 
-    /* Accent */
-    --color-accent: 37 99 235;       /* blue-600 */
+    /* Sacred Blue + Gold Brand */
+    --color-sacred-blue: 30 124 232;  /* Sacred Blue #1e7ce8 */
+    --color-soft-gold: 229 196 83;   /* Soft Gold #e5c453 */
+    --color-accent: 30 124 232;      /* Sacred Blue as primary accent */
     --color-accent-ink: 255 255 255; /* on accent */
 
-    /* State */
-    --color-success: 22 163 74;
-    --color-warning: 202 138 4;
-    --color-danger: 220 38 38;
+    /* State colors using brand palette */
+    --color-success: 22 163 74;      /* Keep green for success */
+    --color-warning: 43 74% 66%;     /* Soft gold for warnings */
+    --color-danger: 220 38 38;       /* Keep red for danger */
+    --color-info: 217 91% 48%;       /* Sacred blue for info */
 
     /* Borders & outlines */
     --color-border: 226 232 240;     /* slate-200-ish */
@@ -52,29 +55,29 @@
     --duration-slow: 250ms;
 
     /* Legacy shadcn compatibility - convert RGB to HSL */
-    --background: 0 0% 100%;              /* white */
-    --foreground: 222 84% 4.9%;           /* slate-900 */
+    --background: 0 0% 100%;              /* Pure White */
+    --foreground: 220 13% 18%;           /* Dark Gray */
     --card: 210 40% 98%;                  /* slate-50 */
     --card-foreground: 222 84% 4.9%;     /* slate-900 */
     --popover: 210 40% 98%;               /* slate-50 */
     --popover-foreground: 222 84% 4.9%;  /* slate-900 */
-    --primary: 221 83% 53%;               /* blue-600 */
+    --primary: 217 91% 48%;               /* Sacred Blue #1e7ce8 */
     --primary-foreground: 210 40% 98%;   /* white */
-    --secondary: 214 32% 91%;             /* slate-100 */
+    --secondary: 43 74% 66%;              /* Soft Gold #e5c453 */
     --secondary-foreground: 222 84% 4.9%; /* slate-900 */
-    --muted: 214 32% 91%;                 /* slate-100 */
+    --muted: 220 14% 96%;                 /* Light Gray */
     --muted-foreground: 215 16% 47%;     /* slate-600 */
-    --accent: 214 32% 91%;                /* slate-100 */
+    --accent: 217 19% 94%;                /* Light Blue */
     --accent-foreground: 222 84% 4.9%;   /* slate-900 */
     --destructive: 0 84% 60%;             /* red-500 */
     --destructive-foreground: 210 40% 98%; /* white */
     --border: 214 32% 91%;                /* slate-200 */
     --input: 214 32% 91%;                 /* slate-200 */
-    --ring: 221 83% 53%;                  /* blue-600 */
+    --ring: 217 91% 48%;                  /* Sacred Blue */
     --radius: var(--radius-md);
   }
 
-  [data-theme="dark"] {
+  .dark {
     --color-bg: 9 9 11;             /* zinc-950-ish */
     --color-surface: 17 17 20;      /* deep surface */
     --color-elevated: 24 24 27;     /* zinc-800-ish */
@@ -86,18 +89,24 @@
     --shadow-md: 0 4px 12px rgba(0,0,0,0.45);
     --shadow-lg: 0 10px 24px rgba(0,0,0,0.55);
 
+    /* Sacred Blue + Gold Brand - Dark Mode */
+    --color-sacred-blue: 217 91% 60%;    /* Bright Sacred Blue */
+    --color-soft-gold: 43 74% 55%;       /* Muted Gold */
+    --color-accent: 217 91% 60;          /* Bright Sacred Blue */
+    
     /* Legacy shadcn compatibility for dark mode - convert RGB to HSL */
-    --background: 224 71% 4%;             /* zinc-950 */
-    --foreground: 213 31% 91%;            /* zinc-100 */
+    --background: 220 26% 11%;           /* Deep Dark */
+    --foreground: 210 20% 98%;           /* Off White */
     --card: 222 84% 4.9%;                 /* zinc-900 */
     --card-foreground: 213 31% 91%;       /* zinc-100 */
     --popover: 222 84% 4.9%;              /* zinc-900 */
     --popover-foreground: 213 31% 91%;    /* zinc-100 */
-    --secondary: 215 28% 17%;             /* zinc-800 */
+    --primary: 217 91% 60%;               /* Bright Sacred Blue */
+    --secondary: 43 74% 55%;              /* Muted Gold */
     --secondary-foreground: 213 31% 91%;  /* zinc-100 */
-    --muted: 215 28% 17%;                 /* zinc-800 */
+    --muted: 220 26% 18%;                 /* Dark Gray */
     --muted-foreground: 240 5% 65%;       /* zinc-400 */
-    --accent: 215 28% 17%;                /* zinc-800 */
+    --accent: 220 26% 20%;                /* Subtle Accent */
     --accent-foreground: 213 31% 91%;     /* zinc-100 */
     --border: 215 28% 17%;                /* zinc-800 */
     --input: 215 28% 17%;                 /* zinc-800 */
@@ -240,6 +249,16 @@
   .badge-danger {
     @apply bg-danger/10 text-danger;
   }
+  
+  .badge-info {
+    @apply bg-info/10 text-info;
+  }
+
+  /* Brand color utilities */
+  .text-info { color: hsl(var(--color-info)); }
+  .bg-info { background-color: hsl(var(--color-info)); }
+  .text-warning { color: hsl(var(--color-warning)); }
+  .bg-warning { background-color: hsl(var(--color-warning)); }
   
   /* Form Patterns */
   .form-group {

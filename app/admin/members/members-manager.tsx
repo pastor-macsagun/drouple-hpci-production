@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DataTable } from '@/components/patterns/data-table'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/ui/use-toast'
 import { Edit, Plus, Search, RefreshCw, UserX, Copy, Download } from 'lucide-react'
@@ -325,71 +325,91 @@ export function MembersManager({
         </Button>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Church</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {members.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell className="font-medium">
-                  {member.name || 'Unnamed'}
-                  {member.mustChangePassword && (
-                    <Badge className="ml-2" variant="secondary">Password Reset Required</Badge>
-                  )}
-                </TableCell>
-                <TableCell>{member.email}</TableCell>
-                <TableCell>
-                  <Badge className={getRoleBadgeColor(member.role)}>
-                    {member.role}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {member.memberships[0]?.localChurch?.name || '-'}
-                </TableCell>
-                <TableCell>
-                  <Badge className={getStatusBadgeColor(member.memberStatus)}>
-                    {member.memberStatus}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right space-x-2">
+      <DataTable
+        data={members}
+        columns={[
+          {
+            key: 'name',
+            header: 'Name',
+            mobileLabel: 'Name',
+            cell: (member) => (
+              <div>
+                {member.name || 'Unnamed'}
+                {member.mustChangePassword && (
+                  <Badge className="ml-2" variant="secondary">Reset Required</Badge>
+                )}
+              </div>
+            )
+          },
+          {
+            key: 'email',
+            header: 'Email',
+            mobileLabel: 'Email',
+            cell: (member) => member.email
+          },
+          {
+            key: 'role',
+            header: 'Role',
+            mobileLabel: 'Role',
+            cell: (member) => (
+              <Badge className={getRoleBadgeColor(member.role)}>
+                {member.role}
+              </Badge>
+            )
+          },
+          {
+            key: 'church',
+            header: 'Church',
+            mobileLabel: 'Church',
+            cell: (member) => member.memberships[0]?.localChurch?.name || '-'
+          },
+          {
+            key: 'status',
+            header: 'Status',
+            mobileLabel: 'Status',
+            cell: (member) => (
+              <Badge className={getStatusBadgeColor(member.memberStatus)}>
+                {member.memberStatus}
+              </Badge>
+            )
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            mobileLabel: 'Actions',
+            className: 'text-right',
+            cell: (member) => (
+              <div className="space-x-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => openEditDialog(member)}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleResetPassword(member.id)}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+                {member.memberStatus !== 'INACTIVE' && (
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => openEditDialog(member)}
+                    onClick={() => handleDeactivate(member.id)}
                   >
-                    <Edit className="h-4 w-4" />
+                    <UserX className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleResetPassword(member.id)}
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                  </Button>
-                  {member.memberStatus !== 'INACTIVE' && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDeactivate(member.id)}
-                    >
-                      <UserX className="h-4 w-4" />
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+                )}
+              </div>
+            )
+          }
+        ]}
+        emptyState={<div className="text-center py-8 text-muted-foreground">No members found</div>}
+        ariaLabel="Members table"
+      />
 
       {hasMore && (
         <div className="flex justify-center">
