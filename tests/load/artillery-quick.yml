@@ -1,0 +1,29 @@
+config:
+  target: "{{ $processEnvironment.BASE_URL || 'http://localhost:3000' }}"
+  phases:
+    - duration: 10 # Quick 10 second test
+      arrivalRate: 1
+      rampTo: 5
+  defaults:
+    headers:
+      User-Agent: "Artillery Load Test (Quick)"
+  ensure:
+    p95: 2000 # More lenient for quick test
+    errorRate: 5 # More lenient for quick test
+
+scenarios:
+  - name: "Quick Homepage Test"
+    weight: 50
+    flow:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: [200, 302] # Allow redirects
+      
+  - name: "Quick Sign-in Page Test"  
+    weight: 50
+    flow:
+      - get:
+          url: "/auth/signin"
+          expect:
+            - statusCode: 200

@@ -51,7 +51,7 @@ function SignInContent() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
@@ -107,20 +107,20 @@ function SignInContent() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }
 
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <main className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Loading...</CardTitle>
           </CardHeader>
         </Card>
-      </div>
+      </main>
     }>
       <SignInContent />
     </Suspense>

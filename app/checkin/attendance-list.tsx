@@ -132,6 +132,8 @@ export function AttendanceList({ serviceId, serviceName }: AttendanceListProps) 
           <DataTable
             data={attendance}
             columns={columns}
+            caption={`Service attendance list for ${serviceName} showing ${attendance.length} attendees`}
+            ariaLabel="Service attendance data"
             emptyState={
               <div className="text-center py-8 text-muted-foreground">
                 No one has checked in yet

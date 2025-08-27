@@ -15,6 +15,8 @@ interface DataTableProps<T> {
   columns: Column<T>[];
   emptyState?: ReactNode;
   className?: string;
+  caption?: string;
+  ariaLabel?: string;
 }
 
 export function DataTable<T extends { id?: string | number }>({
@@ -22,6 +24,8 @@ export function DataTable<T extends { id?: string | number }>({
   columns,
   emptyState,
   className,
+  caption,
+  ariaLabel,
 }: DataTableProps<T>) {
   if (data.length === 0 && emptyState) {
     return <>{emptyState}</>;
@@ -29,12 +33,14 @@ export function DataTable<T extends { id?: string | number }>({
 
   return (
     <div className={cn("table-container", className)}>
-      <table className="w-full">
+      <table className="w-full" aria-label={ariaLabel}>
+        {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
           <tr className="border-b">
             {columns.map((column) => (
               <th
                 key={column.key}
+                scope="col"
                 className={cn(
                   "px-4 py-3 text-left text-sm font-medium text-muted-foreground",
                   column.className

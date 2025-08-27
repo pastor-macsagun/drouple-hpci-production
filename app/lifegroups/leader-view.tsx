@@ -166,6 +166,7 @@ export function LeaderView({ lifeGroupId, lifeGroupName }: LeaderViewProps) {
             size="sm"
             variant="outline"
             onClick={() => handleApprove(item.id)}
+            aria-label={`Approve request from ${item.user.name || item.user.email}`}
           >
             <Check className="h-4 w-4" />
           </Button>
@@ -173,6 +174,7 @@ export function LeaderView({ lifeGroupId, lifeGroupName }: LeaderViewProps) {
             size="sm"
             variant="outline"
             onClick={() => handleReject(item.id)}
+            aria-label={`Reject request from ${item.user.name || item.user.email}`}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -238,6 +240,8 @@ export function LeaderView({ lifeGroupId, lifeGroupName }: LeaderViewProps) {
             <DataTable
               data={members}
               columns={memberColumns}
+              caption={`Life group members for ${lifeGroupName} with ${members.length} members`}
+              ariaLabel="Life group members list"
               emptyState={
                 <div className="text-center py-8 text-muted-foreground">
                   No members yet
@@ -250,6 +254,8 @@ export function LeaderView({ lifeGroupId, lifeGroupName }: LeaderViewProps) {
             <DataTable
               data={requests}
               columns={requestColumns}
+              caption={`Join requests for ${lifeGroupName} with ${requests.length} pending requests`}
+              ariaLabel="Life group join requests"
               emptyState={
                 <div className="text-center py-8 text-muted-foreground">
                   No pending requests

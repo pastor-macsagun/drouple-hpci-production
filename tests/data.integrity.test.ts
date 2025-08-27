@@ -161,23 +161,26 @@ describe('Data Integrity Constraints', () => {
         SELECT 
           tc.constraint_name,
           tc.constraint_type,
-          kcu.column_name
+          array_agg(kcu.column_name ORDER BY kcu.ordinal_position) as columns
         FROM information_schema.table_constraints tc
         JOIN information_schema.key_column_usage kcu 
           ON tc.constraint_name = kcu.constraint_name
         WHERE tc.table_name = 'checkins' 
           AND tc.constraint_type = 'UNIQUE'
-        ORDER BY kcu.ordinal_position;
+        GROUP BY tc.constraint_name, tc.constraint_type;
       `
       
       const results = await prisma.$queryRawUnsafe(query) as any[]
-      const hasUniqueConstraint = results.some(r => 
-        r.column_name === 'serviceId' || r.column_name === 'userId'
-      )
+      const hasCompositeConstraint = results.some((r: any) => {
+        const columns = r.columns || []
+        return columns.includes('serviceId') && columns.includes('userId')
+      })
       
-      if (!hasUniqueConstraint) {
+      if (!hasCompositeConstraint) {
         console.warn('⚠️ Missing unique constraint on checkins(serviceId, userId)')
       }
+      
+      expect(hasCompositeConstraint).toBeTruthy()
     })
 
     it('should have index on User.tenantId', async () => {

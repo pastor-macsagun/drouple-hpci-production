@@ -28,6 +28,8 @@ model User {
   zipCode                 String?
   emergencyContact        String?
   emergencyPhone          String?
+  twoFactorEnabled        Boolean                  @default(false)
+  twoFactorSecret         String?                  @db.VarChar(128)
   joinedAt                DateTime                 @default(now())
   profileVisibility       ProfileVisibility        @default(MEMBERS)
   allowContact            Boolean                  @default(true)

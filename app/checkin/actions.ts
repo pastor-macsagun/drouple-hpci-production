@@ -103,8 +103,14 @@ export async function checkIn(serviceId: string, isNewBeliever = false) {
     revalidatePath('/admin/services')
     
     return { success: true, data: checkin }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Check-in error:', error)
+    
+    // Handle unique constraint violation
+    if (error?.code === 'P2002') {
+      return { success: false, error: 'Already checked in for this service' }
+    }
+    
     return { success: false, error: 'Failed to check in' }
   }
 }

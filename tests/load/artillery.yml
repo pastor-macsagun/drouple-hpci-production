@@ -1,0 +1,75 @@
+config:
+  target: "{{ $processEnvironment.BASE_URL || 'http://localhost:3000' }}"
+  phases:
+    - duration: 120 # Ramp up for 2 minutes
+      arrivalRate: 1
+      rampTo: 50
+    - duration: 120 # Steady load for 2 minutes
+      arrivalRate: 50
+  defaults:
+    headers:
+      User-Agent: "Artillery Load Test"
+  ensure:
+    p95: 1000 # 95th percentile latency must be under 1000ms
+    errorRate: 1 # Error rate must be under 1%
+  processor: "./artillery-functions.js"
+
+scenarios:
+  - name: "Anonymous to Sign-in Flow"
+    weight: 30
+    flow:
+      - get:
+          url: "/"
+          capture:
+            - json: "$.title" 
+              as: "title"
+              default: "Homepage"
+      - get:
+          url: "/auth/signin"
+          expect:
+            - statusCode: 200
+      - post:
+          url: "/api/auth/callback/credentials"
+          form:
+            email: "{{ $processEnvironment.SEED_EMAIL || 'member1@test.com' }}"
+            password: "{{ $processEnvironment.SEED_PASSWORD || 'Hpci!Test2025' }}"
+            redirect: "false"
+          expect:
+            - statusCode: [200, 302, 400] # Allow various auth responses
+      - think: 2
+
+  - name: "Member Check-in Flow"
+    weight: 40
+    beforeScenario: "authenticateUser"
+    flow:
+      - get:
+          url: "/checkin"
+          expect:
+            - statusCode: 200
+      - function: "getTodayService"
+      - post:
+          url: "/checkin"
+          form:
+            serviceId: "{{ serviceId }}"
+            isNewBeliever: "false"
+          expect:
+            - statusCode: [200, 302, 400] # Allow success or already checked in
+      - think: 1
+
+  - name: "Event RSVP Flow"
+    weight: 30  
+    beforeScenario: "authenticateUser"
+    flow:
+      - get:
+          url: "/events"
+          expect:
+            - statusCode: 200
+      - function: "getFirstEvent"
+      - post:
+          url: "/events/{{ eventId }}/rsvp"
+          form:
+            attending: "true"
+          ifTrue: "eventId"
+          expect:
+            - statusCode: [200, 302, 400] # Allow success, redirect, or capacity full
+      - think: 1

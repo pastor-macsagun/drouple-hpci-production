@@ -1,40 +1,7 @@
 [
   {
-    "page": "Home",
-    "path": "/",
-    "memberSection": [],
-    "adminSection": [],
-    "superAdminSection": [],
-    "bottomSection": [],
-    "issues": [
-      "CRITICAL: No sidebar found on page"
-    ]
-  },
-  {
-    "page": "Dashboard",
-    "path": "/dashboard",
-    "memberSection": [],
-    "adminSection": [],
-    "superAdminSection": [],
-    "bottomSection": [],
-    "issues": [
-      "CRITICAL: No sidebar found on page"
-    ]
-  },
-  {
-    "page": "Check-In",
-    "path": "/checkin",
-    "memberSection": [],
-    "adminSection": [],
-    "superAdminSection": [],
-    "bottomSection": [],
-    "issues": [
-      "CRITICAL: No sidebar found on page"
-    ]
-  },
-  {
-    "page": "Events",
-    "path": "/events",
+    "page": "Admin LifeGroups",
+    "path": "/admin/lifegroups",
     "memberSection": [
       "Dashboard",
       "Check-In",
@@ -42,16 +9,21 @@
       "LifeGroups",
       "Pathways"
     ],
-    "adminSection": [],
-    "superAdminSection": [],
+    "adminSection": [
+      "Admin Services",
+      "Admin Events",
+      "Admin LifeGroups",
+      "Admin Pathways"
+    ],
+    "superAdminSection": [
+      "Churches",
+      "Local Churches"
+    ],
     "bottomSection": [
       "Profile",
       "Sign Out"
     ],
-    "issues": [
-      "Missing: Entire Administration Section",
-      "Missing: Entire Super Admin Section"
-    ],
-    "screenshot": "docs/verification/screenshots/sidebar-events.png"
+    "issues": [],
+    "screenshot": "docs/verification/screenshots/sidebar-admin-lifegroups.png"
   }
 ]

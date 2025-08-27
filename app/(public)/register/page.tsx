@@ -23,7 +23,7 @@ export default async function RegisterPage() {
   })
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
+    <main className="min-h-screen flex items-center justify-center p-4 bg-surface">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
@@ -128,6 +128,6 @@ export default async function RegisterPage() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   )
 }
