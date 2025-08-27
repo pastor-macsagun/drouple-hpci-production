@@ -15,8 +15,13 @@ export async function GET() {
       status: "healthy",
       time: new Date().toISOString(),
       service: "hpci-chms",
-      db: "up",
-      dbResponseTime: `${healthResult.latencyMs}ms`,
+      db: {
+        status: "up",
+        responseTime: `${healthResult.latencyMs}ms`,
+        connectionPooling: healthResult.connectionInfo?.pooled ? "enabled" : "disabled",
+        activeConnections: healthResult.connectionInfo?.activeConnections,
+        serverVersion: healthResult.connectionInfo?.serverVersion
+      },
       version: process.env.npm_package_version || "unknown"
     });
   } catch (error) {

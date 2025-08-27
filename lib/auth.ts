@@ -119,7 +119,17 @@ export const authOptions: any = {
             mustChangePassword: user.mustChangePassword
           }
         } catch (error) {
-          authLogger.error("Login error", { error, email })
+          authLogger.error("Login error", { 
+            error: error instanceof Error ? { 
+              message: error.message, 
+              stack: error.stack,
+              name: error.name 
+            } : error, 
+            email,
+            timestamp: new Date().toISOString(),
+            userAgent: (req as any)?.headers?.["user-agent"],
+            ip: ipAddress
+          })
           throw error
         }
       }
