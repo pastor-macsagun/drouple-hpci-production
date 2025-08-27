@@ -296,8 +296,8 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-xl md:text-2xl text-[color:rgb(var(--color-ink-muted))] max-w-4xl mx-auto leading-relaxed font-medium">
-              Drouple isn't another business CRM trying to squeeze church life into corporate templates.<br className="hidden md:block" />
-              It's purpose-built for ministry by people who understand the unique rhythms of church community.
+              Drouple isn&apos;t another business CRM trying to squeeze church life into corporate templates.<br className="hidden md:block" />
+              It&apos;s purpose-built for ministry by people who understand the unique rhythms of church community.
             </p>
           </div>
           
@@ -334,8 +334,8 @@ export default function LandingPage() {
                   <div>
                     <h3 className="text-xl font-bold text-[color:rgb(var(--color-ink))] mb-3">Security You Can Trust</h3>
                     <p className="text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
-                      Multi-tenant architecture keeps each church's data completely isolated. 
-                      Enterprise-grade security protects your community's sensitive information.
+                      Multi-tenant architecture keeps each church&apos;s data completely isolated. 
+                      Enterprise-grade security protects your community&apos;s sensitive information.
                     </p>
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export default function LandingPage() {
                     <h3 className="text-xl font-bold text-[color:rgb(var(--color-ink))] mb-3">Focus on People</h3>
                     <p className="text-[color:rgb(var(--color-ink-muted))] leading-relaxed">
                       Create margin so pastors, leaders, and teams spend less time on administrative work 
-                      and more time doing what they're called to do: caring for people and building God's kingdom.
+                      and more time doing what they&apos;re called to do: caring for people and building God&apos;s kingdom.
                     </p>
                   </div>
                 </div>
@@ -369,7 +369,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <blockquote className="text-xl italic text-[color:rgb(var(--color-ink-muted))] mb-8 text-center leading-relaxed font-medium">
-                  "This isn't about efficiency for efficiency's sake. It's about creating margin for what matters most."
+                  &quot;This isn&apos;t about efficiency for efficiency&apos;s sake. It&apos;s about creating margin for what matters most.&quot;
                 </blockquote>
                 <div className="text-center">
                   <div className="font-bold text-lg text-[color:rgb(var(--color-ink))] mb-1">Drouple Team</div>
@@ -407,7 +407,7 @@ export default function LandingPage() {
               <h3 className="text-2xl font-bold text-[color:rgb(var(--color-ink))] mb-4">Member Directory & Profiles</h3>
               <p className="text-[color:rgb(var(--color-ink-muted))] mb-6 text-lg leading-relaxed">
                 Complete member management with secure directories, detailed profiles, and granular privacy controls. 
-                Role-based access ensures members see only what they're authorized to view.
+                Role-based access ensures members see only what they&apos;re authorized to view.
               </p>
               <ul className="text-[color:rgb(var(--color-ink-muted))] space-y-3 text-left">
                 <li className="flex items-center">
@@ -581,7 +581,7 @@ export default function LandingPage() {
               </h3>
               
               <p className="text-lg md:text-xl text-[color:rgb(var(--color-ink-muted))] max-w-4xl mx-auto leading-relaxed mb-12 font-medium">
-                We're not just building another church app. We're creating the <span className="font-bold text-[color:rgb(var(--color-ink))]">most intuitive, powerful, and beautiful</span> mobile church experience ever designed. 
+                We&apos;re not just building another church app. We&apos;re creating the <span className="font-bold text-[color:rgb(var(--color-ink))]">most intuitive, powerful, and beautiful</span> mobile church experience ever designed. 
                 Imagine your entire church ecosystem in your pocket with stunning design and lightning-fast performance.
               </p>
 

@@ -33,8 +33,8 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-xl">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="p-2 bg-accent/10 rounded-xl">
+                  <Users className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="font-semibold">Members</h3>
               </div>
@@ -51,8 +51,8 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-xl">
-                  <Calendar className="h-6 w-6 text-purple-600" />
+                <div className="p-2 bg-accent-secondary/10 rounded-xl">
+                  <Calendar className="h-6 w-6 text-accent-secondary" />
                 </div>
                 <h3 className="font-semibold">Services</h3>
               </div>
@@ -69,8 +69,8 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-xl">
-                  <Heart className="h-6 w-6 text-green-600" />
+                <div className="p-2 bg-success/10 rounded-xl">
+                  <Heart className="h-6 w-6 text-success" />
                 </div>
                 <h3 className="font-semibold">LifeGroups</h3>
               </div>
@@ -87,8 +87,8 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-xl">
-                  <MapPin className="h-6 w-6 text-orange-600" />
+                <div className="p-2 bg-amber-100 rounded-xl">
+                  <MapPin className="h-6 w-6 text-amber-600" />
                 </div>
                 <h3 className="font-semibold">Events</h3>
               </div>
@@ -105,8 +105,8 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-100 rounded-xl">
-                  <Settings className="h-6 w-6 text-indigo-600" />
+                <div className="p-2 bg-accent/10 rounded-xl">
+                  <Settings className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="font-semibold">Pathways</h3>
               </div>
@@ -123,8 +123,8 @@ export default async function AdminDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-xl">
-                  <BarChart3 className="h-6 w-6 text-red-600" />
+                <div className="p-2 bg-danger/10 rounded-xl">
+                  <BarChart3 className="h-6 w-6 text-danger" />
                 </div>
                 <h3 className="font-semibold">Reports</h3>
               </div>

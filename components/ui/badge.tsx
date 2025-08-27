@@ -4,17 +4,27 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+          "border-transparent bg-accent/10 text-accent border-accent/20",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-transparent bg-surface text-ink-muted border-border",
+        info:
+          "border-transparent bg-accent/10 text-accent border-accent/20",
+        success:
+          "border-transparent bg-success/10 text-success border-success/20",
+        warning:
+          "border-transparent bg-amber-50 text-amber-800 border-amber-600/20 dark:bg-amber-900/20 dark:text-amber-200 dark:border-amber-400/20",
+        danger:
+          "border-transparent bg-danger/10 text-danger border-danger/20",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+          "border-transparent bg-danger/10 text-danger border-danger/20",
+        featured:
+          "border-transparent bg-accent text-accent-ink shadow-sm",
+        outline: "text-ink border-border bg-transparent",
       },
     },
     defaultVariants: {

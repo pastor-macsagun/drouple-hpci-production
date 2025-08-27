@@ -21,8 +21,8 @@ describe('HomePage', () => {
     render(Component)
     
     // Check for key brand elements
-    expect(screen.getByText('Drouple — Built for the Church')).toBeDefined()
-    expect(screen.getByText(/Churches struggle with disconnected tools/)).toBeDefined()
+    expect(screen.getByText('Ministry made')).toBeDefined()
+    expect(screen.getByText(/Stop wrestling with spreadsheets and disconnected tools/)).toBeDefined()
     expect(screen.getAllByText('Sign In').length).toBeGreaterThanOrEqual(1)
   })
 })

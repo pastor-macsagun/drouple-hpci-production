@@ -33,8 +33,8 @@ export default async function VipDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-pink-100 rounded-xl">
-                  <Heart className="h-6 w-6 text-pink-600" />
+                <div className="p-2 bg-accent-secondary/10 rounded-xl">
+                  <Heart className="h-6 w-6 text-accent-secondary" />
                 </div>
                 <h3 className="font-semibold">First Timers</h3>
               </div>
@@ -51,8 +51,8 @@ export default async function VipDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-xl">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="p-2 bg-accent/10 rounded-xl">
+                  <Users className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="font-semibold">Members</h3>
               </div>
@@ -69,8 +69,8 @@ export default async function VipDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-xl">
-                  <Calendar className="h-6 w-6 text-orange-600" />
+                <div className="p-2 bg-amber-100 rounded-xl">
+                  <Calendar className="h-6 w-6 text-amber-600" />
                 </div>
                 <h3 className="font-semibold">Events</h3>
               </div>
@@ -87,8 +87,8 @@ export default async function VipDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-xl">
-                  <BookOpen className="h-6 w-6 text-green-600" />
+                <div className="p-2 bg-success/10 rounded-xl">
+                  <BookOpen className="h-6 w-6 text-success" />
                 </div>
                 <h3 className="font-semibold">Discipleship</h3>
               </div>

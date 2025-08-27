@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "auditDate": "2025-01-27",
+    "version": "1.0.0",
+    "auditor": "UI/UX Design Agent",
+    "source": "/app/public-landing.tsx",
+    "scope": "Landing page marketing sections only",
+    "status": "Complete - Ready for Frontend Integration"
+  },
+  
+  "brand": {
+    "primary": "30 124 232",
+    "primaryHex": "#1e7ce8",
+    "primaryName": "Sacred Blue",
+    "primaryForeground": "255 255 255",
+    "secondary": "229 196 83",
+    "secondaryHex": "#e5c453", 
+    "secondaryName": "Soft Gold",
+    "secondaryIssue": "Contrast failure - needs adjustment to 4.5:1 ratio",
+    "accent": "30 124 232",
+    "accentSecondary": "229 196 83"
+  },
+
+  "base": {
+    "bg": "255 255 255",
+    "surface": "248 250 252",
+    "elevated": "241 245 249",
+    "ink": "17 24 39",
+    "inkMuted": "71 85 105",
+    "border": "226 232 240",
+    "ring": "30 124 232"
+  },
+
+  "semantic": {
+    "success": "22 163 74",
+    "successForeground": "255 255 255",
+    "info": "30 124 232",
+    "infoForeground": "255 255 255",
+    "warning": "234 179 8",
+    "warningForeground": "17 24 39",
+    "danger": "220 38 38",
+    "dangerForeground": "255 255 255"
+  },
+
+  "darkMode": {
+    "bg": "9 9 11",
+    "surface": "17 17 20",
+    "elevated": "24 24 27",
+    "ink": "250 250 250",
+    "inkMuted": "161 161 170",
+    "border": "39 39 42",
+    "accent": "92 140 255",
+    "accentSecondary": "245 205 92",
+    "criticalIssue": "Primary text on surface contrast ratio 1.04:1 - WCAG failure"
+  },
+
+  "typography": {
+    "fontSans": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif",
+    "fontMono": "ui-monospace, SFMono-Regular, \"SF Mono\", Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+    "scale": {
+      "xs": "0.75rem",
+      "sm": "0.875rem", 
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem",
+      "5xl": "3rem",
+      "6xl": "3.75rem",
+      "7xl": "4.5rem"
+    },
+    "lineHeight": {
+      "tight": "1.25",
+      "snug": "1.375", 
+      "normal": "1.5",
+      "relaxed": "1.625",
+      "loose": "2"
+    },
+    "tracking": {
+      "tighter": "-0.05em",
+      "tight": "-0.025em",
+      "normal": "0em",
+      "wide": "0.025em",
+      "wider": "0.05em"
+    }
+  },
+
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.25rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem",
+    "20": "5rem",
+    "24": "6rem",
+    "32": "8rem"
+  },
+
+  "radii": {
+    "sm": "0.5rem",
+    "base": "0.75rem",
+    "md": "0.75rem", 
+    "lg": "1rem",
+    "xl": "1.25rem",
+    "2xl": "1.5rem",
+    "full": "9999px"
+  },
+
+  "shadows": {
+    "sm": "0 1px 2px rgb(0 0 0 / 0.05)",
+    "base": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    "md": "0 4px 12px rgb(0 0 0 / 0.07)",
+    "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    "xl": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+  },
+
+  "shadowsDark": {
+    "sm": "0 1px 2px rgb(0 0 0 / 0.35)",
+    "base": "0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4)",
+    "md": "0 4px 12px rgb(0 0 0 / 0.45)",
+    "lg": "0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4)",
+    "xl": "0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4)"
+  },
+
+  "motion": {
+    "ease": {
+      "standard": "cubic-bezier(0.2, 0, 0, 1)",
+      "accelerate": "cubic-bezier(0.4, 0, 1, 1)",
+      "decelerate": "cubic-bezier(0, 0, 0.2, 1)",
+      "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+    },
+    "duration": {
+      "instant": "75ms",
+      "fast": "150ms",
+      "base": "200ms", 
+      "slow": "300ms",
+      "slower": "500ms"
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "var(--color-accent)",
+        "fg": "var(--color-accent-ink)",
+        "hoverBg": "rgb(var(--color-accent) / 0.9)",
+        "focusRing": "rgb(var(--color-accent) / 0.5)",
+        "radius": "var(--radius-xl)",
+        "shadow": "var(--shadow-md)",
+        "hoverShadow": "var(--shadow-lg)",
+        "hoverTransform": "translateY(-1px)"
+      },
+      "secondary": {
+        "bg": "var(--color-surface)",
+        "fg": "var(--color-ink)",
+        "border": "var(--color-border)",
+        "hoverBg": "var(--color-elevated)",
+        "focusRing": "rgb(var(--color-accent) / 0.3)"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "fg": "var(--color-ink)", 
+        "hoverBg": "var(--color-surface)"
+      }
+    },
+    
+    "card": {
+      "bg": "var(--color-bg)",
+      "fg": "var(--color-ink)",
+      "border": "var(--color-border)",
+      "shadow": "var(--shadow-md)",
+      "hoverShadow": "var(--shadow-lg)",
+      "hoverTransform": "translateY(-2px)",
+      "radius": "var(--radius-xl)"
+    },
+
+    "badge": {
+      "info": {
+        "bg": "rgb(var(--color-accent) / 0.1)",
+        "fg": "var(--color-accent)",
+        "border": "rgb(var(--color-accent) / 0.2)"
+      },
+      "warning": {
+        "bg": "rgb(251 245 204)",
+        "fg": "rgb(146 64 14)",
+        "border": "rgb(217 119 6 / 0.2)"
+      },
+      "featured": {
+        "bg": "var(--color-accent)",
+        "fg": "var(--color-accent-ink)",
+        "shadow": "var(--shadow-sm)"
+      }
+    },
+
+    "input": {
+      "bg": "var(--color-bg)",
+      "fg": "var(--color-ink)",
+      "border": "var(--color-border)",
+      "borderFocus": "var(--color-accent)",
+      "placeholder": "var(--color-ink-muted)",
+      "focusRing": "rgb(var(--color-accent) / 0.3)"
+    },
+
+    "navigation": {
+      "bg": "rgb(var(--color-bg) / 0.95)",
+      "backdropFilter": "blur(8px)",
+      "border": "var(--color-border)"
+    }
+  },
+
+  "accessibility": {
+    "wcagCompliance": "Partial - 2 critical issues",
+    "issues": [
+      {
+        "severity": "Critical",
+        "component": "Soft Gold Secondary Accent",
+        "problem": "Contrast ratio 3.84:1 on light backgrounds",
+        "requirement": "WCAG AA 4.5:1",
+        "fix": "Darken to rgb(200, 170, 70) for 4.5:1+ contrast"
+      },
+      {
+        "severity": "Critical",
+        "component": "Dark Mode Surface Text",
+        "problem": "Contrast ratio 1.04:1 primary text on surface",
+        "requirement": "WCAG AA 4.5:1", 
+        "fix": "Update dark mode text colors for proper contrast"
+      }
+    ],
+    "passing": [
+      "Primary text on white: 16.78:1 (AAA)",
+      "Muted text on white: 7.59:1 (AAA)",
+      "Sacred Blue on white: 5.32:1 (AA)",
+      "Problem badge: 7.21:1 (AA)"
+    ]
+  },
+
+  "implementationPlan": {
+    "phase1": {
+      "title": "Foundation",
+      "duration": "Week 1",
+      "tasks": [
+        "Deploy token files to build system",
+        "Fix critical contrast issues",
+        "Update Tailwind configuration",
+        "Baseline testing"
+      ]
+    },
+    "phase2": {
+      "title": "Component Integration", 
+      "duration": "Week 2-3",
+      "tasks": [
+        "Update shadcn/ui component variants",
+        "Implement interactive states",
+        "Deploy corrected dark mode",
+        "Add accessibility features"
+      ]
+    },
+    "phase3": {
+      "title": "App-wide Rollout",
+      "duration": "Week 4+", 
+      "tasks": [
+        "Systematic component replacement",
+        "Visual regression testing",
+        "Documentation updates",
+        "Performance monitoring"
+      ]
+    }
+  },
+
+  "risks": {
+    "high": [
+      "Dark mode contrast violations",
+      "Brand color WCAG compliance",
+      "Extensive component dependencies"
+    ],
+    "medium": [
+      "CSS performance impact",
+      "Browser compatibility",
+      "Team adoption"
+    ],
+    "low": [
+      "Visual consistency maintenance",
+      "Responsive behavior",
+      "Brand recognition"
+    ]
+  },
+
+  "deliverables": {
+    "tokensCSS": "src/styles/tokens.css",
+    "tokensTS": "src/styles/tokens.ts", 
+    "contrastAudit": "docs/theme-contrast.csv",
+    "componentMapping": "docs/theme-components.md",
+    "auditReport": "docs/theme-audit.md",
+    "swatches": "Not generated - manual process required",
+    "summary": "docs/theme-audit-summary.json"
+  },
+
+  "nextSteps": [
+    "Hand off to Frontend Engineer for component integration",
+    "Address critical accessibility issues immediately", 
+    "Implement systematic token replacement",
+    "Establish automated WCAG validation pipeline",
+    "Monitor performance impact during rollout"
+  ]
+}

@@ -38,7 +38,7 @@ export function AppLayout({ children, user, showSidebar = true }: AppLayoutProps
             {sidebarOpen && (
               <>
                 <div
-                  className="fixed inset-0 z-40 bg-surface/80 backdrop-blur-sm lg:hidden"
+                  className="fixed inset-0 z-40 bg-ink/80 backdrop-blur-sm lg:hidden"
                   onClick={() => setSidebarOpen(false)}
                 />
                 <div className="fixed inset-y-0 left-0 z-50 lg:hidden">

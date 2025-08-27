@@ -19,19 +19,29 @@ export default {
     },
     extend: {
       colors: {
-        // New design system tokens
+        // Drouple Design System Tokens - WCAG AA Compliant
         bg: "rgb(var(--color-bg) / <alpha-value>)",
         surface: "rgb(var(--color-surface) / <alpha-value>)",
         elevated: "rgb(var(--color-elevated) / <alpha-value>)",
         ink: "rgb(var(--color-ink) / <alpha-value>)",
         "ink-muted": "rgb(var(--color-ink-muted) / <alpha-value>)",
+        
+        // Brand Colors - Sacred Blue + WCAG AA Compliant Gold
+        "sacred-blue": "rgb(var(--color-sacred-blue) / <alpha-value>)",
+        "soft-gold": "rgb(var(--color-soft-gold) / <alpha-value>)",
         accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "accent-secondary": "rgb(var(--color-accent-secondary) / <alpha-value>)",
         "accent-ink": "rgb(var(--color-accent-ink) / <alpha-value>)",
+        
+        // Borders & Focus States
         border: "rgb(var(--color-border) / <alpha-value>)",
         ring: "rgb(var(--color-ring) / <alpha-value>)",
+        
+        // Semantic Colors
         success: "rgb(var(--color-success) / <alpha-value>)",
         warning: "rgb(var(--color-warning) / <alpha-value>)",
         danger: "rgb(var(--color-danger) / <alpha-value>)",
+        info: "rgb(var(--color-info) / <alpha-value>)",
 
         // Legacy shadcn compatibility (keep existing)
         input: "hsl(var(--input))",
@@ -64,27 +74,49 @@ export default {
       },
       borderRadius: {
         sm: "var(--radius-sm)",
-        DEFAULT: "var(--radius-md)",
+        DEFAULT: "var(--radius)",
         md: "var(--radius-md)",
         lg: "var(--radius-lg)",
         xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
       },
       boxShadow: {
         sm: "var(--shadow-sm)",
-        DEFAULT: "var(--shadow-md)",
+        DEFAULT: "var(--shadow)",
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
+        xl: "var(--shadow-xl)",
       },
       transitionTimingFunction: {
         standard: "var(--ease-standard)",
+        accelerate: "var(--ease-accelerate)",
+        decelerate: "var(--ease-decelerate)",
+        bounce: "var(--ease-bounce)",
       },
       transitionDuration: {
+        instant: "var(--duration-instant)",
         fast: "var(--duration-fast)",
         base: "var(--duration-base)",
         slow: "var(--duration-slow)",
+        slower: "var(--duration-slower)",
       },
       maxWidth: {
         'content': '72rem', // ~1152px
+      },
+      spacing: {
+        "1": "var(--space-1)",
+        "2": "var(--space-2)",
+        "3": "var(--space-3)",
+        "4": "var(--space-4)",
+        "5": "var(--space-5)",
+        "6": "var(--space-6)",
+        "8": "var(--space-8)",
+        "10": "var(--space-10)",
+        "12": "var(--space-12)",
+        "16": "var(--space-16)",
+        "20": "var(--space-20)",
+        "24": "var(--space-24)",
+        "32": "var(--space-32)",
       },
       keyframes: {
         "accordion-down": {

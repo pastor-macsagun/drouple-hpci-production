@@ -65,11 +65,35 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url))
   }
 
+  // Handle unauthenticated access to protected routes
+  if (!isAuth && (pathname.startsWith("/super") || pathname.startsWith("/admin") || pathname.startsWith("/vip") || pathname.startsWith("/leader"))) {
+    return NextResponse.redirect(new URL("/dashboard", req.url))
+  }
+
   // Role-based access control
   if (isAuth && session) {
     const userRole = (session as any).role
+    const mustChangePassword = (session as any).mustChangePassword
     
-    // Super admin can access everything, skip other checks
+    // Force password change for users who need it (except on change-password page)
+    if (mustChangePassword && !pathname.startsWith("/auth/change-password")) {
+      return NextResponse.redirect(new URL("/auth/change-password", req.url))
+    }
+    
+    // If user doesn't need to change password but is on change-password page, redirect appropriately
+    if (!mustChangePassword && pathname.startsWith("/auth/change-password")) {
+      if (userRole === "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/super", req.url))
+      } else if (["ADMIN", "PASTOR"].includes(userRole)) {
+        return NextResponse.redirect(new URL("/admin", req.url))
+      } else if (userRole === "VIP") {
+        return NextResponse.redirect(new URL("/vip", req.url))
+      } else {
+        return NextResponse.redirect(new URL("/dashboard", req.url))
+      }
+    }
+    
+    // Super admin can access everything (after password change check), skip other checks
     if (userRole === "SUPER_ADMIN") {
       return NextResponse.next()
     }

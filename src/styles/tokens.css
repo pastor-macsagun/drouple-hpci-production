@@ -1,0 +1,194 @@
+/**
+ * Drouple Design System - CSS Custom Properties
+ * 
+ * Extracted from landing page audit and existing globals.css
+ * Sacred Blue (#1e7ce8) + Soft Gold (#e5c453) brand palette
+ * 
+ * All colors use RGB space for opacity control: rgb(var(--color-name) / <alpha>)
+ * HSL values preserved for shadcn compatibility
+ */
+
+:root {
+  /* ===== BRAND PALETTE ===== */
+  --color-sacred-blue: 30 124 232;        /* #1e7ce8 - Primary brand color */
+  --color-soft-gold: 132 107 20;          /* #846b14 - WCAG AA compliant secondary brand color */
+  --color-accent: 30 124 232;             /* Sacred Blue as primary accent */
+  --color-accent-secondary: 132 107 20;    /* WCAG AA compliant Soft Gold as secondary accent */
+  --color-accent-ink: 255 255 255;        /* Text on accent backgrounds */
+
+  /* ===== BASE SURFACES ===== */
+  --color-bg: 255 255 255;               /* Primary background - pure white */
+  --color-surface: 248 250 252;          /* Elevated surface - slate-50 */
+  --color-elevated: 241 245 249;         /* Card/modal backgrounds - slate-100 */
+
+  /* ===== TEXT COLORS ===== */
+  --color-ink: 17 24 39;                 /* Primary text - slate-900 */
+  --color-ink-muted: 71 85 105;          /* Secondary text - slate-600 */
+
+  /* ===== BORDERS & OUTLINES ===== */
+  --color-border: 226 232 240;           /* Default borders - slate-200 */
+  --color-ring: 30 124 232;              /* Focus ring - Sacred Blue */
+
+  /* ===== SEMANTIC COLORS ===== */
+  --color-success: 22 163 74;            /* Success states - green-600 */
+  --color-success-foreground: 255 255 255; /* Text on success backgrounds */
+  --color-info: 30 124 232;              /* Info states - Sacred Blue */
+  --color-info-foreground: 255 255 255;   /* Text on info backgrounds */
+  --color-warning: 234 179 8;            /* Warning states - yellow-500 */
+  --color-warning-foreground: 17 24 39;   /* Text on warning backgrounds */
+  --color-danger: 220 38 38;             /* Error states - red-600 */
+  --color-danger-foreground: 255 255 255; /* Text on danger backgrounds */
+
+  /* ===== TYPOGRAPHY ===== */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+  --text-5xl: 3rem;       /* 48px */
+  --text-6xl: 3.75rem;    /* 60px */
+  --text-7xl: 4.5rem;     /* 72px */
+
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  /* ===== SPACING SCALE ===== */
+  --space-1: 0.25rem;     /* 4px */
+  --space-2: 0.5rem;      /* 8px */
+  --space-3: 0.75rem;     /* 12px */
+  --space-4: 1rem;        /* 16px */
+  --space-5: 1.25rem;     /* 20px */
+  --space-6: 1.5rem;      /* 24px */
+  --space-8: 2rem;        /* 32px */
+  --space-10: 2.5rem;     /* 40px */
+  --space-12: 3rem;       /* 48px */
+  --space-16: 4rem;       /* 64px */
+  --space-20: 5rem;       /* 80px */
+  --space-24: 6rem;       /* 96px */
+  --space-32: 8rem;       /* 128px */
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-sm: 0.5rem;    /* 8px */
+  --radius: 0.75rem;      /* 12px - default */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.25rem;   /* 20px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;  /* Full radius */
+
+  /* ===== SHADOWS ===== */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.07);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* ===== MOTION ===== */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  --duration-instant: 75ms;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  /* ===== SHADCN COMPATIBILITY (HSL) ===== */
+  --background: 0 0% 100%;
+  --foreground: 220 13% 18%;
+  --card: 210 40% 98%;
+  --card-foreground: 222 84% 4.9%;
+  --popover: 210 40% 98%;
+  --popover-foreground: 222 84% 4.9%;
+  --primary: 217 91% 48%;                 /* Sacred Blue in HSL */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 43 74% 66%;                /* Soft Gold in HSL */
+  --secondary-foreground: 222 84% 4.9%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent-shadcn: 217 19% 94%;           /* Different from --color-accent */
+  --accent-foreground: 222 84% 4.9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border-shadcn: 214 32% 91%;           /* Different from --color-border */
+  --input: 214 32% 91%;
+  --ring-shadcn: 217 91% 48%;             /* Different from --color-ring */
+}
+
+.dark {
+  /* ===== BRAND PALETTE - DARK MODE ===== */
+  --color-sacred-blue: 92 140 255;       /* Brighter Sacred Blue for dark */
+  --color-soft-gold: 200 170 70;         /* WCAG AA compliant Soft Gold for dark mode */
+  --color-accent: 92 140 255;            /* Brighter Sacred Blue */
+  --color-accent-secondary: 200 170 70;   /* WCAG AA compliant Soft Gold for dark mode */
+  --color-accent-ink: 17 24 39;          /* Dark text on bright accents */
+
+  /* ===== BASE SURFACES - DARK MODE ===== */
+  --color-bg: 9 9 11;                    /* Primary background - zinc-950 */
+  --color-surface: 24 24 27;             /* FIXED: Better contrast surface - zinc-800 */
+  --color-elevated: 39 39 42;            /* FIXED: Better contrast elevated - zinc-700 */
+
+  /* ===== TEXT COLORS - DARK MODE ===== */
+  --color-ink: 250 250 250;              /* Primary text - zinc-50 - WCAG AA compliant */
+  --color-ink-muted: 161 161 170;        /* Secondary text - zinc-400 */
+
+  /* ===== BORDERS & OUTLINES - DARK MODE ===== */
+  --color-border: 39 39 42;              /* Default borders - zinc-700 */
+  --color-ring: 92 140 255;              /* Focus ring - Bright Sacred Blue */
+
+  /* ===== SEMANTIC COLORS - DARK MODE ===== */
+  --color-success: 34 197 94;            /* Success states - green-500 */
+  --color-success-foreground: 17 24 39;   /* Dark text on success */
+  --color-info: 92 140 255;              /* Info states - Bright Sacred Blue */
+  --color-info-foreground: 17 24 39;      /* Dark text on info */
+  --color-warning: 245 158 11;           /* Warning states - amber-500 */
+  --color-warning-foreground: 17 24 39;   /* Dark text on warning */
+  --color-danger: 239 68 68;             /* Error states - red-500 */
+  --color-danger-foreground: 255 255 255; /* White text on danger */
+
+  /* ===== SHADOWS - DARK MODE ===== */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+
+  /* ===== SHADCN COMPATIBILITY - DARK MODE (HSL) ===== */
+  --background: 220 26% 11%;
+  --foreground: 210 20% 98%;
+  --card: 222 84% 4.9%;
+  --card-foreground: 213 31% 91%;
+  --popover: 222 84% 4.9%;
+  --popover-foreground: 213 31% 91%;
+  --primary: 217 91% 60%;                 /* Brighter Sacred Blue in HSL */
+  --primary-foreground: 222 84% 4.9%;
+  --secondary: 43 74% 55%;                /* Adjusted Soft Gold in HSL */
+  --secondary-foreground: 213 31% 91%;
+  --muted: 220 26% 18%;
+  --muted-foreground: 240 5% 65%;
+  --accent-shadcn: 220 26% 20%;
+  --accent-foreground: 213 31% 91%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border-shadcn: 215 28% 17%;
+  --input: 215 28% 17%;
+  --ring-shadcn: 217 91% 60%;
+}
