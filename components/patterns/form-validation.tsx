@@ -118,7 +118,7 @@ export function FormField({
       )}
       
       <div className="space-y-2">
-        {React.cloneElement(children as React.ReactElement<any>, {
+        {React.cloneElement(children as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
           id: fieldId,
           'aria-describedby': [hintId, validationId].filter(Boolean).join(' ') || undefined,
           'aria-invalid': error ? 'true' : undefined,
@@ -126,7 +126,7 @@ export function FormField({
             'mobile-form', // Apply mobile-friendly styles
             error && 'border-destructive focus:border-destructive focus:ring-destructive/20',
             success && 'border-success focus:border-success focus:ring-success/20',
-            (children as React.ReactElement<any>).props?.className
+            (children as React.ReactElement<React.HTMLAttributes<HTMLElement>>).props?.className
           ),
         })}
         

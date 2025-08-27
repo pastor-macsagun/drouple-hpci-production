@@ -115,7 +115,8 @@ export const authOptions: any = {
             name: user.name,
             role: user.role,
             tenantId: primaryMembership?.localChurchId || user.tenantId,
-            primaryLocalChurchId: primaryMembership?.localChurchId
+            primaryLocalChurchId: primaryMembership?.localChurchId,
+            mustChangePassword: user.mustChangePassword
           }
         } catch (error) {
           authLogger.error("Login error", { error, email })
@@ -136,6 +137,7 @@ export const authOptions: any = {
         token.role = user.role
         token.tenantId = user.tenantId
         token.primaryLocalChurchId = user.primaryLocalChurchId
+        token.mustChangePassword = user.mustChangePassword
       }
       return token
     },
@@ -146,6 +148,7 @@ export const authOptions: any = {
         session.user.role = token.role
         session.user.tenantId = token.tenantId
         session.user.primaryLocalChurchId = token.primaryLocalChurchId
+        session.user.mustChangePassword = token.mustChangePassword
       }
       return session
     },

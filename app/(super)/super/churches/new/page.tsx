@@ -38,7 +38,7 @@ export default async function NewChurchPage() {
           <CardTitle>Church Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={createChurch} className="space-y-4">
+          <form action={createChurch} className="space-y-4" data-testid="create-church-form">
             <div>
               <Label htmlFor="name">Name *</Label>
               <Input

@@ -7,6 +7,28 @@ import { logger } from './logger';
 
 export type AlertSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
+export interface SystemMetrics {
+  timestamp: string;
+  errorRate: number;
+  averageResponseTime: number;
+  memoryUsage: number;
+  databaseHealthy: boolean;
+  failedRegistrations: number;
+  deploymentFailed: boolean;
+  requestsPerMinute: number;
+  activeUsers: number;
+  uptime: number;
+  internalToken?: unknown;
+  apiKeys?: unknown;
+  [key: string]: unknown;
+}
+
+interface SentryScope {
+  setTag(key: string, value: string): void;
+  setLevel(level: string): void;
+  setExtra(key: string, value: unknown): void;
+}
+
 export interface Alert {
   id: string;
   severity: AlertSeverity;
@@ -15,14 +37,14 @@ export interface Alert {
   category: string;
   timestamp: Date;
   resolved: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AlertRule {
   id: string;
   name: string;
   description: string;
-  condition: (metric: any) => boolean;
+  condition: (metric: SystemMetrics) => boolean;
   severity: AlertSeverity;
   cooldownMinutes: number;
   enabled: boolean;
@@ -31,7 +53,7 @@ export interface AlertRule {
 export interface NotificationChannel {
   id: string;
   type: 'email' | 'slack' | 'webhook' | 'sms';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   enabled: boolean;
   severityFilter: AlertSeverity[];
 }
@@ -182,7 +204,7 @@ class AlertManager {
     title: string,
     message: string,
     category: string = 'system',
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<void> {
     const alertId = `${category}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
@@ -254,7 +276,7 @@ class AlertManager {
   /**
    * Get current system metrics
    */
-  private async getCurrentMetrics(): Promise<any> {
+  private async getCurrentMetrics(): Promise<SystemMetrics> {
     // In production, this would collect real metrics
     // For now, return mock data that can be extended
     const metrics = {
@@ -285,7 +307,7 @@ class AlertManager {
   /**
    * Sanitize metrics for logging (remove sensitive data)
    */
-  private sanitizeMetrics(metrics: any): any {
+  private sanitizeMetrics(metrics: SystemMetrics): SystemMetrics {
     const sanitized = { ...metrics };
     
     // Remove or redact sensitive fields
@@ -452,7 +474,7 @@ class AlertManager {
         try {
           const Sentry = require('@sentry/nextjs'); // eslint-disable-line @typescript-eslint/no-require-imports
           
-          Sentry.withScope((scope: any) => {
+          Sentry.withScope((scope: SentryScope) => {
             scope.setTag('alert_severity', alert.severity);
             scope.setTag('alert_category', alert.category);
             scope.setLevel(
@@ -558,7 +580,7 @@ export const createAlert = (
   title: string,
   message: string,
   category?: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ) => alertManager.createAlert(severity, title, message, category, metadata);
 
 export const resolveAlert = (alertId: string, resolvedBy?: string) =>

@@ -6,10 +6,8 @@ import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
-import { randomBytes } from 'crypto'
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { generateTemporaryPassword } from '@/lib/password-generator'
+import bcrypt from 'bcryptjs'
 
 const inviteAdminSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -17,7 +15,11 @@ const inviteAdminSchema = z.object({
   role: z.enum([UserRole.PASTOR, UserRole.ADMIN]),
 })
 
-export async function inviteAdmin(localChurchId: string, formData: FormData) {
+export async function inviteAdmin(localChurchId: string, formData: FormData): Promise<{
+  success: boolean
+  credentials?: { email: string; password: string }
+  error?: string
+}> {
   const session = await auth()
   
   if (!session?.user) {
@@ -55,57 +57,40 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
     where: { email: validated.email },
   })
 
+  let generatedPassword: string | null = null
+
   if (!user) {
-    // Create user stub
+    // Generate temporary password
+    generatedPassword = generateTemporaryPassword()
+    const hashedPassword = await bcrypt.hash(generatedPassword, 12)
+
+    // Create user with password and mustChangePassword flag
     user = await prisma.user.create({
       data: {
         email: validated.email,
         name: validated.name,
         role: validated.role,
         tenantId: localChurch.church.id,
+        passwordHash: hashedPassword,
+        mustChangePassword: true, // Force password change on first login
       },
     })
-
-    // Create verification token
-    const token = randomBytes(32).toString('hex')
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
-
-    await prisma.verificationToken.create({
-      data: {
-        identifier: validated.email,
-        token,
-        expires,
-      },
-    })
-
-    // Send invitation email
-    const inviteUrl = `${process.env.NEXTAUTH_URL}/auth/verify-request?token=${token}&email=${encodeURIComponent(validated.email)}`
-    
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM!,
-      to: validated.email,
-      subject: `Invitation to join ${localChurch.name} as ${validated.role}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>You've been invited!</h2>
-          <p>You have been invited to join <strong>${localChurch.name}</strong> as a church ${validated.role.toLowerCase()}.</p>
-          <p>Click the link below to accept the invitation and set up your account:</p>
-          <p style="margin: 30px 0;">
-            <a href="${inviteUrl}" 
-               style="background-color: rgb(37, 99, 235); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Accept Invitation
-            </a>
-          </p>
-          <p style="color: rgb(71, 85, 105); font-size: 14px;">
-            This invitation link will expire in 24 hours.
-          </p>
-          <hr style="border: none; border-top: 1px solid rgb(226, 232, 240); margin: 30px 0;">
-          <p style="color: rgb(161, 161, 170); font-size: 12px;">
-            If you did not expect this invitation, you can safely ignore this email.
-          </p>
-        </div>
-      `,
-    })
+  } else {
+    // If user exists but needs password reset, generate new password
+    if (!user.passwordHash) {
+      generatedPassword = generateTemporaryPassword()
+      const hashedPassword = await bcrypt.hash(generatedPassword, 12)
+      
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordHash: hashedPassword,
+          mustChangePassword: true,
+          role: validated.role, // Update role if needed
+          tenantId: localChurch.church.id, // Update tenant if needed
+        },
+      })
+    }
   }
 
   // Check if membership already exists
@@ -149,12 +134,26 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
         email: validated.email,
         role: validated.role,
         localChurchId: localChurchId,
+        passwordGenerated: generatedPassword ? true : false,
       },
     },
   })
 
   revalidatePath(`/super/local-churches/${localChurchId}/admins`)
   revalidatePath('/super/local-churches')
+
+  // Return credentials if password was generated
+  if (generatedPassword) {
+    return {
+      success: true,
+      credentials: {
+        email: validated.email,
+        password: generatedPassword,
+      },
+    }
+  }
+
+  return { success: true }
 }
 
 export async function removeAdmin(formData: FormData) {

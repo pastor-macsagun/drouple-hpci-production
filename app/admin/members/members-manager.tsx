@@ -269,8 +269,8 @@ export function MembersManager({
 
   const getStatusBadgeColor = (status: MemberStatus) => {
     switch (status) {
-      case 'ACTIVE': return 'bg-green-100 text-green-800'
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800'
+      case 'ACTIVE': return 'bg-success/10 text-success'
+      case 'PENDING': return 'bg-amber-100 text-amber-800'
       case 'INACTIVE': return 'bg-elevated text-ink'
       default: return 'bg-elevated text-ink'
     }
@@ -278,11 +278,11 @@ export function MembersManager({
 
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role) {
-      case 'SUPER_ADMIN': return 'bg-purple-100 text-purple-800'
-      case 'PASTOR': return 'bg-indigo-100 text-indigo-800'
-      case 'ADMIN': return 'bg-blue-100 text-blue-800'
-      case 'VIP': return 'bg-yellow-100 text-yellow-800'
-      case 'LEADER': return 'bg-green-100 text-green-800'
+      case 'SUPER_ADMIN': return 'bg-accent-secondary/10 text-accent-secondary'
+      case 'PASTOR': return 'bg-accent/10 text-accent'
+      case 'ADMIN': return 'bg-accent/10 text-accent'
+      case 'VIP': return 'bg-amber-100 text-amber-800'
+      case 'LEADER': return 'bg-success/10 text-success'
       default: return 'bg-elevated text-ink'
     }
   }
@@ -590,7 +590,7 @@ export function MembersManager({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="p-4 bg-gray-100 rounded-lg font-mono text-sm break-all">
+            <div className="p-4 bg-surface rounded-lg font-mono text-sm break-all">
               {generatedPassword}
             </div>
             <Button onClick={copyToClipboard} className="w-full gap-2">

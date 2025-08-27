@@ -62,7 +62,7 @@ export default async function SuperChurchesPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-testid="church-list">
           {churches.map((church) => (
             <Card key={church.id}>
               <CardHeader>
