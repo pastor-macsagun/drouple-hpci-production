@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { redirect } from 'next/navigation'
 
@@ -20,7 +20,7 @@ export async function getCurrentUser() {
   const session = await auth()
   if (!session?.user?.email) return null
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email },
     include: {
       memberships: {
@@ -201,7 +201,7 @@ export async function getAccessibleChurchIds(
   // Super admin can access all churches if no specific constraint
   if (user.role === UserRole.SUPER_ADMIN) {
     // For super admin without specific church filter, return all church IDs
-    const churches = await db.localChurch.findMany({
+    const churches = await prisma.localChurch.findMany({
       select: { id: true }
     })
     return churches.map(c => c.id)

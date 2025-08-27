@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { PathwayType, EnrollmentStatus } from '@prisma/client'
 
-vi.mock('@/app/lib/db', () => ({
-  db: {
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
     pathway: {
       findFirst: vi.fn(),
       create: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock('@/app/lib/db', () => ({
 }))
 
 import { enrollUserInPathway, autoEnrollNewBeliever, getUserEnrollments } from './enrollment'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 
 describe('Pathway Enrollment', () => {
   beforeEach(() => {
@@ -37,17 +37,17 @@ describe('Pathway Enrollment', () => {
         status: EnrollmentStatus.ENROLLED,
       }
 
-      vi.mocked(db.pathway.findFirst).mockResolvedValue(mockPathway as any)
-      vi.mocked(db.pathwayEnrollment.findFirst).mockResolvedValue(null)
-      vi.mocked(db.pathwayEnrollment.create).mockResolvedValue(mockEnrollment as any)
+      vi.mocked(prisma.pathway.findFirst).mockResolvedValue(mockPathway as any)
+      vi.mocked(prisma.pathwayEnrollment.findFirst).mockResolvedValue(null)
+      vi.mocked(prisma.pathwayEnrollment.create).mockResolvedValue(mockEnrollment as any)
 
       const result = await enrollUserInPathway('user1', 'pathway1', 'tenant1')
 
       expect(result).toEqual(mockEnrollment)
-      expect(db.pathway.findFirst).toHaveBeenCalledWith({
+      expect(prisma.pathway.findFirst).toHaveBeenCalledWith({
         where: { id: 'pathway1', tenantId: 'tenant1', isActive: true },
       })
-      expect(db.pathwayEnrollment.create).toHaveBeenCalledWith({
+      expect(prisma.pathwayEnrollment.create).toHaveBeenCalledWith({
         data: {
           pathwayId: 'pathway1',
           userId: 'user1',
@@ -65,17 +65,17 @@ describe('Pathway Enrollment', () => {
         status: EnrollmentStatus.ENROLLED,
       }
 
-      vi.mocked(db.pathway.findFirst).mockResolvedValue(mockPathway as any)
-      vi.mocked(db.pathwayEnrollment.findFirst).mockResolvedValue(existingEnrollment as any)
+      vi.mocked(prisma.pathway.findFirst).mockResolvedValue(mockPathway as any)
+      vi.mocked(prisma.pathwayEnrollment.findFirst).mockResolvedValue(existingEnrollment as any)
 
       const result = await enrollUserInPathway('user1', 'pathway1', 'tenant1')
 
       expect(result).toEqual(existingEnrollment)
-      expect(db.pathwayEnrollment.create).not.toHaveBeenCalled()
+      expect(prisma.pathwayEnrollment.create).not.toHaveBeenCalled()
     })
 
     it('should throw error if pathway not found', async () => {
-      vi.mocked(db.pathway.findFirst).mockResolvedValue(null)
+      vi.mocked(prisma.pathway.findFirst).mockResolvedValue(null)
 
       await expect(enrollUserInPathway('user1', 'pathway1', 'tenant1')).rejects.toThrow(
         'Pathway not found'
@@ -102,15 +102,15 @@ describe('Pathway Enrollment', () => {
         status: EnrollmentStatus.ENROLLED,
       }
 
-      vi.mocked(db.user.findUnique).mockResolvedValue(mockUser as any)
-      vi.mocked(db.pathway.findFirst).mockResolvedValue(mockPathway as any)
-      vi.mocked(db.pathwayEnrollment.findFirst).mockResolvedValue(null)
-      vi.mocked(db.pathwayEnrollment.create).mockResolvedValue(mockEnrollment as any)
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as any)
+      vi.mocked(prisma.pathway.findFirst).mockResolvedValue(mockPathway as any)
+      vi.mocked(prisma.pathwayEnrollment.findFirst).mockResolvedValue(null)
+      vi.mocked(prisma.pathwayEnrollment.create).mockResolvedValue(mockEnrollment as any)
 
       const result = await autoEnrollNewBeliever('user1')
 
       expect(result).toEqual(mockEnrollment)
-      expect(db.pathway.findFirst).toHaveBeenCalledWith({
+      expect(prisma.pathway.findFirst).toHaveBeenCalledWith({
         where: {
           type: PathwayType.ROOTS,
           tenantId: 'tenant1',
@@ -126,12 +126,12 @@ describe('Pathway Enrollment', () => {
         tenantId: 'tenant1',
       }
 
-      vi.mocked(db.user.findUnique).mockResolvedValue(mockUser as any)
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as any)
 
       const result = await autoEnrollNewBeliever('user1')
 
       expect(result).toBeNull()
-      expect(db.pathway.findFirst).not.toHaveBeenCalled()
+      expect(prisma.pathway.findFirst).not.toHaveBeenCalled()
     })
 
     it('should not enroll if already enrolled in ROOTS', async () => {
@@ -152,14 +152,14 @@ describe('Pathway Enrollment', () => {
         status: EnrollmentStatus.ENROLLED,
       }
 
-      vi.mocked(db.user.findUnique).mockResolvedValue(mockUser as any)
-      vi.mocked(db.pathway.findFirst).mockResolvedValue(mockPathway as any)
-      vi.mocked(db.pathwayEnrollment.findFirst).mockResolvedValue(existingEnrollment as any)
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as any)
+      vi.mocked(prisma.pathway.findFirst).mockResolvedValue(mockPathway as any)
+      vi.mocked(prisma.pathwayEnrollment.findFirst).mockResolvedValue(existingEnrollment as any)
 
       const result = await autoEnrollNewBeliever('user1')
 
       expect(result).toEqual(existingEnrollment)
-      expect(db.pathwayEnrollment.create).not.toHaveBeenCalled()
+      expect(prisma.pathwayEnrollment.create).not.toHaveBeenCalled()
     })
 
     it('should create ROOTS pathway if it does not exist', async () => {
@@ -182,16 +182,16 @@ describe('Pathway Enrollment', () => {
         status: EnrollmentStatus.ENROLLED,
       }
 
-      vi.mocked(db.user.findUnique).mockResolvedValue(mockUser as any)
-      vi.mocked(db.pathway.findFirst).mockResolvedValueOnce(null)
-      vi.mocked(db.pathway.create).mockResolvedValue(newPathway as any)
-      vi.mocked(db.pathwayEnrollment.findFirst).mockResolvedValue(null)
-      vi.mocked(db.pathwayEnrollment.create).mockResolvedValue(mockEnrollment as any)
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as any)
+      vi.mocked(prisma.pathway.findFirst).mockResolvedValueOnce(null)
+      vi.mocked(prisma.pathway.create).mockResolvedValue(newPathway as any)
+      vi.mocked(prisma.pathwayEnrollment.findFirst).mockResolvedValue(null)
+      vi.mocked(prisma.pathwayEnrollment.create).mockResolvedValue(mockEnrollment as any)
 
       const result = await autoEnrollNewBeliever('user1')
 
       expect(result).toEqual(mockEnrollment)
-      expect(db.pathway.create).toHaveBeenCalledWith({
+      expect(prisma.pathway.create).toHaveBeenCalledWith({
         data: {
           type: PathwayType.ROOTS,
           name: 'ROOTS',
@@ -222,12 +222,12 @@ describe('Pathway Enrollment', () => {
         },
       ]
 
-      vi.mocked(db.pathwayEnrollment.findMany).mockResolvedValue(mockEnrollments as any)
+      vi.mocked(prisma.pathwayEnrollment.findMany).mockResolvedValue(mockEnrollments as any)
 
       const result = await getUserEnrollments('user1')
 
       expect(result).toEqual(mockEnrollments)
-      expect(db.pathwayEnrollment.findMany).toHaveBeenCalledWith({
+      expect(prisma.pathwayEnrollment.findMany).toHaveBeenCalledWith({
         where: { userId: 'user1' },
         include: {
           pathway: {

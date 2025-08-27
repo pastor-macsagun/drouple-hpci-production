@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { UserRole, MemberStatus } from '@prisma/client'
 import { z } from 'zod'
 import { generateSecurePassword, hashPassword } from '@/lib/password'
-import { createTenantWhereClause } from '@/lib/rbac'
+import { createTenantWhereClause, hasMinRole } from '@/lib/rbac'
 import { handleActionError, ApplicationError } from '@/lib/errors'
 
 const createMemberSchema = z.object({
@@ -41,7 +41,7 @@ export async function listMembers({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -80,7 +80,8 @@ export async function listMembers({
                 name: true
               }
             }
-          }
+          },
+          take: 1 // Optimize: only need one membership for display
         }
       },
       orderBy: {
@@ -118,7 +119,7 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
       throw new ApplicationError('UNAUTHORIZED', 'Not authenticated')
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       throw new ApplicationError('FORBIDDEN', 'Insufficient permissions to create members')
     }
 
@@ -186,7 +187,7 @@ export async function updateMember(data: z.infer<typeof updateMemberSchema>) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -241,7 +242,7 @@ export async function deactivateMember(memberId: string) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -279,7 +280,7 @@ export async function resetPassword(memberId: string) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -326,7 +327,7 @@ export async function getLocalChurches() {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -359,7 +360,7 @@ export async function exportMembersCsv({ churchId }: { churchId?: string } = {})
       return new Response('Unauthorized', { status: 401 })
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return new Response('Forbidden', { status: 403 })
     }
 
@@ -372,6 +373,15 @@ export async function exportMembersCsv({ churchId }: { churchId?: string } = {})
 
     const members = await prisma.user.findMany({
       where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        memberStatus: true,
+        tenantId: true,
+        createdAt: true
+      },
       orderBy: {
         createdAt: 'desc'
       }

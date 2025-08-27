@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
@@ -26,7 +26,7 @@ export async function createLocalChurch(formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -48,11 +48,11 @@ export async function createLocalChurch(formData: FormData) {
 
   const validated = localChurchSchema.parse(rawData)
 
-  const localChurch = await db.localChurch.create({
+  const localChurch = await prisma.localChurch.create({
     data: validated,
   })
 
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: user.id,
       action: 'CREATE',
@@ -74,7 +74,7 @@ export async function updateLocalChurch(localChurchId: string, formData: FormDat
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -96,12 +96,12 @@ export async function updateLocalChurch(localChurchId: string, formData: FormDat
 
   const validated = localChurchSchema.parse(rawData)
 
-  await db.localChurch.update({
+  await prisma.localChurch.update({
     where: { id: localChurchId },
     data: validated,
   })
 
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: user.id,
       action: 'UPDATE',
@@ -123,7 +123,7 @@ export async function archiveLocalChurch(formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -135,11 +135,11 @@ export async function archiveLocalChurch(formData: FormData) {
 
   // For now, we'll delete instead of archive
   // In production, you might want to add an isArchived field
-  await db.localChurch.delete({
+  await prisma.localChurch.delete({
     where: { id: localChurchId },
   })
 
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: user.id,
       action: 'ARCHIVE',

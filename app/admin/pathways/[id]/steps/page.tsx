@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import StepsManager from './steps-manager'
 import { AppLayout } from '@/components/layout/app-layout'
@@ -18,7 +18,7 @@ export default async function PathwayStepsPage({ params }: Props) {
     redirect('/auth/login')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -26,7 +26,7 @@ export default async function PathwayStepsPage({ params }: Props) {
     redirect('/')
   }
 
-  const pathway = await db.pathway.findFirst({
+  const pathway = await prisma.pathway.findFirst({
     where: {
       id,
       tenantId: user.tenantId!,

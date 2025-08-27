@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
@@ -19,7 +19,7 @@ export async function createChurch(formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -34,11 +34,11 @@ export async function createChurch(formData: FormData) {
 
   const validated = churchSchema.parse(rawData)
 
-  await db.church.create({
+  await prisma.church.create({
     data: validated,
   })
 
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: user.id,
       action: 'CREATE',
@@ -59,7 +59,7 @@ export async function updateChurch(churchId: string, formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -74,12 +74,12 @@ export async function updateChurch(churchId: string, formData: FormData) {
 
   const validated = churchSchema.parse(rawData)
 
-  await db.church.update({
+  await prisma.church.update({
     where: { id: churchId },
     data: validated,
   })
 
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: user.id,
       action: 'UPDATE',
@@ -100,7 +100,7 @@ export async function archiveChurch(formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -112,11 +112,11 @@ export async function archiveChurch(formData: FormData) {
 
   // For now, we'll delete instead of archive
   // In production, you might want to add an isArchived field
-  await db.church.delete({
+  await prisma.church.delete({
     where: { id: churchId },
   })
 
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: user.id,
       action: 'ARCHIVE',

@@ -1,7 +1,7 @@
 'use server'
 
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
@@ -45,7 +45,7 @@ export async function updateProfile(formData: FormData) {
   const validated = updateProfileSchema.parse(rawData)
 
   try {
-    await db.user.update({
+    await prisma.user.update({
       where: { id: session.user.id },
       data: {
         ...validated,

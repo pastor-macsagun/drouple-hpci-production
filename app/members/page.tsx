@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -33,7 +33,7 @@ async function searchMembers(query: string, tenantId: string, userRole: string) 
     ]
   }
 
-  return db.user.findMany({
+  return prisma.user.findMany({
     where: whereClause,
     select: {
       id: true,

@@ -35,7 +35,10 @@ export function CheckInForm({ service, existingCheckin }: CheckInFormProps) {
   const handleCheckIn = async () => {
     setIsLoading(true)
     try {
-      const result = await checkIn(service.id, isNewBeliever)
+      const formData = new FormData()
+      formData.set('serviceId', service.id)
+      formData.set('isNewBeliever', isNewBeliever.toString())
+      const result = await checkIn(formData)
       if (result.success) {
         toast.success('Successfully checked in!')
         // Refresh the page to show updated state

@@ -1,4 +1,4 @@
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { EnrollmentStatus } from '@prisma/client'
 
 export async function completeStep(
@@ -7,7 +7,7 @@ export async function completeStep(
   completedBy?: string,
   notes?: string
 ) {
-  const step = await db.pathwayStep.findUnique({
+  const step = await prisma.pathwayStep.findUnique({
     where: { id: stepId },
     select: { id: true, pathwayId: true },
   })
@@ -16,7 +16,7 @@ export async function completeStep(
     throw new Error('Step not found')
   }
 
-  const existingProgress = await db.pathwayProgress.findFirst({
+  const existingProgress = await prisma.pathwayProgress.findFirst({
     where: { stepId, userId },
   })
 
@@ -24,7 +24,7 @@ export async function completeStep(
     return existingProgress
   }
 
-  const progress = await db.pathwayProgress.create({
+  const progress = await prisma.pathwayProgress.create({
     data: {
       stepId,
       userId,
@@ -35,7 +35,7 @@ export async function completeStep(
 
   const isComplete = await isPathwayComplete(step.pathwayId, userId)
   if (isComplete) {
-    const enrollment = await db.pathwayEnrollment.findFirst({
+    const enrollment = await prisma.pathwayEnrollment.findFirst({
       where: {
         pathwayId: step.pathwayId,
         userId,
@@ -44,7 +44,7 @@ export async function completeStep(
     })
 
     if (enrollment) {
-      await db.pathwayEnrollment.update({
+      await prisma.pathwayEnrollment.update({
         where: { id: enrollment.id },
         data: {
           status: EnrollmentStatus.COMPLETED,
@@ -58,7 +58,7 @@ export async function completeStep(
 }
 
 export async function getPathwayProgress(pathwayId: string, userId: string) {
-  return await db.pathwayProgress.findMany({
+  return await prisma.pathwayProgress.findMany({
     where: {
       userId,
       step: { pathwayId },
@@ -71,11 +71,11 @@ export async function getPathwayProgress(pathwayId: string, userId: string) {
 }
 
 export async function isPathwayComplete(pathwayId: string, userId: string) {
-  const totalSteps = await db.pathwayStep.count({
+  const totalSteps = await prisma.pathwayStep.count({
     where: { pathwayId },
   })
 
-  const completedSteps = await db.pathwayProgress.findMany({
+  const completedSteps = await prisma.pathwayProgress.findMany({
     where: {
       userId,
       step: { pathwayId },
@@ -87,7 +87,7 @@ export async function isPathwayComplete(pathwayId: string, userId: string) {
 }
 
 export async function getUserProgress(userId: string) {
-  const enrollments = await db.pathwayEnrollment.findMany({
+  const enrollments = await prisma.pathwayEnrollment.findMany({
     where: { userId },
     include: {
       pathway: {

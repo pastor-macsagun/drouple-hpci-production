@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
@@ -24,7 +24,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const actor = await db.user.findUnique({
+  const actor = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -41,7 +41,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
   const validated = inviteAdminSchema.parse(rawData)
 
   // Check if local church exists
-  const localChurch = await db.localChurch.findUnique({
+  const localChurch = await prisma.localChurch.findUnique({
     where: { id: localChurchId },
     include: { church: true },
   })
@@ -51,13 +51,13 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
   }
 
   // Check if user already exists
-  let user = await db.user.findUnique({
+  let user = await prisma.user.findUnique({
     where: { email: validated.email },
   })
 
   if (!user) {
     // Create user stub
-    user = await db.user.create({
+    user = await prisma.user.create({
       data: {
         email: validated.email,
         name: validated.name,
@@ -70,7 +70,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
     const token = randomBytes(32).toString('hex')
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
 
-    await db.verificationToken.create({
+    await prisma.verificationToken.create({
       data: {
         identifier: validated.email,
         token,
@@ -109,7 +109,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
   }
 
   // Check if membership already exists
-  const existingMembership = await db.membership.findUnique({
+  const existingMembership = await prisma.membership.findUnique({
     where: {
       userId_localChurchId: {
         userId: user.id,
@@ -120,7 +120,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
 
   if (!existingMembership) {
     // Create membership
-    await db.membership.create({
+    await prisma.membership.create({
       data: {
         userId: user.id,
         localChurchId: localChurchId,
@@ -130,7 +130,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
   } else {
     // Update role if different
     if (existingMembership.role !== validated.role) {
-      await db.membership.update({
+      await prisma.membership.update({
         where: { id: existingMembership.id },
         data: { role: validated.role },
       })
@@ -138,7 +138,7 @@ export async function inviteAdmin(localChurchId: string, formData: FormData) {
   }
 
   // Create audit log
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: actor.id,
       action: 'GRANT_ROLE',
@@ -164,7 +164,7 @@ export async function removeAdmin(formData: FormData) {
     redirect('/auth/signin')
   }
 
-  const actor = await db.user.findUnique({
+  const actor = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -174,7 +174,7 @@ export async function removeAdmin(formData: FormData) {
 
   const membershipId = formData.get('membershipId') as string
 
-  const membership = await db.membership.findUnique({
+  const membership = await prisma.membership.findUnique({
     where: { id: membershipId },
     include: {
       user: true,
@@ -187,12 +187,12 @@ export async function removeAdmin(formData: FormData) {
   }
 
   // Delete the membership
-  await db.membership.delete({
+  await prisma.membership.delete({
     where: { id: membershipId },
   })
 
   // Create audit log
-  await db.auditLog.create({
+  await prisma.auditLog.create({
     data: {
       actorId: actor.id,
       action: 'REVOKE_ROLE',

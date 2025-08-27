@@ -1,8 +1,8 @@
-# Deployment Procedures
+# HPCI-ChMS Deployment Guide
 
 ## Overview
 
-This document outlines the deployment procedures for the HPCI Church Management System.
+Comprehensive deployment guide for the HPCI Church Management System, covering environment setup, deployment procedures, and post-deployment verification.
 
 ## Environments
 
@@ -10,6 +10,7 @@ This document outlines the deployment procedures for the HPCI Church Management 
 - **URL**: http://localhost:3000
 - **Database**: Local PostgreSQL or Neon dev branch
 - **Purpose**: Local development and testing
+- **Setup**: See [Development Setup Guide](./dev-setup.md)
 
 ### Staging
 - **URL**: https://staging.hpci-chms.vercel.app
@@ -20,18 +21,75 @@ This document outlines the deployment procedures for the HPCI Church Management 
 - **URL**: https://hpci-chms.vercel.app
 - **Database**: Neon production database (pooled connections)
 - **Purpose**: Live environment for end users
-- **Last Deployment**: Aug 26, 2025
+- **Last Deployment**: Aug 27, 2025
 - **Region**: Singapore (sin1)
 
-## Deployment Process
+## Production Environment Setup
 
-### 1. Pre-Deployment Checklist
+### Database Configuration
 
+1. **Neon PostgreSQL Setup**:
+   - Create production database at [neon.tech](https://neon.tech)
+   - Enable connection pooling (pgbouncer)
+   - Note both pooled and direct connection strings
+
+2. **Required Environment Variables**:
+   ```bash
+   # Database
+   DATABASE_URL="postgresql://user:pass@host/db?sslmode=require&pgbouncer=true"
+   DATABASE_URL_UNPOOLED="postgresql://user:pass@host/db?sslmode=require"
+   
+   # NextAuth
+   NEXTAUTH_URL="https://your-production-domain.com"
+   NEXTAUTH_SECRET="[generate-with: openssl rand -base64 32]"
+   
+   # Email Service (Resend)
+   RESEND_API_KEY="re_xxxxx"
+   RESEND_FROM_EMAIL="noreply@your-domain.com"
+   
+   # Application
+   NODE_ENV="production"
+   APP_ENV="production"
+   ```
+
+### Vercel Deployment Setup
+
+1. **Security Headers Configuration** (`vercel.json`):
+   ```json
+   {
+     "headers": [
+       {
+         "source": "/(.*)",
+         "headers": [
+           { "key": "X-Content-Type-Options", "value": "nosniff" },
+           { "key": "X-Frame-Options", "value": "DENY" },
+           { "key": "X-XSS-Protection", "value": "1; mode=block" },
+           { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+           { "key": "Strict-Transport-Security", "value": "max-age=31536000" }
+         ]
+       }
+     ]
+   }
+   ```
+
+## Pre-Deployment Checklist
+
+### Code Quality Verification
 - [ ] All tests passing (`npm run test:all`)
-- [ ] Linting passing (`npm run lint`)
-- [ ] Build successful (`npm run build`)
+- [ ] TypeScript compilation successful (`npm run typecheck`)
+- [ ] ESLint checks passing (`npm run lint`)
+- [ ] Production build successful (`npm run build`)
+- [ ] Bundle size optimized (< 200kB First Load JS)
 - [ ] Database migrations ready
 - [ ] Environment variables configured
+- [ ] Security headers configured in `vercel.json`
+
+### Database Verification
+- [ ] Migrations applied and tested on staging
+- [ ] Database constraints verified (unique constraints on checkins, rsvps)
+- [ ] Performance indexes in place (see Database Optimization section)
+- [ ] Connection pooling enabled
+- [ ] Backup strategy verified
 - [ ] Documentation updated
 - [ ] CHANGELOG updated
 - [ ] Navigation audit resolved (see docs/verification/NAVIGATION-AUDIT.md)
@@ -56,12 +114,21 @@ pg_dump $PRODUCTION_DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
 DATABASE_URL=$PRODUCTION_DATABASE_URL npx prisma migrate deploy
 ```
 
-#### Required Database Indexes
-Ensure these indexes exist in production:
-- `users`: tenantId, (tenantId, role), (email, tenantId), role
-- `checkins`: (serviceId, userId) UNIQUE
-- `event_rsvps`: (eventId, userId) composite index
-- `memberships`: localChurchId index
+#### Critical Database Indexes
+Ensure these performance indexes exist in production:
+
+**Multi-tenancy indexes**:
+- `users(tenantId)` - Fast tenant filtering
+- `users(tenantId, role)` - Role-based queries
+- `users(email, tenantId)` - Authentication lookup
+
+**Data integrity constraints**:
+- `checkins(serviceId, userId)` - UNIQUE constraint prevents duplicate check-ins
+- `event_rsvps(eventId, userId)` - Composite index for RSVP queries
+- `memberships(localChurchId)` - Fast church member lookup
+
+**Performance optimization**:
+- See [Database Optimization Guide](./database-optimization.md) for complete index list
 
 ### 3. Staging Deployment
 

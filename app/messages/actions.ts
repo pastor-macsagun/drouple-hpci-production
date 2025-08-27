@@ -1,7 +1,7 @@
 'use server'
 
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
@@ -28,7 +28,7 @@ export async function sendMessage(formData: FormData) {
   const validated = sendMessageSchema.parse(rawData)
 
   // Check recipient exists and is in same tenant
-  const recipient = await db.user.findFirst({
+  const recipient = await prisma.user.findFirst({
     where: {
       id: validated.recipientId,
       tenantId: session.user.tenantId
@@ -40,7 +40,7 @@ export async function sendMessage(formData: FormData) {
   }
 
   try {
-    const message = await db.message.create({
+    const message = await prisma.message.create({
       data: {
         senderId: session.user.id,
         recipientId: validated.recipientId,
@@ -75,7 +75,7 @@ export async function replyToMessage(messageId: string, formData: FormData) {
   }
 
   // Get original message
-  const originalMessage = await db.message.findFirst({
+  const originalMessage = await prisma.message.findFirst({
     where: {
       id: messageId,
       OR: [
@@ -95,7 +95,7 @@ export async function replyToMessage(messageId: string, formData: FormData) {
     : originalMessage.senderId
 
   try {
-    await db.message.create({
+    await prisma.message.create({
       data: {
         senderId: session.user.id,
         recipientId,
@@ -124,7 +124,7 @@ export async function markAsRead(messageId: string) {
     redirect('/auth/signin')
   }
 
-  await db.message.updateMany({
+  await prisma.message.updateMany({
     where: {
       OR: [
         { id: messageId },

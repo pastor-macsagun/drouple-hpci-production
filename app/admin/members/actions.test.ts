@@ -46,7 +46,7 @@ vi.mock('next/cache', () => ({
 
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { db } from '@/app/lib/db'
+// Removed duplicate db import - using prisma from @/lib/prisma
 
 describe('Member Management Actions', () => {
   beforeEach(() => {
@@ -130,7 +130,7 @@ describe('Member Management Actions', () => {
           churchId: 'parent-church'
         }
       ]
-      vi.mocked(db.localChurch.findMany).mockResolvedValue(mockChurches as any)
+      vi.mocked(prisma.localChurch.findMany).mockResolvedValue(mockChurches as any)
 
       vi.mocked(auth).mockResolvedValue(mockSession as any)
       vi.mocked(prisma.user.findMany).mockResolvedValue([])

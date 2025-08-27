@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,7 +18,7 @@ export default async function SuperChurchesPage() {
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -26,7 +26,7 @@ export default async function SuperChurchesPage() {
     redirect('/forbidden')
   }
 
-  const churches = await db.church.findMany({
+  const churches = await prisma.church.findMany({
     include: {
       localChurches: {
         select: { id: true },

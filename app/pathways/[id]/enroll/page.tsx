@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { enrollUserInPathway } from '@/app/lib/pathways/enrollment'
 
 interface Props {
@@ -16,7 +16,7 @@ export default async function EnrollPage({ params }: Props) {
     redirect('/auth/login')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 

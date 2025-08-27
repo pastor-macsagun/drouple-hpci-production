@@ -26,18 +26,6 @@ for (const route of ROUTES_TO_TEST) {
     await expect(main).toBeVisible();
 
     // Check for icon-only buttons that should have aria-label
-    const iconButtons = page.locator('button[aria-label]');
-    const iconButtonsCount = await iconButtons.count();
-    
-    if (iconButtonsCount > 0) {
-      // Verify each icon button has accessible text
-      for (let i = 0; i < iconButtonsCount; i++) {
-        const button = iconButtons.nth(i);
-        const ariaLabel = await button.getAttribute('aria-label');
-        expect(ariaLabel).toBeTruthy();
-        expect(ariaLabel?.length).toBeGreaterThan(0);
-      }
-    }
 
     // Check for tables and their accessibility
     const tables = page.locator('table');

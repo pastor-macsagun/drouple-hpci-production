@@ -1,4 +1,4 @@
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function RegisterPage() {
   // Get all local churches for the dropdown
-  const localChurches = await db.localChurch.findMany({
+  const localChurches = await prisma.localChurch.findMany({
     include: {
       church: true,
     },

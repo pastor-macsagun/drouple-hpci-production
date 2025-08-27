@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { auth } from '@/lib/auth'
 import { redirect, notFound } from 'next/navigation'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Mail, Phone, Calendar, MapPin, User as UserIcon, Shield } from 'lucide-react'
@@ -20,7 +20,7 @@ type MemberWithRelations = User & {
 }
 
 async function getMemberProfile(memberId: string, viewerId: string, viewerRole: string, viewerTenantId: string) {
-  const member = await db.user.findFirst({
+  const member = await prisma.user.findFirst({
     where: {
       id: memberId,
       tenantId: viewerTenantId

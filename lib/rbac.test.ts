@@ -10,8 +10,8 @@ vi.mock('@/lib/auth', () => ({
   auth: vi.fn()
 }))
 
-vi.mock('@/app/lib/db', () => ({
-  db: {
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
     user: {
       findUnique: vi.fn()
     }

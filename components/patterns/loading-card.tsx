@@ -11,7 +11,7 @@ interface LoadingCardProps {
 
 export function LoadingCard({ title, description, className, children }: LoadingCardProps) {
   return (
-    <Card className={cn("border-0 shadow-md", className)}>
+    <Card className={cn("border-0 shadow-md", className)} role="status" aria-label={title || "Loading content"}>
       {(title || description) && (
         <CardHeader>
           {title && (
@@ -44,6 +44,7 @@ export function LoadingCard({ title, description, className, children }: Loading
           </>
         )}
       </CardContent>
+      <span className="sr-only">{title || "Loading content"}</span>
     </Card>
   );
 }

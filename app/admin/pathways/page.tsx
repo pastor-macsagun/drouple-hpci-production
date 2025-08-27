@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { AppLayout } from '@/components/layout/app-layout'
@@ -23,7 +23,7 @@ export default async function PathwaysPage() {
     redirect('/auth/login')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -31,7 +31,7 @@ export default async function PathwaysPage() {
     redirect('/')
   }
 
-  const pathways = await db.pathway.findMany({
+  const pathways = await prisma.pathway.findMany({
     where: {
       tenantId: user.tenantId!,
     },

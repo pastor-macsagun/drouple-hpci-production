@@ -117,94 +117,102 @@ export function MembersManager({
     })
   }, [cursor, search, selectedChurch, isPending])
 
-  const handleCreate = useCallback(async () => {
-    const result = await createMember({
-      name: formData.name,
-      email: formData.email,
-      role: formData.role,
-      tenantId: formData.tenantId
+  const handleCreate = useCallback(() => {
+    startTransition(async () => {
+      const result = await createMember({
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        tenantId: formData.tenantId
+      })
+      
+      if (result.success && result.password) {
+        setGeneratedPassword(result.password)
+        setShowPassword(true)
+        setIsCreateOpen(false)
+        handleSearch()
+        setFormData({
+          name: '',
+          email: '',
+          role: UserRole.MEMBER,
+          tenantId: userChurchId || '',
+          memberStatus: MemberStatus.PENDING
+        })
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+      }
     })
-    
-    if (result.success && result.password) {
-      setGeneratedPassword(result.password)
-      setShowPassword(true)
-      setIsCreateOpen(false)
-      handleSearch()
-      setFormData({
-        name: '',
-        email: '',
-        role: UserRole.MEMBER,
-        tenantId: userChurchId || '',
-        memberStatus: MemberStatus.PENDING
-      })
-    } else {
-      toast({
-        title: 'Error',
-        description: result.error,
-        variant: 'destructive'
-      })
-    }
-  }, [formData, toast, handleSearch, userChurchId])
+  }, [formData, toast, handleSearch, userChurchId, startTransition])
 
-  const handleUpdate = useCallback(async () => {
+  const handleUpdate = useCallback(() => {
     if (!editingMember) return
     
-    const result = await updateMember({
-      id: editingMember.id,
-      name: formData.name,
-      email: formData.email,
-      role: formData.role,
-      memberStatus: formData.memberStatus
+    startTransition(async () => {
+      const result = await updateMember({
+        id: editingMember.id,
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        memberStatus: formData.memberStatus
+      })
+      
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: 'Member updated successfully'
+        })
+        setIsEditOpen(false)
+        setEditingMember(null)
+        handleSearch()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+      }
     })
-    
-    if (result.success) {
-      toast({
-        title: 'Success',
-        description: 'Member updated successfully'
-      })
-      setIsEditOpen(false)
-      setEditingMember(null)
-      handleSearch()
-    } else {
-      toast({
-        title: 'Error',
-        description: result.error,
-        variant: 'destructive'
-      })
-    }
-  }, [editingMember, formData, toast, handleSearch])
+  }, [editingMember, formData, toast, handleSearch, startTransition])
 
-  const handleDeactivate = useCallback(async (memberId: string) => {
-    const result = await deactivateMember(memberId)
-    if (result.success) {
-      toast({
-        title: 'Success',
-        description: 'Member deactivated successfully'
-      })
-      handleSearch()
-    } else {
-      toast({
-        title: 'Error',
-        description: result.error,
-        variant: 'destructive'
-      })
-    }
-  }, [toast, handleSearch])
+  const handleDeactivate = useCallback((memberId: string) => {
+    startTransition(async () => {
+      const result = await deactivateMember(memberId)
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: 'Member deactivated successfully'
+        })
+        handleSearch()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+      }
+    })
+  }, [toast, handleSearch, startTransition])
 
-  const handleResetPassword = useCallback(async (memberId: string) => {
-    const result = await resetPassword(memberId)
-    if (result.success && result.password) {
-      setGeneratedPassword(result.password)
-      setShowPassword(true)
-      handleSearch()
-    } else {
-      toast({
-        title: 'Error',
-        description: result.error,
-        variant: 'destructive'
-      })
-    }
-  }, [toast, handleSearch])
+  const handleResetPassword = useCallback((memberId: string) => {
+    startTransition(async () => {
+      const result = await resetPassword(memberId)
+      if (result.success && result.password) {
+        setGeneratedPassword(result.password)
+        setShowPassword(true)
+        handleSearch()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error,
+          variant: 'destructive'
+        })
+      }
+    })
+  }, [toast, handleSearch, startTransition])
 
   const openEditDialog = useCallback((member: Member) => {
     setEditingMember(member)

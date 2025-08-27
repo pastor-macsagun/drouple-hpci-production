@@ -4,6 +4,18 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { startOfDay, endOfDay } from 'date-fns'
+import { z } from 'zod'
+import { hasMinRole, createTenantWhereClause } from '@/lib/rbac'
+import { UserRole } from '@prisma/client'
+
+const checkInSchema = z.object({
+  serviceId: z.string().min(1),
+  isNewBeliever: z.boolean().default(false)
+})
+
+const createServiceSchema = z.object({
+  date: z.date()
+})
 
 export async function getTodayService() {
   try {
@@ -16,15 +28,21 @@ export async function getTodayService() {
     const dayStart = startOfDay(today)
     const dayEnd = endOfDay(today)
 
-    // Get service for today in user's local church
-    const service = await prisma.service.findFirst({
-      where: {
+    // Apply proper tenant isolation for service lookup
+    const whereClause = await createTenantWhereClause(
+      session.user,
+      {
         date: {
           gte: dayStart,
           lte: dayEnd
-        },
-        localChurchId: session.user.tenantId || undefined
+        }
       },
+      undefined,
+      'localChurchId' // Service model uses localChurchId field
+    )
+
+    const service = await prisma.service.findFirst({
+      where: whereClause,
       include: {
         localChurch: true,
         _count: {
@@ -42,11 +60,35 @@ export async function getTodayService() {
   }
 }
 
-export async function checkIn(serviceId: string, isNewBeliever = false) {
+export async function checkIn(formData: FormData) {
   try {
     const session = await auth()
     if (!session?.user?.id) {
       return { success: false, error: 'Not authenticated' }
+    }
+
+    // Validate input
+    const validatedData = checkInSchema.parse({
+      serviceId: formData.get('serviceId'),
+      isNewBeliever: formData.get('isNewBeliever') === 'true'
+    })
+
+    const { serviceId, isNewBeliever } = validatedData
+
+    // Optimize: Combine service validation with tenant check
+    const service = await prisma.service.findFirst({
+      where: {
+        id: serviceId,
+        localChurchId: session.user.tenantId || undefined
+      },
+      select: { 
+        id: true,
+        localChurchId: true 
+      }
+    })
+
+    if (!service) {
+      return { success: false, error: 'Service not found or access denied' }
     }
 
     // Check if already checked in
@@ -146,13 +188,34 @@ export async function getServiceAttendance(serviceId: string) {
     }
 
     // Only admins can view attendance
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // Optimize: Single query with tenant filtering for attendance
+    const service = await prisma.service.findFirst({
+      where: {
+        id: serviceId,
+        ...(session.user.role !== 'SUPER_ADMIN' && {
+          localChurchId: session.user.tenantId || undefined
+        })
+      },
+      select: { 
+        id: true,
+        localChurchId: true 
+      }
+    })
+
+    if (!service) {
+      return { success: false, error: 'Service not found or access denied' }
     }
 
     const checkins = await prisma.checkin.findMany({
       where: { serviceId },
-      include: {
+      select: {
+        id: true,
+        checkedInAt: true,
+        isNewBeliever: true,
         user: {
           select: {
             id: true,
@@ -173,21 +236,26 @@ export async function getServiceAttendance(serviceId: string) {
   }
 }
 
-export async function createService(date: Date) {
+export async function createService(formData: FormData) {
   try {
     const session = await auth()
     if (!session?.user) {
       return { success: false, error: 'Not authenticated' }
     }
 
+    // Validate input
+    const validatedData = createServiceSchema.parse({
+      date: new Date(formData.get('date') as string)
+    })
+
     // Only admins can create services
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
     const service = await prisma.service.create({
       data: {
-        date,
+        date: validatedData.date,
         localChurchId: session.user.tenantId!
       }
     })

@@ -9,7 +9,7 @@ interface SkeletonProps {
 // Skeleton for dashboard stat cards
 export function StatCardSkeleton({ className }: SkeletonProps) {
   return (
-    <Card className={cn("border-0 shadow-md", className)}>
+    <Card className={cn("border-0 shadow-md", className)} role="status" aria-label="Loading dashboard statistics">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <Skeleton className="h-4 w-20" /> {/* Title */}
         <Skeleton className="h-8 w-8 rounded-xl" /> {/* Icon */}
@@ -18,6 +18,7 @@ export function StatCardSkeleton({ className }: SkeletonProps) {
         <Skeleton className="h-8 w-16 mb-2" /> {/* Large number */}
         <Skeleton className="h-3 w-24" /> {/* Subtitle */}
       </CardContent>
+      <span className="sr-only">Loading dashboard statistics</span>
     </Card>
   );
 }
@@ -29,7 +30,7 @@ export function TableSkeleton({
   className 
 }: SkeletonProps & { columns?: number; rows?: number }) {
   return (
-    <div className={cn("table-container", className)}>
+    <div className={cn("table-container", className)} role="status" aria-label="Loading table data">
       <div className="w-full">
         {/* Header */}
         <div className="border-b flex">
@@ -51,6 +52,7 @@ export function TableSkeleton({
           </div>
         ))}
       </div>
+      <span className="sr-only">Loading table data</span>
     </div>
   );
 }

@@ -3,6 +3,8 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { hasMinRole } from '@/lib/rbac'
+import { UserRole } from '@prisma/client'
 import { createTenantWhereClause } from '@/lib/rbac'
 
 export async function listServices({ 
@@ -20,7 +22,7 @@ export async function listServices({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -83,7 +85,7 @@ export async function createService({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -125,7 +127,7 @@ export async function deleteService({ id }: { id: string }) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -161,7 +163,7 @@ export async function getServiceAttendance({ serviceId }: { serviceId: string })
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -178,26 +180,31 @@ export async function getServiceAttendance({ serviceId }: { serviceId: string })
       return { success: false, error: 'Cannot view attendance for another church' }
     }
 
-    const [count, checkins] = await Promise.all([
-      prisma.checkin.count({
-        where: { serviceId }
-      }),
-      prisma.checkin.findMany({
-        where: { serviceId },
-        include: {
-          user: {
-            select: {
-              name: true,
-              email: true
-            }
+    // Optimize: Single query with aggregation instead of separate count/findMany
+    const checkins = await prisma.checkin.findMany({
+      where: { serviceId },
+      select: {
+        id: true,
+        checkedInAt: true,
+        isNewBeliever: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
           }
-        },
-        orderBy: {
-          checkedInAt: 'desc'
-        },
-        take: 10
-      })
-    ])
+        }
+      },
+      orderBy: {
+        checkedInAt: 'desc'
+      },
+      take: 10
+    })
+    
+    // Get count with a separate optimized query
+    const count = await prisma.checkin.count({
+      where: { serviceId }
+    })
 
     return { success: true, data: { count, checkins } }
   } catch (error) {
@@ -213,16 +220,27 @@ export async function exportAttendanceCsv({ serviceId }: { serviceId: string }) 
       return new Response('Not authenticated', { status: 401 })
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return new Response('Unauthorized', { status: 403 })
     }
 
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
-      include: {
-        localChurch: true,
+      select: {
+        id: true,
+        date: true,
+        localChurchId: true,
+        localChurch: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
         checkins: {
-          include: {
+          select: {
+            id: true,
+            checkedInAt: true,
+            isNewBeliever: true,
             user: {
               select: {
                 name: true,
@@ -279,18 +297,20 @@ export async function getLocalChurches() {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
-    const churches = session.user.role === 'SUPER_ADMIN'
-      ? await prisma.localChurch.findMany({
-          orderBy: { name: 'asc' }
-        })
-      : await prisma.localChurch.findMany({
-          where: { id: session.user.tenantId || undefined },
-          orderBy: { name: 'asc' }
-        })
+    const churches = await prisma.localChurch.findMany({
+      where: session.user.role === 'SUPER_ADMIN' 
+        ? {} 
+        : { id: session.user.tenantId || undefined },
+      select: {
+        id: true,
+        name: true
+      },
+      orderBy: { name: 'asc' }
+    })
 
     return { success: true, data: churches }
   } catch (error) {

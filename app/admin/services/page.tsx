@@ -1,9 +1,25 @@
+import { Suspense } from "react";
 import { AppLayout } from "@/components/layout/app-layout";
+import { PageHeader } from "@/components/layout/page-header";
 import { getCurrentUser } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { ServicesManager } from "./services-manager";
 import { listServices, getLocalChurches } from "./actions";
+import { DataFetchErrorBoundary } from "@/components/patterns/error-boundary";
+import { TableSkeleton, FormSkeleton } from "@/components/patterns/loading-skeletons";
+
+function ServicesLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <FormSkeleton className="w-80" />
+        <div className="w-32 h-10 bg-muted rounded" />
+      </div>
+      <TableSkeleton columns={5} rows={6} />
+    </div>
+  );
+}
 
 export default async function AdminServicesPage() {
   const user = await getCurrentUser();
@@ -23,15 +39,21 @@ export default async function AdminServicesPage() {
 
   return (
     <AppLayout user={user}>
-      <div className="container py-8">
-        <h1 className="text-3xl font-bold mb-6">Admin Services</h1>
-        <ServicesManager 
-          initialServices={servicesResult.success && servicesResult.data ? servicesResult.data : { items: [], nextCursor: null, hasMore: false }}
-          churches={churchesResult.success && churchesResult.data ? churchesResult.data : []}
-          userRole={user.role}
-          userChurchId={user.tenantId}
-        />
-      </div>
+      <PageHeader
+        title="Service Management"
+        description="Manage Sunday services and track attendance"
+      />
+      
+      <DataFetchErrorBoundary>
+        <Suspense fallback={<ServicesLoadingSkeleton />}>
+          <ServicesManager 
+            initialServices={servicesResult.success && servicesResult.data ? servicesResult.data : { items: [], nextCursor: null, hasMore: false }}
+            churches={churchesResult.success && churchesResult.data ? churchesResult.data : []}
+            userRole={user.role}
+            userChurchId={user.tenantId}
+          />
+        </Suspense>
+      </DataFetchErrorBoundary>
     </AppLayout>
   );
 }

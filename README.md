@@ -94,13 +94,15 @@ npm run coverage:summary
 - **Unit test coverage**: Open `coverage/index.html` in browser
 - **E2E test report**: Run `npm run test:e2e -- --reporter=html` then open `playwright-report/index.html`
 
-### 4. Key Documentation
-- [Shippability Checklist](docs/shippability-checklist.md) - Pre-release verification
-- [Deployment Guide](docs/deployment.md) - Production deployment steps
-- [API Reference](docs/api-reference.md) - Server actions and schemas
-- [RBAC Documentation](docs/rbac.md) - Role permissions matrix
-- [UI Redesign Documentation](docs/ui-redesign.md) - Modern UI/UX implementation
-- [Design System](docs/design-system.md) - Component patterns and guidelines
+### 4. Documentation
+- **[📚 Complete Documentation Index](docs/README.md)** - Organized navigation to all documentation
+- **[🚀 Development Setup](docs/dev-setup.md)** - Complete setup guide for developers
+- **[🔧 Deployment Guide](docs/deployment.md)** - Production deployment procedures
+- **[📖 API Reference](docs/api.md)** - Server actions, schemas, and authentication
+- **[🔐 RBAC Documentation](docs/rbac.md)** - Role permissions and access control
+- **[🎨 UI Redesign](docs/ui-redesign.md)** - Modern design system (Aug 2025)
+- **[👥 VIP Team Management](docs/vip-team.md)** - First timer tracking system
+- **[✅ Shippability Checklist](docs/shippability-checklist.md)** - Pre-release verification
 
 ## Available Scripts
 

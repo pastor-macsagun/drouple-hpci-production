@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { UserRole, EventScope, RsvpStatus } from '@prisma/client'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
+import { hasMinRole, createTenantWhereClause } from '@/lib/rbac'
 
 const createEventSchema = z.object({
   name: z.string().min(1),
@@ -44,8 +45,7 @@ export async function createEvent(data: z.infer<typeof createEventSchema>) {
     }
 
     // Only admins can create events
-    if (session.user.role !== UserRole.ADMIN && 
-        session.user.role !== UserRole.SUPER_ADMIN) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -79,8 +79,7 @@ export async function updateEvent(
     }
 
     // Only admins can update events
-    if (session.user.role !== UserRole.ADMIN && 
-        session.user.role !== UserRole.SUPER_ADMIN) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -106,8 +105,7 @@ export async function deleteEvent(eventId: string) {
     }
 
     // Only admins can delete events
-    if (session.user.role !== UserRole.ADMIN && 
-        session.user.role !== UserRole.SUPER_ADMIN) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -144,10 +142,17 @@ export async function rsvpToEvent(eventId: string) {
       return { success: false, error: 'Event not available' }
     }
 
-    // Check scope visibility
-    if (event.scope === EventScope.LOCAL_CHURCH && 
-        event.localChurchId !== session.user.tenantId) {
-      return { success: false, error: 'Event not available' }
+    // Check scope visibility using tenant isolation
+    if (event.scope === EventScope.LOCAL_CHURCH) {
+      const whereClause = await createTenantWhereClause(
+        session.user, 
+        { id: eventId }, 
+        undefined, 
+        'localChurchId'
+      )
+      if (whereClause.localChurchId !== event.localChurchId) {
+        return { success: false, error: 'Event not available' }
+      }
     }
 
     // Check for existing RSVP
@@ -163,7 +168,7 @@ export async function rsvpToEvent(eventId: string) {
       return { success: false, error: 'Already registered for this event' }
     }
 
-    // Count current attendees (GOING status only)
+    // Optimize: Count current attendees efficiently
     const currentAttendees = await prisma.eventRsvp.count({
       where: {
         eventId,
@@ -258,8 +263,15 @@ export async function getEvents() {
       return { success: false, error: 'Not authenticated' }
     }
 
-    const isAdmin = session.user.role === UserRole.ADMIN || 
-                   session.user.role === UserRole.SUPER_ADMIN
+    const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
+
+    // Get tenant-scoped events using proper isolation
+    const localChurchWhere = await createTenantWhereClause(
+      session.user,
+      { scope: EventScope.LOCAL_CHURCH },
+      undefined,
+      'localChurchId'
+    )
 
     let events = await prisma.event.findMany({
       where: {
@@ -267,15 +279,30 @@ export async function getEvents() {
         OR: [
           // WHOLE_CHURCH events visible to all
           { scope: EventScope.WHOLE_CHURCH },
-          // LOCAL_CHURCH events for user's church
-          {
-            scope: EventScope.LOCAL_CHURCH,
-            localChurchId: session.user.tenantId || undefined,
-          },
+          // LOCAL_CHURCH events using tenant isolation
+          localChurchWhere,
         ],
       },
-      include: {
-        localChurch: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        startDateTime: true,
+        endDateTime: true,
+        location: true,
+        capacity: true,
+        scope: true,
+        localChurchId: true,
+        requiresPayment: true,
+        feeAmount: true,
+        visibleToRoles: true,
+        isActive: true,
+        localChurch: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
         _count: {
           select: {
             rsvps: {
@@ -311,13 +338,35 @@ export async function getEventById(eventId: string) {
 
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      include: {
-        localChurch: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        startDateTime: true,
+        endDateTime: true,
+        location: true,
+        capacity: true,
+        scope: true,
+        localChurchId: true,
+        requiresPayment: true,
+        feeAmount: true,
+        visibleToRoles: true,
+        isActive: true,
+        localChurch: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
         rsvps: {
           where: { 
             status: { not: RsvpStatus.CANCELLED },
           },
-          include: {
+          select: {
+            id: true,
+            status: true,
+            rsvpAt: true,
+            hasPaid: true,
             user: {
               select: {
                 id: true,
@@ -335,8 +384,7 @@ export async function getEventById(eventId: string) {
       return { success: false, error: 'Event not found' }
     }
 
-    const isAdmin = session.user.role === UserRole.ADMIN || 
-                   session.user.role === UserRole.SUPER_ADMIN
+    const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
 
     // Check visibility for non-admins
     if (!isAdmin) {
@@ -345,9 +393,16 @@ export async function getEventById(eventId: string) {
         return { success: false, error: 'Event not available' }
       }
 
-      if (event.scope === EventScope.LOCAL_CHURCH && 
-          event.localChurchId !== session.user.tenantId) {
-        return { success: false, error: 'Event not available' }
+      if (event.scope === EventScope.LOCAL_CHURCH) {
+        const whereClause = await createTenantWhereClause(
+          session.user, 
+          { id: eventId }, 
+          undefined, 
+          'localChurchId'
+        )
+        if (whereClause.localChurchId !== event.localChurchId) {
+          return { success: false, error: 'Event not available' }
+        }
       }
     }
 
@@ -381,8 +436,7 @@ export async function markAsPaid(rsvpId: string) {
     }
 
     // Only admins can mark as paid
-    if (session.user.role !== UserRole.ADMIN && 
-        session.user.role !== UserRole.SUPER_ADMIN) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -408,8 +462,7 @@ export async function exportEventAttendees(eventId: string) {
     }
 
     // Only admins can export
-    if (session.user.role !== UserRole.ADMIN && 
-        session.user.role !== UserRole.SUPER_ADMIN) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -421,11 +474,18 @@ export async function exportEventAttendees(eventId: string) {
       return { success: false, error: 'Event not found' }
     }
 
-    // Verify admin has access to this event
-    if (session.user.role === UserRole.ADMIN && 
-        event.scope === EventScope.LOCAL_CHURCH &&
-        event.localChurchId !== session.user.tenantId) {
-      return { success: false, error: 'Unauthorized' }
+    // Verify admin has access to this event using tenant isolation
+    if (event.scope === EventScope.LOCAL_CHURCH) {
+      const whereClause = await createTenantWhereClause(
+        session.user, 
+        {}, 
+        undefined, 
+        'localChurchId'
+      )
+      if (session.user.role !== UserRole.SUPER_ADMIN && 
+          whereClause.localChurchId !== event.localChurchId) {
+        return { success: false, error: 'Unauthorized' }
+      }
     }
 
     const rsvps = await prisma.eventRsvp.findMany({
@@ -433,7 +493,11 @@ export async function exportEventAttendees(eventId: string) {
         eventId,
         status: { not: RsvpStatus.CANCELLED },
       },
-      include: {
+      select: {
+        id: true,
+        status: true,
+        rsvpAt: true,
+        hasPaid: true,
         user: {
           select: {
             name: true,

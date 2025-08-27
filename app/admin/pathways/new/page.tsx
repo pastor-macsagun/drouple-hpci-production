@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import PathwayForm from '../pathway-form'
 import { AppLayout } from '@/components/layout/app-layout'
@@ -13,7 +13,7 @@ export default async function NewPathwayPage() {
     redirect('/auth/login')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 

@@ -152,8 +152,8 @@ export function withCache<T extends (...args: any[]) => Promise<any>>(
 export const cachedQueries = {
   getUser: createCachedFunction(
     async (userId: string) => {
-      const { db } = await import('@/app/lib/db')
-      return db.user.findUnique({ where: { id: userId } })
+      const { prisma } = await import('@/lib/prisma')
+      return prisma.user.findUnique({ where: { id: userId } })
     },
     {
       tags: [CACHE_TAGS.USER],
@@ -164,8 +164,8 @@ export const cachedQueries = {
 
   getChurch: createCachedFunction(
     async (churchId: string) => {
-      const { db } = await import('@/app/lib/db')
-      return db.church.findUnique({
+      const { prisma } = await import('@/lib/prisma')
+      return prisma.church.findUnique({
         where: { id: churchId },
         include: { localChurches: true }
       })
@@ -179,8 +179,8 @@ export const cachedQueries = {
 
   getUpcomingEvents: createCachedFunction(
     async (localChurchId: string) => {
-      const { db } = await import('@/app/lib/db')
-      return db.event.findMany({
+      const { prisma } = await import('@/lib/prisma')
+      return prisma.event.findMany({
         where: {
           localChurchId,
           isActive: true,
@@ -199,8 +199,8 @@ export const cachedQueries = {
 
   getAnnouncements: createCachedFunction(
     async (localChurchId: string) => {
-      const { db } = await import('@/app/lib/db')
-      return db.announcement.findMany({
+      const { prisma } = await import('@/lib/prisma')
+      return prisma.announcement.findMany({
         where: {
           localChurchId,
           isActive: true,

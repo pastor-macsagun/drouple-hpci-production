@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from '@sentry/nextjs';
 
 // Bundle analyzer configuration
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -58,4 +59,27 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+// Sentry configuration options
+const sentryWebpackPluginOptions = {
+  // Additional config options for the Sentry Webpack plugin
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: true, // Suppresses all logs
+  widenClientFileUpload: true,
+  reactComponentAnnotation: {
+    enabled: true,
+  },
+  hideSourceMaps: true,
+  disableLogger: true,
+  automaticVercelMonitors: true,
+};
+
+// Apply configurations in the right order
+const configWithBundleAnalyzer = withBundleAnalyzer(nextConfig);
+
+// Only apply Sentry in production or when explicitly enabled
+const shouldUseSentry = process.env.NODE_ENV === 'production' || process.env.SENTRY_ENABLED === 'true';
+
+export default shouldUseSentry 
+  ? withSentryConfig(configWithBundleAnalyzer, sentryWebpackPluginOptions)
+  : configWithBundleAnalyzer;

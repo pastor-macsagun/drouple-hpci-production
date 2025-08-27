@@ -1,6 +1,6 @@
 'use server'
 
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { PathwayType } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
@@ -11,7 +11,7 @@ export async function createPathway(data: {
   tenantId: string
   isActive?: boolean
 }) {
-  const pathway = await db.pathway.create({
+  const pathway = await prisma.pathway.create({
     data: {
       name: data.name,
       description: data.description,
@@ -34,7 +34,7 @@ export async function updatePathway(
     isActive?: boolean
   }
 ) {
-  const pathway = await db.pathway.update({
+  const pathway = await prisma.pathway.update({
     where: { id },
     data,
   })
@@ -45,7 +45,7 @@ export async function updatePathway(
 }
 
 export async function deletePathway(id: string) {
-  await db.pathway.delete({
+  await prisma.pathway.delete({
     where: { id },
   })
 
@@ -58,7 +58,7 @@ export async function createStep(data: {
   description?: string
   orderIndex: number
 }) {
-  const step = await db.pathwayStep.create({
+  const step = await prisma.pathwayStep.create({
     data,
   })
 
@@ -75,7 +75,7 @@ export async function updateStep(
     orderIndex?: number
   }
 ) {
-  const step = await db.pathwayStep.update({
+  const step = await prisma.pathwayStep.update({
     where: { id },
     data,
   })
@@ -85,12 +85,12 @@ export async function updateStep(
 }
 
 export async function deleteStep(id: string) {
-  const step = await db.pathwayStep.findUnique({
+  const step = await prisma.pathwayStep.findUnique({
     where: { id },
     select: { pathwayId: true },
   })
 
-  await db.pathwayStep.delete({
+  await prisma.pathwayStep.delete({
     where: { id },
   })
 
@@ -106,7 +106,7 @@ export async function markStepComplete(
   completedBy: string,
   notes?: string
 ) {
-  const existing = await db.pathwayProgress.findFirst({
+  const existing = await prisma.pathwayProgress.findFirst({
     where: { stepId, userId },
   })
 
@@ -114,7 +114,7 @@ export async function markStepComplete(
     return existing
   }
 
-  const progress = await db.pathwayProgress.create({
+  const progress = await prisma.pathwayProgress.create({
     data: {
       stepId,
       userId,
@@ -132,7 +132,7 @@ export async function enrollUser(
   userId: string,
   pathwayId: string
 ) {
-  const existing = await db.pathwayEnrollment.findFirst({
+  const existing = await prisma.pathwayEnrollment.findFirst({
     where: { userId, pathwayId },
   })
 
@@ -140,7 +140,7 @@ export async function enrollUser(
     return existing
   }
 
-  const enrollment = await db.pathwayEnrollment.create({
+  const enrollment = await prisma.pathwayEnrollment.create({
     data: {
       userId,
       pathwayId,

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { 
@@ -27,12 +27,12 @@ async function getDashboardStats(tenantId: string) {
     believerStatusCounts
   ] = await Promise.all([
     // Total members
-    db.user.count({
+    prisma.user.count({
       where: { tenantId, role: 'MEMBER' }
     }),
     
     // New members (last 30 days)
-    db.user.count({
+    prisma.user.count({
       where: {
         tenantId,
         role: 'MEMBER',
@@ -41,7 +41,7 @@ async function getDashboardStats(tenantId: string) {
     }),
     
     // Active life groups
-    db.lifeGroup.count({
+    prisma.lifeGroup.count({
       where: {
         localChurch: { church: { id: tenantId } },
         isActive: true
@@ -49,7 +49,7 @@ async function getDashboardStats(tenantId: string) {
     }),
     
     // Upcoming events
-    db.event.count({
+    prisma.event.count({
       where: {
         localChurch: { church: { id: tenantId } },
         isActive: true,
@@ -58,7 +58,7 @@ async function getDashboardStats(tenantId: string) {
     }),
     
     // Recent check-ins (last 7 days)
-    db.checkin.count({
+    prisma.checkin.count({
       where: {
         service: {
           localChurch: { church: { id: tenantId } }
@@ -68,7 +68,7 @@ async function getDashboardStats(tenantId: string) {
     }),
     
     // Active pathway enrollments
-    db.pathwayEnrollment.count({
+    prisma.pathwayEnrollment.count({
       where: {
         pathway: { tenantId },
         status: 'ENROLLED'
@@ -76,7 +76,7 @@ async function getDashboardStats(tenantId: string) {
     }),
     
     // Weekly attendance trend
-    db.checkin.groupBy({
+    prisma.checkin.groupBy({
       by: ['serviceId'],
       where: {
         service: {
@@ -88,7 +88,7 @@ async function getDashboardStats(tenantId: string) {
     }),
     
     // Monthly growth
-    db.user.groupBy({
+    prisma.user.groupBy({
       by: ['createdAt'],
       where: {
         tenantId,
@@ -98,7 +98,7 @@ async function getDashboardStats(tenantId: string) {
     }),
 
     // New believer status counts
-    db.membership.groupBy({
+    prisma.membership.groupBy({
       by: ['believerStatus'],
       where: {
         localChurch: { church: { id: tenantId } },
@@ -109,7 +109,7 @@ async function getDashboardStats(tenantId: string) {
   ])
 
   // Calculate trends
-  const previousWeekCheckins = await db.checkin.count({
+  const previousWeekCheckins = await prisma.checkin.count({
     where: {
       service: {
         localChurch: { church: { id: tenantId } }
@@ -155,7 +155,7 @@ async function getDashboardStats(tenantId: string) {
 
 async function getDetailedReports(tenantId: string) {
   // Get life group attendance
-  const lifeGroupAttendance = await db.lifeGroupAttendance.findMany({
+  const lifeGroupAttendance = await prisma.lifeGroupAttendance.findMany({
     where: {
       session: {
         lifeGroup: {
@@ -174,7 +174,7 @@ async function getDetailedReports(tenantId: string) {
   })
 
   // Get event RSVPs
-  const eventRsvps = await db.eventRsvp.findMany({
+  const eventRsvps = await prisma.eventRsvp.findMany({
     where: {
       event: {
         localChurch: { church: { id: tenantId } },

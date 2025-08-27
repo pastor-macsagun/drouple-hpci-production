@@ -3,7 +3,8 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import { MembershipStatus, RequestStatus } from '@prisma/client'
+import { MembershipStatus, RequestStatus, UserRole } from '@prisma/client'
+import { hasMinRole, createTenantWhereClause } from '@/lib/rbac'
 
 export async function getMyLifeGroups() {
   try {
@@ -55,10 +56,10 @@ export async function getAvailableLifeGroups() {
       return { success: false, error: 'Not authenticated' }
     }
 
-    // Get life groups user is not a member of
-    const lifeGroups = await prisma.lifeGroup.findMany({
-      where: {
-        localChurchId: session.user.tenantId || undefined,
+    // Apply proper tenant isolation for life groups
+    const whereClause = await createTenantWhereClause(
+      session.user,
+      {
         isActive: true,
         NOT: {
           memberships: {
@@ -69,6 +70,12 @@ export async function getAvailableLifeGroups() {
           }
         }
       },
+      undefined,
+      'localChurchId' // LifeGroup model uses localChurchId field
+    )
+
+    const lifeGroups = await prisma.lifeGroup.findMany({
+      where: whereClause,
       include: {
         leader: {
           select: {
@@ -120,6 +127,21 @@ export async function requestJoinLifeGroup(lifeGroupId: string, message?: string
     const session = await auth()
     if (!session?.user?.id) {
       return { success: false, error: 'Not authenticated' }
+    }
+
+    // CRITICAL SECURITY FIX: Verify life group belongs to user's tenant
+    const lifeGroup = await prisma.lifeGroup.findUnique({
+      where: { id: lifeGroupId },
+      select: { localChurchId: true, isActive: true }
+    })
+
+    if (!lifeGroup || !lifeGroup.isActive) {
+      return { success: false, error: 'Life group not found or inactive' }
+    }
+
+    // Verify tenant access
+    if (lifeGroup.localChurchId !== session.user.tenantId) {
+      return { success: false, error: 'Cannot join life group from another church' }
     }
 
     // Check if already a member
@@ -201,14 +223,23 @@ export async function getLifeGroupMembers(lifeGroupId: string) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    // Check if user is leader or admin
+    // CRITICAL SECURITY FIX: Verify tenant access and leadership/admin status
     const lifeGroup = await prisma.lifeGroup.findUnique({
       where: { id: lifeGroupId },
-      select: { leaderId: true }
+      select: { leaderId: true, localChurchId: true }
     })
 
-    const isLeader = lifeGroup?.leaderId === session.user.id
-    const isAdmin = ['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)
+    if (!lifeGroup) {
+      return { success: false, error: 'Life group not found' }
+    }
+
+    // Verify tenant access
+    if (session.user.role !== 'SUPER_ADMIN' && lifeGroup.localChurchId !== session.user.tenantId) {
+      return { success: false, error: 'Cannot access life group from another church' }
+    }
+
+    const isLeader = lifeGroup.leaderId === session.user.id
+    const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
 
     if (!isLeader && !isAdmin) {
       return { success: false, error: 'Unauthorized' }
@@ -248,14 +279,23 @@ export async function getLifeGroupRequests(lifeGroupId: string) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    // Check if user is leader or admin
+    // CRITICAL SECURITY FIX: Verify tenant access and leadership/admin status
     const lifeGroup = await prisma.lifeGroup.findUnique({
       where: { id: lifeGroupId },
-      select: { leaderId: true }
+      select: { leaderId: true, localChurchId: true }
     })
 
-    const isLeader = lifeGroup?.leaderId === session.user.id
-    const isAdmin = ['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)
+    if (!lifeGroup) {
+      return { success: false, error: 'Life group not found' }
+    }
+
+    // Verify tenant access
+    if (session.user.role !== 'SUPER_ADMIN' && lifeGroup.localChurchId !== session.user.tenantId) {
+      return { success: false, error: 'Cannot access life group from another church' }
+    }
+
+    const isLeader = lifeGroup.leaderId === session.user.id
+    const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
 
     if (!isLeader && !isAdmin) {
       return { success: false, error: 'Unauthorized' }
@@ -300,6 +340,7 @@ export async function approveRequest(requestId: string) {
         lifeGroup: {
           select: {
             leaderId: true,
+            localChurchId: true,
             capacity: true,
             _count: {
               select: {
@@ -319,9 +360,14 @@ export async function approveRequest(requestId: string) {
       return { success: false, error: 'Request not found' }
     }
 
+    // CRITICAL SECURITY FIX: Verify tenant access
+    if (session.user.role !== 'SUPER_ADMIN' && request.lifeGroup.localChurchId !== session.user.tenantId) {
+      return { success: false, error: 'Cannot approve request for another church' }
+    }
+
     // Check authorization
     const isLeader = request.lifeGroup.leaderId === session.user.id
-    const isAdmin = ['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)
+    const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
 
     if (!isLeader && !isAdmin) {
       return { success: false, error: 'Unauthorized' }
@@ -381,7 +427,8 @@ export async function rejectRequest(requestId: string) {
       include: {
         lifeGroup: {
           select: {
-            leaderId: true
+            leaderId: true,
+            localChurchId: true
           }
         }
       }
@@ -391,9 +438,14 @@ export async function rejectRequest(requestId: string) {
       return { success: false, error: 'Request not found' }
     }
 
+    // CRITICAL SECURITY FIX: Verify tenant access
+    if (session.user.role !== 'SUPER_ADMIN' && request.lifeGroup.localChurchId !== session.user.tenantId) {
+      return { success: false, error: 'Cannot reject request for another church' }
+    }
+
     // Check authorization
     const isLeader = request.lifeGroup.leaderId === session.user.id
-    const isAdmin = ['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)
+    const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
 
     if (!isLeader && !isAdmin) {
       return { success: false, error: 'Unauthorized' }

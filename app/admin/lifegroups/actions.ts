@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { MembershipStatus, RequestStatus, UserRole } from '@prisma/client'
-import { createTenantWhereClause } from '@/lib/rbac'
+import { createTenantWhereClause, hasMinRole } from '@/lib/rbac'
 
 export async function listLifeGroups({ 
   churchId,
@@ -21,7 +21,7 @@ export async function listLifeGroups({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -101,7 +101,7 @@ export async function createLifeGroup({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -173,7 +173,7 @@ export async function updateLifeGroup({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -234,7 +234,7 @@ export async function deleteLifeGroup({ id }: { id: string }) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -270,7 +270,7 @@ export async function listMemberships({ lifeGroupId }: { lifeGroupId: string }) 
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -308,7 +308,7 @@ export async function listJoinRequests({ lifeGroupId }: { lifeGroupId: string })
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -345,40 +345,44 @@ export async function approveRequest({ requestId }: { requestId: string }) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
+    // Optimize: Use efficient aggregation for capacity check
     const request = await prisma.lifeGroupMemberRequest.findUnique({
       where: { id: requestId },
-      include: {
+      select: {
+        id: true,
+        lifeGroupId: true,
+        userId: true,
         lifeGroup: {
           select: {
+            id: true,
             localChurchId: true,
-            capacity: true,
-            _count: {
-              select: {
-                memberships: {
-                  where: {
-                    status: MembershipStatus.ACTIVE
-                  }
-                }
-              }
-            }
+            capacity: true
           }
         }
       }
     })
-
+    
     if (!request) {
       return { success: false, error: 'Request not found' }
     }
+    
+    // Separate optimized count query
+    const currentMemberCount = await prisma.lifeGroupMembership.count({
+      where: {
+        lifeGroupId: request.lifeGroupId,
+        status: MembershipStatus.ACTIVE
+      }
+    })
 
     if (session.user.role !== 'SUPER_ADMIN' && request.lifeGroup.localChurchId !== session.user.tenantId) {
       return { success: false, error: 'Cannot approve request for another church' }
     }
 
-    if (request.lifeGroup._count.memberships >= request.lifeGroup.capacity) {
+    if (currentMemberCount >= request.lifeGroup.capacity) {
       return { success: false, error: 'Life group is at capacity' }
     }
 
@@ -425,7 +429,7 @@ export async function rejectRequest({ requestId }: { requestId: string }) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -472,7 +476,7 @@ export async function removeMember({ lifeGroupId, userId }: { lifeGroupId: strin
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -510,7 +514,7 @@ export async function startAttendanceSession({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -544,7 +548,7 @@ export async function markAttendance({
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -588,25 +592,34 @@ export async function exportRosterCsv({ lifeGroupId }: { lifeGroupId: string }) 
       return new Response('Not authenticated', { status: 401 })
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return new Response('Unauthorized', { status: 403 })
     }
 
     const lifeGroup = await prisma.lifeGroup.findUnique({
       where: { id: lifeGroupId },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        localChurchId: true,
         leader: {
           select: {
             name: true,
             email: true
           }
         },
-        localChurch: true,
+        localChurch: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
         memberships: {
           where: {
             status: MembershipStatus.ACTIVE
           },
-          include: {
+          select: {
+            joinedAt: true,
             user: {
               select: {
                 name: true,
@@ -662,18 +675,29 @@ export async function exportAttendanceCsv({ lifeGroupId }: { lifeGroupId: string
       return new Response('Not authenticated', { status: 401 })
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return new Response('Unauthorized', { status: 403 })
     }
 
     const lifeGroup = await prisma.lifeGroup.findUnique({
       where: { id: lifeGroupId },
-      include: {
-        localChurch: true,
+      select: {
+        id: true,
+        name: true,
+        localChurchId: true,
+        localChurch: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
         attendanceSessions: {
-          include: {
+          select: {
+            id: true,
+            date: true,
             attendances: {
-              include: {
+              select: {
+                userId: true,
                 user: {
                   select: {
                     name: true,
@@ -737,7 +761,7 @@ export async function getLeaders({ churchId }: { churchId?: string } = {}) {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 
@@ -778,7 +802,7 @@ export async function getLocalChurches() {
       return { success: false, error: 'Not authenticated' }
     }
 
-    if (!['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)) {
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
       return { success: false, error: 'Unauthorized' }
     }
 

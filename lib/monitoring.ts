@@ -1,12 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Monitoring and Error Tracking Setup
- * Sentry integration for production error tracking
+ * Comprehensive monitoring with Sentry integration for production error tracking
  */
 
 import { logger } from './logger'
 
-// Sentry configuration
+// Import Sentry helpers
+let sentryHelpers: any = null;
+if (typeof window === 'undefined') {
+  // Server-side
+  try {
+    sentryHelpers = require('../sentry.server.config'); // eslint-disable-line @typescript-eslint/no-require-imports
+  } catch (error) {
+    logger.warn('Sentry server config not available', { 
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+} else {
+  // Client-side - Sentry should be available via next.config.js configuration
+  sentryHelpers = (window as any).Sentry;
+}
+
+// Enhanced Sentry configuration
 export const sentryConfig = {
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
@@ -26,6 +42,113 @@ export const sentryConfig = {
     logger.error('Sentry Event', { eventId: event.event_id, error: hint.originalException })
     
     return event
+  }
+}
+
+/**
+ * Enhanced error tracking with business context
+ */
+export class ErrorTracker {
+  /**
+   * Track authentication errors with user context
+   */
+  static captureAuthError(error: Error, context: {
+    userId?: string;
+    email?: string;
+    attemptedAction: string;
+  }) {
+    if (sentryHelpers?.captureUserError) {
+      sentryHelpers.captureUserError(error, {
+        id: context.userId,
+        email: context.email ? '[REDACTED]' : undefined,
+      }, {
+        auth_action: context.attemptedAction,
+        error_type: 'authentication',
+      });
+    }
+    
+    logger.error('Authentication Error', {
+      error: error.message,
+      userId: context.userId,
+      action: context.attemptedAction,
+    });
+  }
+
+  /**
+   * Track business logic errors
+   */
+  static captureBusinessError(message: string, context: {
+    userId?: string;
+    tenantId?: string;
+    action: string;
+    resource?: string;
+    severity?: 'low' | 'medium' | 'high';
+    extra?: Record<string, any>;
+  }) {
+    if (sentryHelpers?.captureBusinessLogicError) {
+      sentryHelpers.captureBusinessLogicError(message, context);
+    }
+    
+    logger.error('Business Logic Error', {
+      message,
+      ...context,
+    });
+  }
+
+  /**
+   * Track database errors with query context
+   */
+  static captureDatabaseError(error: Error, context: {
+    operation: string;
+    table?: string;
+    userId?: string;
+    tenantId?: string;
+  }) {
+    if (sentryHelpers?.captureUserError) {
+      sentryHelpers.captureUserError(error, 
+        context.userId ? { id: context.userId } : undefined,
+        {
+          db_operation: context.operation,
+          db_table: context.table,
+          tenant_id: context.tenantId,
+          error_type: 'database',
+        }
+      );
+    }
+    
+    logger.error('Database Error', {
+      error: error.message,
+      ...context,
+    });
+  }
+
+  /**
+   * Track API errors with request context
+   */
+  static captureAPIError(error: Error, context: {
+    method: string;
+    url: string;
+    statusCode?: number;
+    userId?: string;
+    requestId?: string;
+  }) {
+    if (sentryHelpers?.captureUserError) {
+      sentryHelpers.captureUserError(error,
+        context.userId ? { id: context.userId } : undefined,
+        {
+          http_method: context.method,
+          http_url: context.url,
+          http_status: context.statusCode,
+          request_id: context.requestId,
+          error_type: 'api',
+        }
+      );
+    }
+    
+    logger.error('API Error', {
+      error: error.message,
+      ...context,
+    });
   }
 }
 
@@ -160,8 +283,8 @@ export async function performHealthCheck(): Promise<HealthCheckResult> {
   // Check database
   let databaseHealthy = false
   try {
-    const { db } = await import('@/app/lib/db')
-    await db.$queryRaw`SELECT 1`
+    const { prisma } = await import('@/lib/prisma')
+    await prisma.$queryRaw`SELECT 1`
     databaseHealthy = true
   } catch (error) {
     logger.error('Database health check failed', { error })

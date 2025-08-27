@@ -1,7 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole, PathwayType } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
@@ -76,7 +76,7 @@ export async function registerMember(formData: FormData) {
   }
 
   // Check if user already exists
-  const existingUser = await db.user.findUnique({
+  const existingUser = await prisma.user.findUnique({
     where: { email: validated.email },
   })
 
@@ -86,7 +86,7 @@ export async function registerMember(formData: FormData) {
   }
 
   // Get local church details
-  const localChurch = await db.localChurch.findUnique({
+  const localChurch = await prisma.localChurch.findUnique({
     where: { id: validated.localChurchId },
     include: { church: true },
   })
@@ -100,7 +100,7 @@ export async function registerMember(formData: FormData) {
   const passwordHash = await bcrypt.hash(validated.password, 12)
 
   // Create user with password
-  const user = await db.user.create({
+  const user = await prisma.user.create({
     data: {
       email: validated.email,
       name: validated.name,
@@ -113,7 +113,7 @@ export async function registerMember(formData: FormData) {
   })
 
   // Create membership
-  await db.membership.create({
+  await prisma.membership.create({
     data: {
       userId: user.id,
       localChurchId: validated.localChurchId,
@@ -124,7 +124,7 @@ export async function registerMember(formData: FormData) {
 
   // If new believer, auto-enroll in ROOTS pathway
   if (validated.isNewBeliever) {
-    const rootsPathway = await db.pathway.findFirst({
+    const rootsPathway = await prisma.pathway.findFirst({
       where: {
         tenantId: localChurch.church.id,
         type: PathwayType.ROOTS,
@@ -132,7 +132,7 @@ export async function registerMember(formData: FormData) {
     })
 
     if (rootsPathway) {
-      await db.pathwayEnrollment.create({
+      await prisma.pathwayEnrollment.create({
         data: {
           pathwayId: rootsPathway.id,
           userId: user.id,

@@ -1,14 +1,41 @@
-# API Documentation
+# HPCI-ChMS API Reference
 
 ## Overview
 
-HPCI-ChMS uses server actions and route handlers for API functionality. All actions require authentication unless explicitly noted as public.
+HPCI-ChMS uses Next.js server actions and route handlers for API functionality. All actions require authentication unless explicitly noted as public.
 
 ## Authentication
 
-Authentication is handled via NextAuth with Credentials Provider (email + password). Sessions are JWT-based with bcrypt password hashing.
+### Authentication Method
+- **Provider**: NextAuth with Credentials Provider (email + password)
+- **Password Hashing**: bcrypt
+- **Session Storage**: JWT tokens
+- **Multi-tenancy**: All requests are tenant-scoped based on user's church association
 
-## Error Handling
+### Login Endpoint
+```typescript
+POST /api/auth/callback/credentials
+Content-Type: application/x-www-form-urlencoded
+
+email=user@example.com&password=yourPassword
+```
+
+### Rate Limiting
+- **Login attempts**: 5 per 15 minutes per IP+email combination
+- **Response**: Returns 429 with `Retry-After` header when rate limited
+
+### Test Accounts
+Available after running `npm run seed`:
+
+| Email | Role | Password | Redirects To |
+|-------|------|----------|--------------|
+| superadmin@test.com | SUPER_ADMIN | Hpci!Test2025 | /super |
+| admin.manila@test.com | ADMIN | Hpci!Test2025 | /dashboard?lc=local_manila |
+| vip.manila@test.com | VIP | Hpci!Test2025 | /dashboard?lc=local_manila |
+| leader.manila@test.com | LEADER | Hpci!Test2025 | /dashboard?lc=local_manila |
+| member1@test.com | MEMBER | Hpci!Test2025 | /dashboard |
+
+## API Response Format
 
 All server actions return a standardized response format:
 
@@ -23,11 +50,15 @@ interface ActionResponse<T = any> {
 
 ### Error Codes
 
-| Code | Description |
-|------|-------------|
-| `UNAUTHORIZED` | User is not authenticated |
-| `FORBIDDEN` | User lacks required permissions |
-| `NOT_FOUND` | Resource not found |
+| Code | Description | HTTP Status |
+|------|-------------|-------------|
+| `UNAUTHORIZED` | User is not authenticated | 401 |
+| `FORBIDDEN` | User lacks required permissions | 403 |
+| `NOT_FOUND` | Resource not found | 404 |
+| `VALIDATION_ERROR` | Input validation failed | 400 |
+| `RATE_LIMITED` | Too many requests | 429 |
+| `TENANT_ISOLATED` | Resource belongs to different tenant | 403 |
+| `INTERNAL_ERROR` | Server error | 500 |
 | `VALIDATION_ERROR` | Invalid input data |
 | `DUPLICATE_ENTRY` | Resource already exists |
 | `TENANT_MISMATCH` | Cross-tenant access attempted |

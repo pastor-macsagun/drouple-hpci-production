@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect, notFound } from 'next/navigation'
 import { auth } from '@/lib/auth'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -21,7 +21,7 @@ export default async function EditChurchPage({ params }: { params: Promise<{ id:
     redirect('/auth/signin')
   }
 
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
   })
 
@@ -29,7 +29,7 @@ export default async function EditChurchPage({ params }: { params: Promise<{ id:
     redirect('/forbidden')
   }
 
-  const church = await db.church.findUnique({
+  const church = await prisma.church.findUnique({
     where: { id: resolvedParams.id },
   })
 

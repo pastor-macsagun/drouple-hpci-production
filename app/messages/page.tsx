@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import type { Message, User } from '@prisma/client'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -14,7 +14,7 @@ type MessageWithRecipient = Message & { recipient: Pick<User, 'id' | 'name' | 'e
 
 async function getMessages(userId: string, filter: 'inbox' | 'sent'): Promise<MessageWithSender[] | MessageWithRecipient[]> {
   if (filter === 'sent') {
-    return db.message.findMany({
+    return prisma.message.findMany({
       where: {
         senderId: userId,
         parentMessageId: null
@@ -29,7 +29,7 @@ async function getMessages(userId: string, filter: 'inbox' | 'sent'): Promise<Me
       take: 50
     })
   } else {
-    return db.message.findMany({
+    return prisma.message.findMany({
       where: {
         recipientId: userId,
         parentMessageId: null
@@ -47,7 +47,7 @@ async function getMessages(userId: string, filter: 'inbox' | 'sent'): Promise<Me
 }
 
 async function getUnreadCount(userId: string) {
-  return db.message.count({
+  return prisma.message.count({
     where: {
       recipientId: userId,
       isRead: false
@@ -71,7 +71,7 @@ export default async function MessagesPage({
   const unreadCount = await getUnreadCount(session.user.id)
 
   // Get full user details for sidebar
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { id: true, email: true, name: true, role: true }
   })

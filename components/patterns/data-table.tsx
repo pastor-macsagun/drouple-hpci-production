@@ -75,17 +75,17 @@ const DataTableComponent = <T extends { id?: string | number }>({
         </table>
       </div>
 
-      {/* Mobile Card View */}
+      {/* Mobile Card View - Enhanced for touch */}
       <div className="md:hidden space-y-3">
         {data.map((item, index) => (
-          <Card key={item.id || index} className="p-4">
-            <CardContent className="p-0 space-y-2">
+          <Card key={item.id || index} className="p-4 mobile-scroll">
+            <CardContent className="p-0 space-y-3">
               {columns.map((column) => (
-                <div key={column.key} className="flex justify-between items-start gap-2">
-                  <span className="text-sm font-medium text-muted-foreground min-w-0 flex-shrink-0">
+                <div key={column.key} className="flex justify-between items-start gap-3 min-h-[24px]">
+                  <span className="text-sm font-medium text-muted-foreground min-w-[80px] flex-shrink-0">
                     {column.mobileLabel || column.header}:
                   </span>
-                  <div className="text-sm text-right min-w-0 flex-1">
+                  <div className="text-sm text-right min-w-0 flex-1 break-words">
                     {column.cell(item)}
                   </div>
                 </div>

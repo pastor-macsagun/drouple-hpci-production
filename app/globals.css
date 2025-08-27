@@ -269,6 +269,65 @@
     @apply card p-4 sm:p-6 space-y-3 sm:space-y-4;
   }
 
+  /* Mobile touch targets - minimum 44px for accessibility */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .mobile-form {
+    @apply space-y-4;
+  }
+
+  .mobile-form input,
+  .mobile-form textarea,
+  .mobile-form select,
+  .mobile-form button {
+    @apply min-h-[44px] text-base; /* Prevent zoom on iOS */
+  }
+
+  /* Better mobile scrolling */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-friendly buttons */
+  .mobile-btn {
+    @apply min-h-[44px] px-4 py-2 text-base font-medium touch-manipulation;
+  }
+
+  /* Enhanced focus indicators for better accessibility */
+  .enhanced-focus {
+    @apply focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .border { border-width: 2px; }
+    .text-muted { color: rgb(var(--color-ink)) !important; }
+    .bg-muted { background-color: rgb(var(--color-elevated)) !important; }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    * {
+      color: black !important;
+      background: white !important;
+      box-shadow: none !important;
+    }
+  }
+
   /* Theming Utilities */
   .gradient-hero {
     background: radial-gradient(40rem 40rem at 50% -10%, rgba(37, 99, 235, 0.08), transparent);

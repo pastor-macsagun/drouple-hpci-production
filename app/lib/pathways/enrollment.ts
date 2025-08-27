@@ -1,4 +1,4 @@
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { PathwayType, EnrollmentStatus } from '@prisma/client'
 
 export async function enrollUserInPathway(
@@ -6,7 +6,7 @@ export async function enrollUserInPathway(
   pathwayId: string,
   tenantId: string
 ) {
-  const pathway = await db.pathway.findFirst({
+  const pathway = await prisma.pathway.findFirst({
     where: {
       id: pathwayId,
       tenantId,
@@ -18,7 +18,7 @@ export async function enrollUserInPathway(
     throw new Error('Pathway not found')
   }
 
-  const existingEnrollment = await db.pathwayEnrollment.findFirst({
+  const existingEnrollment = await prisma.pathwayEnrollment.findFirst({
     where: {
       pathwayId,
       userId,
@@ -29,7 +29,7 @@ export async function enrollUserInPathway(
     return existingEnrollment
   }
 
-  return await db.pathwayEnrollment.create({
+  return await prisma.pathwayEnrollment.create({
     data: {
       pathwayId,
       userId,
@@ -39,7 +39,7 @@ export async function enrollUserInPathway(
 }
 
 export async function autoEnrollNewBeliever(userId: string) {
-  const user = await db.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { isNewBeliever: true, tenantId: true },
   })
@@ -48,7 +48,7 @@ export async function autoEnrollNewBeliever(userId: string) {
     return null
   }
 
-  let rootsPathway = await db.pathway.findFirst({
+  let rootsPathway = await prisma.pathway.findFirst({
     where: {
       type: PathwayType.ROOTS,
       tenantId: user.tenantId,
@@ -57,7 +57,7 @@ export async function autoEnrollNewBeliever(userId: string) {
   })
 
   if (!rootsPathway) {
-    rootsPathway = await db.pathway.create({
+    rootsPathway = await prisma.pathway.create({
       data: {
         type: PathwayType.ROOTS,
         name: 'ROOTS',
@@ -67,7 +67,7 @@ export async function autoEnrollNewBeliever(userId: string) {
     })
   }
 
-  const existingEnrollment = await db.pathwayEnrollment.findFirst({
+  const existingEnrollment = await prisma.pathwayEnrollment.findFirst({
     where: {
       pathwayId: rootsPathway.id,
       userId,
@@ -78,7 +78,7 @@ export async function autoEnrollNewBeliever(userId: string) {
     return existingEnrollment
   }
 
-  return await db.pathwayEnrollment.create({
+  return await prisma.pathwayEnrollment.create({
     data: {
       pathwayId: rootsPathway.id,
       userId,
@@ -88,7 +88,7 @@ export async function autoEnrollNewBeliever(userId: string) {
 }
 
 export async function getUserEnrollments(userId: string) {
-  return await db.pathwayEnrollment.findMany({
+  return await prisma.pathwayEnrollment.findMany({
     where: { userId },
     include: {
       pathway: {
@@ -104,7 +104,7 @@ export async function getUserEnrollments(userId: string) {
 }
 
 export async function completePathway(enrollmentId: string) {
-  return await db.pathwayEnrollment.update({
+  return await prisma.pathwayEnrollment.update({
     where: { id: enrollmentId },
     data: {
       status: EnrollmentStatus.COMPLETED,
@@ -114,7 +114,7 @@ export async function completePathway(enrollmentId: string) {
 }
 
 export async function dropPathway(enrollmentId: string) {
-  return await db.pathwayEnrollment.update({
+  return await prisma.pathwayEnrollment.update({
     where: { id: enrollmentId },
     data: {
       status: EnrollmentStatus.DROPPED,

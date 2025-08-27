@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 
+import { Suspense } from 'react'
 import { getEvents } from './actions'
 import { EventCard } from './event-card'
 import Link from 'next/link'
@@ -10,8 +11,20 @@ import { PageHeader } from '@/components/layout/page-header'
 import { EmptyState } from '@/components/patterns/empty-state'
 import { Calendar, Plus } from 'lucide-react'
 import { getCurrentUser } from '@/lib/rbac'
+import { DataFetchErrorBoundary } from '@/components/patterns/error-boundary'
+import { EventLoadingCard } from '@/components/patterns/loading-card'
 
-export default async function EventsPage() {
+function EventsLoadingSkeleton() {
+  return (
+    <div className="card-grid">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <EventLoadingCard key={i} />
+      ))}
+    </div>
+  )
+}
+
+async function EventsContent() {
   const user = await getCurrentUser()
   const isAdmin = user?.role === UserRole.ADMIN || 
                  user?.role === UserRole.SUPER_ADMIN
@@ -19,22 +32,13 @@ export default async function EventsPage() {
   const result = await getEvents()
   
   if (!result.success) {
-    return (
-      <AppLayout user={user ? {email: user.email || '', name: user.name, role: user.role} : undefined}>
-        <PageHeader title="Events" description="Browse and RSVP for upcoming events" />
-        <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-center">
-          <p className="text-destructive">
-            Failed to load events. Please try again later.
-          </p>
-        </div>
-      </AppLayout>
-    )
+    throw new Error(result.error || 'Failed to load events')
   }
 
   const events = result.data || []
 
   return (
-    <AppLayout user={user ? {email: user.email || '', name: user.name, role: user.role} : undefined}>
+    <>
       <PageHeader 
         title="Events" 
         description="Browse and RSVP for upcoming events"
@@ -66,6 +70,20 @@ export default async function EventsPage() {
           ))}
         </div>
       )}
+    </>
+  )
+}
+
+export default async function EventsPage() {
+  const user = await getCurrentUser()
+
+  return (
+    <AppLayout user={user ? {email: user.email || '', name: user.name, role: user.role} : undefined}>
+      <DataFetchErrorBoundary>
+        <Suspense fallback={<EventsLoadingSkeleton />}>
+          <EventsContent />
+        </Suspense>
+      </DataFetchErrorBoundary>
     </AppLayout>
   )
 }

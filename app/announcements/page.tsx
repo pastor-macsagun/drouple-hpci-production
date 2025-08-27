@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { db } from '@/app/lib/db'
+import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Bell, AlertCircle, Info, AlertTriangle, Clock } from 'lucide-react'
@@ -19,7 +19,7 @@ async function getAnnouncements(tenantId: string, userRole: string) {
     allowedScopes.push(AnnouncementScope.ADMINS)
   }
 
-  return db.announcement.findMany({
+  return prisma.announcement.findMany({
     where: {
       localChurch: {
         church: {
