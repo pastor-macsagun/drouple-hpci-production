@@ -113,13 +113,32 @@ Unit tests validate individual functions and business logic in isolation.
   - Edge cases and error handling
 
 #### Tenancy Scope Tests
-- **File**: `tests/unit/tenancy.scope.test.ts`
-- **Coverage**: Multi-tenant data isolation
+- **File**: `tests/unit/tenancy.scope.test.ts` (new addition for security fixes)
+- **Coverage**: Repository guard functions and tenant isolation  
 - **Key Tests**:
-  - Data filtering by localChurchId
-  - Cross-tenant access prevention
-  - Super admin global access
-  - Tenant-specific queries
+  - Empty church access returns zero results (critical security fix)
+  - Field name support for both `tenantId` and `localChurchId`
+  - Super admin can access all churches
+  - Regular users can only access their assigned church
+  - Error handling for missing user context
+
+#### Auth Redirect Tests  
+- **File**: `e2e/role-based-redirects-fix.spec.ts` (new addition for security fixes)
+- **Coverage**: Role-based landing page routing
+- **Key Tests**:
+  - Each role lands on correct page after login
+  - Unauthorized access properly redirected 
+  - Super admin can access all role pages
+  - Middleware enforces access control
+  
+#### Tenant Isolation E2E Tests
+- **File**: `e2e/validation-tenancy.spec.ts`  
+- **Coverage**: End-to-end tenant isolation verification
+- **Key Tests**:
+  - Manila admin cannot see Cebu data
+  - Cebu admin cannot see Manila data
+  - Cross-tenant service access blocked
+  - Super admin can view all church data
 
 #### Entity CRUD Tests
 - **Files**: `*.crud.test.ts`

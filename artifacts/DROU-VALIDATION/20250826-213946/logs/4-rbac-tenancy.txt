@@ -1,0 +1,76 @@
+RBAC & TENANT ISOLATION VALIDATION RESULTS
+==========================================
+
+CRITICAL FINDINGS:
+
+🔴 CRITICAL: TENANT ISOLATION BROKEN
+   - Manila admin can see ALL 20 members (including Cebu members)
+   - Cebu admin can see ALL 20 members (including Manila members)
+   - Expected: Manila admin should see only ~7 Manila members
+   - Expected: Cebu admin should see only ~7 Cebu members
+   - Impact: Complete breakdown of multi-tenant security
+
+🔴 CRITICAL: ROLE-BASED REDIRECTS BROKEN  
+   - All roles redirect to /dashboard instead of role-specific pages
+   - NextAuth redirect callback only handles SUPER_ADMIN correctly
+   - ADMIN, VIP, LEADER roles all fallback to dashboard
+   - Impact: Users can't access their intended role interfaces
+
+🟡 MEDIUM: LIFE GROUP VISIBILITY ISSUES
+   - Manila admin cannot see expected Manila life groups
+   - Life groups appear to have filtering problems
+
+POSITIVE FINDINGS:
+
+✅ Middleware Protection Works:
+   - Unauthenticated access properly redirected to /auth/signin
+   - Role-based path protection functional
+
+✅ Super Admin Access:
+   - Super admin can access all tenant data (expected behavior)
+   - Church filter dropdown present for super admin
+
+✅ VIP Access:
+   - VIP users can access /vip/firsttimers page
+   - Role-specific functionality accessible
+
+✅ Services Tenant Filtering:
+   - Manila admin sees Manila services only
+   - Cebu admin cross-tenant access blocked
+
+DETAILED TEST RESULTS:
+
+1. TENANT ISOLATION:
+   ❌ Manila admin sees: 20 members (should see ~7)
+   ❌ Cebu admin sees: 20 members (should see ~7)  
+   ✅ Cross-tenant service access blocked
+   ⚠️  Direct entity URL access allowed (potential issue)
+
+2. ROLE REDIRECTS:
+   ❌ Super admin → /dashboard (should be /super)
+   ❌ Admin → /dashboard (should be /admin)
+   ❌ VIP → /dashboard (should be /vip)  
+   ❌ Leader → /dashboard (should be /leader)
+
+3. PATH PROTECTION:
+   ✅ Middleware correctly protects admin paths
+   ✅ Role-based access control functional
+   ✅ Unauthenticated users properly redirected
+
+ROOT CAUSE ANALYSIS:
+
+1. Tenant Isolation:
+   - Membership filtering not implemented in admin queries
+   - Database queries missing localChurchId filters
+   - User.tenantId field not being used for isolation
+
+2. Role Redirects:
+   - NextAuth redirect callback incomplete (lib/auth.ts:153-165)
+   - Only SUPER_ADMIN case handled, others fall through to dashboard
+
+SECURITY IMPACT:
+- HIGH: Complete tenant data exposure 
+- MEDIUM: Role confusion due to incorrect landing pages
+- LOW: Direct URL access needs validation
+
+STATUS: 🔴 CRITICAL SECURITY DEFECTS FOUND

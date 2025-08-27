@@ -144,7 +144,7 @@ export function ServicesManager({
     return (
       <Card className="p-8 text-center">
         <p className="text-muted-foreground mb-4">No services yet</p>
-        <Button onClick={() => setCreateDialogOpen(true)}>
+        <Button data-testid="create-service-button" onClick={() => setCreateDialogOpen(true)}>
           Create Service
         </Button>
       </Card>
@@ -172,7 +172,7 @@ export function ServicesManager({
             </Select>
           </div>
         )}
-        <Button onClick={() => setCreateDialogOpen(true)}>
+        <Button data-testid="create-service-button" onClick={() => setCreateDialogOpen(true)}>
           Create Service
         </Button>
       </div>
@@ -188,7 +188,7 @@ export function ServicesManager({
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody data-testid="services-list">
             {services.map((service) => (
               <TableRow key={service.id}>
                 <TableCell>{format(new Date(service.date), 'PPP')}</TableCell>
@@ -205,6 +205,7 @@ export function ServicesManager({
                       View
                     </Button>
                     <Button
+                      data-testid="export-csv-button"
                       variant="outline"
                       size="sm"
                       onClick={() => handleExportCsv(service.id)}
@@ -300,6 +301,7 @@ export function ServicesManager({
               Cancel
             </Button>
             <Button 
+              data-testid="submit-create-service"
               type="submit" 
               form="create-service-form"
               disabled={isLoading || !newService.date}

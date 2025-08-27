@@ -163,7 +163,7 @@ export function LifeGroupsManager({
     return (
       <Card className="p-8 text-center">
         <p className="text-muted-foreground mb-4">No life groups yet</p>
-        <Button onClick={() => setCreateDialogOpen(true)}>
+        <Button data-testid="create-lifegroup-button" onClick={() => setCreateDialogOpen(true)}>
           Create LifeGroup
         </Button>
       </Card>
@@ -191,7 +191,7 @@ export function LifeGroupsManager({
             </Select>
           </div>
         )}
-        <Button onClick={() => setCreateDialogOpen(true)}>
+        <Button data-testid="create-lifegroup-button" onClick={() => setCreateDialogOpen(true)}>
           Create LifeGroup
         </Button>
       </div>
@@ -208,7 +208,7 @@ export function LifeGroupsManager({
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody data-testid="lifegroups-list">
             {lifeGroups.map((lifeGroup) => (
               <TableRow key={lifeGroup.id}>
                 <TableCell className="font-medium">{lifeGroup.name}</TableCell>
@@ -359,6 +359,7 @@ export function LifeGroupsManager({
               Cancel
             </Button>
             <Button 
+              data-testid="submit-create-lifegroup"
               type="submit" 
               form="create-lifegroup-form"
               disabled={isLoading || !newLifeGroup.name || !newLifeGroup.leaderId}

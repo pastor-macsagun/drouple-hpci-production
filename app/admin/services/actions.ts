@@ -24,11 +24,13 @@ export async function listServices({
       return { success: false, error: 'Unauthorized' }
     }
 
-    // Apply tenant scoping - note: Service model uses localChurchId instead of tenantId
-    const baseTenantWhere = await createTenantWhereClause(session.user, {}, churchId)
-    const whereClause = {
-      localChurchId: baseTenantWhere.tenantId
-    }
+    // Apply tenant scoping - Service model uses localChurchId field
+    const whereClause = await createTenantWhereClause(
+      session.user, 
+      {}, 
+      churchId,
+      'localChurchId' // Service model uses localChurchId instead of tenantId
+    )
 
     const services = await prisma.service.findMany({
       where: whereClause,

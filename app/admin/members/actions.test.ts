@@ -101,10 +101,36 @@ describe('Member Management Actions', () => {
 
       // Mock the database call for getAllChurches
       const mockChurches = [
-        { id: 'church1' },
-        { id: 'church2' }
+        { 
+          id: 'church1',
+          name: 'Manila Church',
+          email: null,
+          phone: null,
+          address: null,
+          city: null,
+          zipCode: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          state: null,
+          country: null,
+          churchId: 'parent-church'
+        },
+        { 
+          id: 'church2',
+          name: 'Cebu Church',
+          email: null,
+          phone: null,
+          address: null,
+          city: null,
+          zipCode: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          state: null,
+          country: null,
+          churchId: 'parent-church'
+        }
       ]
-      vi.mocked(db.localChurch.findMany).mockResolvedValue(mockChurches)
+      vi.mocked(db.localChurch.findMany).mockResolvedValue(mockChurches as any)
 
       vi.mocked(auth).mockResolvedValue(mockSession as any)
       vi.mocked(prisma.user.findMany).mockResolvedValue([])

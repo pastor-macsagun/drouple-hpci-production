@@ -187,8 +187,8 @@ export function canManageEntity(
 /**
  * Repository Guard: Get accessible church IDs for the current user
  * Returns:
- * - undefined/null → throws explicit error
- * - [] (empty array) → return query that yields zero results
+ * - undefined/null → throws explicit error  
+ * - [] (empty array) → return empty array (caller must handle zero results)
  * - [churchIds] → return array of accessible church IDs
  */
 export async function getAccessibleChurchIds(
@@ -196,10 +196,6 @@ export async function getAccessibleChurchIds(
 ): Promise<string[]> {
   if (!user) {
     throw new Error('No user provided for tenant scoping')
-  }
-
-  if (!user.tenantId) {
-    throw new Error('User has no tenantId - cannot determine accessible churches')
   }
 
   // Super admin can access all churches if no specific constraint
@@ -211,28 +207,42 @@ export async function getAccessibleChurchIds(
     return churches.map(c => c.id)
   }
 
-  // All other roles can only access their own church
+  // All other roles can only access their own church - if no tenantId, return empty
+  if (!user.tenantId) {
+    return [] // Empty array = zero results
+  }
+
   return [user.tenantId]
 }
 
 /**
  * Repository Guard: Create tenant-scoped WHERE clause for Prisma queries
+ * Supports both tenantId and localChurchId field names
  */
 export async function createTenantWhereClause(
   user?: { role: UserRole; tenantId?: string | null } | null,
-  additionalWhere: Record<string, any> = {},
-  churchIdOverride?: string
-): Promise<Record<string, any>> {
+  additionalWhere: Record<string, unknown> = {},
+  churchIdOverride?: string,
+  fieldName: 'tenantId' | 'localChurchId' = 'tenantId'
+): Promise<Record<string, unknown>> {
   const accessibleChurchIds = await getAccessibleChurchIds(user)
   
   // If specific church override provided (e.g., super admin filtering)
   if (churchIdOverride) {
-    if (!accessibleChurchIds.includes(churchIdOverride)) {
+    if (accessibleChurchIds.length > 0 && !accessibleChurchIds.includes(churchIdOverride)) {
       throw new Error(`Access denied: cannot access church ${churchIdOverride}`)
     }
     return {
       ...additionalWhere,
-      tenantId: churchIdOverride
+      [fieldName]: churchIdOverride
+    }
+  }
+
+  // Empty access = zero results (critical for tenant isolation)
+  if (accessibleChurchIds.length === 0) {
+    return {
+      ...additionalWhere,
+      [fieldName]: { in: [] } // This will return zero results
     }
   }
 
@@ -240,13 +250,13 @@ export async function createTenantWhereClause(
   if (accessibleChurchIds.length === 1) {
     return {
       ...additionalWhere,
-      tenantId: accessibleChurchIds[0]
+      [fieldName]: accessibleChurchIds[0]
     }
   }
 
   // Multiple church access (super admin)
   return {
     ...additionalWhere,
-    tenantId: { in: accessibleChurchIds }
+    [fieldName]: { in: accessibleChurchIds }
   }
 }

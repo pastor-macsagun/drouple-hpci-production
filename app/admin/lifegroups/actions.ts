@@ -25,11 +25,13 @@ export async function listLifeGroups({
       return { success: false, error: 'Unauthorized' }
     }
 
-    // Apply tenant scoping - note: LifeGroup model uses localChurchId instead of tenantId
-    const baseTenantWhere = await createTenantWhereClause(session.user, {}, churchId)
-    const whereClause = {
-      localChurchId: baseTenantWhere.tenantId
-    }
+    // Apply tenant scoping - LifeGroup model uses localChurchId field
+    const whereClause = await createTenantWhereClause(
+      session.user, 
+      {}, 
+      churchId,
+      'localChurchId' // LifeGroup model uses localChurchId instead of tenantId
+    )
 
     const lifeGroups = await prisma.lifeGroup.findMany({
       where: whereClause,
@@ -739,16 +741,19 @@ export async function getLeaders({ churchId }: { churchId?: string } = {}) {
       return { success: false, error: 'Unauthorized' }
     }
 
-    // Apply tenant scoping using repository guard
-    const whereClause = await createTenantWhereClause(session.user, {}, churchId)
-
-    const leaders = await prisma.user.findMany({
-      where: {
-        ...whereClause,
+    // Apply tenant scoping using repository guard - User model uses tenantId field
+    const whereClause = await createTenantWhereClause(
+      session.user, 
+      {
         role: {
           in: [UserRole.LEADER, UserRole.PASTOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]
         }
-      },
+      }, 
+      churchId
+    ) // User model defaults to tenantId field
+
+    const leaders = await prisma.user.findMany({
+      where: whereClause,
       select: {
         id: true,
         name: true,

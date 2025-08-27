@@ -66,27 +66,32 @@ export default async function middleware(req: NextRequest) {
   }
 
   // Role-based access control
-  if (isAuth && session?.user) {
-    const userRole = (session.user as any).role
+  if (isAuth && session) {
+    const userRole = (session as any).role
     
-    // Super admin routes
-    if (pathname.startsWith("/super") && userRole !== "SUPER_ADMIN") {
-      return NextResponse.redirect(new URL("/", req.url))
+    // Super admin can access everything, skip other checks
+    if (userRole === "SUPER_ADMIN") {
+      return NextResponse.next()
     }
     
-    // Admin routes (ADMIN, PASTOR, SUPER_ADMIN)
-    if (pathname.startsWith("/admin") && !["ADMIN", "PASTOR", "SUPER_ADMIN"].includes(userRole)) {
-      return NextResponse.redirect(new URL("/", req.url))
+    // Super admin only routes
+    if (pathname.startsWith("/super") && userRole !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard", req.url))
+    }
+    
+    // Admin routes (ADMIN, PASTOR)
+    if (pathname.startsWith("/admin") && !["ADMIN", "PASTOR"].includes(userRole)) {
+      return NextResponse.redirect(new URL("/dashboard", req.url))
     }
     
     // VIP routes
     if (pathname.startsWith("/vip") && userRole !== "VIP") {
-      return NextResponse.redirect(new URL("/", req.url))
+      return NextResponse.redirect(new URL("/dashboard", req.url))
     }
     
     // Leader routes
     if (pathname.startsWith("/leader") && userRole !== "LEADER") {
-      return NextResponse.redirect(new URL("/", req.url))
+      return NextResponse.redirect(new URL("/dashboard", req.url))
     }
   }
 

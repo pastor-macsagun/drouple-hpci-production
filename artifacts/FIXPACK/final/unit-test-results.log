@@ -1,0 +1,64 @@
+
+> hpci-chms@0.1.0 test:unit
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+
+ ✓ tests/unit/rate-limit.test.ts (28 tests) 11ms
+ ✓ tests/api/contracts.test.ts (35 tests) 7ms
+ ✓ tests/unit/events.rsvp.test.ts (44 tests) 7ms
+stderr | tests/unit/lifegroups.crud.test.ts > LifeGroups CRUD Operations > Delete LifeGroup > should handle active members on deletion
+Group has active members, they will be notified
+
+stderr | tests/unit/pathways.flow.test.ts > Pathways CRUD Operations > Delete Pathway > should handle active enrollments on deletion
+Warning: 5 active enrollments will be affected
+
+ ✓ tests/unit/pathways.flow.test.ts (49 tests) 11ms
+ ✓ tests/unit/lifegroups.crud.test.ts (47 tests) 7ms
+ ✓ tests/unit/messages.crud.test.ts (45 tests) 12ms
+ ✓ tests/unit/members.profile.test.ts (42 tests) 15ms
+ ✓ tests/tenancy.repo.test.ts (16 tests) 7ms
+ ✓ lib/rate-limit-policies.test.ts (14 tests) 9ms
+ ✓ tests/unit/rbac.matrix.test.ts (15 tests) 5ms
+ ✓ tests/unit/services.crud.test.ts (29 tests) 5ms
+stderr | tests/data.integrity.test.ts > Data Integrity Constraints > Database Indexes > should have unique constraint on checkin (serviceId, userId)
+⚠️ Missing unique constraint on checkins(serviceId, userId)
+
+ ✓ tests/concurrency.rsvp.test.ts (4 tests | 2 skipped) 117ms
+ ✓ tests/data.integrity.test.ts (10 tests) 169ms
+ ✓ app/admin/members/actions.test.ts (14 tests) 257ms
+ ✓ tests/rate-limit.test.ts (10 tests) 4ms
+ ✓ lib/rbac.test.ts (20 tests) 5ms
+ ✓ lib/rate-limit.test.ts (10 tests) 9ms
+ ✓ app/lib/pathways/enrollment.test.ts (8 tests) 9ms
+ ✓ tests/rbac.guard.test.ts (7 tests) 7ms
+ ✓ app/lib/pathways/progress.test.ts (7 tests) 4ms
+ ✓ lib/logger.test.ts (10 tests) 11ms
+ ✓ tests/tenant-isolation.test.ts (10 tests) 17ms
+ ❯ tests/unit/tenancy.scope.test.ts (0 test)
+ ✓ tests/event-scope-validation.test.ts (5 tests) 5ms
+ ✓ components/patterns/data-table.test.tsx (8 tests) 144ms
+ ✓ components/patterns/empty-state.test.tsx (6 tests) 57ms
+ ✓ components/layout/header.test.tsx (7 tests) 91ms
+ ✓ tests/helpers/db-connectivity.test.ts (2 tests | 1 skipped) 33ms
+ ✓ app/page.test.tsx (1 test) 24ms
+ ✓ app/auth/signin/page.test.tsx (1 test) 28ms
+ ✓ __tests__/auth.credentials.test.ts (10 tests) 1605ms
+   ✓ Credentials Authentication > Password Validation > should hash passwords with bcrypt 504ms
+   ✓ Credentials Authentication > Password Validation > should verify correct password 581ms
+   ✓ Credentials Authentication > Password Validation > should reject incorrect password 518ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/tenancy.scope.test.ts [ tests/unit/tenancy.scope.test.ts ]
+Error: Cannot find module '/Users/macsagun/HPCI-ChMS/node_modules/next/server' imported from /Users/macsagun/HPCI-ChMS/node_modules/next-auth/lib/env.js
+Did you mean to import "next/server.js"?
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 30 passed (31)
+      Tests  511 passed | 3 skipped (514)
+   Start at  08:44:33
+   Duration  4.00s (transform 665ms, setup 1.63s, collect 1.84s, tests 2.69s, environment 9.11s, prepare 1.89s)
+

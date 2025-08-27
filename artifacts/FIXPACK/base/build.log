@@ -1,0 +1,76 @@
+
+> hpci-chms@0.1.0 build
+> next build
+
+   ▲ Next.js 15.1.3
+   - Environments: .env.production.local, .env.production, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/19) ...
+   Generating static pages (4/19) 
+   Generating static pages (9/19) 
+   Generating static pages (14/19) 
+ ✓ Generating static pages (19/19)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    189 B           109 kB
+├ ○ /_not-found                          154 B           105 kB
+├ ƒ /admin                               227 B           140 kB
+├ ƒ /admin/events                        227 B           140 kB
+├ ƒ /admin/events/[id]                   2.08 kB         151 kB
+├ ƒ /admin/events/[id]/edit              157 B           180 kB
+├ ƒ /admin/events/new                    157 B           180 kB
+├ ƒ /admin/lifegroups                    7.74 kB         193 kB
+├ ƒ /admin/members                       9.48 kB         174 kB
+├ ƒ /admin/pathways                      227 B           140 kB
+├ ƒ /admin/pathways/[id]/steps           2.48 kB         142 kB
+├ ƒ /admin/pathways/new                  26.4 kB         191 kB
+├ ƒ /admin/reports                       189 B           109 kB
+├ ƒ /admin/services                      6.87 kB         188 kB
+├ ƒ /announcements                       189 B           109 kB
+├ ƒ /api/auth/[...nextauth]              154 B           105 kB
+├ ƒ /api/health                          154 B           105 kB
+├ ○ /auth/change-password                3.69 kB         117 kB
+├ ○ /auth/error                          1.61 kB         118 kB
+├ ○ /auth/signin                         5.18 kB         118 kB
+├ ƒ /checkin                             6.21 kB         161 kB
+├ ƒ /dashboard                           227 B           140 kB
+├ ƒ /events                              1.88 kB         141 kB
+├ ƒ /events/[id]                         2.22 kB         151 kB
+├ ○ /forbidden                           189 B           109 kB
+├ ƒ /leader                              227 B           140 kB
+├ ƒ /lifegroups                          5.21 kB         174 kB
+├ ƒ /members                             209 B           145 kB
+├ ƒ /members/[id]                        209 B           145 kB
+├ ƒ /messages                            227 B           140 kB
+├ ƒ /pathways                            1.84 kB         141 kB
+├ ƒ /pathways/[id]/enroll                154 B           105 kB
+├ ƒ /profile                             856 B           140 kB
+├ ƒ /register                            4.86 kB         122 kB
+├ ƒ /register/success                    189 B           109 kB
+├ ƒ /super                               227 B           140 kB
+├ ƒ /super/churches                      227 B           140 kB
+├ ƒ /super/churches/[id]/edit            856 B           140 kB
+├ ƒ /super/churches/new                  856 B           140 kB
+├ ƒ /super/local-churches                227 B           140 kB
+├ ƒ /super/local-churches/[id]/admins    856 B           140 kB
+├ ƒ /super/local-churches/[id]/edit      856 B           140 kB
+├ ƒ /super/local-churches/new            856 B           140 kB
+├ ƒ /vip                                 227 B           140 kB
+└ ƒ /vip/firsttimers                     7.74 kB         188 kB
++ First Load JS shared by all            105 kB
+  ├ chunks/1517-080059dc00d19316.js      50.4 kB
+  ├ chunks/4bd1b696-8d59b28885e05506.js  53 kB
+  └ other shared chunks (total)          1.91 kB
+
+
+ƒ Middleware                             43.8 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

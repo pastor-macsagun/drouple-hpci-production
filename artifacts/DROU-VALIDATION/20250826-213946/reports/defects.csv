@@ -1,0 +1,5 @@
+id,severity,area,title,route_or_component,status,evidence_path
+DROU-DEF-001,CRITICAL,Tenant Isolation,Complete Multi-Tenant Security Breakdown,/admin/members,Found,logs/4-rbac-tenancy.txt
+DROU-DEF-002,MAJOR,RBAC,Role-Based Redirect System Broken,lib/auth.ts NextAuth redirect callback,Found,logs/3-authentication.txt
+DROU-DEF-003,MINOR,UI/UX,Modal Dialog Submit Button Intercepted,shadcn dialogs in admin CRUD,Found,CRUD test failures
+DROU-DEF-004,INFO,UI/UX,Multiple Alert Elements Cause Selector Conflicts,Authentication error handling,Found,Playwright test failures

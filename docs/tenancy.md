@@ -49,18 +49,130 @@ For efficient tenant-scoped queries:
 @@index([localChurchId, role])
 ```
 
-## Tenant Isolation Strategies
+## Tenant Isolation Strategy
 
-### 1. Database-Level Isolation
+### Repository Guards with Empty-Access Behavior
 
-All queries are automatically filtered by tenant:
+The system uses centralized tenant scoping functions in `lib/rbac.ts`:
 
 ```typescript
-// TenantRepository automatically adds localChurchId filter
-const services = await tenantRepo.findServices({
-  date: { gte: startDate }
+/**
+ * Get accessible church IDs for the current user
+ * Returns:
+ * - undefined/null → throws explicit error  
+ * - [] (empty array) → return empty array (caller must handle zero results)
+ * - [churchIds] → return array of accessible church IDs
+ */
+export async function getAccessibleChurchIds(user): Promise<string[]> {
+  if (!user) {
+    throw new Error('No user provided for tenant scoping')
+  }
+
+  if (user.role === UserRole.SUPER_ADMIN) {
+    // For super admin without specific church filter, return all church IDs
+    const churches = await db.localChurch.findMany({
+      select: { id: true }
+    })
+    return churches.map(c => c.id)
+  }
+
+  // All other roles can only access their own church - if no tenantId, return empty
+  if (!user.tenantId) {
+    return [] // Empty array = zero results (critical for tenant isolation)
+  }
+
+  return [user.tenantId]
+}
+
+/**
+ * Create tenant-scoped WHERE clause for Prisma queries
+ * Supports both tenantId and localChurchId field names
+ */
+export async function createTenantWhereClause(
+  user,
+  additionalWhere = {},
+  churchIdOverride?,
+  fieldName: 'tenantId' | 'localChurchId' = 'tenantId'
+): Promise<Record<string, unknown>> {
+  const accessibleChurchIds = await getAccessibleChurchIds(user)
+  
+  // Empty access = zero results (critical for tenant isolation)
+  if (accessibleChurchIds.length === 0) {
+    return {
+      ...additionalWhere,
+      [fieldName]: { in: [] } // This will return zero results
+    }
+  }
+
+  // Single church access
+  if (accessibleChurchIds.length === 1) {
+    return {
+      ...additionalWhere,
+      [fieldName]: accessibleChurchIds[0]
+    }
+  }
+
+  // Multiple church access (super admin)
+  return {
+    ...additionalWhere,
+    [fieldName]: { in: accessibleChurchIds }
+  }
+}
+```
+
+### Defense in Depth: Middleware Guard
+
+The system includes Prisma middleware for additional protection (currently disabled but ready for deployment):
+
+```typescript
+// Defense in depth: Prisma middleware to enforce tenant scoping
+client.$use(async (params, next) => {
+  // Models that have tenant fields and need scoping
+  const TENANT_MODELS = {
+    User: 'tenantId',
+    Service: 'localChurchId', 
+    LifeGroup: 'localChurchId',
+    Event: 'localChurchId'
+  }
+
+  if (!TENANT_MODELS[params.model] || user.role === 'SUPER_ADMIN') {
+    return next(params)
+  }
+
+  const tenantField = TENANT_MODELS[params.model]
+  
+  // For read operations, inject tenant filter
+  if (['findFirst', 'findMany', 'findUnique'].includes(params.action)) {
+    if (!params.args) params.args = {}
+    if (!params.args.where) params.args.where = {}
+    
+    if (!params.args.where[tenantField]) {
+      const userTenantId = session.user.tenantId
+      if (userTenantId) {
+        params.args.where[tenantField] = userTenantId
+      } else {
+        // No tenant access - return zero results
+        params.args.where[tenantField] = { in: [] }
+      }
+    }
+  }
+
+  return next(params)
 })
-// Becomes: WHERE localChurchId IN (...) AND date >= startDate
+```
+
+### SUPER_ADMIN Bypass
+
+Super administrators can bypass tenant restrictions but still follow security patterns:
+
+```typescript
+if (user.role === UserRole.SUPER_ADMIN) {
+  // Access all churches
+  const churches = await db.localChurch.findMany({
+    select: { id: true }
+  })
+  return churches.map(c => c.id)
+}
 ```
 
 ### 2. Application-Level Enforcement

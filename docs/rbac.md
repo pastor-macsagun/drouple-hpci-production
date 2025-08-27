@@ -153,6 +153,38 @@ async function getMembers() {
 4. **Super Admins bypass** church-level checks but actions are still logged
 5. **Default to least privilege** - start with MEMBER role
 
+## Path → Role Mapping & Landing Rules
+
+After successful authentication, users are redirected based on their role:
+
+| Role | Landing Page | Description |
+|------|--------------|-------------|
+| SUPER_ADMIN | `/super` | Access to all churches, system administration |
+| ADMIN/PASTOR | `/admin` | Church administration dashboard |
+| VIP | `/vip` | VIP team management, first-timer follow-up |
+| LEADER | `/leader` | Life group leadership dashboard |
+| MEMBER | `/dashboard` | Standard member dashboard |
+
+### Access Control Rules
+
+- **SUPER_ADMIN**: Can access all role pages (`/super`, `/admin`, `/vip`, `/leader`, `/dashboard`)
+- **ADMIN/PASTOR**: Can access `/admin` and `/dashboard` only
+- **VIP**: Can access `/vip` and `/dashboard` only  
+- **LEADER**: Can access `/leader` and `/dashboard` only
+- **MEMBER**: Can access `/dashboard` only
+
+### Implementation
+
+Role-based redirects are handled in two places:
+1. **Root page** (`app/page.tsx`): Redirects authenticated users to their role-specific page
+2. **Middleware** (`middleware.ts`): Enforces access control and redirects unauthorized access to `/dashboard`
+
+**Sign-in Flow**:
+1. User submits credentials on `/auth/signin`
+2. NextAuth redirect callback routes to `/` (root)
+3. Root page checks user role and redirects to appropriate dashboard
+4. Middleware enforces ongoing access control
+
 ## Admin Member Management
 
 ### Permissions

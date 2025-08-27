@@ -114,7 +114,7 @@ export const authOptions: any = {
             email: user.email,
             name: user.name,
             role: user.role,
-            tenantId: user.tenantId,
+            tenantId: primaryMembership?.localChurchId || user.tenantId,
             primaryLocalChurchId: primaryMembership?.localChurchId
           }
         } catch (error) {
@@ -150,27 +150,14 @@ export const authOptions: any = {
       return session
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async redirect({ token, baseUrl }: any) {
-      // Redirect based on role - match the logic from app/page.tsx
-      if (token?.role) {
-        switch (token.role) {
-          case UserRole.SUPER_ADMIN:
-            return `${baseUrl}/super`
-          case UserRole.ADMIN:
-          case UserRole.PASTOR:
-            return `${baseUrl}/admin`
-          case UserRole.VIP:
-            return `${baseUrl}/vip`
-          case UserRole.LEADER:
-            return `${baseUrl}/leader`
-          case UserRole.MEMBER:
-          default:
-            return `${baseUrl}/dashboard`
-        }
+    async redirect({ url, baseUrl }: any) {
+      // Always redirect to root to let app/page.tsx handle role-based routing
+      if (url.startsWith(baseUrl)) {
+        return baseUrl
       }
       
-      // Fallback to dashboard for users without role
-      return `${baseUrl}/dashboard`
+      // Redirect external URLs to home
+      return baseUrl
     }
   },
   session: {
