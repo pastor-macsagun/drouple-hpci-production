@@ -2,9 +2,28 @@ import { NextResponse, NextRequest } from "next/server"
 import { getClientIp } from "@/lib/rate-limit"
 import { checkRateLimitWithHeaders } from "@/lib/rate-limit-policies"
 import { getSession } from "@/lib/edge/session-cookie"
+import { clearInvalidSessionCookies } from "@/lib/auth-session-cleanup"
 
 export default async function middleware(req: NextRequest) {
-  const session = await getSession(req)
+  let session
+  let needsCookieCleanup = false
+  
+  try {
+    session = await getSession(req)
+  } catch (error) {
+    // If session retrieval fails due to JWT error, mark for cleanup
+    if (error instanceof Error && 
+        (error.message.includes('no matching decryption secret') || 
+         error.message.includes('JWTSessionError'))) {
+      needsCookieCleanup = true
+      session = null
+    } else {
+      // For other errors, log and treat as not authenticated
+      console.error('[Middleware] Unexpected session error:', error)
+      session = null
+    }
+  }
+  
   const isAuth = !!session
   const isAuthPage = req.nextUrl.pathname.startsWith("/auth")
   const isDashboard = req.nextUrl.pathname.startsWith("/dashboard")
@@ -119,7 +138,15 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  // Create response
+  const response = NextResponse.next()
+  
+  // Clear invalid session cookies if needed
+  if (needsCookieCleanup) {
+    return clearInvalidSessionCookies(req, response)
+  }
+
+  return response
 }
 
 export const config = {

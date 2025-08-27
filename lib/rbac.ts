@@ -17,21 +17,52 @@ const roleHierarchy: Record<UserRole, number> = {
 }
 
 export async function getCurrentUser() {
-  const session = await auth()
-  if (!session?.user?.email) return null
+  try {
+    const session = await auth()
+    if (!session?.user?.email) return null
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: {
-      memberships: {
-        include: {
-          localChurch: true,
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        memberships: {
+          include: {
+            localChurch: true,
+          },
         },
       },
-    },
-  })
+    })
 
-  return user
+    return user
+  } catch (error: unknown) {
+    // Handle JWT session errors gracefully
+    if (error instanceof Error) {
+      // Check for JWT-related errors
+      if (error.message.includes('no matching decryption secret') || 
+          error.message.includes('JWTSessionError') ||
+          error.name === 'JWTSessionError') {
+        
+        console.warn('[Auth] JWT decryption failed - clearing invalid session cookies:', {
+          error: error.message,
+          timestamp: new Date().toISOString()
+        })
+        
+        // In a server component, we can't directly clear cookies
+        // The middleware or client-side code will need to handle this
+        return null
+      }
+      
+      // Log other auth errors for debugging
+      console.error('[Auth] Authentication error in getCurrentUser:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+      })
+    }
+    
+    // For any auth error, treat user as not authenticated
+    return null
+  }
 }
 
 export async function requireRole(

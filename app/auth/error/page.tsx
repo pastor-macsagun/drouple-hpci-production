@@ -14,6 +14,8 @@ function AuthErrorContent() {
     Configuration: "There is a problem with the server configuration.",
     AccessDenied: "You do not have permission to sign in.",
     Verification: "The verification token has expired or has already been used.",
+    SessionExpired: "Your session has expired or is invalid. Please sign in again.",
+    JWTError: "Authentication session error. Please sign in again.",
     Default: "An error occurred during authentication.",
   };
 

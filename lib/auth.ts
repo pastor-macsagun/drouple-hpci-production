@@ -5,8 +5,15 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { authLogger } from "./logger"
 import { checkRateLimit, recordAttempt, resetAttempts } from "./auth-rate-limit"
+import { logEnvironmentValidation } from "./env-validation"
 
 const prisma = new PrismaClient()
+
+// Validate environment on module load
+const envValidation = logEnvironmentValidation()
+if (!envValidation.valid) {
+  console.error('[AUTH] Critical environment issues detected - authentication may not work properly')
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const authOptions: any = {
@@ -127,7 +134,7 @@ export const authOptions: any = {
             } : error, 
             email,
             timestamp: new Date().toISOString(),
-            userAgent: (req as any)?.headers?.["user-agent"],
+            userAgent: req?.headers?.["user-agent"] || "unknown",
             ip: ipAddress
           })
           throw error
@@ -142,28 +149,56 @@ export const authOptions: any = {
   callbacks: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, user }: any) {
-      if (user) {
-        token.id = user.id
-        token.role = user.role
-        token.tenantId = user.tenantId
-        token.primaryLocalChurchId = user.primaryLocalChurchId
-        token.mustChangePassword = user.mustChangePassword
+      try {
+        if (user) {
+          token.id = user.id
+          token.role = user.role
+          token.tenantId = user.tenantId
+          token.primaryLocalChurchId = user.primaryLocalChurchId
+          token.mustChangePassword = user.mustChangePassword
+        }
+        return token
+      } catch (error) {
+        authLogger.error("JWT callback error", { 
+          error: error instanceof Error ? { 
+            message: error.message, 
+            stack: error.stack,
+            name: error.name 
+          } : error,
+          userId: user?.id,
+          timestamp: new Date().toISOString()
+        })
+        // Return a minimal token to prevent complete auth failure
+        return token
       }
-      return token
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: any) {
-      if (token && session.user) {
-        session.user.id = token.id
-        session.user.role = token.role
-        session.user.tenantId = token.tenantId
-        session.user.primaryLocalChurchId = token.primaryLocalChurchId
-        session.user.mustChangePassword = token.mustChangePassword
+      try {
+        if (token && session.user) {
+          session.user.id = token.id
+          session.user.role = token.role
+          session.user.tenantId = token.tenantId
+          session.user.primaryLocalChurchId = token.primaryLocalChurchId
+          session.user.mustChangePassword = token.mustChangePassword
+        }
+        return session
+      } catch (error) {
+        authLogger.error("Session callback error", { 
+          error: error instanceof Error ? { 
+            message: error.message, 
+            stack: error.stack,
+            name: error.name 
+          } : error,
+          tokenId: token?.id,
+          timestamp: new Date().toISOString()
+        })
+        // Return session without additional fields to prevent complete failure
+        return session
       }
-      return session
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async redirect({ url, baseUrl }: any) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       // Always redirect to root to let app/page.tsx handle role-based routing
       if (url.startsWith(baseUrl)) {
         return baseUrl
@@ -175,6 +210,66 @@ export const authOptions: any = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24 hours
+    // Add error handling for JWT issues
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    encode: async (params: any) => {
+      try {
+        const { encode } = await import('next-auth/jwt')
+        return await encode(params)
+      } catch (error) {
+        authLogger.error('JWT encode error', { 
+          error: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString()
+        })
+        throw error
+      }
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    decode: async (params: any) => {
+      try {
+        const { decode } = await import('next-auth/jwt')
+        return await decode(params)
+      } catch (error) {
+        authLogger.warn('JWT decode error - clearing invalid token', { 
+          error: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString()
+        })
+        // Return null for decode errors to trigger re-authentication
+        return null
+      }
+    }
+  },
+  events: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async signIn(message: any) {
+      authLogger.info("User signed in successfully", {
+        userId: message.user?.id,
+        email: message.user?.email,
+        timestamp: new Date().toISOString()
+      })
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async signOut(message: any) {
+      authLogger.info("User signed out", {
+        userId: message.token?.id,
+        email: message.token?.email,
+        timestamp: new Date().toISOString()
+      })
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session(message: any) {
+      // Only log session events in development to avoid spam
+      if (process.env.NODE_ENV === 'development') {
+        authLogger.debug("Session accessed", {
+          userId: message.session?.user?.id,
+          timestamp: new Date().toISOString()
+        })
+      }
+    }
   },
 }
 
