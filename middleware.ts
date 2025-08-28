@@ -75,18 +75,22 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-  // Authentication redirects
-  if (isDashboard && !isAuth) {
-    return NextResponse.redirect(new URL("/auth/signin", req.url))
+  // Define public paths that don't require authentication
+  const PUBLIC_PATHS = [/^\/$/, /^\/auth\//, /^\/api\/health/, /^\/_next\//, /^\/favicon/, /^\/public\//]
+  const isPublicPath = PUBLIC_PATHS.some(rx => rx.test(pathname))
+  
+  // Authentication redirects - protect all non-public routes
+  if (!isAuth && !isPublicPath) {
+    const url = new URL('/auth/signin', req.url)
+    if (pathname !== '/') {
+      url.searchParams.set('returnTo', pathname + (req.nextUrl.search || ''))
+    }
+    return NextResponse.redirect(url)
   }
 
+  // Redirect authenticated users away from auth pages
   if (isAuthPage && isAuth) {
     return NextResponse.redirect(new URL("/", req.url))
-  }
-
-  // Handle unauthenticated access to protected routes
-  if (!isAuth && (pathname.startsWith("/super") || pathname.startsWith("/admin") || pathname.startsWith("/vip") || pathname.startsWith("/leader"))) {
-    return NextResponse.redirect(new URL("/dashboard", req.url))
   }
 
   // Role-based access control

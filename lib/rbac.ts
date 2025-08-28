@@ -16,7 +16,31 @@ const roleHierarchy: Record<UserRole, number> = {
   [UserRole.MEMBER]: 20,
 }
 
-export async function getCurrentUser() {
+export type CurrentUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  role: UserRole;
+  tenantId: string | null;
+  emailVerified?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  memberships: Array<{
+    id: string;
+    localChurchId: string;
+    role: UserRole;
+    joinedAt: Date;
+    leftAt?: Date | null;
+    localChurch: { 
+      id: string; 
+      name: string; 
+      address?: string | null;
+      city: string | null;
+    };
+  }>;
+} | null;
+
+export async function getCurrentUser(): Promise<CurrentUser> {
   try {
     // Handle static generation context - when headers() is not available
     try {

@@ -15,9 +15,16 @@ if (!envValidation.valid) {
   console.error('[AUTH] Critical environment issues detected - authentication may not work properly')
 }
 
+// Check for AUTH_SECRET with fallback to NEXTAUTH_SECRET
+const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+if (!AUTH_SECRET) {
+  console.warn('[Auth] Missing AUTH_SECRET/NEXTAUTH_SECRET. JWT sessions will fail.')
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const authOptions: any = {
   adapter: PrismaAdapter(prisma),
+  secret: AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
