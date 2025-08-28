@@ -1,0 +1,129 @@
+
+> hpci-chms@0.1.0 test:unit:coverage
+> COVERAGE=true vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+      Coverage enabled with v8
+
+stderr | tests/unit/pathways.flow.test.ts > Pathways CRUD Operations > Delete Pathway > should handle active enrollments on deletion
+Warning: 5 active enrollments will be affected
+
+stderr | tests/unit/lifegroups.crud.test.ts > LifeGroups CRUD Operations > Delete LifeGroup > should handle active members on deletion
+Group has active members, they will be notified
+
+ ✓ tests/unit/messages.crud.test.ts (45 tests) 12ms
+ ✓ tests/unit/lifegroups.crud.test.ts (47 tests) 9ms
+ ✓ tests/unit/rate-limit.test.ts (28 tests) 13ms
+ ✓ tests/unit/events.rsvp.test.ts (44 tests) 11ms
+ ✓ tests/unit/members.profile.test.ts (42 tests) 28ms
+ ✓ tests/api/contracts.test.ts (35 tests) 49ms
+ ✓ tests/unit/pathways.flow.test.ts (49 tests) 8ms
+ ✓ tests/unit/services.crud.test.ts (29 tests) 11ms
+ ✓ tests/unit/rbac.matrix.test.ts (15 tests) 9ms
+ ✓ lib/rate-limit-policies.test.ts (14 tests) 6ms
+ ✓ tests/tenancy.repo.test.ts (16 tests) 13ms
+stderr | app/admin/members/actions.test.ts > Member Management Actions > createMember > should prevent duplicate emails
+Action error: ApplicationError: This email address is already registered
+    at Module.createMember (/Users/macsagun/HPCI-ChMS/app/admin/members/actions.ts:137:13)
+    at /Users/macsagun/HPCI-ChMS/app/admin/members/actions.test.ts:242:22
+    at file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///Users/macsagun/HPCI-ChMS/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11 {
+  code: 'EMAIL_EXISTS',
+  details: undefined
+}
+
+stderr | app/admin/members/actions.test.ts > Member Management Actions > createMember > should prevent cross-church creation for non-super admins
+Action error: ApplicationError: Cannot create member for another church
+    at Module.createMember (/Users/macsagun/HPCI-ChMS/app/admin/members/actions.ts:129:13)
+    at /Users/macsagun/HPCI-ChMS/app/admin/members/actions.test.ts:264:22
+    at file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///Users/macsagun/HPCI-ChMS/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///Users/macsagun/HPCI-ChMS/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11 {
+  code: 'TENANT_MISMATCH',
+  details: undefined
+}
+
+ ✓ app/admin/members/actions.test.ts (14 tests) 246ms
+ ✓ app/lib/pathways/enrollment.test.ts (8 tests) 6ms
+ ✓ tests/rate-limit.test.ts (10 tests) 8ms
+ ✓ lib/rbac.test.ts (20 tests) 4ms
+ ✓ lib/rate-limit.test.ts (10 tests) 11ms
+ ✓ tests/unit/tenancy.scope.test.ts (10 tests) 5ms
+ ✓ app/lib/pathways/progress.test.ts (7 tests) 10ms
+ ✓ tests/rbac.guard.test.ts (7 tests) 8ms
+ ✓ lib/logger.test.ts (10 tests) 6ms
+ ✓ components/patterns/data-table.test.tsx (8 tests) 148ms
+ ✓ tests/tenant-isolation.test.ts (10 tests) 8ms
+ ✓ components/patterns/form-validation.test.tsx (12 tests) 97ms
+ ✓ lib/api-version.test.ts (12 tests) 9ms
+ ✓ components/patterns/error-boundary.test.tsx (7 tests) 68ms
+ ✓ tests/unit/2fa.test.ts (12 tests) 6ms
+ ✓ components/patterns/loading-card.test.tsx (7 tests) 94ms
+ ✓ tests/event-scope-validation.test.ts (5 tests) 3ms
+ ✓ components/patterns/loading-skeletons.test.tsx (11 tests) 110ms
+ ✓ __tests__/auth.credentials.test.ts (10 tests) 2083ms
+   ✓ Credentials Authentication > Password Validation > should hash passwords with bcrypt 363ms
+   ✓ Credentials Authentication > Password Validation > should verify correct password 721ms
+   ✓ Credentials Authentication > Password Validation > should reject incorrect password 994ms
+ ✓ components/layout/header.test.tsx (7 tests) 114ms
+ ✓ components/patterns/empty-state.test.tsx (6 tests) 131ms
+ ✓ app/page.test.tsx (1 test) 29ms
+ ✓ app/auth/signin/page.test.tsx (1 test) 27ms
+ ✓ tests/helpers/db-connectivity.test.ts (2 tests | 1 skipped) 2764ms
+   ✓ Database Connectivity > should connect to database successfully 2763ms
+ ❯ tests/concurrency.rsvp.test.ts (4 tests | 4 skipped) 13498ms
+ ❯ tests/data.integrity.test.ts (10 tests | 1 failed | 1 skipped) 32379ms
+   ✓ Data Integrity Constraints > Check-in Constraints > should prevent duplicate check-ins for same service and user 4496ms
+   ✓ Data Integrity Constraints > Check-in Constraints > should allow same user to check in to different services 3373ms
+   ✓ Data Integrity Constraints > RSVP Constraints > should prevent duplicate RSVPs for same event and user 4475ms
+   ✓ Data Integrity Constraints > RSVP Constraints > should allow status updates for existing RSVP 2475ms
+   ✓ Data Integrity Constraints > Database Indexes > should have index on User.tenantId 1140ms
+   ✓ Data Integrity Constraints > Database Indexes > should have composite index on EventRsvp 1124ms
+   × Data Integrity Constraints > Foreign Key Constraints > should cascade delete checkins when service is deleted 5004ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ Data Integrity Constraints > Required Fields > should allow null localChurchId for WHOLE_CHURCH events 2627ms
+ ❯ tests/unit/checkin.duplicate.test.ts (3 tests | 2 failed) 45908ms
+   ✓ Check-in Duplicate Handling > should handle duplicate check-in gracefully 14797ms
+   × Check-in Duplicate Handling > should allow different users to check in to same service 15998ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Check-in Duplicate Handling > should allow same user to check in to different services 15111ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/concurrency.rsvp.test.ts > RSVP Concurrency Tests
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/data.integrity.test.ts > Data Integrity Constraints > Foreign Key Constraints > should cascade delete checkins when service is deleted
+ FAIL  tests/unit/checkin.duplicate.test.ts > Check-in Duplicate Handling > should allow different users to check in to same service
+ FAIL  tests/unit/checkin.duplicate.test.ts > Check-in Duplicate Handling > should allow same user to check in to different services
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ Test Files  3 failed | 35 passed (38)
+      Tests  3 failed | 579 passed | 6 skipped (588)
+   Start at  17:49:32
+   Duration  49.78s (transform 887ms, setup 2.12s, collect 2.59s, tests 97.95s, environment 13.00s, prepare 2.81s)
+
+UNIT_EXIT_CODE: 0

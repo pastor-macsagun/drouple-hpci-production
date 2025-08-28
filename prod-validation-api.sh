@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Production Validation Script
-BASE_URL="https://drouple-hpci-prod.vercel.app"
+BASE_URL="https://drouple.app"
 TS="1756183401000"
 LOG_FILE="POST_PROD_VALIDATION_LOG.md"
 

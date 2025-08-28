@@ -8,6 +8,7 @@ import { ServicesManager } from "./services-manager";
 import { listServices, getLocalChurches } from "./actions";
 import { DataFetchErrorBoundary } from "@/components/patterns/error-boundary";
 import { TableSkeleton, FormSkeleton } from "@/components/patterns/loading-skeletons";
+import { unstable_noStore as noStore } from 'next/cache';
 
 function ServicesLoadingSkeleton() {
   return (
@@ -22,6 +23,7 @@ function ServicesLoadingSkeleton() {
 }
 
 export default async function AdminServicesPage() {
+  noStore(); // Opt out of static generation for authenticated pages
   const user = await getCurrentUser();
 
   if (!user) {

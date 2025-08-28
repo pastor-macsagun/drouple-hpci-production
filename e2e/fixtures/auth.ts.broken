@@ -1,0 +1,113 @@
+import { test as base, expect } from '@playwright/test'
+
+type AuthFixtures = {
+  superAdminAuth: void
+  churchAdminAuth: void
+  vipAuth: void
+  leaderAuth: void
+  memberAuth: void
+}
+
+// Create a reusable test fixture with auth states
+export const test = base.extend<AuthFixtures>({
+  superAdminAuth: [async ({ page }, use) => {
+    await loginAs(page, 'superadmin@test.com', 'Hpci!Test2025')
+    await use()
+  }, { scope: 'test' }],
+
+  churchAdminAuth: [async ({ page }, use) => {
+    await loginAs(page, 'admin.manila@test.com', 'Hpci!Test2025')
+    await use()
+  }, { scope: 'test' }],
+
+  vipAuth: [async ({ page }, use) => {
+    await loginAs(page, 'vip.manila@test.com', 'Hpci!Test2025')
+    await use()
+  }, { scope: 'test' }],
+
+  leaderAuth: [async ({ page }, use) => {
+    await loginAs(page, 'leader.manila@test.com', 'Hpci!Test2025')
+    await use()
+  }, { scope: 'test' }],
+
+  memberAuth: [async ({ page }, use) => {
+    await loginAs(page, 'member1@test.com', 'Hpci!Test2025')
+    await use()
+  }, { scope: 'test' }],
+})
+
+async function loginAs(page: any, email: string, password: string) {
+  console.log(`[AUTH] Starting login for ${email}`)
+  
+  try {
+    // Navigate to sign in page
+    await page.goto('/auth/signin', { waitUntil: 'domcontentloaded' })
+    console.log(`[AUTH] Navigated to signin page`)
+    
+    // Wait for form elements to be ready
+    await page.waitForSelector('#email', { timeout: 5000 })
+    await page.waitForSelector('#password', { timeout: 5000 })
+    await page.waitForSelector('button[type="submit"]', { timeout: 5000 })
+    
+    // Fill credentials with retries
+    await page.fill('#email', email, { timeout: 5000 })
+    await page.fill('#password', password, { timeout: 5000 })
+    console.log(`[AUTH] Filled credentials for ${email}`)
+    
+    // Click sign in button and wait for network to stabilize
+    await Promise.all([
+      page.click('button[type="submit"]', { timeout: 5000 }),
+      page.waitForLoadState('networkidle', { timeout: 15000 })
+    ])
+    console.log(`[AUTH] Submitted login form`)
+    
+    // Wait for authentication to complete with extended timeout
+    // This handles the double-redirect: signin -> / -> role-based-page
+    await page.waitForFunction(
+      () => {
+        const url = window.location.pathname
+        return url.includes('/dashboard') || 
+               url.includes('/admin') || 
+               url.includes('/super') || 
+               url.includes('/vip') || 
+               url.includes('/leader')
+      },
+      { timeout: 20000 }
+    )
+    
+    const finalUrl = page.url()
+    console.log(`[AUTH] Successfully authenticated ${email} - final URL: ${finalUrl}`)
+    
+    // Additional verification: ensure we're not on an error or signin page
+    const currentPath = new URL(finalUrl).pathname
+    if (currentPath.includes('/auth/signin') || currentPath.includes('/auth/error')) {
+      throw new Error(`Authentication failed - still on auth page: ${currentPath}`)
+    }
+    
+    console.log(`[AUTH] Login completed successfully for ${email}`)
+    
+  } catch (error) {
+    console.error(`[AUTH] Login failed for ${email}:`, error)
+    
+    // Debug information
+    const currentUrl = page.url()
+    const currentPath = new URL(currentUrl).pathname
+    console.error(`[AUTH] Current URL: ${currentUrl}`)
+    console.error(`[AUTH] Current path: ${currentPath}`)
+    
+    // Check if there are any error messages on the page
+    try {
+      const errorElement = await page.locator('[role="alert"], .error, .text-red-500').first()
+      if (await errorElement.isVisible()) {
+        const errorText = await errorElement.textContent()
+        console.error(`[AUTH] Error message on page: ${errorText}`)
+      }
+    } catch (debugError) {
+      console.error(`[AUTH] Could not check for error messages:`, debugError)
+    }
+    
+    throw error
+  }
+}
+
+export { expect }

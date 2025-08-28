@@ -8,6 +8,7 @@ import { MembersManager } from "./members-manager";
 import { listMembers, getLocalChurches } from "./actions";
 import { DataFetchErrorBoundary } from "@/components/patterns/error-boundary";
 import { TableSkeleton, FormSkeleton } from "@/components/patterns/loading-skeletons";
+import { unstable_noStore as noStore } from 'next/cache';
 
 function MembersLoadingSkeleton() {
   return (
@@ -22,6 +23,7 @@ function MembersLoadingSkeleton() {
 }
 
 export default async function AdminMembersPage() {
+  noStore(); // Opt out of static generation for authenticated pages
   const user = await getCurrentUser();
 
   if (!user) {

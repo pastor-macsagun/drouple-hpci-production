@@ -168,25 +168,31 @@ export async function rsvpToEvent(eventId: string) {
       return { success: false, error: 'Already registered for this event' }
     }
 
-    // Optimize: Count current attendees efficiently
-    const currentAttendees = await prisma.eventRsvp.count({
-      where: {
-        eventId,
-        status: RsvpStatus.GOING,
-      },
-    })
+    // Use transaction to prevent race conditions in capacity checking
+    const rsvp = await prisma.$transaction(async (tx) => {
+      // Count current attendees within transaction
+      const currentAttendees = await tx.eventRsvp.count({
+        where: {
+          eventId,
+          status: RsvpStatus.GOING,
+        },
+      })
 
-    // Determine RSVP status based on capacity
-    const status = currentAttendees < event.capacity 
-      ? RsvpStatus.GOING 
-      : RsvpStatus.WAITLIST
+      // Determine RSVP status based on capacity
+      const status = currentAttendees < event.capacity 
+        ? RsvpStatus.GOING 
+        : RsvpStatus.WAITLIST
 
-    const rsvp = await prisma.eventRsvp.create({
-      data: {
-        eventId,
-        userId: session.user.id,
-        status,
-      },
+      // Create RSVP within same transaction
+      return await tx.eventRsvp.create({
+        data: {
+          eventId,
+          userId: session.user.id,
+          status,
+        },
+      })
+    }, {
+      isolationLevel: 'Serializable'
     })
 
     revalidatePath('/events')

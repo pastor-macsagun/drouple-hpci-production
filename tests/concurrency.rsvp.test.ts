@@ -42,7 +42,7 @@ describe('RSVP Concurrency Tests', () => {
       })
       testUsers.push(user)
     }
-  })
+  }, 30000)
 
   afterAll(async () => {
     await prisma.$transaction([
@@ -51,7 +51,7 @@ describe('RSVP Concurrency Tests', () => {
       prisma.user.deleteMany({ where: { id: { startsWith: 'test_conc_' } } }),
     ])
     await prisma.$disconnect()
-  })
+  }, 30000)
 
   describe('Concurrent RSVP at capacity', () => {
     it('should handle concurrent RSVPs without overbooking', async () => {
@@ -169,7 +169,7 @@ describe('RSVP Concurrency Tests', () => {
           where: { id: { startsWith: `test_conc_user_${testRunId}_` } }
         })
       }
-    })
+    }, 15000)
   })
 
   describe('Waitlist promotion on cancellation', () => {

@@ -18,21 +18,43 @@ const roleHierarchy: Record<UserRole, number> = {
 
 export async function getCurrentUser() {
   try {
-    const session = await auth()
-    if (!session?.user?.email) return null
+    // Handle static generation context - when headers() is not available
+    try {
+      const session = await auth()
+      if (!session?.user?.email) return null
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        memberships: {
-          include: {
-            localChurch: true,
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        include: {
+          memberships: {
+            include: {
+              localChurch: true,
+            },
           },
         },
-      },
-    })
+      })
 
-    return user
+      return user
+    } catch (staticError) {
+      // Check if this is a static generation error (headers() not available)
+      if (staticError instanceof Error && 
+          (staticError.message.includes('headers') || 
+           staticError.message.includes('Dynamic server usage') ||
+           staticError.message.includes('dynamic function'))) {
+        
+        console.warn('[Auth] Static generation context detected - getCurrentUser() cannot access request headers:', {
+          error: staticError.message,
+          timestamp: new Date().toISOString(),
+          context: 'static-generation'
+        })
+        
+        // In static generation context, we cannot determine the user
+        return null
+      }
+      
+      // Re-throw if not a static generation error
+      throw staticError
+    }
   } catch (error: unknown) {
     // Handle JWT session errors gracefully
     if (error instanceof Error) {

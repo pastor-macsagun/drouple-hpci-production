@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/rbac";
 import { UserRole } from "@prisma/client";
 import { Metadata } from "next";
 import LandingPage from "./public-landing";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const metadata: Metadata = {
   title: "Drouple",
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
+  noStore(); // Opt out of static generation for role-based routing
   const user = await getCurrentUser();
   
   // Redirect authenticated users based on role

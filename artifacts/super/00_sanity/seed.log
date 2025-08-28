@@ -1,0 +1,25 @@
+
+> hpci-chms@0.1.0 seed
+> prisma db push --force-reset && tsx prisma/seed.ts
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-flat-glade-ad7dfexu-pooler.c-2.us-east-1.aws.neon.tech"
+
+The PostgreSQL database "neondb" schema "public" at "ep-flat-glade-ad7dfexu-pooler.c-2.us-east-1.aws.neon.tech" was successfully reset.
+
+🚀  Your database is now in sync with your Prisma schema. Done in 43.40s
+
+Running generate... (Use --skip-generate to skip the generators)
+[2K[1A[2K[GRunning generate... - Prisma Client
+[2K[1A[2K[G✔ Generated Prisma Client (v6.14.0) to ./node_modules/@prisma/client in 100ms
+
+🌱 Starting database seed...
+✅ Cleared existing data
+✅ Created churches
+📝 Default password for all users: Hpci!Test2025
+✅ Created users
+✅ Created memberships
+✅ Created life groups
+✅ Created events
+✅ Created services and check-ins

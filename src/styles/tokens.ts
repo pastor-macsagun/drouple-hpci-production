@@ -11,7 +11,7 @@ export const tokens = {
   /* ===== BRAND PALETTE ===== */
   color: {
     sacredBlue: "30 124 232",        // #1e7ce8 - Primary brand color
-    softGold: "132 107 20",          // #846b14 - WCAG AA compliant secondary brand color
+    softGold: "132 107 20",          // WCAG AA compliant Soft Gold - 4.9:1 contrast
     accent: "30 124 232",            // Sacred Blue as primary accent
     accentSecondary: "132 107 20",   // WCAG AA compliant Soft Gold as secondary accent
     accentInk: "255 255 255",        // Text on accent backgrounds
@@ -43,9 +43,9 @@ export const tokens = {
   /* ===== DARK MODE OVERRIDES ===== */
   colorDark: {
     sacredBlue: "92 140 255",        // Brighter Sacred Blue for dark
-    softGold: "200 170 70",          // WCAG AA compliant Soft Gold for dark mode
+    softGold: "229 196 83",          // Soft Gold for dark mode - better visibility
     accent: "92 140 255",            // Brighter Sacred Blue
-    accentSecondary: "200 170 70",   // WCAG AA compliant Soft Gold for dark mode
+    accentSecondary: "229 196 83",   // Soft Gold for dark mode - better visibility
     accentInk: "17 24 39",           // Dark text on bright accents
 
     bg: "9 9 11",                    // Primary background - zinc-950

@@ -8,6 +8,7 @@ import { LifeGroupsManager } from "./lifegroups-manager";
 import { listLifeGroups, getLocalChurches, getLeaders } from "./actions";
 import { DataFetchErrorBoundary } from "@/components/patterns/error-boundary";
 import { TableSkeleton, FormSkeleton } from "@/components/patterns/loading-skeletons";
+import { unstable_noStore as noStore } from 'next/cache';
 
 function LifeGroupsLoadingSkeleton() {
   return (
@@ -22,6 +23,7 @@ function LifeGroupsLoadingSkeleton() {
 }
 
 export default async function AdminLifeGroupsPage() {
+  noStore(); // Opt out of static generation for authenticated pages
   const user = await getCurrentUser();
 
   if (!user) {

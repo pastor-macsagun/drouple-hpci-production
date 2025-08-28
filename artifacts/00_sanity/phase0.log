@@ -1,0 +1,6 @@
+Branch: main
+PHASE 0 SUMMARY:
+Install: PASS (with deprecation warnings)
+TypeCheck: PASS
+Lint: WARN (10 TypeScript 'any' warnings)
+Build: PASS (with Sentry config warnings)

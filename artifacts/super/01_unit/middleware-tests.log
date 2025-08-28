@@ -1,0 +1,213 @@
+
+> hpci-chms@0.1.0 test:unit
+> vitest run tests/unit/super-admin.middleware.test.ts
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+
+ ❯ tests/unit/super-admin.middleware.test.ts (14 tests | 14 failed) 9ms
+   × SUPER_ADMIN Middleware Tests > /super route protection > should allow SUPER_ADMIN access to /super 4ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > /super route protection > should allow SUPER_ADMIN access to /super/churches 0ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > /super route protection > should allow SUPER_ADMIN access to /super/local-churches 0ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > /super route protection > should redirect ADMIN from /super to /dashboard 0ms
+     → Cannot read properties of undefined (reading 'get')
+   × SUPER_ADMIN Middleware Tests > /super route protection > should redirect MEMBER from /super to /dashboard 0ms
+     → Cannot read properties of undefined (reading 'get')
+   × SUPER_ADMIN Middleware Tests > /super route protection > should redirect unauthenticated users from /super 0ms
+     → Cannot read properties of undefined (reading 'get')
+   × SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access /admin routes 0ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access /vip routes 0ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access /leader routes 0ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access regular user routes 0ms
+     → The instanceof assertion needs a constructor but Object was given.
+   × SUPER_ADMIN Middleware Tests > Role isolation for non-SUPER_ADMIN > should prevent ADMIN from accessing /vip routes 0ms
+     → Cannot read properties of undefined (reading 'get')
+   × SUPER_ADMIN Middleware Tests > Role isolation for non-SUPER_ADMIN > should prevent MEMBER from accessing /admin routes 0ms
+     → Cannot read properties of undefined (reading 'get')
+   × SUPER_ADMIN Middleware Tests > Authentication redirects > should redirect unauthenticated users from /dashboard to signin 0ms
+     → Cannot read properties of undefined (reading 'get')
+   × SUPER_ADMIN Middleware Tests > Authentication redirects > should redirect authenticated users from auth pages 0ms
+     → Cannot read properties of undefined (reading 'get')
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > /super route protection > should allow SUPER_ADMIN access to /super
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:59:24
+     57|       const response = await middleware(request)
+     58|       
+     59|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+     60|       expect(response.headers.get('location')).toBeNull()
+     61|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > /super route protection > should allow SUPER_ADMIN access to /super/churches
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:69:24
+     67|       const response = await middleware(request)
+     68|       
+     69|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+     70|       expect(response.headers.get('location')).toBeNull()
+     71|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > /super route protection > should allow SUPER_ADMIN access to /super/local-churches
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:79:24
+     77|       const response = await middleware(request)
+     78|       
+     79|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+     80|       expect(response.headers.get('location')).toBeNull()
+     81|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > /super route protection > should redirect ADMIN from /super to /dashboard
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:89:31
+     87|       const response = await middleware(request)
+     88|       
+     89|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+     90|       expect(response.status).toBe(307)
+     91|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > /super route protection > should redirect MEMBER from /super to /dashboard
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:99:31
+     97|       const response = await middleware(request)
+     98|       
+     99|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+    100|       expect(response.status).toBe(307)
+    101|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > /super route protection > should redirect unauthenticated users from /super
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:109:31
+    107|       const response = await middleware(request)
+    108|       
+    109|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+    110|       expect(response.status).toBe(307)
+    111|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access /admin routes
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:121:24
+    119|       const response = await middleware(request)
+    120|       
+    121|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+    122|       expect(response.headers.get('location')).toBeNull()
+    123|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access /vip routes
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:131:24
+    129|       const response = await middleware(request)
+    130|       
+    131|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+    132|       expect(response.headers.get('location')).toBeNull()
+    133|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access /leader routes
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:141:24
+    139|       const response = await middleware(request)
+    140|       
+    141|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+    142|       expect(response.headers.get('location')).toBeNull()
+    143|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > SUPER_ADMIN bypass for other routes > should allow SUPER_ADMIN to access regular user routes
+AssertionError: The instanceof assertion needs a constructor but Object was given.
+ ❯ tests/unit/super-admin.middleware.test.ts:151:24
+    149|       const response = await middleware(request)
+    150|       
+    151|       expect(response).toBeInstanceOf(NextResponse)
+       |                        ^
+    152|       expect(response.headers.get('location')).toBeNull()
+    153|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > Role isolation for non-SUPER_ADMIN > should prevent ADMIN from accessing /vip routes
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:163:31
+    161|       const response = await middleware(request)
+    162|       
+    163|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+    164|       expect(response.status).toBe(307)
+    165|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > Role isolation for non-SUPER_ADMIN > should prevent MEMBER from accessing /admin routes
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:173:31
+    171|       const response = await middleware(request)
+    172|       
+    173|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+    174|       expect(response.status).toBe(307)
+    175|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > Authentication redirects > should redirect unauthenticated users from /dashboard to signin
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:185:31
+    183|       const response = await middleware(request)
+    184|       
+    185|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+    186|       expect(response.status).toBe(307)
+    187|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯
+
+ FAIL  tests/unit/super-admin.middleware.test.ts > SUPER_ADMIN Middleware Tests > Authentication redirects > should redirect authenticated users from auth pages
+TypeError: Cannot read properties of undefined (reading 'get')
+ ❯ tests/unit/super-admin.middleware.test.ts:195:31
+    193|       const response = await middleware(request)
+    194|       
+    195|       expect(response.headers.get('location')).toBe('http://localhost:…
+       |                               ^
+    196|       expect(response.status).toBe(307)
+    197|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/14]⎯
+
+ Test Files  1 failed (1)
+      Tests  14 failed (14)
+   Start at  18:01:21
+   Duration  801ms (transform 49ms, setup 78ms, collect 17ms, tests 9ms, environment 291ms, prepare 55ms)
+

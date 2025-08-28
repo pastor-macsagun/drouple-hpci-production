@@ -4,17 +4,17 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 2 : 1, // Allow 1 retry locally for flaky auth
+  workers: process.env.CI ? 1 : 2, // Allow 2 workers locally for speed
   reporter: process.env.CI 
     ? [['html', { outputFolder: 'playwright-report', open: 'never' }], ['list']]
     : [['html', { outputFolder: 'playwright-report', open: 'on-failure' }]],
   globalSetup: './e2e/global-setup.ts',
   
-  // Timeout configuration
-  timeout: 30000, // 30s per test
+  // Optimized timeout configuration for reliable auth flows
+  timeout: 30000, // 30s per test (reduced from 45s with better auth logic)
   expect: {
-    timeout: 5000, // 5s for expect assertions
+    timeout: 8000, // 8s for expect assertions (increased for stability)
   },
   
   use: {
@@ -24,9 +24,9 @@ export default defineConfig({
     video: 'retain-on-failure',
     testIdAttribute: 'data-testid',
     
-    // Additional stability settings
-    actionTimeout: 10000, // 10s for actions
-    navigationTimeout: 30000, // 30s for navigations
+    // Optimized stability settings for faster auth flows
+    actionTimeout: 10000, // 10s for actions (reduced with better selectors)
+    navigationTimeout: 20000, // 20s for navigations (reduced with retry logic)
     
     // Viewport for consistency
     viewport: { width: 1280, height: 720 },

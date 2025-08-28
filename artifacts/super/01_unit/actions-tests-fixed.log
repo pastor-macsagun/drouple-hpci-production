@@ -1,0 +1,54 @@
+
+> hpci-chms@0.1.0 test:unit
+> vitest run tests/unit/super-admin.actions.test.ts
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+
+ ❯ tests/unit/super-admin.actions.test.ts (7 tests | 1 failed) 9ms
+   × SUPER_ADMIN Server Actions Tests > createChurch > should redirect non-SUPER_ADMIN users 4ms
+     → [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "null",
+    "path": [
+      "description"
+    ],
+    "message": "Expected string, received null"
+  }
+]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/super-admin.actions.test.ts > SUPER_ADMIN Server Actions Tests > createChurch > should redirect non-SUPER_ADMIN users
+ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "null",
+    "path": [
+      "description"
+    ],
+    "message": "Expected string, received null"
+  }
+]
+ ❯ Object.get error [as error] node_modules/zod/v3/types.js:39:31
+ ❯ ZodObject.parse node_modules/zod/v3/types.js:114:22
+ ❯ Module.createChurch app/(super)/super/churches/actions.ts:35:34
+     33|   }
+     34| 
+     35|   const validated = churchSchema.parse(rawData)
+       |                                  ^
+     36| 
+     37|   await prisma.church.create({
+ ❯ tests/unit/super-admin.actions.test.ts:148:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  18:00:15
+   Duration  853ms (transform 55ms, setup 77ms, collect 52ms, tests 9ms, environment 280ms, prepare 57ms)
+

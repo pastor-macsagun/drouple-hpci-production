@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drouple Design System - Color Swatches</title>
+    <style>
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f8fafc;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        .brand-colors {
+            background: linear-gradient(135deg, rgb(30, 124, 232), rgb(229, 196, 83));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgb(30, 124, 232);
+            padding-bottom: 0.5rem;
+        }
+        
+        .swatch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .swatch-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .swatch-color {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .swatch-info {
+            padding: 1rem;
+        }
+        
+        .swatch-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+        
+        .swatch-values {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, monospace;
+            font-size: 0.75rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .contrast-info {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .contrast-pass {
+            color: #059669;
+            font-weight: 600;
+        }
+        
+        .contrast-fail {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        
+        .usage-note {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+            font-style: italic;
+        }
+        
+        .mode-toggle {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .toggle-btn {
+            background: rgb(30, 124, 232);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn:hover {
+            background: rgb(27, 111, 209);
+        }
+        
+        .toggle-btn.active {
+            background: rgb(229, 196, 83);
+            color: rgb(17, 24, 39);
+        }
+        
+        .dark-mode {
+            background: #111827;
+            color: #f9fafb;
+        }
+        
+        .dark-mode .swatch-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .dark-mode .swatch-name {
+            color: #f9fafb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Drouple Design System</h1>
+            <p class="subtitle">Color Palette & Token Reference</p>
+            <div class="brand-colors">Sacred Blue + Soft Gold</div>
+        </div>
+        
+        <div class="mode-toggle">
+            <button class="toggle-btn active" onclick="setMode('light')">Light Mode</button>
+            <button class="toggle-btn" onclick="setMode('dark')">Dark Mode</button>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Brand Palette</h2>
+            <div class="swatch-grid">
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(30, 124, 232); color: white;">
+                        Sacred Blue
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Sacred Blue (Primary)</div>
+                        <div class="swatch-values">
+                            RGB: 30, 124, 232<br>
+                            HEX: #1e7ce8<br>
+                            CSS: rgb(var(--color-accent))
+                        </div>
+                        <div class="contrast-info">
+                            <span class="contrast-pass">✓ WCAG AA</span> 5.32:1 on white
+                        </div>
+                        <div class="usage-note">Primary CTAs, brand text, navigation</div>
+                    </div>
+                </div>
+                
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(229, 196, 83); color: rgb(17, 24, 39);">
+                        Soft Gold
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Soft Gold (Secondary)</div>
+                        <div class="swatch-values">
+                            RGB: 229, 196, 83<br>
+                            HEX: #e5c453<br>
+                            CSS: rgb(var(--color-accent-secondary))
+                        </div>
+                        <div class="contrast-info">
+                            <span class="contrast-fail">⚠ WCAG Fail</span> 3.84:1 on light backgrounds
+                        </div>
+                        <div class="usage-note">Secondary accents, gradient combinations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Base Surfaces</h2>
+            <div class="swatch-grid">
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(255, 255, 255); color: rgb(17, 24, 39); border: 1px solid #e5e7eb;">
+                        Background
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Background</div>
+                        <div class="swatch-values">
+                            RGB: 255, 255, 255<br>
+                            HEX: #ffffff<br>
+                            CSS: rgb(var(--color-bg))
+                        </div>
+                        <div class="usage-note">Primary app background</div>
+                    </div>
+                </div>
+                
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(248, 250, 252); color: rgb(17, 24, 39);">
+                        Surface
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Surface</div>
+                        <div class="swatch-values">
+                            RGB: 248, 250, 252<br>
+                            HEX: #f8fafc<br>
+                            CSS: rgb(var(--color-surface))
+                        </div>
+                        <div class="usage-note">Elevated elements, feature pills</div>
+                    </div>
+                </div>
+                
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(241, 245, 249); color: rgb(17, 24, 39);">
+                        Elevated
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Elevated</div>
+                        <div class="swatch-values">
+                            RGB: 241, 245, 249<br>
+                            HEX: #f1f5f9<br>
+                            CSS: rgb(var(--color-elevated))
+                        </div>
+                        <div class="usage-note">Cards, modals, dropdowns</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Text Colors</h2>
+            <div class="swatch-grid">
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(17, 24, 39); color: white;">
+                        Primary Text
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Ink (Primary)</div>
+                        <div class="swatch-values">
+                            RGB: 17, 24, 39<br>
+                            HEX: #111827<br>
+                            CSS: rgb(var(--color-ink))
+                        </div>
+                        <div class="contrast-info">
+                            <span class="contrast-pass">✓ WCAG AAA</span> 16.78:1 on white
+                        </div>
+                        <div class="usage-note">Headings, emphasis text</div>
+                    </div>
+                </div>
+                
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(71, 85, 105); color: white;">
+                        Secondary Text
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Ink Muted</div>
+                        <div class="swatch-values">
+                            RGB: 71, 85, 105<br>
+                            HEX: #475569<br>
+                            CSS: rgb(var(--color-ink-muted))
+                        </div>
+                        <div class="contrast-info">
+                            <span class="contrast-pass">✓ WCAG AAA</span> 7.59:1 on white
+                        </div>
+                        <div class="usage-note">Body text, descriptions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Semantic Colors</h2>
+            <div class="swatch-grid">
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(22, 163, 74); color: white;">
+                        Success
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Success</div>
+                        <div class="swatch-values">
+                            RGB: 22, 163, 74<br>
+                            HEX: #16a34a<br>
+                            CSS: rgb(var(--color-success))
+                        </div>
+                        <div class="usage-note">Positive states, confirmations</div>
+                    </div>
+                </div>
+                
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(234, 179, 8); color: rgb(17, 24, 39);">
+                        Warning
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Warning</div>
+                        <div class="swatch-values">
+                            RGB: 234, 179, 8<br>
+                            HEX: #eab308<br>
+                            CSS: rgb(var(--color-warning))
+                        </div>
+                        <div class="usage-note">Caution states, alerts</div>
+                    </div>
+                </div>
+                
+                <div class="swatch-card">
+                    <div class="swatch-color" style="background-color: rgb(220, 38, 38); color: white;">
+                        Danger
+                    </div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Danger</div>
+                        <div class="swatch-values">
+                            RGB: 220, 38, 38<br>
+                            HEX: #dc2626<br>
+                            CSS: rgb(var(--color-danger))
+                        </div>
+                        <div class="usage-note">Error states, destructive actions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function setMode(mode) {
+            const body = document.body;
+            const buttons = document.querySelectorAll('.toggle-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (mode === 'dark') {
+                body.classList.add('dark-mode');
+                updateSwatchesForDarkMode();
+            } else {
+                body.classList.remove('dark-mode');
+                updateSwatchesForLightMode();
+            }
+        }
+        
+        function updateSwatchesForDarkMode() {
+            // Update brand colors for dark mode
+            const brandSwatches = document.querySelectorAll('.swatch-color');
+            // This would need specific updates for each swatch in a real implementation
+        }
+        
+        function updateSwatchesForLightMode() {
+            // Reset to light mode values
+        }
+    </script>
+</body>
+</html>

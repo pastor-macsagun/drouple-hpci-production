@@ -6,8 +6,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Heart, Users, Calendar, BookOpen } from "lucide-react";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export default async function VipDashboard() {
+  noStore(); // Opt out of static generation for authenticated pages
   const user = await getCurrentUser();
 
   if (!user) {

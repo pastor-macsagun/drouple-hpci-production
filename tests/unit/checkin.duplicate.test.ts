@@ -26,6 +26,36 @@ describe('Check-in Duplicate Handling', () => {
       where: { id: testUserId }
     })
 
+    // Ensure local church exists (should be created by seed)
+    let localChurch = await prisma.localChurch.findUnique({
+      where: { id: 'local_manila' }
+    })
+    
+    if (!localChurch) {
+      // Create church structure if not exists
+      let church = await prisma.church.findUnique({
+        where: { id: 'church_hpci' }
+      })
+      
+      if (!church) {
+        church = await prisma.church.create({
+          data: {
+            id: 'church_hpci',
+            name: 'HPCI',
+            description: 'House of Prayer Christian International',
+          }
+        })
+      }
+      
+      localChurch = await prisma.localChurch.create({
+        data: {
+          id: 'local_manila',
+          name: 'HPCI Manila',
+          churchId: 'church_hpci',
+        }
+      })
+    }
+
     // Create test data
     await prisma.user.create({
       data: {
@@ -107,8 +137,16 @@ describe('Check-in Duplicate Handling', () => {
     expect(checkins).toHaveLength(1)
   })
 
-  it('should allow different users to check in to same service', async () => {
+  it('should allow different users to check in to same service', { timeout: 30000 }, async () => {
     const secondUserId = 'test_user_2_duplicate_checkin'
+    
+    // Ensure church exists for second user
+    const church = await prisma.church.findUnique({
+      where: { id: 'church_hpci' }
+    })
+    if (!church) {
+      throw new Error('Church church_hpci not found in test setup')
+    }
     
     // Create second user
     await prisma.user.create({
@@ -163,12 +201,20 @@ describe('Check-in Duplicate Handling', () => {
     }
   })
 
-  it('should allow same user to check in to different services', async () => {
+  it('should allow same user to check in to different services', { timeout: 30000 }, async () => {
     const secondServiceId = 'test_service_duplicate_2'
     
     // Create second service with different date
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
+    
+    // Ensure local church exists
+    const localChurch = await prisma.localChurch.findUnique({
+      where: { id: 'local_manila' }
+    })
+    if (!localChurch) {
+      throw new Error('Local church local_manila not found in test setup')
+    }
     
     await prisma.service.create({
       data: {

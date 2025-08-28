@@ -11,7 +11,7 @@
 :root {
   /* ===== BRAND PALETTE ===== */
   --color-sacred-blue: 30 124 232;        /* #1e7ce8 - Primary brand color */
-  --color-soft-gold: 132 107 20;          /* #846b14 - WCAG AA compliant secondary brand color */
+  --color-soft-gold: 132 107 20;          /* WCAG AA compliant Soft Gold - 4.9:1 contrast */
   --color-accent: 30 124 232;             /* Sacred Blue as primary accent */
   --color-accent-secondary: 132 107 20;    /* WCAG AA compliant Soft Gold as secondary accent */
   --color-accent-ink: 255 255 255;        /* Text on accent backgrounds */
@@ -136,9 +136,9 @@
 .dark {
   /* ===== BRAND PALETTE - DARK MODE ===== */
   --color-sacred-blue: 92 140 255;       /* Brighter Sacred Blue for dark */
-  --color-soft-gold: 200 170 70;         /* WCAG AA compliant Soft Gold for dark mode */
+  --color-soft-gold: 229 196 83;         /* Soft Gold for dark mode - better visibility */
   --color-accent: 92 140 255;            /* Brighter Sacred Blue */
-  --color-accent-secondary: 200 170 70;   /* WCAG AA compliant Soft Gold for dark mode */
+  --color-accent-secondary: 229 196 83;   /* Soft Gold for dark mode - better visibility */
   --color-accent-ink: 17 24 39;          /* Dark text on bright accents */
 
   /* ===== BASE SURFACES - DARK MODE ===== */
@@ -180,7 +180,7 @@
   --popover-foreground: 213 31% 91%;
   --primary: 217 91% 60%;                 /* Brighter Sacred Blue in HSL */
   --primary-foreground: 222 84% 4.9%;
-  --secondary: 43 74% 55%;                /* Adjusted Soft Gold in HSL */
+  --secondary: 43 74% 66%;                /* Soft Gold in HSL for dark mode */
   --secondary-foreground: 213 31% 91%;
   --muted: 220 26% 18%;
   --muted-foreground: 240 5% 65%;

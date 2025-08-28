@@ -1,0 +1,65 @@
+
+> hpci-chms@0.1.0 test:unit
+> vitest run tests/unit/super-admin.actions.test.ts
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+
+ ❯ tests/unit/super-admin.actions.test.ts (7 tests | 1 failed) 10ms
+   × SUPER_ADMIN Server Actions Tests > createChurch > should redirect non-SUPER_ADMIN users 4ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "data": Object {
+          "description": "Test Description",
+          "name": "Test Church",
+        },
+      },
+    ]
+
+
+Number of calls: 1
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/super-admin.actions.test.ts > SUPER_ADMIN Server Actions Tests > createChurch > should redirect non-SUPER_ADMIN users
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "data": Object {
+          "description": "Test Description",
+          "name": "Test Church",
+        },
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/unit/super-admin.actions.test.ts:152:40
+    150| 
+    151|       expect(redirect).toHaveBeenCalledWith('/forbidden')
+    152|       expect(prisma.church.create).not.toHaveBeenCalled()
+       |                                        ^
+    153|     })
+    154| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  18:00:25
+   Duration  957ms (transform 68ms, setup 74ms, collect 54ms, tests 10ms, environment 299ms, prepare 64ms)
+

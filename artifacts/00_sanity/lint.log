@@ -1,0 +1,23 @@
+npm warn Unknown cli config "--max-warnings". This will stop working in the next major version of npm.
+
+> hpci-chms@0.1.0 lint
+> next lint
+
+
+./components/patterns/form-validation.tsx
+121:60  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+129:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/alerts.ts
+18:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+34:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+185:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+257:46  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+288:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+288:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+455:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+561:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+EXIT_CODE: 0

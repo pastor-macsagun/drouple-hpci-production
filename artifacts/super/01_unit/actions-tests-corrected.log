@@ -1,0 +1,15 @@
+
+> hpci-chms@0.1.0 test:unit
+> vitest run tests/unit/super-admin.actions.test.ts
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+
+ ✓ tests/unit/super-admin.actions.test.ts (7 tests) 7ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  18:00:48
+   Duration  871ms (transform 60ms, setup 74ms, collect 52ms, tests 7ms, environment 281ms, prepare 52ms)
+

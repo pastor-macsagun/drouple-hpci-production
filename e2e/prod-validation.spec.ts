@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 // Override to test production
 test.use({ 
-  baseURL: 'https://drouple-hpci-prod.vercel.app',
+  baseURL: 'https://drouple.app',
   ignoreHTTPSErrors: true
 });
 

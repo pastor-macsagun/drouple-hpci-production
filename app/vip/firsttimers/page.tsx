@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { FirstTimersManager } from "./firsttimers-manager";
 import { getFirstTimers, getVipTeamMembers } from "@/app/actions/firsttimers";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export default async function VipFirstTimersPage() {
+  noStore(); // Opt out of static generation for authenticated pages
   const user = await getCurrentUser();
 
   if (!user) {

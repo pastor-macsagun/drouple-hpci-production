@@ -1,0 +1,106 @@
+
+> hpci-chms@0.1.0 build
+> next build
+
+   ▲ Next.js 15.1.3
+   - Environments: .env.production.local, .env.production, .env
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+   Creating an optimized production build ...
+[@sentry/nextjs] It appears you've configured a `sentry.server.config.ts` file. Please ensure to put this file's content into the `register()` function of a Next.js instrumentation file instead. To ensure correct functionality of the SDK, `Sentry.init` must be called inside of an instrumentation file. Learn more about setting up an instrumentation file in Next.js: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation. You can safely delete the `sentry.server.config.ts` file afterward.
+[@sentry/nextjs] Could not find a Next.js instrumentation file. This indicates an incomplete configuration of the Sentry SDK. An instrumentation file is required for the Sentry SDK to be initialized on the server: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#create-initialization-config-files (you can suppress this warning by setting SENTRY_SUPPRESS_INSTRUMENTATION_FILE_WARNING=1 as environment variable)
+warn  - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
+[@sentry/nextjs] It appears you've configured a `sentry.edge.config.ts` file. Please ensure to put this file's content into the `register()` function of a Next.js instrumentation file instead. To ensure correct functionality of the SDK, `Sentry.init` must be called inside of an instrumentation file. Learn more about setting up an instrumentation file in Next.js: https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation. You can safely delete the `sentry.edge.config.ts` file afterward.
+[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (191kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (139kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./components/patterns/form-validation.tsx
+121:60  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+129:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/alerts.ts
+18:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+34:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+185:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+257:46  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+288:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+288:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+455:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+561:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/22) ...
+   Generating static pages (5/22) 
+   Generating static pages (10/22) 
+   Generating static pages (16/22) 
+ ✓ Generating static pages (22/22)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    369 B           168 kB
+├ ○ /_not-found                          342 B           166 kB
+├ ƒ /admin                               403 B           199 kB
+├ ƒ /admin/events                        402 B           199 kB
+├ ƒ /admin/events/[id]                   2.31 kB         210 kB
+├ ƒ /admin/events/[id]/edit              337 B           240 kB
+├ ƒ /admin/events/new                    337 B           240 kB
+├ ƒ /admin/lifegroups                    9.43 kB         254 kB
+├ ƒ /admin/members                       11.3 kB         236 kB
+├ ƒ /admin/pathways                      402 B           199 kB
+├ ƒ /admin/pathways/[id]/steps           2.73 kB         201 kB
+├ ƒ /admin/pathways/new                  26.8 kB         251 kB
+├ ƒ /admin/reports                       369 B           168 kB
+├ ƒ /admin/services                      8.34 kB         249 kB
+├ ƒ /announcements                       372 B           168 kB
+├ ƒ /api/auth/[...nextauth]              341 B           166 kB
+├ ƒ /api/health                          342 B           166 kB
+├ ƒ /api/v1/users                        342 B           166 kB
+├ ƒ /api/v2/users                        342 B           166 kB
+├ ○ /auth/change-password                3.94 kB         177 kB
+├ ○ /auth/error                          1.87 kB         177 kB
+├ ○ /auth/signin                         5.45 kB         179 kB
+├ ƒ /checkin                             6.96 kB         222 kB
+├ ƒ /dashboard                           2 kB            200 kB
+├ ƒ /events                              3.27 kB         202 kB
+├ ƒ /events/[id]                         2.45 kB         210 kB
+├ ○ /forbidden                           371 B           168 kB
+├ ƒ /leader                              401 B           199 kB
+├ ƒ /lifegroups                          6.02 kB         234 kB
+├ ƒ /members                             385 B           204 kB
+├ ƒ /members/[id]                        387 B           204 kB
+├ ƒ /messages                            403 B           199 kB
+├ ƒ /pathways                            1.99 kB         200 kB
+├ ƒ /pathways/[id]/enroll                343 B           166 kB
+├ ƒ /profile                             1.01 kB         199 kB
+├ ○ /profile/2fa                         5.39 kB         193 kB
+├ ƒ /register                            5 kB            180 kB
+├ ƒ /register/success                    371 B           168 kB
+├ ƒ /super                               402 B           199 kB
+├ ƒ /super/churches                      403 B           199 kB
+├ ƒ /super/churches/[id]/edit            1.01 kB         199 kB
+├ ƒ /super/churches/new                  1.01 kB         199 kB
+├ ƒ /super/local-churches                401 B           199 kB
+├ ƒ /super/local-churches/[id]/admins    1.01 kB         199 kB
+├ ƒ /super/local-churches/[id]/edit      1.01 kB         199 kB
+├ ƒ /super/local-churches/new            1.01 kB         199 kB
+├ ƒ /vip                                 403 B           199 kB
+└ ƒ /vip/firsttimers                     8.24 kB         249 kB
++ First Load JS shared by all            165 kB
+  ├ chunks/2923-d1956cabb074e693.js      109 kB
+  ├ chunks/4bd1b696-f351ea452002cb0f.js  53.1 kB
+  └ other shared chunks (total)          3.4 kB
+
+
+ƒ Middleware                             50.5 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+EXIT_CODE: 0

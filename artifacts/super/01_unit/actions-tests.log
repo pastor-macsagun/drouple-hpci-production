@@ -1,0 +1,40 @@
+
+> hpci-chms@0.1.0 test:unit
+> vitest run tests/unit/super-admin.actions.test.ts
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/macsagun/HPCI-ChMS
+
+ ❯ tests/unit/super-admin.actions.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/super-admin.actions.test.ts [ tests/unit/super-admin.actions.test.ts ]
+Error: [vitest] No "default" export is defined on the "crypto" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("crypto"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ ❯ app/(super)/super/local-churches/[id]/admins/actions.ts:9:29
+      7| import { z } from 'zod'
+      8| import { revalidatePath } from 'next/cache'
+      9| import { randomBytes } from 'crypto'
+       |                             ^
+     10| import { Resend } from 'resend'
+     11| 
+ ❯ tests/unit/super-admin.actions.test.ts:58:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  18:00:04
+   Duration  895ms (transform 56ms, setup 75ms, collect 0ms, tests 0ms, environment 312ms, prepare 71ms)
+
