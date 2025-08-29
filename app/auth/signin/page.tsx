@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { signIn, getCsrfToken } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -109,6 +110,14 @@ function SignInContent() {
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <Link 
+              href="/" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              ← Back to Home
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </main>
