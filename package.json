@@ -45,6 +45,10 @@
     "monitoring:test": "node -e \"require('./lib/alerts').createAlert('info', 'Test Alert', 'This is a test alert', 'system')\"",
     "security:audit": "npm audit --audit-level=high",
     "performance:analyze": "npm run analyze && echo 'Check .next/analyze for bundle analysis'",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel",
+    "vercel:status": "vercel ls",
+    "vercel:logs": "vercel logs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

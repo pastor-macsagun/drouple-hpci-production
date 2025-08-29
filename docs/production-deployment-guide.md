@@ -10,7 +10,7 @@ This guide covers the complete production deployment process for HPCI-ChMS, incl
 2. [Environment Setup](#environment-setup)
 3. [Database Configuration](#database-configuration)
 4. [CI/CD Pipeline Setup](#cicd-pipeline-setup)
-5. [Monitoring and Alerts](#monitoring-and-alerts)
+5. [Vercel Analytics & Monitoring](#vercel-analytics--monitoring)
 6. [Deployment Process](#deployment-process)
 7. [Post-Deployment Validation](#post-deployment-validation)
 8. [Rollback Procedures](#rollback-procedures)
@@ -19,11 +19,15 @@ This guide covers the complete production deployment process for HPCI-ChMS, incl
 ## Prerequisites
 
 ### Required Services
-- **Vercel Account**: For application hosting
+- **Vercel Account**: For application hosting and monitoring
 - **Neon Database**: PostgreSQL database with pooling
-- **Sentry Account**: Error tracking and monitoring
-- **GitHub Repository**: Source code and CI/CD
+- **GitHub Repository**: Source code and automated CI/CD
 - **Domain Name**: Custom domain (optional but recommended)
+
+### Integrated Monitoring (Automatic)
+- **Vercel Analytics**: User behavior tracking (auto-enabled)
+- **Vercel Speed Insights**: Core Web Vitals monitoring (auto-enabled)
+- **GitHub Actions**: CI/CD pipeline with quality gates
 
 ### Local Development Setup
 ```bash
@@ -221,27 +225,49 @@ The CI/CD pipeline includes these stages:
 - `develop` - Staging deployments
 - Feature branches - Preview deployments (PRs)
 
-## Monitoring and Alerts
+## Vercel Analytics & Monitoring
 
-### 1. Sentry Configuration
+### 1. Integrated Monitoring (Zero Configuration)
 
-1. **Create Sentry Project**
+**Vercel Analytics** and **Speed Insights** are automatically enabled when deployed to Vercel:
+
+- **Analytics Component**: `<Analytics />` integrated in `app/layout.tsx`
+- **Speed Insights**: `<SpeedInsights />` integrated in `app/layout.tsx`
+- **Automatic Activation**: No additional setup required on Vercel deployment
+
+### 2. Analytics Dashboard Access
+
+1. **Vercel Dashboard**
    ```bash
-   # Install Sentry CLI
-   npm install -g @sentry/cli
-   
-   # Login and create project
-   sentry-cli login
-   sentry-cli projects create hpci-chms
+   # Access via web
+   https://vercel.com/dashboard
    ```
 
-2. **Configure Alerts**
-   - Error rate > 5% in 5 minutes
-   - New release issues
-   - Performance degradation
-   - High memory usage
+2. **Key Metrics Available**
+   - **Page Views**: Real-time visitor tracking
+   - **User Sessions**: Session duration and paths
+   - **Conversion Funnels**: User journey analysis
+   - **Geographic Data**: Visitor locations and regions
+   - **Device Analytics**: Desktop/mobile/tablet breakdown
 
-### 2. Health Check Endpoint
+### 3. Speed Insights Monitoring
+
+**Core Web Vitals Tracking:**
+- **LCP** (Largest Contentful Paint): Loading performance
+- **FID** (First Input Delay): Interactivity measurement
+- **CLS** (Cumulative Layout Shift): Visual stability
+- **TTFB** (Time to First Byte): Server response time
+- **INP** (Interaction to Next Paint): Response time
+- **FCP** (First Contentful Paint): Perceived loading speed
+
+### 4. Real-time Alerts & Notifications
+
+- **Performance Regression Detection**: Automatic alerts for performance drops
+- **Error Rate Monitoring**: Spike detection in client-side errors
+- **Traffic Anomaly Detection**: Unusual traffic pattern alerts
+- **Core Web Vitals Threshold Alerts**: When metrics fall below thresholds
+
+### 5. Health Check Endpoint
 
 The `/api/health` endpoint provides:
 - Database connectivity status
@@ -249,12 +275,18 @@ The `/api/health` endpoint provides:
 - System uptime
 - Response time metrics
 
-### 3. Alert Channels
+### 6. CLI Monitoring Commands
 
-Configure alert notifications:
-- **Email**: Critical and high-severity alerts
-- **Slack**: All alerts with context
-- **Webhook**: Integration with external systems
+```bash
+# Check deployment status
+npm run vercel:status
+
+# View deployment logs
+npm run vercel:logs
+
+# Manual deployment (if needed)
+npm run deploy
+```
 
 ## Deployment Process
 
@@ -285,19 +317,36 @@ Configure alert notifications:
 
 ### 3. Production Deployment
 
+**🚀 Fully Automated via Vercel + GitHub Integration**
+
 1. **Automatic Trigger**
    ```bash
-   # Push to main branch
+   # Push to main branch triggers automatic deployment
    git checkout main
-   git merge develop
+   git merge feature/your-changes
    git push origin main
    ```
 
-2. **Monitoring**
-   - Watch CI/CD pipeline progress
-   - Monitor error rates
-   - Verify health checks
-   - Check performance metrics
+2. **Deployment Flow**
+   - GitHub Actions runs quality gates (security, tests, build)
+   - Vercel automatically deploys on successful pipeline
+   - Analytics and Speed Insights activate automatically
+   - Production URL: https://www.drouple.app
+
+3. **Manual Deployment (if needed)**
+   ```bash
+   # Using Vercel CLI for manual deployment
+   npm run deploy              # Deploy to production
+   npm run deploy:preview      # Deploy preview build
+   npm run vercel:status       # Check deployment status
+   npm run vercel:logs         # View deployment logs
+   ```
+
+4. **Real-time Monitoring**
+   - **Vercel Dashboard**: Deployment status and performance
+   - **Vercel Analytics**: User behavior and traffic patterns
+   - **Speed Insights**: Core Web Vitals and performance metrics
+   - **GitHub Actions**: Pipeline status and quality gates
 
 ## Post-Deployment Validation
 

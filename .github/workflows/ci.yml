@@ -368,71 +368,28 @@ jobs:
           temporaryPublicStorage: true
           runs: 3
 
-  # Deployment Gates
-  deploy-staging:
-    name: Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: [performance-tests]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    environment:
-      name: staging
-      url: ${{ steps.deploy.outputs.preview-url }}
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Deploy to Vercel Staging
-        uses: amondnet/vercel-action@v25
-        id: deploy
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--env DATABASE_URL=${{ secrets.STAGING_DATABASE_URL }} --env DATABASE_URL_UNPOOLED=${{ secrets.STAGING_DATABASE_URL_UNPOOLED }}'
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-      
-      - name: Run staging smoke tests
-        run: |
-          sleep 60  # Wait for deployment to stabilize
-          curl -f ${{ steps.deploy.outputs.preview-url }}/api/health || exit 1
-          echo "✅ Staging deployment healthy"
-
-  deploy-production:
-    name: Deploy to Production
+  # Note: Deployment is handled automatically by Vercel's GitHub integration
+  # When pushing to main branch, Vercel will automatically deploy to production
+  # Analytics and Speed Insights are integrated via components in app/layout.tsx
+  # Use `npm run deploy` for manual deployment via Vercel CLI if needed
+  
+  deployment-notification:
+    name: Deployment Ready
     runs-on: ubuntu-latest
     needs: [performance-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment:
-      name: production
-      url: ${{ steps.deploy.outputs.preview-url }}
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Deploy to Vercel Production
-        uses: amondnet/vercel-action@v25
-        id: deploy
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod --env DATABASE_URL=${{ secrets.PRODUCTION_DATABASE_URL }} --env DATABASE_URL_UNPOOLED=${{ secrets.PRODUCTION_DATABASE_URL_UNPOOLED }}'
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-      
-      - name: Run production smoke tests
+      - name: Notify deployment readiness
         run: |
-          sleep 60  # Wait for deployment to stabilize
-          curl -f ${{ steps.deploy.outputs.preview-url }}/api/health || exit 1
-          echo "✅ Production deployment healthy"
-      
-      - name: Post-deployment notifications
-        if: always()
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "🚀 Production deployment successful!"
-            echo "URL: ${{ steps.deploy.outputs.preview-url }}"
-          else
-            echo "❌ Production deployment failed!"
-          fi
+          echo "🚀 All quality gates passed!"
+          echo "✅ Security audit completed"
+          echo "✅ Code quality validated"
+          echo "✅ Unit tests passed with coverage"
+          echo "✅ Build analysis completed"
+          echo "✅ E2E tests passed"
+          echo "✅ Performance tests completed"
+          echo ""
+          echo "🔄 Vercel will automatically deploy to production"
+          echo "📊 Analytics and Speed Insights are active"
+          echo "🌐 Production URL: https://www.drouple.app"

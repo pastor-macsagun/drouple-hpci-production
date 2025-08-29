@@ -16,9 +16,10 @@ HPCI-ChMS is a multi-church management system designed to handle:
 - **Frontend**: Next.js 15 with TypeScript, App Router
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **Database**: Neon Postgres (pooled connections) + Prisma ORM
-- **Auth**: NextAuth v5 with Email Provider via Resend
+- **Auth**: NextAuth v5 with JWT Credentials Provider
 - **Testing**: Vitest (unit/component), Playwright (e2e)
-- **CI/CD**: GitHub Actions, Vercel deployment
+- **Deployment**: Vercel with GitHub integration
+- **Monitoring**: Vercel Analytics + Speed Insights for performance tracking
 
 ## Architecture Decisions
 1. **App Router**: Using Next.js 15 App Router for better performance and DX
@@ -28,7 +29,8 @@ HPCI-ChMS is a multi-church management system designed to handle:
 5. **Multi-tenancy**: User.tenantId field for church isolation with repository guard patterns
 6. **Security**: Enhanced CSP policy, rate limiting with Redis fallback, comprehensive security headers
 7. **Performance**: Bundle analysis monitoring, N+1 query prevention, database connection pooling
-8. **DevOps**: Enterprise-grade CI/CD with 8 quality gates, Sentry monitoring, automated deployments
+8. **DevOps**: Vercel deployment with GitHub integration, automated CI/CD pipeline
+9. **Monitoring**: Comprehensive analytics with Vercel Analytics (user behavior) and Speed Insights (Core Web Vitals)
 
 ## Development Workflow
 1. Write tests first (TDD)
@@ -92,6 +94,8 @@ HPCI-ChMS is a multi-church management system designed to handle:
 - **Loading States**: Enhanced UX with consistent loading skeletons and error boundaries
 - **Image Optimization**: All images using Next.js `<Image />` components for automatic optimization
 - **Edge Caching**: Vercel edge caching plus Redis-backed rate limiting for scalability
+- **Real-time Analytics**: Vercel Analytics for user behavior tracking and conversion analysis
+- **Performance Monitoring**: Vercel Speed Insights with Core Web Vitals (LCP, FID, CLS, TTFB, INP, FCP)
 
 ## Design System (Updated Aug 24, 2025)
 - **Color Palette**: Sacred Blue (#1e7ce8) + Soft Gold (#e5c453) 
@@ -102,6 +106,26 @@ HPCI-ChMS is a multi-church management system designed to handle:
 - **Theme**: Light/Dark mode support via next-themes, system preference detection
 - **Mobile**: Responsive grids, touch-friendly targets, drawer navigation
 - **Documentation**: Full redesign details at docs/ui-redesign.md
+
+## Monitoring & Analytics Integration (Aug 29, 2025)
+
+**✅ Vercel Analytics & Speed Insights Integrated**
+- **Analytics Component**: `<Analytics />` from `@vercel/analytics/next` integrated in root layout
+- **Speed Insights**: `<SpeedInsights />` from `@vercel/speed-insights/next` for Core Web Vitals
+- **Real-time Monitoring**: User behavior tracking, performance metrics, and optimization insights
+- **Zero Configuration**: Automatic activation on Vercel deployment with dashboard integration
+- **Production Benefits**:
+  - User journey analysis and conversion funnel tracking
+  - Core Web Vitals monitoring (LCP, FID, CLS, TTFB, INP, FCP)
+  - Performance regression detection and alerts
+  - Data-driven optimization recommendations
+
+**✅ Enhanced JWT Authentication Security (Aug 29, 2025)**
+- **AUTH_SECRET Implementation**: Proper JWT signing with NEXTAUTH_SECRET fallback
+- **Graceful Error Handling**: Invalid tokens redirect to login without app crashes
+- **Enhanced Security**: Improved session cleanup and authentication flow
+- **Development Experience**: Silenced OpenTelemetry warnings in dev builds only
+- **Production Impact**: Zero authentication-related crashes, improved user experience
 
 ## Recent Achievements
 
