@@ -23,7 +23,8 @@ if (!AUTH_SECRET) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const authOptions: any = {
-  adapter: PrismaAdapter(prisma),
+  // Remove adapter when using credentials provider with JWT strategy
+  // adapter: PrismaAdapter(prisma),
   secret: AUTH_SECRET,
   providers: [
     CredentialsProvider({
@@ -219,6 +220,7 @@ export const authOptions: any = {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours
   },
+  useSecureCookies: process.env.NODE_ENV === "production",
   jwt: {
     maxAge: 24 * 60 * 60, // 24 hours
     // Add error handling for JWT issues

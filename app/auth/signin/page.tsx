@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getCsrfToken } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,9 +26,13 @@ function SignInContent() {
     setError("");
     
     try {
+      // Get CSRF token for security
+      const csrfToken = await getCsrfToken();
+      
       const result = await signIn("credentials", {
         email,
         password,
+        csrfToken,
         redirect: false,
       });
       

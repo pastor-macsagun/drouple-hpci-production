@@ -21,7 +21,7 @@ test('detailed signin debug', async ({ page }) => {
   })
 
   // Navigate to signin page
-  await page.goto('http://localhost:3001/auth/signin')
+  await page.goto('http://localhost:3000/auth/signin')
   
   // Wait for page to fully load
   await page.waitForLoadState('networkidle')
@@ -77,4 +77,4 @@ test('detailed signin debug', async ({ page }) => {
     return document.readyState;
   })
   console.log(`Document ready state: ${pendingRequests}`)
-}
+})

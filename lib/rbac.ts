@@ -76,32 +76,32 @@ export async function getCurrentUser(): Promise<CurrentUser> {
         return null
       }
       
-      // Re-throw if not a static generation error
+      // Check for JWT-related errors from NextAuth
+      if (staticError instanceof Error) {
+        if (staticError.message.includes('no matching decryption secret') || 
+            staticError.message.includes('JWTSessionError') ||
+            staticError.message.includes('Invalid JWT') ||
+            staticError.name === 'JWTSessionError') {
+          
+          console.warn('[Auth] JWT session error - invalid token detected:', {
+            error: staticError.message,
+            timestamp: new Date().toISOString()
+          })
+          
+          // Return null for invalid JWT tokens - this will trigger re-authentication
+          return null
+        }
+      }
+      
+      // Re-throw if not a known error type
       throw staticError
     }
   } catch (error: unknown) {
-    // Handle JWT session errors gracefully
+    // Handle any remaining authentication errors gracefully
     if (error instanceof Error) {
-      // Check for JWT-related errors
-      if (error.message.includes('no matching decryption secret') || 
-          error.message.includes('JWTSessionError') ||
-          error.name === 'JWTSessionError') {
-        
-        console.warn('[Auth] JWT decryption failed - clearing invalid session cookies:', {
-          error: error.message,
-          timestamp: new Date().toISOString()
-        })
-        
-        // In a server component, we can't directly clear cookies
-        // The middleware or client-side code will need to handle this
-        return null
-      }
-      
-      // Log other auth errors for debugging
-      console.error('[Auth] Authentication error in getCurrentUser:', {
+      console.warn('[Auth] Authentication error in getCurrentUser - treating as unauthenticated:', {
         message: error.message,
         name: error.name,
-        stack: error.stack,
         timestamp: new Date().toISOString()
       })
     }
