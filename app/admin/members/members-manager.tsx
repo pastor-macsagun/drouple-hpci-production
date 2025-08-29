@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { DataTable } from '@/components/patterns/data-table'
 import { Badge } from '@/components/ui/badge'
@@ -75,14 +76,14 @@ export function MembersManager({
   const [formData, setFormData] = useState<{
     name: string
     email: string
-    role: UserRole
-    tenantId: string
+    systemRoles: UserRole[]
+    selectedChurchId: string
     memberStatus: MemberStatus
   }>({
     name: '',
     email: '',
-    role: UserRole.MEMBER,
-    tenantId: userChurchId || '',
+    systemRoles: [UserRole.MEMBER], // Default to MEMBER
+    selectedChurchId: userChurchId || '',
     memberStatus: MemberStatus.PENDING
   })
 
@@ -118,12 +119,46 @@ export function MembersManager({
   }, [cursor, search, selectedChurch, isPending])
 
   const handleCreate = useCallback(() => {
+    // Validate form
+    if (formData.systemRoles.length === 0) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please select at least one system role',
+        variant: 'destructive'
+      })
+      return
+    }
+    
+    // For Super Admin: validate church selection, for others: validate userChurchId
+    if (userRole === 'SUPER_ADMIN') {
+      if (!formData.selectedChurchId) {
+        toast({
+          title: 'Validation Error',
+          description: 'Please select a church',
+          variant: 'destructive'
+        })
+        return
+      }
+    } else {
+      if (!userChurchId) {
+        toast({
+          title: 'Error',
+          description: 'Admin church not found',
+          variant: 'destructive'
+        })
+        return
+      }
+    }
+
     startTransition(async () => {
       const result = await createMember({
         name: formData.name,
         email: formData.email,
-        role: formData.role,
-        tenantId: formData.tenantId
+        systemRoles: formData.systemRoles,
+        churchMemberships: [{ 
+          churchId: userRole === 'SUPER_ADMIN' ? formData.selectedChurchId : userChurchId!, 
+          role: UserRole.MEMBER 
+        }]
       })
       
       if (result.success && result.password) {
@@ -134,8 +169,8 @@ export function MembersManager({
         setFormData({
           name: '',
           email: '',
-          role: UserRole.MEMBER,
-          tenantId: userChurchId || '',
+          systemRoles: [UserRole.MEMBER],
+          selectedChurchId: userChurchId || '',
           memberStatus: MemberStatus.PENDING
         })
       } else {
@@ -146,7 +181,7 @@ export function MembersManager({
         })
       }
     })
-  }, [formData, toast, handleSearch, userChurchId, startTransition])
+  }, [formData, toast, handleSearch, userChurchId, userRole, startTransition])
 
   const handleUpdate = useCallback(() => {
     if (!editingMember) return
@@ -156,7 +191,7 @@ export function MembersManager({
         id: editingMember.id,
         name: formData.name,
         email: formData.email,
-        role: formData.role,
+        role: formData.systemRoles[0] || UserRole.MEMBER, // Use first system role for now, we'll need to update this later
         memberStatus: formData.memberStatus
       })
       
@@ -219,8 +254,8 @@ export function MembersManager({
     setFormData({
       name: member.name || '',
       email: member.email,
-      role: member.role,
-      tenantId: member.tenantId || '',
+      systemRoles: [member.role], // Convert single role to array
+      selectedChurchId: member.memberships[0]?.localChurch?.id || '',
       memberStatus: member.memberStatus
     })
     setIsEditOpen(true)
@@ -456,41 +491,74 @@ export function MembersManager({
               />
             </div>
             <div>
-              <Label htmlFor="role">Role</Label>
-              <Select 
-                value={formData.role} 
-                onValueChange={(value) => setFormData({ ...formData, role: value as UserRole })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(UserRole).map(role => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>System Roles</Label>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                {Object.values(UserRole)
+                  .filter(role => role !== 'SUPER_ADMIN') // Exclude SUPER_ADMIN
+                  .map(role => {
+                    const isChecked = formData.systemRoles.includes(role)
+                    return (
+                      <div key={role} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`system-role-${role}`}
+                          checked={isChecked}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setFormData({
+                                ...formData,
+                                systemRoles: [...formData.systemRoles, role]
+                              })
+                            } else {
+                              setFormData({
+                                ...formData,
+                                systemRoles: formData.systemRoles.filter(r => r !== role)
+                              })
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`system-role-${role}`} className="text-sm cursor-pointer">
+                          {role}
+                        </Label>
+                      </div>
+                    )
+                  })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Select all applicable system-wide roles. At least one role is required.
+              </p>
             </div>
-            {churches.length > 0 && (
-              <div>
-                <Label htmlFor="church">Church</Label>
-                <Select 
-                  value={formData.tenantId} 
-                  onValueChange={(value) => setFormData({ ...formData, tenantId: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select church" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {churches.map(church => (
-                      <SelectItem key={church.id} value={church.id}>
-                        {church.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {userRole === 'SUPER_ADMIN' ? (
+              churches.length > 0 && (
+                <div>
+                  <Label htmlFor="church-select">Church</Label>
+                  <Select 
+                    value={formData.selectedChurchId} 
+                    onValueChange={(value) => setFormData({ ...formData, selectedChurchId: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a church" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {churches.map(church => (
+                        <SelectItem key={church.id} value={church.id}>
+                          {church.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Select the church for this member
+                  </p>
+                </div>
+              )
+            ) : (
+              <div className="p-3 bg-muted/50 rounded-lg">
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-medium">Church Assignment:</span> Member will be automatically assigned to your church
+                  {userChurchId && churches.find(c => c.id === userChurchId) && (
+                    <span className="ml-1">({churches.find(c => c.id === userChurchId)?.name})</span>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -498,7 +566,10 @@ export function MembersManager({
             <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleCreate} disabled={isPending}>
+            <Button 
+              onClick={handleCreate} 
+              disabled={isPending || formData.systemRoles.length === 0 || (userRole === 'SUPER_ADMIN' ? !formData.selectedChurchId : !userChurchId)}
+            >
               Create Member
             </Button>
           </DialogFooter>
@@ -534,22 +605,41 @@ export function MembersManager({
               />
             </div>
             <div>
-              <Label htmlFor="edit-role">Role</Label>
-              <Select 
-                value={formData.role} 
-                onValueChange={(value) => setFormData({ ...formData, role: value as UserRole })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(UserRole).map(role => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>System Roles</Label>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                {Object.values(UserRole)
+                  .filter(role => role !== 'SUPER_ADMIN') // Exclude SUPER_ADMIN
+                  .map(role => {
+                    const isChecked = formData.systemRoles.includes(role)
+                    return (
+                      <div key={role} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`edit-system-role-${role}`}
+                          checked={isChecked}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setFormData({
+                                ...formData,
+                                systemRoles: [...formData.systemRoles, role]
+                              })
+                            } else {
+                              setFormData({
+                                ...formData,
+                                systemRoles: formData.systemRoles.filter(r => r !== role)
+                              })
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`edit-system-role-${role}`} className="text-sm cursor-pointer">
+                          {role}
+                        </Label>
+                      </div>
+                    )
+                  })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Select all applicable system-wide roles
+              </p>
             </div>
             <div>
               <Label htmlFor="edit-status">Status</Label>

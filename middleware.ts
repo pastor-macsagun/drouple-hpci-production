@@ -131,8 +131,8 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/dashboard", req.url))
     }
     
-    // VIP routes
-    if (pathname.startsWith("/vip") && userRole !== "VIP") {
+    // VIP routes (accessible by SUPER_ADMIN, ADMIN, PASTOR, and VIP)
+    if (pathname.startsWith("/vip") && !["SUPER_ADMIN", "ADMIN", "PASTOR", "VIP"].includes(userRole)) {
       return NextResponse.redirect(new URL("/dashboard", req.url))
     }
     

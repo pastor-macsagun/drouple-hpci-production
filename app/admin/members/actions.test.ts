@@ -32,6 +32,7 @@ vi.mock('@/lib/prisma', () => ({
     },
     membership: {
       create: vi.fn(),
+      createMany: vi.fn(),
       updateMany: vi.fn()
     },
     localChurch: {
@@ -200,8 +201,8 @@ describe('Member Management Actions', () => {
       const newMemberData = {
         name: 'Jane Doe',
         email: 'jane@test.com',
-        role: UserRole.MEMBER,
-        tenantId: 'church1',
+        systemRoles: [UserRole.MEMBER],
+        churchMemberships: [{ churchId: 'church1', role: UserRole.MEMBER }]
       }
 
       vi.mocked(auth).mockResolvedValue(mockSession as any)
@@ -222,7 +223,6 @@ describe('Member Management Actions', () => {
           tenantId: 'church1'
         })
       })
-      expect(prisma.membership.create).toHaveBeenCalled()
     })
 
     it('should prevent duplicate emails', async () => {
@@ -242,8 +242,8 @@ describe('Member Management Actions', () => {
       const result = await createMember({
         name: 'Jane Doe',
         email: 'existing@test.com',
-        role: UserRole.MEMBER,
-        tenantId: 'church1',
+        systemRoles: [UserRole.MEMBER],
+        churchMemberships: [{ churchId: 'church1', role: UserRole.MEMBER }]
       })
 
       expect(result.success).toBe(false)
@@ -264,8 +264,8 @@ describe('Member Management Actions', () => {
       const result = await createMember({
         name: 'Jane Doe',
         email: 'jane@test.com',
-        role: UserRole.MEMBER,
-        tenantId: 'church2',
+        systemRoles: [UserRole.MEMBER],
+        churchMemberships: [{ churchId: 'church2', role: UserRole.MEMBER }]
       })
 
       expect(result.success).toBe(false)

@@ -46,7 +46,9 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline'", // Next.js dev mode requires inline scripts
+              process.env.NODE_ENV === 'development' 
+                ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com" // Dev mode needs unsafe-eval for webpack HMR + Vercel scripts
+                : "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com", // Production needs Vercel scripts
               "style-src 'self' 'unsafe-inline'", // Required for progress.tsx dynamic transforms
               "img-src 'self' data: https:",
               "font-src 'self' data:",

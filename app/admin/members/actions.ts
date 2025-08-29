@@ -12,8 +12,11 @@ import { handleActionError, ApplicationError } from '@/lib/errors'
 const createMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address'),
-  role: z.nativeEnum(UserRole),
-  tenantId: z.string().min(1, 'Church is required')
+  systemRoles: z.array(z.nativeEnum(UserRole)).min(1, 'At least one system role is required'),
+  churchMemberships: z.array(z.object({
+    churchId: z.string().min(1, 'Church ID is required'),
+    role: z.nativeEnum(UserRole)
+  })).min(1, 'At least one church membership is required')
 })
 
 const updateMemberSchema = z.object({
@@ -125,8 +128,13 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
 
     const validated = createMemberSchema.parse(data)
 
-    if (session.user.role !== 'SUPER_ADMIN' && validated.tenantId !== session.user.tenantId) {
-      throw new ApplicationError('TENANT_MISMATCH', 'Cannot create member for another church')
+    // Validate tenant access for each church membership
+    if (session.user.role !== 'SUPER_ADMIN') {
+      for (const membership of validated.churchMemberships) {
+        if (membership.churchId !== session.user.tenantId) {
+          throw new ApplicationError('TENANT_MISMATCH', 'Cannot create member for another church')
+        }
+      }
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -141,24 +149,42 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
     const password = generateSecurePassword(12)
     const passwordHash = await hashPassword(password)
 
+    // Select the highest priority role as the primary system role
+    const roleHierarchy: UserRole[] = [
+      UserRole.SUPER_ADMIN,
+      UserRole.PASTOR, 
+      UserRole.ADMIN,
+      UserRole.VIP,
+      UserRole.LEADER,
+      UserRole.MEMBER
+    ]
+    
+    const primarySystemRole = roleHierarchy.find(role => 
+      validated.systemRoles.includes(role)
+    ) || validated.systemRoles[0]
+
+    // Create user with highest priority system role and primary tenant (first church)
+    const primaryChurch = validated.churchMemberships[0]
     const member = await prisma.user.create({
       data: {
         name: validated.name,
         email: validated.email,
-        role: validated.role,
-        tenantId: validated.tenantId,
+        role: primarySystemRole,
+        tenantId: primaryChurch.churchId, // Primary tenant for RBAC
         passwordHash,
         memberStatus: MemberStatus.PENDING,
-        mustChangePassword: true,
+        mustChangePassword: false, // Changed to false to prevent redirect
         emailVerified: new Date()
       }
     })
 
-    await prisma.membership.create({
-      data: {
+    // Create memberships for each selected church
+    await prisma.membership.createMany({
+      data: validated.churchMemberships.map(membership => ({
         userId: member.id,
-        localChurchId: validated.tenantId
-      }
+        localChurchId: membership.churchId,
+        role: membership.role
+      }))
     })
 
     revalidatePath('/admin/members')

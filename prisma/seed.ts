@@ -91,6 +91,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -103,6 +104,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -115,6 +117,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -127,6 +130,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -139,6 +143,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -151,6 +156,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -163,6 +169,7 @@ async function main() {
       emailVerified: new Date(),
       tenantId: hpciChurch.id,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -181,6 +188,7 @@ async function main() {
         tenantId: hpciChurch.id,
         isNewBeliever: i === 1 || i === 6, // First member of each church is new believer
         passwordHash,
+        mustChangePassword: false, // Seed accounts don't need password change
       },
     })
     members.push(member)
@@ -573,6 +581,7 @@ async function main() {
       tenantId: hpciChurch.id,
       isNewBeliever: true,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -586,6 +595,7 @@ async function main() {
       tenantId: hpciChurch.id,
       isNewBeliever: true,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
@@ -599,6 +609,7 @@ async function main() {
       tenantId: hpciChurch.id,
       isNewBeliever: true,
       passwordHash,
+      mustChangePassword: false, // Seed accounts don't need password change
     },
   })
 
