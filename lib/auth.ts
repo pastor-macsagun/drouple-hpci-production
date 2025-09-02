@@ -25,6 +25,7 @@ export const authOptions: any = {
   // Remove adapter when using credentials provider with JWT strategy
   // adapter: PrismaAdapter(prisma),
   secret: AUTH_SECRET,
+  trustHost: true, // Required for NextAuth v5 in production with custom domains
   providers: [
     CredentialsProvider({
       name: "credentials",
