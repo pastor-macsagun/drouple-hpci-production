@@ -13,8 +13,14 @@ async function testAuthEndpoints() {
   try {
     // Test 1: Get CSRF Token
     console.log('➤ Test 1: Getting CSRF Token...');
-    const csrfResponse = await fetch(`${PRODUCTION_URL}/api/auth/csrf`);
+    const csrfResponse = await fetch(`${PRODUCTION_URL}/api/auth/csrf`, {
+      credentials: 'include' // Include cookies for CSRF token
+    });
     const csrfData = await csrfResponse.json();
+    
+    // Extract cookies from CSRF response for subsequent requests
+    const csrfCookies = csrfResponse.headers.get('set-cookie');
+    console.log('   CSRF cookies:', csrfCookies ? 'Present' : 'None');
     
     if (!csrfData.csrfToken) {
       throw new Error('No CSRF token returned');
@@ -49,13 +55,23 @@ async function testAuthEndpoints() {
       json: 'true'
     });
 
+    // Create headers with cookies from CSRF request
+    const authHeaders = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    
+    // Include CSRF cookies if available
+    if (csrfCookies) {
+      const cookies = csrfCookies.split(', ').map(cookie => cookie.split(';')[0]).join('; ');
+      authHeaders['Cookie'] = cookies;
+    }
+
     const authResponse = await fetch(`${PRODUCTION_URL}/api/auth/callback/credentials`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: authHeaders,
       body: authBody.toString(),
-      redirect: 'manual' // Don't follow redirects automatically
+      redirect: 'manual', // Don't follow redirects automatically
+      credentials: 'include' // Include cookies
     });
 
     console.log('✅ Auth response status:', authResponse.status);

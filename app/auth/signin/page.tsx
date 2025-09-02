@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn, getCsrfToken, getSession } from "next-auth/react";
+import { signIn, getCsrfToken } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getPostAuthRedirectUrl } from "@/lib/role-redirects";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,15 +45,9 @@ function SignInContent() {
           setError("Invalid email or password. Please try again.");
         }
       } else if (result?.ok) {
-        // Successful login - get fresh session and redirect based on role
-        const session = await getSession();
-        if (session?.user?.role) {
-          const redirectUrl = getPostAuthRedirectUrl(session.user.role, callbackUrl);
-          router.push(redirectUrl);
-        } else {
-          // Fallback to callback URL if session/role not available
-          router.push(callbackUrl);
-        }
+        // Successful login - let NextAuth handle the redirect
+        // The role-based redirect will be handled by middleware
+        router.push(callbackUrl);
       }
     } catch (error) {
       console.error("Sign in error:", error);

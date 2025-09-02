@@ -72,7 +72,7 @@ export default auth(async (req) => {
     return NextResponse.redirect(new URL("/", req.url))
   }
 
-  // Role-based access control (simplified - detailed checks in page components)
+  // Role-based access control and redirects
   if (isAuth && session) {
     const userRole = session.user?.role
     const mustChangePassword = session.user?.mustChangePassword
@@ -80,6 +80,24 @@ export default auth(async (req) => {
     // Force password change (except on change-password page)
     if (mustChangePassword && !pathname.startsWith("/auth/change-password")) {
       return NextResponse.redirect(new URL("/auth/change-password", req.url))
+    }
+    
+    // Redirect from home page to role-appropriate dashboard
+    if (pathname === "/") {
+      switch (userRole) {
+        case "SUPER_ADMIN":
+          return NextResponse.redirect(new URL("/super", req.url))
+        case "ADMIN":
+        case "PASTOR":
+          return NextResponse.redirect(new URL("/admin", req.url))
+        case "VIP":
+          return NextResponse.redirect(new URL("/vip", req.url))
+        case "LEADER":
+          return NextResponse.redirect(new URL("/leader", req.url))
+        case "MEMBER":
+        default:
+          return NextResponse.redirect(new URL("/dashboard", req.url))
+      }
     }
     
     // Basic role-based route protection
