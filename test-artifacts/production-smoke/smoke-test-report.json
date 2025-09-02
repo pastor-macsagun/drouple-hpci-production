@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "totalTests": 3,
+    "passedTests": 0,
+    "failedTests": 3,
+    "successRate": 0,
+    "duration": 57.049,
+    "timestamp": "2025-09-02T09:12:44.537Z"
+  },
+  "cookieSecurity": {
+    "hasAuthJSCookies": false,
+    "hasSecureFlag": false,
+    "hasHttpOnlyFlag": false,
+    "hasSameSiteFlag": false
+  },
+  "detailedResults": [
+    {
+      "account": "admin.manila@test.com",
+      "role": "ADMIN",
+      "loginSuccess": false,
+      "redirectSuccess": false,
+      "sessionPersisted": false,
+      "newTabAccess": false,
+      "protectedAccessSuccess": false,
+      "timestamp": "2025-09-02T09:11:54.398Z"
+    },
+    {
+      "account": "member1@test.com",
+      "role": "MEMBER",
+      "loginSuccess": false,
+      "redirectSuccess": false,
+      "sessionPersisted": false,
+      "newTabAccess": false,
+      "protectedAccessSuccess": false,
+      "timestamp": "2025-09-02T09:11:59.820Z"
+    },
+    {
+      "account": "superadmin@test.com",
+      "role": "SUPER_ADMIN",
+      "error": "page.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#email')\u001b[22m\n",
+      "timestamp": "2025-09-02T09:12:31.329Z"
+    }
+  ]
+}

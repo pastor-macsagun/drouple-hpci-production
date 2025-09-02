@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server"
-import NextAuth from "next-auth"
 import { getClientIp } from "@/lib/rate-limit"
 import { checkRateLimitWithHeaders } from "@/lib/rate-limit-policies"
-import authConfig from "@/auth.config"
-
-// Create edge-compatible auth instance for middleware
-const { auth } = NextAuth(authConfig)
+import { auth } from "@/lib/auth"
 
 export default auth(async (req) => {
   const pathname = req.nextUrl.pathname
