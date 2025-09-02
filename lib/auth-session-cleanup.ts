@@ -6,13 +6,22 @@ import type { NextRequest } from 'next/server'
  */
 export function clearInvalidSessionCookies(request: NextRequest, response: NextResponse) {
   const sessionCookies = [
+    // Auth.js v4 cookie names (legacy support)
     'next-auth.session-token',
     '__Secure-next-auth.session-token',
     'next-auth.csrf-token',
     '__Host-next-auth.csrf-token',
     '__Secure-next-auth.csrf-token',
     'next-auth.callback-url',
-    '__Secure-next-auth.callback-url'
+    '__Secure-next-auth.callback-url',
+    // Auth.js v5 cookie names (current)
+    'authjs.session-token',
+    '__Secure-authjs.session-token',
+    'authjs.csrf-token',
+    '__Host-authjs.csrf-token',
+    '__Secure-authjs.csrf-token',
+    'authjs.callback-url',
+    '__Secure-authjs.callback-url'
   ]
 
   for (const cookieName of sessionCookies) {

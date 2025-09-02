@@ -1,310 +1,190 @@
-# AUTHENTICATION SYSTEM DIAGNOSIS REPORT
-**Date:** 2025-09-02  
-**Issue:** Login Returns 200 OK But Sessions Don't Persist  
-**Environment:** Production (https://www.drouple.app)  
-**NextAuth Version:** v5.0.0-beta.25 (Auth.js)
+# Auth.js v5 Session Persistence Diagnosis
 
----
+## Executive Summary
+The HPCI-ChMS application is experiencing session persistence failures in production where sessions "work momentarily then expire." Based on comprehensive analysis of the Auth.js v5 configuration, this appears to be a **cookie naming and security attribute mismatch** issue combined with **domain canonicalization problems**.
 
-## 🔍 **EXECUTIVE SUMMARY**
+## Critical Findings
 
-**ROOT CAUSE IDENTIFIED:** NextAuth v5 configuration incompatibility causing JWT session persistence failure in production environment. The system uses JWT strategy but has configuration conflicts between NextAuth v5 API patterns and cookie management.
+### 1. Package Versions
+```json
+"next-auth": "5.0.0-beta.25"
+```
+- **Status**: ✅ Using Auth.js v5 (NextAuth v5 beta)
+- **Impact**: Latest beta should have stable cookie handling, but beta versions may have edge cases
 
-**SEVERITY:** **CRITICAL** - 100% of protected routes inaccessible  
-**IMPACT:** Complete authentication system failure in production  
-
----
-
-## 📊 **AUTHENTICATION SYSTEM ANALYSIS**
-
-### **Package Versions & API Detection**
-- **NextAuth Version:** `next-auth: 5.0.0-beta.25` (NextAuth v5 Beta/Auth.js)
-- **Prisma Adapter:** `@auth/prisma-adapter: ^2.7.4` (New Auth.js adapter)
-- **API Pattern:** NextAuth v5 with `/app/api/auth/[...nextauth]/route.ts` handler
-- **Import Pattern:** Uses new `auth`, `handlers`, `signIn`, `signOut` exports from NextAuth v5
-
-### **Session Strategy Configuration**
+### 2. Session Strategy Analysis
 ```typescript
-// /lib/auth.ts
+// From lib/auth.ts line 229
 session: {
   strategy: "jwt",
   maxAge: 24 * 60 * 60, // 24 hours
+},
+useSecureCookies: process.env.NODE_ENV === "production",
+```
+- **Strategy**: JWT (correct for credentials provider)
+- **Max Age**: 24 hours (reasonable)
+- **Secure Cookies**: ✅ Enabled in production
+
+### 3. Cookie Configuration Issues
+
+#### 3.1 Missing Custom Cookies Configuration
+**CRITICAL**: The auth configuration lacks explicit `cookies` options. Auth.js v5 uses different default cookie names than v4:
+
+**Expected v5 Cookie Names:**
+- `__Secure-authjs.session-token` (production)
+- `authjs.session-token` (development)
+
+**Current Cleanup Logic Expects v4 Names:**
+```typescript
+// lib/auth-session-cleanup.ts line 8-16
+const sessionCookies = [
+  'next-auth.session-token',           // ❌ v4 name
+  '__Secure-next-auth.session-token',  // ❌ v4 name
+  // ... other v4 names
+]
+```
+
+### 4. Domain Configuration Analysis
+
+#### 4.1 Production URL Mismatch
+```typescript
+// Production config shows:
+NEXTAUTH_URL="https://drouple.app"        // Apex domain
+
+// But testing config shows:
+baseUrl: 'https://www.drouple.app'        // www subdomain
+```
+
+**CRITICAL**: Domain mismatch between Auth.js configuration and actual application URL.
+
+#### 4.2 Missing trustHost Configuration Issues
+```typescript
+trustHost: true, // Required for NextAuth v5 in production with custom domains
+```
+- **Status**: ✅ Present but may not handle www/apex redirect properly
+
+### 5. Environment Variable Analysis
+
+#### 5.1 Secret Management
+```typescript
+// lib/env-utils.ts line 30-32
+export function getNextAuthSecret(): string | undefined {
+  return getCleanEnvVar('AUTH_SECRET', 'NEXTAUTH_SECRET')
 }
 ```
-- **Session Strategy:** JWT-based (NOT database sessions)
-- **Max Age:** 24 hours
-- **Adapter:** Prisma adapter commented out (correctly for JWT strategy)
-- **Secret Resolution:** `AUTH_SECRET || NEXTAUTH_SECRET` fallback pattern
+- **Status**: ✅ Proper fallback handling
+- **Cleaning**: ✅ Trims Vercel CLI newlines
 
-### **Environment Variables Analysis**
-```bash
-# Production (.env.production)
-NEXTAUTH_URL="https://drouple-hpci-prod.vercel.app"  # ❌ MISMATCH
-AUTH_SECRET="4SXeUeyyXepmKPMUWOpjNU8swaXzMRGFbTXnOeDQY3s="      # ✅ Present
-NEXTAUTH_SECRET="4SXeUeyyXepmKPMUWOpjNU8swaXzMRGFbTXnOeDQY3s="  # ✅ Fallback
+#### 5.2 Environment Variables Expected
+```env
+NEXTAUTH_URL="https://drouple.app"
+NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
 ```
 
-**🚨 CRITICAL FINDING:** `NEXTAUTH_URL` mismatch between configuration and actual domain:
-- **Configured:** `https://drouple-hpci-prod.vercel.app`
-- **Actual Domain:** `https://www.drouple.app`
+### 6. Middleware Implementation Analysis
 
-### **Cookie Configuration**
 ```typescript
-// lib/auth.ts
-useSecureCookies: process.env.NODE_ENV === "production"
-// Default NextAuth v5 cookie settings apply
-```
-
-**Cookie Analysis:**
-- **Secure Cookies:** Enabled in production (correct)
-- **SameSite:** Default NextAuth v5 settings (`lax`)
-- **Domain:** Derived from NEXTAUTH_URL (INCORRECT due to URL mismatch)
-- **Path:** `/` (default)
-- **HttpOnly:** `true` (default, correct)
-
-### **Middleware Authentication Logic**
-```typescript
-// middleware.ts - Line 12
+// middleware.ts line 4, 12
+import { getSession } from "@/lib/edge/session-cookie"
 session = await getSession(req)
-// Uses getToken with same secret resolution
-const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
 ```
 
-**Middleware Analysis:**
-- **Session Retrieval:** Uses `getToken` from `next-auth/jwt`
-- **Secret Consistency:** ✅ Same secret resolution as auth.ts
-- **Error Handling:** ✅ Graceful JWT error handling with cookie cleanup
-- **Route Protection:** ✅ Comprehensive route protection logic
+**ISSUE**: Middleware uses `getToken()` from next-auth/jwt which may not properly handle Auth.js v5 cookie names.
 
-### **Database Session Storage**
-```sql
--- Prisma Schema
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-}
-```
-**Status:** ✅ Tables exist but **NOT USED** (JWT strategy, adapter commented out correctly)
+## Root Cause Hypothesis
 
-### **Vercel/Production Specifics**
-```json
-// vercel.json
-{
-  "regions": ["sin1"],
-  "framework": "nextjs"
-}
-```
-- **Region:** Singapore (sin1)
-- **Framework:** Next.js 15 with App Router
-- **Headers:** Comprehensive security headers configured
-- **No Auth-Specific Configuration:** Missing trustHost for Auth.js v5
+### Primary Issue: Cookie Name Mismatch
+Auth.js v5 uses different default cookie names, but the cleanup logic and potentially the middleware are looking for v4 cookie names. This causes:
 
----
+1. **Initial Login Success**: JWT is created with v5 cookie names
+2. **Subsequent Failures**: Middleware/cleanup can't find cookies with v4 names
+3. **Session Expiry**: Invalid cookie cleanup triggers, clearing valid v5 sessions
 
-## 🎯 **ROOT CAUSE IDENTIFICATION**
+### Secondary Issue: Domain Canonicalization
+The mismatch between `drouple.app` (apex) and `www.drouple.app` (www) may cause:
 
-### **Primary Root Cause: NEXTAUTH_URL Domain Mismatch**
+1. **Cookie Domain Issues**: Cookies set for one domain aren't accessible from the other
+2. **CORS/Trust Issues**: Auth.js may not trust requests between apex and www
 
-**Evidence:**
-1. **Configuration Error:** `NEXTAUTH_URL=https://drouple-hpci-prod.vercel.app`
-2. **Actual Domain:** `https://www.drouple.app`
-3. **Impact:** Cookies set with wrong domain, causing immediate invalidation
+## Immediate Action Items
 
-**Technical Impact:**
-```bash
-# What happens:
-1. User submits login form to www.drouple.app
-2. NextAuth processes auth with NEXTAUTH_URL=drouple-hpci-prod.vercel.app
-3. JWT cookies set for drouple-hpci-prod.vercel.app domain
-4. Browser rejects cookies due to domain mismatch
-5. Subsequent requests have no valid session cookies
-6. Middleware redirects to login (session = null)
-```
-
-### **Secondary Root Cause: NextAuth v5 trustHost Configuration Missing**
-
-**Evidence:**
+### 1. Fix Cookie Names for v5 Compatibility
 ```typescript
-// Missing in authOptions:
-trustHost: true  // Required for Auth.js v5 in production with domain differences
+// Update lib/auth-session-cleanup.ts
+const sessionCookies = [
+  'authjs.session-token',                    // v5 development
+  '__Secure-authjs.session-token',           // v5 production
+  'authjs.csrf-token',                       // v5 csrf
+  '__Host-authjs.csrf-token',                // v5 csrf secure
+  // Keep v4 names for migration compatibility
+  'next-auth.session-token',
+  '__Secure-next-auth.session-token',
+]
 ```
 
-**Technical Impact:**
-- NextAuth v5 requires explicit `trustHost: true` for production deployments
-- Without it, host header validation may fail
-- Causes additional session creation failures
-
----
-
-## 🔧 **DETAILED TECHNICAL FINDINGS**
-
-### **Authentication Flow Breakdown**
-| Step | Component | Status | Evidence |
-|------|-----------|--------|----------|
-| 1. Login Form Submit | ✅ Working | 200 OK response | Production testing confirmed |
-| 2. Credential Validation | ✅ Working | User found, password valid | Database operations successful |
-| 3. JWT Token Creation | ❓ Partial | Token created but invalid domain | JWT sign/encode functions working |
-| 4. Cookie Setting | ❌ **FAILING** | Wrong domain in Set-Cookie headers | Domain mismatch prevents storage |
-| 5. Browser Cookie Storage | ❌ **FAILING** | Cookies rejected by browser | Security policy blocks cross-domain |
-| 6. Subsequent Request Auth | ❌ **FAILING** | No cookies sent with requests | No session data available |
-| 7. Middleware Session Check | ❌ **FAILING** | getToken returns null | Expected behavior with no cookies |
-| 8. Route Protection | ✅ Working | Correctly redirects to login | Middleware logic functioning |
-
-### **JWT Token Analysis**
+### 2. Explicit Cookie Configuration
 ```typescript
-// lib/auth.ts JWT configuration
-jwt: {
-  maxAge: 24 * 60 * 60, // 24 hours
-  encode: async (params: any) => { ... }, // ✅ Custom encode with error handling
-  decode: async (params: any) => { ... }  // ✅ Custom decode with error handling
-}
-```
-**Status:** ✅ JWT encoding/decoding logic is correct and includes proper error handling
-
-### **Cookie Storage Evidence**
-From production testing:
-```bash
-# Expected Cookie Headers (should be):
-Set-Cookie: next-auth.session-token=<jwt>; Domain=www.drouple.app; Path=/; HttpOnly; Secure; SameSite=lax
-
-# Actual Cookie Headers (likely):
-Set-Cookie: next-auth.session-token=<jwt>; Domain=drouple-hpci-prod.vercel.app; Path=/; HttpOnly; Secure; SameSite=lax
-```
-
-### **Session Retrieval Analysis**
-```typescript
-// lib/edge/session-cookie.ts
-export async function getSession(req: NextRequest) {
-  const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
-  const token = await getToken({ req, secret })
-  return token
-}
-```
-**Status:** ✅ Session retrieval logic is correct, but returns null due to missing cookies
-
----
-
-## 🛠️ **VERIFIED SOLUTION PATH**
-
-### **Priority 1: Fix NEXTAUTH_URL Configuration**
-```bash
-# Change in Vercel environment variables:
-NEXTAUTH_URL="https://www.drouple.app"  # Match actual domain
-```
-
-### **Priority 2: Add trustHost Configuration**
-```typescript
-// lib/auth.ts - Add to authOptions
-export const authOptions: any = {
-  trustHost: true,  // Required for Auth.js v5 in production
-  secret: AUTH_SECRET,
-  // ... rest of config
+// Add to lib/auth.ts authOptions
+cookies: {
+  sessionToken: {
+    name: process.env.NODE_ENV === 'production' 
+      ? '__Secure-authjs.session-token' 
+      : 'authjs.session-token',
+    options: {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      domain: process.env.NODE_ENV === 'production' ? '.drouple.app' : undefined
+    }
+  }
 }
 ```
 
-### **Priority 3: Verify Cookie Domain Settings**
-After fixing NEXTAUTH_URL, cookies should automatically use correct domain.
+### 3. Domain Canonicalization Strategy
+**Option A**: Redirect www to apex
+**Option B**: Configure cookies for both domains
+**Recommended**: Use apex domain (`drouple.app`) consistently
 
----
-
-## 📋 **COMPREHENSIVE FIX IMPLEMENTATION**
-
-### **Step 1: Environment Variables**
-```bash
-# Update in Vercel dashboard:
-NEXTAUTH_URL=https://www.drouple.app
-# Keep existing:
-AUTH_SECRET=4SXeUeyyXepmKPMUWOpjNU8swaXzMRGFbTXnOeDQY3s=
-NEXTAUTH_SECRET=4SXeUeyyXepmKPMUWOpjNU8swaXzMRGFbTXnOeDQY3s=
+### 4. Environment Variable Audit
+Ensure production environment has:
+```env
+NEXTAUTH_URL="https://drouple.app"  # Match actual domain
+AUTH_SECRET="[32+ char secret]"
 ```
 
-### **Step 2: Code Changes**
-```typescript
-// lib/auth.ts - Add trustHost
-export const authOptions: any = {
-  trustHost: true,          // NEW: Required for Auth.js v5
-  secret: AUTH_SECRET,
-  providers: [
-    // ... existing providers
-  ],
-  // ... rest unchanged
-}
-```
+## Testing Strategy
 
-### **Step 3: Verification Commands**
-```bash
-# After deployment:
-curl -I https://www.drouple.app/api/auth/session
-curl -I https://www.drouple.app/api/auth/csrf
-```
+### Phase 1: Cookie Name Verification
+1. Check browser developer tools for actual cookie names in production
+2. Compare with cleanup logic expectations
+3. Verify middleware can read the correct cookies
 
----
+### Phase 2: Domain Resolution
+1. Test auth flow on both `drouple.app` and `www.drouple.app`
+2. Verify cookie accessibility across subdomains
+3. Check redirect behavior
 
-## 🎯 **EXPECTED OUTCOMES AFTER FIX**
+### Phase 3: Session Persistence
+1. Login and wait 10+ minutes
+2. Perform authenticated actions
+3. Verify session doesn't expire prematurely
 
-### **Immediate Results**
-1. ✅ Login sets cookies with correct domain
-2. ✅ Browser stores session cookies
-3. ✅ Middleware finds valid sessions
-4. ✅ Protected routes become accessible
-5. ✅ Role-based redirects function correctly
+## Risk Assessment
 
-### **Success Metrics**
-- **Authentication Success Rate:** 0% → 100%
-- **Admin Route Access:** 0% → 100%  
-- **Session Persistence:** 0% → 100%
-- **Functional Test Pass Rate:** 0% → Expected 95%+
+**HIGH RISK**: Session persistence affects all authenticated users
+**MEDIUM COMPLEXITY**: Requires cookie configuration updates and testing
+**LOW BREAKING CHANGE RISK**: Changes are backward compatible
+
+## Success Criteria
+
+1. ✅ Sessions persist for full 24-hour duration
+2. ✅ No unexpected logouts during normal usage
+3. ✅ Proper cookie cleanup only occurs on actual JWT errors
+4. ✅ Consistent behavior across all production domains
 
 ---
 
-## 📊 **PRODUCTION READINESS ASSESSMENT**
-
-### **Current Status: 🔴 CRITICAL FAILURE**
-- **Authentication:** Non-functional due to domain mismatch
-- **All Admin Features:** Completely inaccessible
-- **Business Operations:** Cannot be performed
-
-### **Post-Fix Status: 🟢 PRODUCTION READY**
-- **Time to Fix:** 30 minutes (environment variables + deployment)
-- **Complexity:** LOW (configuration change, no code logic issues)
-- **Risk Level:** LOW (well-understood problem with proven solution)
-
----
-
-## 🔍 **ADDITIONAL OBSERVATIONS**
-
-### **What's Working Correctly**
-1. ✅ NextAuth v5 API implementation
-2. ✅ JWT strategy configuration  
-3. ✅ Database connectivity and user validation
-4. ✅ Password hashing and verification
-5. ✅ Middleware route protection logic
-6. ✅ Error handling and logging
-7. ✅ Session cleanup mechanisms
-
-### **Architecture Strengths**
-- ✅ Proper NextAuth v5 upgrade implementation
-- ✅ JWT strategy correctly chosen over database sessions
-- ✅ Comprehensive error handling throughout auth flow
-- ✅ Security headers and CSP policies properly configured
-- ✅ Multi-tenant architecture ready for production
-
----
-
-## 🎯 **FINAL DIAGNOSIS**
-
-**DEFINITIVE ROOT CAUSE:** NextAuth v5 NEXTAUTH_URL domain mismatch causing JWT session cookies to be set for wrong domain, resulting in complete session persistence failure.
-
-**CONFIDENCE LEVEL:** 100% - Clear cause-and-effect relationship established through comprehensive analysis
-
-**FIX COMPLEXITY:** SIMPLE - Single environment variable change + one line code addition
-
-**ESTIMATED RESOLUTION TIME:** 30 minutes
-
----
-
-**Diagnosis Completed:** 2025-09-02T14:30:00Z  
-**Next Step:** Implement verified solution path  
-**Validation:** Re-run production testing framework post-fix
+*Generated on: 2025-01-02*  
+*Production URL: https://www.drouple.app*  
+*Auth.js Version: 5.0.0-beta.25*

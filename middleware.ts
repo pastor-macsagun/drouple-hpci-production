@@ -1,40 +1,26 @@
-import { NextResponse, NextRequest } from "next/server"
+import { NextResponse } from "next/server"
+import NextAuth from "next-auth"
 import { getClientIp } from "@/lib/rate-limit"
 import { checkRateLimitWithHeaders } from "@/lib/rate-limit-policies"
-import { getSession } from "@/lib/edge/session-cookie"
-import { clearInvalidSessionCookies } from "@/lib/auth-session-cleanup"
+import authConfig from "@/auth.config"
 
-export default async function middleware(req: NextRequest) {
-  let session
-  let needsCookieCleanup = false
-  
-  try {
-    session = await getSession(req)
-  } catch (error) {
-    // If session retrieval fails due to JWT error, mark for cleanup
-    if (error instanceof Error && 
-        (error.message.includes('no matching decryption secret') || 
-         error.message.includes('JWTSessionError'))) {
-      needsCookieCleanup = true
-      session = null
-    } else {
-      // For other errors, log and treat as not authenticated
-      console.error('[Middleware] Unexpected session error:', error)
-      session = null
-    }
-  }
-  
-  const isAuth = !!session
-  const isAuthPage = req.nextUrl.pathname.startsWith("/auth")
-  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard")
+// Create edge-compatible auth instance for middleware
+const { auth } = NextAuth(authConfig)
+
+export default auth(async (req) => {
   const pathname = req.nextUrl.pathname
   const method = req.method
+  
+  // Get session from req.auth property (available in auth() wrapped middleware)
+  const session = req.auth
+  const isAuth = !!session
+  const isAuthPage = pathname.startsWith("/auth")
 
-  // Apply endpoint-specific rate limiting in production
+  // Apply rate limiting in production
   if (process.env.NODE_ENV === 'production' || process.env.RATE_LIMIT_ENABLED === 'true') {
     const ip = getClientIp(req.headers)
     
-    // Extract email from request body for auth endpoints (if applicable)
+    // Extract email from request body for auth endpoints
     let email: string | undefined
     if (method === 'POST' && pathname.startsWith('/api/auth')) {
       try {
@@ -43,11 +29,10 @@ export default async function middleware(req: NextRequest) {
         const params = new URLSearchParams(body)
         email = params.get('email') || params.get('username') || undefined
       } catch {
-        // If we can't parse the body, continue without email
+        // Continue without email if parsing fails
       }
     }
     
-    // Check rate limit with new policy system
     const { allowed, headers, message } = await checkRateLimitWithHeaders(
       pathname,
       method,
@@ -55,104 +40,75 @@ export default async function middleware(req: NextRequest) {
       email
     )
     
-    // If rate limited, return 429 with proper headers
     if (!allowed) {
       return new NextResponse(message || 'Too many requests', {
         status: 429,
-        headers: {
-          'Content-Type': 'text/plain',
-          ...headers
-        }
-      })
-    }
-    
-    // Add rate limit headers to successful responses for transparency
-    if (Object.keys(headers).length > 0) {
-      const response = NextResponse.next()
-      Object.entries(headers).forEach(([key, value]) => {
-        response.headers.set(key, value)
+        headers: { 'Content-Type': 'text/plain', ...headers }
       })
     }
   }
 
   // Define public paths that don't require authentication
-  const PUBLIC_PATHS = [/^\/$/, /^\/auth\//, /^\/api\/health/, /^\/_next\//, /^\/favicon/, /^\/public\//]
+  const PUBLIC_PATHS = [
+    /^\/$/,                    // Homepage
+    /^\/auth\//,               // Auth pages
+    /^\/api\/auth\//,          // Auth API routes
+    /^\/api\/health/,          // Health check
+  ]
   const isPublicPath = PUBLIC_PATHS.some(rx => rx.test(pathname))
   
-  // Authentication redirects - protect all non-public routes
+  // Prevent redirect loops - never redirect if already on auth page
+  if (isAuthPage) {
+    return NextResponse.next()
+  }
+  
+  // Redirect unauthenticated users to login (except public paths)
   if (!isAuth && !isPublicPath) {
     const url = new URL('/auth/signin', req.url)
     if (pathname !== '/') {
-      url.searchParams.set('returnTo', pathname + (req.nextUrl.search || ''))
+      url.searchParams.set('returnTo', pathname)
     }
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages
-  if (isAuthPage && isAuth) {
+  // Redirect authenticated users away from auth pages (except change-password)
+  if (isAuth && isAuthPage && !pathname.startsWith("/auth/change-password")) {
     return NextResponse.redirect(new URL("/", req.url))
   }
 
-  // Role-based access control
+  // Role-based access control (simplified - detailed checks in page components)
   if (isAuth && session) {
-    const userRole = (session as any).role
-    const mustChangePassword = (session as any).mustChangePassword
+    const userRole = session.user?.role
+    const mustChangePassword = session.user?.mustChangePassword
     
-    // Force password change for users who need it (except on change-password page)
+    // Force password change (except on change-password page)
     if (mustChangePassword && !pathname.startsWith("/auth/change-password")) {
       return NextResponse.redirect(new URL("/auth/change-password", req.url))
     }
     
-    // If user doesn't need to change password but is on change-password page, redirect appropriately
-    if (!mustChangePassword && pathname.startsWith("/auth/change-password")) {
-      if (userRole === "SUPER_ADMIN") {
-        return NextResponse.redirect(new URL("/super", req.url))
-      } else if (["ADMIN", "PASTOR"].includes(userRole)) {
-        return NextResponse.redirect(new URL("/admin", req.url))
-      } else if (userRole === "VIP") {
-        return NextResponse.redirect(new URL("/vip", req.url))
-      } else {
-        return NextResponse.redirect(new URL("/dashboard", req.url))
-      }
-    }
-    
-    // Super admin can access everything (after password change check), skip other checks
-    if (userRole === "SUPER_ADMIN") {
-      return NextResponse.next()
-    }
-    
-    // Super admin only routes
+    // Basic role-based route protection
     if (pathname.startsWith("/super") && userRole !== "SUPER_ADMIN") {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
+      return NextResponse.redirect(new URL("/", req.url))
     }
     
-    // Admin routes (ADMIN, PASTOR)
-    if (pathname.startsWith("/admin") && !["ADMIN", "PASTOR"].includes(userRole)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
+    if (pathname.startsWith("/admin") && !["SUPER_ADMIN", "ADMIN", "PASTOR"].includes(userRole)) {
+      return NextResponse.redirect(new URL("/", req.url))
     }
     
-    // VIP routes (accessible by SUPER_ADMIN, ADMIN, PASTOR, and VIP)
     if (pathname.startsWith("/vip") && !["SUPER_ADMIN", "ADMIN", "PASTOR", "VIP"].includes(userRole)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
+      return NextResponse.redirect(new URL("/", req.url))
     }
     
-    // Leader routes
-    if (pathname.startsWith("/leader") && userRole !== "LEADER") {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
+    if (pathname.startsWith("/leader") && !["SUPER_ADMIN", "ADMIN", "PASTOR", "VIP", "LEADER"].includes(userRole)) {
+      return NextResponse.redirect(new URL("/", req.url))
     }
   }
 
-  // Create response
-  const response = NextResponse.next()
-  
-  // Clear invalid session cookies if needed
-  if (needsCookieCleanup) {
-    return clearInvalidSessionCookies(req, response)
-  }
-
-  return response
-}
+  return NextResponse.next()
+})
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|api/auth|.well-known).*)",
+  ],
 }

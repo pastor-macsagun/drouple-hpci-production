@@ -227,11 +227,11 @@ export const authOptions: any = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 7 * 24 * 60 * 60, // 7 days (consistent with original requirement)
   },
-  useSecureCookies: process.env.NODE_ENV === "production",
+  // Remove useSecureCookies - Auth.js v5 handles this automatically
   jwt: {
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 7 * 24 * 60 * 60, // 7 days (consistent with session)
     // Add error handling for JWT issues
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     encode: async (params: any) => {
@@ -304,6 +304,7 @@ declare module "next-auth" {
       role: UserRole
       tenantId: string | null
       primaryLocalChurchId?: string
+      mustChangePassword?: boolean
     }
   }
   
@@ -311,5 +312,6 @@ declare module "next-auth" {
     role: UserRole
     tenantId: string | null
     primaryLocalChurchId?: string
+    mustChangePassword?: boolean
   }
 }
