@@ -206,12 +206,17 @@ export const authOptions: any = {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      // Always redirect to root to let app/page.tsx handle role-based routing
+      // If it's a relative URL that starts with our base URL, use it
       if (url.startsWith(baseUrl)) {
-        return baseUrl
+        return url
       }
       
-      // Redirect external URLs to home
+      // If it's a relative path (starts with /), append to base URL  
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`
+      }
+      
+      // For external URLs, redirect to home
       return baseUrl
     }
   },

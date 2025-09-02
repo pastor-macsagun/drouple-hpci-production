@@ -4,13 +4,11 @@
  * Global Error Handler for HPCI-ChMS
  * 
  * This component catches React rendering errors that occur anywhere in the application
- * and reports them to Sentry. It provides a user-friendly error fallback UI.
+ * and provides a user-friendly error fallback UI.
  * 
- * @see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/error
  */
 
-import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -21,35 +19,8 @@ interface GlobalErrorProps {
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
-    // Report the error to Sentry with HPCI-ChMS context
-    Sentry.withScope((scope) => {
-      // Add application context
-      scope.setTag('error_boundary', 'global')
-      scope.setTag('application', 'hpci-chms')
-      scope.setTag('error_type', 'react_render_error')
-      
-      // Add error digest if available (Next.js specific)
-      if (error.digest) {
-        scope.setTag('error_digest', error.digest)
-      }
-      
-      // Set error level
-      scope.setLevel('error')
-      
-      // Add extra context about the error
-      scope.setExtra('error_name', error.name)
-      scope.setExtra('error_stack', error.stack)
-      scope.setExtra('error_message', error.message)
-      
-      // Add user agent for debugging
-      if (typeof window !== 'undefined') {
-        scope.setExtra('user_agent', window.navigator.userAgent)
-        scope.setExtra('url', window.location.href)
-      }
-      
-      // Capture the exception
-      Sentry.captureException(error)
-    })
+    // Log error to console for development debugging
+    console.error('Global error boundary caught:', error)
   }, [error])
 
   return (

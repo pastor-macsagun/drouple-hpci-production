@@ -8,33 +8,73 @@ import { Button } from '@/components/ui/button'
 import { Users, Search, Mail, Phone, Calendar, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ProfileVisibility } from '@prisma/client'
+import { ProfileVisibility, UserRole } from '@prisma/client'
+import { getCurrentUser } from '@/lib/rbac'
 
-async function searchMembers(query: string, tenantId: string, userRole: string) {
-  const whereClause = {
-    tenantId,
-    AND: [
-      {
-        OR: [
-          { profileVisibility: ProfileVisibility.PUBLIC },
-          { profileVisibility: ProfileVisibility.MEMBERS },
-          ...(userRole === 'LEADER' || userRole === 'ADMIN' || userRole === 'PASTOR' || userRole === 'SUPER_ADMIN' 
-            ? [{ profileVisibility: ProfileVisibility.LEADERS }] 
-            : [])
+async function searchMembers(query: string, currentUser: any) {
+  // For Super Admin, show all users across all churches
+  if (currentUser.role === UserRole.SUPER_ADMIN) {
+    return prisma.user.findMany({
+      where: {
+        AND: [
+          query ? {
+            OR: [
+              { name: { contains: query, mode: 'insensitive' } },
+              { email: { contains: query, mode: 'insensitive' } },
+              { city: { contains: query, mode: 'insensitive' } }
+            ]
+          } : {},
+          { profileVisibility: ProfileVisibility.MEMBERS }
         ]
       },
-      query ? {
-        OR: [
-          { name: { contains: query, mode: 'insensitive' as const } },
-          { email: { contains: query, mode: 'insensitive' as const } },
-          { city: { contains: query, mode: 'insensitive' as const } }
-        ]
-      } : {}
-    ]
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        phone: true,
+        city: true,
+        joinedAt: true,
+        bio: true,
+        allowContact: true,
+        profileVisibility: true
+      },
+      orderBy: { name: 'asc' },
+      take: 50
+    })
   }
 
+  // For all other roles, only show users from their local church(es)
+  // Get the user's local church memberships
+  const userMemberships = currentUser.memberships || []
+  const localChurchIds = userMemberships.map((m: any) => m.localChurchId)
+
+  if (localChurchIds.length === 0) {
+    return [] // User is not a member of any local church
+  }
+
+  // Find users who are members of the same local church(es)
   return prisma.user.findMany({
-    where: whereClause,
+    where: {
+      AND: [
+        {
+          memberships: {
+            some: {
+              localChurchId: { in: localChurchIds }
+            }
+          }
+        },
+        query ? {
+          OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            { email: { contains: query, mode: 'insensitive' } },
+            { city: { contains: query, mode: 'insensitive' } }
+          ]
+        } : {},
+        { profileVisibility: ProfileVisibility.MEMBERS }
+      ]
+    },
     select: {
       id: true,
       name: true,
@@ -64,11 +104,30 @@ export default async function MembersPage({
     redirect('/auth/signin')
   }
 
+  // Get current user with memberships using the proper RBAC function
+  const currentUser = await getCurrentUser()
+  if (!currentUser) {
+    redirect('/auth/signin')
+  }
+
+  // Debug session
+  console.log('DEBUG Member page:', {
+    userId: currentUser.id,
+    tenantId: currentUser.tenantId,
+    role: currentUser.role,
+    memberships: currentUser.memberships?.map(m => ({ 
+      localChurchId: m.localChurchId, 
+      churchName: m.localChurch.name 
+    })),
+    query: resolvedSearchParams.q || ''
+  })
+
   const members = await searchMembers(
     resolvedSearchParams.q || '', 
-    session.user.tenantId!,
-    session.user.role
+    currentUser
   )
+
+  console.log('DEBUG Found members:', members.length)
 
   return (
     <AppLayout user={session.user}>

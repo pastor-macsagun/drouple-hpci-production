@@ -70,13 +70,6 @@ NEXTAUTH_SECRET="your-32-character-secret"
 RESEND_API_KEY="re_your_api_key"
 RESEND_FROM_EMAIL="noreply@your-domain.com"
 
-# Monitoring (Sentry)
-SENTRY_DSN="https://xxxxx@sentry.io/xxxxx"
-NEXT_PUBLIC_SENTRY_DSN="https://xxxxx@sentry.io/xxxxx"
-SENTRY_ORG="your-sentry-org"
-SENTRY_PROJECT="hpci-chms"
-SENTRY_AUTH_TOKEN="your-sentry-auth-token"
-
 # Performance
 RATE_LIMIT_ENABLED="true"
 RATE_LIMIT_MAX_REQUESTS="100"
@@ -91,7 +84,6 @@ APP_ENV="production"
 
 Create `.env.staging` for staging deployments:
 - Use separate Neon database branch
-- Different Sentry project/environment
 - Relaxed rate limits for testing
 
 ### 3. Vercel Configuration

@@ -58,7 +58,7 @@ export function EventForm({ event, localChurches }: EventFormProps) {
         endDateTime: new Date(formData.endDateTime),
         description: formData.description || undefined,
         location: formData.location || undefined,
-        localChurchId: formData.scope === EventScope.LOCAL_CHURCH ? formData.localChurchId : undefined,
+        localChurchId: formData.scope === EventScope.LOCAL_CHURCH && formData.localChurchId ? formData.localChurchId : undefined,
         feeAmount: formData.requiresPayment ? formData.feeAmount : undefined,
       }
 
@@ -109,7 +109,7 @@ export function EventForm({ event, localChurches }: EventFormProps) {
             type="number"
             min="1"
             value={formData.capacity}
-            onChange={e => setFormData(prev => ({ ...prev, capacity: parseInt(e.target.value) }))}
+            onChange={e => setFormData(prev => ({ ...prev, capacity: parseInt(e.target.value) || 1 }))}
             required
           />
         </div>
@@ -163,7 +163,12 @@ export function EventForm({ event, localChurches }: EventFormProps) {
           <Label htmlFor="scope">Event Scope *</Label>
           <Select
             value={formData.scope}
-            onValueChange={value => setFormData(prev => ({ ...prev, scope: value as EventScope }))}
+            onValueChange={value => setFormData(prev => ({ 
+              ...prev, 
+              scope: value as EventScope,
+              // Clear localChurchId when switching to WHOLE_CHURCH
+              localChurchId: value === EventScope.WHOLE_CHURCH ? '' : prev.localChurchId
+            }))}
           >
             <SelectTrigger>
               <SelectValue />
@@ -218,7 +223,7 @@ export function EventForm({ event, localChurches }: EventFormProps) {
               min="0"
               step="0.01"
               value={formData.feeAmount}
-              onChange={e => setFormData(prev => ({ ...prev, feeAmount: parseFloat(e.target.value) }))}
+              onChange={e => setFormData(prev => ({ ...prev, feeAmount: parseFloat(e.target.value) || 0 }))}
             />
           </div>
         )}

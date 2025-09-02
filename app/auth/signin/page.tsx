@@ -18,7 +18,7 @@ function SignInContent() {
   const [error, setError] = useState("");
   const searchParams = useSearchParams();
   const router = useRouter();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || searchParams.get("returnTo") || "/";
   const justRegistered = searchParams.get("registered") === "true";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,6 +34,7 @@ function SignInContent() {
         email,
         password,
         csrfToken,
+        callbackUrl,
         redirect: false,
       });
       

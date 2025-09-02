@@ -1,49 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Monitoring and Error Tracking Setup
- * Comprehensive monitoring with Sentry integration for production error tracking
+ * Basic monitoring with console logging for development and Vercel monitoring for production
  */
 
 import { logger } from './logger'
-
-// Import Sentry helpers
-let sentryHelpers: any = null;
-if (typeof window === 'undefined') {
-  // Server-side
-  try {
-    sentryHelpers = require('../sentry.server.config'); // eslint-disable-line @typescript-eslint/no-require-imports
-  } catch (error) {
-    logger.warn('Sentry server config not available', { 
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-} else {
-  // Client-side - Sentry should be available via next.config.js configuration
-  sentryHelpers = (window as any).Sentry;
-}
-
-// Enhanced Sentry configuration
-export const sentryConfig = {
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-  debug: process.env.NODE_ENV === 'development',
-  integrations: [],
-  beforeSend: (event: any, hint: any) => {
-    // Filter out sensitive data
-    if (event.request?.cookies) {
-      delete event.request.cookies
-    }
-    if (event.user?.email) {
-      event.user.email = '[REDACTED]'
-    }
-    
-    // Log to our logger as well
-    logger.error('Sentry Event', { eventId: event.event_id, error: hint.originalException })
-    
-    return event
-  }
-}
 
 /**
  * Enhanced error tracking with business context
@@ -57,16 +17,6 @@ export class ErrorTracker {
     email?: string;
     attemptedAction: string;
   }) {
-    if (sentryHelpers?.captureUserError) {
-      sentryHelpers.captureUserError(error, {
-        id: context.userId,
-        email: context.email ? '[REDACTED]' : undefined,
-      }, {
-        auth_action: context.attemptedAction,
-        error_type: 'authentication',
-      });
-    }
-    
     logger.error('Authentication Error', {
       error: error.message,
       userId: context.userId,
@@ -85,10 +35,6 @@ export class ErrorTracker {
     severity?: 'low' | 'medium' | 'high';
     extra?: Record<string, any>;
   }) {
-    if (sentryHelpers?.captureBusinessLogicError) {
-      sentryHelpers.captureBusinessLogicError(message, context);
-    }
-    
     logger.error('Business Logic Error', {
       message,
       ...context,
@@ -104,18 +50,6 @@ export class ErrorTracker {
     userId?: string;
     tenantId?: string;
   }) {
-    if (sentryHelpers?.captureUserError) {
-      sentryHelpers.captureUserError(error, 
-        context.userId ? { id: context.userId } : undefined,
-        {
-          db_operation: context.operation,
-          db_table: context.table,
-          tenant_id: context.tenantId,
-          error_type: 'database',
-        }
-      );
-    }
-    
     logger.error('Database Error', {
       error: error.message,
       ...context,
@@ -132,19 +66,6 @@ export class ErrorTracker {
     userId?: string;
     requestId?: string;
   }) {
-    if (sentryHelpers?.captureUserError) {
-      sentryHelpers.captureUserError(error,
-        context.userId ? { id: context.userId } : undefined,
-        {
-          http_method: context.method,
-          http_url: context.url,
-          http_status: context.statusCode,
-          request_id: context.requestId,
-          error_type: 'api',
-        }
-      );
-    }
-    
     logger.error('API Error', {
       error: error.message,
       ...context,
@@ -158,14 +79,6 @@ export class ErrorTracker {
 export class ErrorBoundary {
   static logError(error: Error, errorInfo?: any) {
     logger.error('React Error Boundary', { error, errorInfo })
-    
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
-      (window as any).Sentry.captureException(error, {
-        contexts: {
-          react: errorInfo
-        }
-      })
-    }
   }
 }
 
@@ -192,16 +105,6 @@ export class PerformanceMonitor {
     // Log slow operations
     if (duration > 1000) {
       logger.warn(`Slow operation detected: ${label}`, { duration })
-    }
-
-    // Send to monitoring service
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
-      (window as any).Sentry.addBreadcrumb({
-        category: 'performance',
-        message: label,
-        level: duration > 1000 ? 'warning' : 'info',
-        data: { duration }
-      })
     }
 
     return duration

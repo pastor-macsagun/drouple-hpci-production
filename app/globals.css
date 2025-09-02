@@ -213,6 +213,48 @@
     }
   }
 
+  /* Mobile performance optimization - Disable complex animations */
+  @media (max-width: 768px) {
+    .tech-background .animate-random-move-1,
+    .tech-background .animate-random-move-2,
+    .tech-background .animate-random-move-3,
+    .tech-background .animate-random-move-4,
+    .tech-background .animate-random-move-5,
+    .tech-background .animate-random-move-6,
+    .tech-background .animate-random-move-7,
+    .tech-background .animate-random-move-8,
+    .tech-background .animate-random-move-9,
+    .tech-background .animate-random-move-10,
+    .tech-background .animate-random-move-11,
+    .tech-background .animate-random-move-12,
+    .tech-background .animate-random-move-13,
+    .tech-background .animate-random-move-14,
+    .tech-background .animate-random-move-15,
+    .tech-background .animate-line-move-1,
+    .tech-background .animate-line-move-2,
+    .tech-background .animate-line-move-3,
+    .tech-background .animate-line-move-4,
+    .tech-background .animate-orbit-1,
+    .tech-background .animate-orbit-2,
+    .tech-background .animate-orbit-3,
+    .tech-background .animate-orbit-4,
+    .tech-background .animate-diagonal-move-1,
+    .tech-background .animate-diagonal-move-2,
+    .tech-background .animate-diagonal-move-3,
+    .tech-background .animate-data-stream,
+    .tech-background .animate-data-stream-reverse {
+      animation: none !important;
+      transform: none !important;
+    }
+    
+    /* Keep only simple animations on mobile */
+    .animate-bounce,
+    .animate-pulse {
+      animation-duration: 2s;
+      animation-timing-function: ease-in-out;
+    }
+  }
+
   /* Print styles */
   @media print {
     .no-print { display: none !important; }
@@ -228,6 +270,15 @@
   .gradient-hero {
     background: radial-gradient(40rem 40rem at 50% -10%, rgba(37, 99, 235, 0.08), transparent);
   }
+
+  /* Design token utilities for consistent theming */
+  .bg-accent { background-color: rgb(var(--color-accent)); }
+  .text-accent { color: rgb(var(--color-accent)); }
+  .border-accent { border-color: rgb(var(--color-accent)); }
+  .bg-accent-secondary { background-color: rgb(var(--color-accent-secondary)); }
+  .text-accent-secondary { color: rgb(var(--color-accent-secondary)); }
+  .border-accent-secondary { border-color: rgb(var(--color-accent-secondary)); }
+  .text-accent-foreground { color: rgb(var(--color-accent-ink)); }
 
   /* Custom animations for hero background */
   @keyframes spin-slow {

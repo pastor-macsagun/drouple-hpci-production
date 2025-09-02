@@ -414,23 +414,7 @@ class BackupManager {
     try {
       console.log('📊 Backup event:', JSON.stringify(event, null, 2));
       
-      // In production, send to monitoring service
-      if (process.env.NODE_ENV === 'production') {
-        // Log to Sentry if available
-        if (typeof require !== 'undefined') {
-          try {
-            const Sentry = require('@sentry/nextjs');
-            Sentry.addBreadcrumb({
-              category: 'backup',
-              message: `Backup event: ${event.type}`,
-              level: event.success === false ? 'error' : 'info',
-              data: event,
-            });
-          } catch (sentryError) {
-            console.warn('Could not log to Sentry:', sentryError.message);
-          }
-        }
-      }
+      // In production, events are logged to console and can be monitored via Vercel
     } catch (error) {
       console.warn('Failed to log backup event:', error);
     }

@@ -359,7 +359,7 @@ export async function getLocalChurches() {
 
     const whereClause = session.user.role === 'SUPER_ADMIN'
       ? {}
-      : { id: session.user.tenantId || undefined }
+      : { churchId: session.user.tenantId || undefined }
 
     const churches = await prisma.localChurch.findMany({
       where: whereClause,

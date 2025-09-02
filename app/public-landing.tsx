@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Metadata } from "next";
+import LazySection from "./components/LazySection";
+import ScrollIndicator from "./components/ScrollIndicator";
 
 export const metadata: Metadata = {
   title: "Drouple",
@@ -16,13 +18,13 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Apple iPhone-style Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md">
+      <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md" role="navigation" aria-label="Main navigation">
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="flex justify-between items-center h-11">
             <div className="text-xl font-semibold text-gray-900 tracking-tight">
               Drouple
             </div>
-            <Button asChild size="sm" className="bg-[#1e7ce8] hover:bg-[#1568c7] text-white px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
+            <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl touch-target" aria-label="Sign in to Drouple">
               <Link href="/auth/signin">Sign In</Link>
             </Button>
           </div>
@@ -30,9 +32,9 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section - Modern Layered Background */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white">
-        {/* Interactive technology background */}
-        <div className="absolute inset-0 tech-background">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-black to-gray-800 text-white">
+        {/* Interactive technology background - Desktop only for performance */}
+        <div className="absolute inset-0 tech-background hidden md:block">
           {/* Base dark background */}
           <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-black to-gray-800"></div>
           
@@ -152,45 +154,60 @@ export default function LandingPage() {
           </div>
         </div>
         
+        {/* Mobile-friendly simplified background */}
+        <div className="absolute inset-0 md:hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-black to-gray-800"></div>
+          {/* Simple subtle pattern for mobile */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 20% 20%, rgb(var(--color-accent)) 0px, transparent 50px),
+                               radial-gradient(circle at 80% 80%, rgb(var(--color-accent-secondary)) 0px, transparent 50px),
+                               radial-gradient(circle at 40% 60%, rgb(var(--color-accent)) 0px, transparent 30px)`,
+              backgroundSize: '200px 200px'
+            }}></div>
+          </div>
+        </div>
+        
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-6 hover:text-[#e5c453] transition-colors duration-500 cursor-default">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-6 hover:text-accent-secondary transition-colors duration-500 cursor-default" 
+              role="banner"
+              aria-label="Drouple - Church Management Platform">
             Drouple
           </h1>
-          <p className="text-2xl md:text-3xl font-medium mb-4 text-gray-100 tracking-tight">
+          <p className="text-xl sm:text-2xl md:text-3xl font-medium mb-4 text-gray-100 tracking-tight">
             Ministry made simple.
           </p>
-          <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
             The most thoughtfully designed church management platform for growing communities worldwide.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button asChild size="lg" className="bg-[#1e7ce8] hover:bg-[#1568c7] text-white px-8 py-3 text-lg font-semibold rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105">
+            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3 text-lg font-semibold rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl touch-target" 
+                    aria-label="Sign in to Drouple">
               <Link href="/auth/signin">Sign In</Link>
             </Button>
-            <p className="text-sm text-[#e5c453] font-semibold">
+            <p className="text-sm text-accent-secondary font-semibold" 
+               aria-live="polite">
               Mobile app coming Q4 2025
             </p>
           </div>
         </div>
         
         {/* Subtle scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hover:scale-110 transition-transform duration-300 cursor-pointer">
-          <div className="animate-bounce hover:animate-pulse">
-            <svg className="w-6 h-6 text-white/50 hover:text-[#e5c453] transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
-        </div>
+        <ScrollIndicator 
+          targetId="member-directory" 
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        />
       </section>
 
       {/* Member Directory - iPhone Style Feature */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden py-32">
+      <section id="member-directory" className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden py-16 sm:py-32" aria-labelledby="member-directory-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
+            <h2 id="member-directory-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
               Member Directory
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               Secure profiles. Smart search. Complete privacy controls.
             </p>
           </div>
@@ -199,12 +216,12 @@ export default function LandingPage() {
             <div className="bg-white rounded-3xl shadow-2xl p-20 border border-gray-200">
               <div className="space-y-12">
                 {/* Header with search bar */}
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#1e7ce8] to-[#e5c453] rounded-2xl shadow-lg">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-accent to-accent-secondary rounded-2xl shadow-lg" role="search" aria-label="Member search">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                   </svg>
-                  <div className="h-8 bg-white/20 rounded-lg flex-1 backdrop-blur-sm"></div>
-                  <div className="text-white text-sm font-medium">247 Members</div>
+                  <div className="h-8 bg-white/20 rounded-lg flex-1 backdrop-blur-sm" aria-label="Search input placeholder"></div>
+                  <div className="text-white text-sm font-medium" aria-live="polite">247 Members</div>
                 </div>
                 
                 {/* Member Directory Layout */}
@@ -212,55 +229,55 @@ export default function LandingPage() {
                   {/* Member Cards */}
                   <div className="space-y-4">
                     {/* Member 1 - Pastor */}
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#1e7ce8] to-[#e5c453] rounded-full flex items-center justify-center shadow-md">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200" role="listitem" aria-label="Pastor - Online">
+                      <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent-secondary rounded-full flex items-center justify-center shadow-md" aria-hidden="true">
                         <span className="text-white font-semibold text-sm">PS</span>
                       </div>
                       <div className="flex-1">
-                        <div className="h-4 bg-gray-700 rounded w-32 mb-2"></div>
-                        <div className="h-3 bg-[#1e7ce8] rounded w-16 text-xs"></div>
+                        <div className="h-4 bg-gray-700 rounded w-32 mb-2" aria-label="Pastor name placeholder"></div>
+                        <div className="h-3 bg-accent rounded w-16 text-xs" aria-label="Pastor role badge"></div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <div className="w-4 h-4 bg-green-500 rounded-full" aria-label="Online status indicator"></div>
                         <span className="text-xs text-gray-500">Online</span>
                       </div>
                     </div>
                     
                     {/* Member 2 - Leader */}
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl" role="listitem" aria-label="Ministry Leader - Last seen 2 hours ago">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center shadow-md" aria-hidden="true">
                         <span className="text-white font-semibold text-sm">ML</span>
                       </div>
                       <div className="flex-1">
-                        <div className="h-4 bg-gray-700 rounded w-28 mb-2"></div>
-                        <div className="h-3 bg-purple-500 rounded w-14 text-xs"></div>
+                        <div className="h-4 bg-gray-700 rounded w-28 mb-2" aria-label="Leader name placeholder"></div>
+                        <div className="h-3 bg-purple-500 rounded w-14 text-xs" aria-label="Leader role badge"></div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gray-400 rounded-full"></div>
+                        <div className="w-4 h-4 bg-gray-400 rounded-full" aria-label="Offline status indicator"></div>
                         <span className="text-xs text-gray-500">2h ago</span>
                       </div>
                     </div>
                     
                     {/* Member 3 - Member */}
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-md">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl" role="listitem" aria-label="Active Member - Online">
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-md" aria-hidden="true">
                         <span className="text-white font-semibold text-sm">AS</span>
                       </div>
                       <div className="flex-1">
-                        <div className="h-4 bg-gray-700 rounded w-36 mb-2"></div>
-                        <div className="h-3 bg-green-500 rounded w-12 text-xs"></div>
+                        <div className="h-4 bg-gray-700 rounded w-36 mb-2" aria-label="Member name placeholder"></div>
+                        <div className="h-3 bg-green-500 rounded w-12 text-xs" aria-label="Member role badge"></div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <div className="w-4 h-4 bg-green-500 rounded-full" aria-label="Online status indicator"></div>
                         <span className="text-xs text-gray-500">Online</span>
                       </div>
                     </div>
                   </div>
                   
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
-                    <div className="text-center p-4 bg-gradient-to-br from-[#1e7ce8]/10 to-[#1e7ce8]/20 rounded-xl">
-                      <div className="text-2xl font-bold text-[#1e7ce8]">47</div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4" role="group" aria-label="Membership statistics">
+                    <div className="text-center p-4 bg-gradient-to-br from-accent/10 to-accent/20 rounded-xl">
+                      <div className="text-2xl font-bold text-accent">47</div>
                       <div className="text-xs text-gray-600">Pastors</div>
                     </div>
                     <div className="text-center p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl">
@@ -301,13 +318,17 @@ export default function LandingPage() {
       </section>
 
       {/* Sunday Check-ins - iPhone Style Feature */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-[#1e7ce8]/5 to-white overflow-hidden py-32">
+      <LazySection 
+        fallback={<div className="min-h-screen bg-gradient-to-b from-white via-accent/5 to-white flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-200 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-200 rounded w-48 mx-auto"></div></div></div>}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-accent/5 to-white overflow-hidden py-16 sm:py-32"
+      >
+      <section aria-labelledby="checkins-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
+            <h2 id="checkins-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
               Sunday Check-ins
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               One tap. Real-time tracking. No more paper forms.
             </p>
           </div>
@@ -316,8 +337,8 @@ export default function LandingPage() {
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl shadow-2xl p-20 border border-green-100">
               <div className="space-y-12">
                 <div className="flex items-center justify-between max-w-2xl mx-auto">
-                  <div className="w-32 h-32 bg-gradient-to-br from-[#e5c453] to-[#d4ac3a] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <div className="w-32 h-32 bg-gradient-to-br from-accent-secondary to-accent-secondary/80 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" aria-hidden="true">
+                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -368,25 +389,30 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
       {/* VIP First-Timer Care - iPhone Style Feature */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 via-[#1e7ce8]/20 to-gray-900 text-white overflow-hidden py-32">
+      <LazySection 
+        fallback={<div className="min-h-screen bg-gradient-to-b from-gray-900 via-accent/20 to-gray-900 flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-700 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-700 rounded w-48 mx-auto"></div></div></div>}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 via-accent/20 to-gray-900 text-white overflow-hidden py-16 sm:py-32"
+      >
+      <section aria-labelledby="vip-care-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+            <h2 id="vip-care-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter mb-6">
               VIP First-Timer Care
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               Revolutionary visitor tracking. Never miss a first-time guest.
             </p>
           </div>
           
           <div className="relative max-w-6xl mx-auto">
-            <div className="bg-gradient-to-br from-[#1e7ce8]/50 to-[#0f4d8c]/50 rounded-3xl shadow-2xl p-20 border border-[#1e7ce8]/30 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-accent/50 to-accent/70 rounded-3xl shadow-2xl p-8 sm:p-20 border border-accent/30 backdrop-blur-sm">
               <div className="space-y-12">
                 <div className="flex items-center justify-center">
-                  <div className="w-32 h-32 bg-purple-600 rounded-full flex items-center justify-center shadow-2xl">
-                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <div className="w-32 h-32 bg-purple-600 rounded-full flex items-center justify-center shadow-2xl" aria-hidden="true">
+                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                     </svg>
                   </div>
@@ -437,45 +463,50 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
       {/* LifeGroups - iPhone Style Feature */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-[#1e7ce8]/5 overflow-hidden py-32">
+      <LazySection 
+        fallback={<div className="min-h-screen bg-gradient-to-b from-blue-50 to-accent/5 flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-200 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-200 rounded w-48 mx-auto"></div></div></div>}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-accent/5 overflow-hidden py-16 sm:py-32"
+      >
+      <section aria-labelledby="lifegroups-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
+            <h2 id="lifegroups-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
               LifeGroups
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               Small group coordination made effortless.
             </p>
           </div>
           
           <div className="relative max-w-6xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-20 border border-[#1e7ce8]/10 hover:border-[#1e7ce8]/20 transition-all duration-300">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-20 border border-accent/10 hover:border-accent/20 transition-all duration-300">
               <div className="space-y-12">
                 <div className="flex items-center justify-center">
-                  <div className="w-32 h-32 bg-[#1e7ce8] rounded-3xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <div className="w-32 h-32 bg-accent rounded-3xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" aria-hidden="true">
+                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                     </svg>
                   </div>
                 </div>
                 
                 <div className="grid md:grid-cols-3 gap-8">
-                  <div className="p-8 bg-blue-50 rounded-3xl border border-blue-100 hover:border-[#1e7ce8]/30 transition-all duration-300 hover:shadow-md">
+                  <div className="p-8 bg-blue-50 rounded-3xl border border-blue-100 hover:border-accent/30 transition-all duration-300 hover:shadow-md">
                     <h4 className="text-lg font-semibold text-gray-900 mb-4">Roster Management</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#1e7ce8] rounded-full"></div>
-                        <div className="h-4 bg-gray-300 rounded flex-1"></div>
+                    <div className="space-y-3" role="list" aria-label="Example member roster">
+                      <div className="flex items-center gap-3" role="listitem">
+                        <div className="w-10 h-10 bg-accent rounded-full" aria-hidden="true"></div>
+                        <div className="h-4 bg-gray-300 rounded flex-1" aria-label="Member name placeholder"></div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-500 rounded-full"></div>
-                        <div className="h-4 bg-gray-300 rounded flex-1"></div>
+                      <div className="flex items-center gap-3" role="listitem">
+                        <div className="w-10 h-10 bg-green-500 rounded-full" aria-hidden="true"></div>
+                        <div className="h-4 bg-gray-300 rounded flex-1" aria-label="Member name placeholder"></div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-500 rounded-full"></div>
-                        <div className="h-4 bg-gray-300 rounded flex-1"></div>
+                      <div className="flex items-center gap-3" role="listitem">
+                        <div className="w-10 h-10 bg-purple-500 rounded-full" aria-hidden="true"></div>
+                        <div className="h-4 bg-gray-300 rounded flex-1" aria-label="Member name placeholder"></div>
                       </div>
                     </div>
                   </div>
@@ -535,28 +566,32 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
-      {/* Events & RSVP - iPhone Style Feature */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden py-32">
+      <LazySection 
+        fallback={<div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-200 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-200 rounded w-48 mx-auto"></div></div></div>}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden py-16 sm:py-32"
+      >
+      <section aria-labelledby="events-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
+            <h2 id="events-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-gray-900 mb-6">
               Events & RSVP
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               End the Facebook group chaos. Professional event management.
             </p>
           </div>
           
           <div className="relative max-w-6xl mx-auto">
-            <div className="bg-gradient-to-br from-green-50 to-[#1e7ce8]/5 rounded-3xl shadow-2xl p-20 border border-gray-100 hover:border-[#1e7ce8]/20 transition-all duration-300">
+            <div className="bg-gradient-to-br from-green-50 to-accent/5 rounded-3xl shadow-2xl p-8 sm:p-20 border border-gray-100 hover:border-accent/20 transition-all duration-300">
               <div className="space-y-12">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                   <div className="text-left">
                     <div className="p-8 bg-white rounded-3xl shadow-lg border border-gray-100">
                       <div className="flex items-center gap-4 mb-6">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#e5c453] to-[#d4ac3a] rounded-2xl flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <div className="w-16 h-16 bg-gradient-to-br from-accent-secondary to-accent-secondary/80 rounded-2xl flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105" aria-hidden="true">
+                          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5m-9-6h.008v.008H12V10.5z" />
                           </svg>
                         </div>
@@ -568,7 +603,7 @@ export default function LandingPage() {
                       
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="text-center p-4 bg-gray-50 rounded-2xl">
-                          <div className="text-2xl font-bold text-[#e5c453]">45</div>
+                          <div className="text-2xl font-bold text-accent-secondary">45</div>
                           <div className="text-sm text-gray-600">Registered</div>
                         </div>
                         <div className="text-center p-4 bg-gray-50 rounded-2xl">
@@ -644,15 +679,20 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
       {/* Discipleship Pathways - iPhone Style Feature */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1e7ce8] via-[#1568c7] to-[#0f4d8c] text-white overflow-hidden py-32">
+      <LazySection 
+        fallback={<div className="min-h-screen bg-gradient-to-br from-accent via-accent/80 to-accent/90 flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-700 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-700 rounded w-48 mx-auto"></div></div></div>}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-accent via-accent/80 to-accent/90 text-white overflow-hidden py-16 sm:py-32"
+      >
+      <section aria-labelledby="pathways-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+            <h2 id="pathways-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter mb-6">
               Discipleship Pathways
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-200 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-200 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               Structured spiritual growth from foundations to maturity.
             </p>
           </div>
@@ -662,18 +702,18 @@ export default function LandingPage() {
               <div className="space-y-12">
                 <div className="grid md:grid-cols-3 gap-8">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#e5c453] to-[#d4ac3a] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                    <div className="w-20 h-20 bg-gradient-to-br from-accent-secondary to-accent-secondary/80 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" aria-hidden="true">
+                      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m-4-8h8" />
                       </svg>
                     </div>
-                    <h4 className="text-2xl font-semibold text-white mb-4 hover:text-[#e5c453] transition-colors duration-300 cursor-default">ROOTS</h4>
+                    <h4 className="text-2xl font-semibold text-white mb-4 hover:text-accent-secondary transition-colors duration-300 cursor-default">ROOTS</h4>
                     <p className="text-gray-200 mb-6">Foundation pathway for new believers with automatic enrollment</p>
                     <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
-                      <div className="text-3xl font-bold text-[#e5c453]">127</div>
+                      <div className="text-3xl font-bold text-accent-secondary">127</div>
                       <div className="text-gray-300 text-sm">Active Members</div>
                       <div className="w-full bg-gray-700 rounded-full h-2 mt-3">
-                        <div className="bg-gradient-to-r from-[#e5c453] to-[#d4ac3a] h-2 rounded-full w-3/4"></div>
+                        <div className="bg-gradient-to-r from-accent-secondary to-accent-secondary/80 h-2 rounded-full w-3/4"></div>
                       </div>
                       <div className="text-xs text-gray-300 mt-1">75% Average Completion</div>
                     </div>
@@ -685,7 +725,7 @@ export default function LandingPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
                       </svg>
                     </div>
-                    <h4 className="text-2xl font-semibold text-white mb-4 hover:text-[#e5c453] transition-colors duration-300 cursor-default">VINES</h4>
+                    <h4 className="text-2xl font-semibold text-white mb-4 hover:text-accent-secondary transition-colors duration-300 cursor-default">VINES</h4>
                     <p className="text-gray-200 mb-6">Growth pathway for maturing believers with opt-in enrollment</p>
                     <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
                       <div className="text-3xl font-bold text-purple-400">89</div>
@@ -703,7 +743,7 @@ export default function LandingPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                       </svg>
                     </div>
-                    <h4 className="text-2xl font-semibold text-white mb-4 hover:text-[#e5c453] transition-colors duration-300 cursor-default">RETREAT</h4>
+                    <h4 className="text-2xl font-semibold text-white mb-4 hover:text-accent-secondary transition-colors duration-300 cursor-default">RETREAT</h4>
                     <p className="text-gray-200 mb-6">Intensive experiences with schedule and attendance tracking</p>
                     <div className="bg-white/10 rounded-2xl p-4 border border-white/20">
                       <div className="text-3xl font-bold text-orange-400">34</div>
@@ -764,16 +804,21 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
       {/* Mobile App - iPhone Style Coming Soon */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-[#1e7ce8]/10 to-black text-white overflow-hidden py-32">
+      <LazySection 
+        fallback={<div className="min-h-screen bg-gradient-to-b from-black via-accent/10 to-black flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-700 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-700 rounded w-48 mx-auto"></div></div></div>}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-accent/10 to-black text-white overflow-hidden py-16 sm:py-32"
+      >
+      <section aria-labelledby="mobile-app-title">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
             <p className="text-lg font-medium text-gray-400 mb-4 tracking-tight">Coming Soon</p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+            <h2 id="mobile-app-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter mb-6">
               Drouple goes mobile
             </h2>
-            <p className="text-2xl md:text-3xl text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               Your entire church ecosystem in your pocket. Beautiful, fast, intuitive.
             </p>
           </div>
@@ -792,8 +837,8 @@ export default function LandingPage() {
                       <div className="w-full h-full bg-white rounded-[2.8rem] relative overflow-hidden">
                         <div className="p-6 h-full flex flex-col items-center justify-center">
                           {/* Simple App Logo */}
-                          <div className="w-20 h-20 bg-[#1e7ce8] rounded-3xl flex items-center justify-center shadow-xl mb-8">
-                            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                          <div className="w-20 h-20 bg-accent rounded-3xl flex items-center justify-center shadow-xl mb-8" aria-hidden="true">
+                            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
                             </svg>
                           </div>
@@ -808,13 +853,13 @@ export default function LandingPage() {
                           <div className="grid grid-cols-2 gap-8 mb-8">
                             <div className="flex flex-col items-center">
                               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                                <div className="w-4 h-4 bg-[#1e7ce8] rounded-full"></div>
+                                <div className="w-4 h-4 bg-accent rounded-full" aria-hidden="true"></div>
                               </div>
                               <span className="text-gray-600 text-sm">Check-In</span>
                             </div>
                             <div className="flex flex-col items-center">
                               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                                <div className="w-4 h-4 bg-[#e5c453] rounded-full"></div>
+                                <div className="w-4 h-4 bg-accent-secondary rounded-full" aria-hidden="true"></div>
                               </div>
                               <span className="text-gray-600 text-sm">Directory</span>
                             </div>
@@ -884,9 +929,10 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
       {/* Footer - Apple minimalist style */}
-      <footer className="bg-black text-white py-16">
+      <footer className="bg-black text-white py-16" role="contentinfo">
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="text-center">
             <p className="text-sm font-medium text-gray-300 mb-2 tracking-tight">

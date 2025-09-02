@@ -23,11 +23,6 @@ export interface SystemMetrics {
   [key: string]: unknown;
 }
 
-interface SentryScope {
-  setTag(key: string, value: string): void;
-  setLevel(level: string): void;
-  setExtra(key: string, value: unknown): void;
-}
 
 export interface Alert {
   id: string;
@@ -469,35 +464,14 @@ class AlertManager {
    */
   private async logToMonitoring(alert: Alert): Promise<void> {
     try {
-      // Log to Sentry if available
-      if (typeof require !== 'undefined') {
-        try {
-          const Sentry = require('@sentry/nextjs'); // eslint-disable-line @typescript-eslint/no-require-imports
-          
-          Sentry.withScope((scope: SentryScope) => {
-            scope.setTag('alert_severity', alert.severity);
-            scope.setTag('alert_category', alert.category);
-            scope.setLevel(
-              alert.severity === 'critical' ? 'error' :
-              alert.severity === 'high' ? 'warning' : 'info'
-            );
-            
-            if (alert.metadata) {
-              Object.keys(alert.metadata).forEach(key => {
-                scope.setExtra(key, alert.metadata![key]);
-              });
-            }
-            
-            if (alert.severity === 'critical' || alert.severity === 'high') {
-              Sentry.captureException(new Error(`Alert: ${alert.title}`));
-            } else {
-              Sentry.captureMessage(`Alert: ${alert.title}`);
-            }
-          });
-        } catch {
-          logger.warn('Could not log alert to Sentry');
-        }
-      }
+      // Log alert details
+      logger.info('Alert triggered', {
+        severity: alert.severity,
+        category: alert.category,
+        title: alert.title,
+        message: alert.message,
+        metadata: alert.metadata
+      });
     } catch (error) {
       logger.error('Failed to log alert to monitoring service', { error });
     }
