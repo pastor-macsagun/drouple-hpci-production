@@ -20,6 +20,7 @@ function SignInContent() {
   const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") || searchParams.get("returnTo") || "/";
   const justRegistered = searchParams.get("registered") === "true";
+  const passwordChanged = searchParams.get("message") === "password-changed";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +74,14 @@ function SignInContent() {
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
                   Registration successful! Please sign in with your new account.
+                </AlertDescription>
+              </Alert>
+            )}
+            {passwordChanged && (
+              <Alert>
+                <CheckCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Password changed successfully! Please sign in with your new password.
                 </AlertDescription>
               </Alert>
             )}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,7 +11,6 @@ import { Lock } from 'lucide-react'
 import { changePassword } from './actions'
 
 export default function ChangePasswordPage() {
-  const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -29,9 +28,13 @@ export default function ChangePasswordPage() {
     if (result.success) {
       toast({
         title: 'Success',
-        description: 'Your password has been changed successfully'
+        description: 'Your password has been changed successfully. Please sign in again.'
       })
-      router.push('/dashboard')
+      // Sign out and redirect to login to refresh session
+      await signOut({ 
+        callbackUrl: '/auth/signin?message=password-changed',
+        redirect: true 
+      })
     } else {
       toast({
         title: 'Error',
