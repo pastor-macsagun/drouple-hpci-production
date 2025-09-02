@@ -1,6 +1,16 @@
 import { prisma } from '@/lib/prisma'
 import { EnrollmentStatus } from '@prisma/client'
 
+/**
+ * Marks pathway step as complete and auto-completes pathway if all steps done.
+ * Implements automatic pathway completion when final step is finished.
+ * 
+ * @param stepId ID of the step to mark complete
+ * @param userId ID of the user completing the step  
+ * @param completedBy Optional ID of leader/admin who verified completion
+ * @param notes Optional completion notes
+ * @returns PathwayProgress record
+ */
 export async function completeStep(
   stepId: string,
   userId: string,
@@ -33,6 +43,7 @@ export async function completeStep(
     },
   })
 
+  // Automatic pathway completion logic when all steps are finished
   const isComplete = await isPathwayComplete(step.pathwayId, userId)
   if (isComplete) {
     const enrollment = await prisma.pathwayEnrollment.findFirst({

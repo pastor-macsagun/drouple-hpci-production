@@ -4,17 +4,17 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0, // No retries locally, 2 retries in CI
+  retries: process.env.CI ? 2 : 1, // Allow 1 retry locally for flaky auth
   workers: process.env.CI ? 1 : 2, // Allow 2 workers locally for speed
   reporter: process.env.CI 
     ? [['html', { outputFolder: 'playwright-report', open: 'never' }], ['list']]
     : [['html', { outputFolder: 'playwright-report', open: 'on-failure' }]],
   globalSetup: './e2e/global-setup.ts',
   
-  // Increased timeout configuration for accessibility and navigation tests
-  timeout: 120_000, // 2 minutes per test (increased from 30s for axe-core scans)
+  // Optimized timeout configuration for reliable auth flows
+  timeout: 30000, // 30s per test (reduced from 45s with better auth logic)
   expect: {
-    timeout: 20_000, // 20s for expect assertions (increased from 8s for stability)
+    timeout: 8000, // 8s for expect assertions (increased for stability)
   },
   
   use: {
@@ -24,9 +24,9 @@ export default defineConfig({
     video: 'retain-on-failure',
     testIdAttribute: 'data-testid',
     
-    // Improved stability settings for complex tests
-    actionTimeout: 15_000, // 15s for actions (increased from 10s)
-    navigationTimeout: 30_000, // 30s for navigations (increased from 20s)
+    // Optimized stability settings for faster auth flows
+    actionTimeout: 10000, // 10s for actions (reduced with better selectors)
+    navigationTimeout: 20000, // 20s for navigations (reduced with retry logic)
     
     // Viewport for consistency
     viewport: { width: 1280, height: 720 },

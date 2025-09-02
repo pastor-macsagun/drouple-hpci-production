@@ -87,7 +87,7 @@ const TEST_USERS = [
 // Helper to check if a page exists
 async function checkPageExists(page: any, url: string): Promise<'PASS' | 'STUB' | 'MISSING'> {
   try {
-    const response = await page.goto(url, { waitUntil: 'networkidle', timeout: 30_000 });
+    const response = await page.goto(url, { waitUntil: 'networkidle' });
     
     if (!response || response.status() === 404) {
       return 'MISSING';
@@ -96,9 +96,6 @@ async function checkPageExists(page: any, url: string): Promise<'PASS' | 'STUB' 
     if (response.status() >= 400) {
       return 'MISSING';
     }
-    
-    // Wait for main content to load
-    await page.getByRole('main').waitFor({ timeout: 10_000 }).catch(() => {});
     
     // Check for content to determine if it's a stub or functional page
     const hasHeading = await page.locator('h1, h2').first().isVisible().catch(() => false);
@@ -119,33 +116,29 @@ test.describe('Navigation Audit - @navigation', () => {
   test.describe('Header Navigation Redundancy Check', () => {
     test('Should verify header has no navigation links', async ({ page }) => {
       await page.goto('/');
-      await page.waitForLoadState('networkidle');
       
-      // Wait for nav to render (public landing page uses nav, not header)
-      await page.locator('nav').waitFor({ timeout: 10_000 });
-      
-      // Check that navigation bar contains minimal links (just Sign In)
-      const navLinks = await page.locator('nav a').count();
+      // Check that header does not contain navigation links
+      const headerNavLinks = await page.locator('header nav a').count();
       
       console.log('Header Redundancy Analysis:');
-      console.log('Navigation links found in nav:', navLinks);
-      console.log('Expected: 1 (Sign In only)');
+      console.log('Navigation links found in header:', headerNavLinks);
+      console.log('Expected: 0 (redundancy removed)');
       
-      // Should only have Sign In link
-      expect(navLinks).toBe(1);
+      // Verify no navigation links in header
+      expect(headerNavLinks).toBe(0);
       
-      // Check that nav still has branding
-      const brandingText = await page.locator('nav').getByText('drouple').isVisible();
-      expect(brandingText).toBeTruthy();
+      // Check that header still has branding
+      const brandingLink = await page.locator('header a:has-text("HPCI")').isVisible();
+      expect(brandingLink).toBeTruthy();
       
-      // Take screenshot of nav
+      // Take screenshot of header
       await page.screenshot({ 
         path: 'e2e/screenshots/header-navigation.png',
         fullPage: false,
         clip: { x: 0, y: 0, width: 1280, height: 100 }
       });
       
-      console.log('Nav now contains only branding and sign in (redundancy resolved)');
+      console.log('Header now contains only branding and user menu (redundancy resolved)');
     });
   });
   
@@ -155,7 +148,6 @@ test.describe('Navigation Audit - @navigation', () => {
         // Login as the user
         // For now, we'll navigate directly and check what's visible
         await page.goto('/dashboard');
-        await page.waitForLoadState('networkidle');
         
         const results: any[] = [];
         
@@ -257,11 +249,7 @@ test.describe('Navigation Audit - @navigation', () => {
     });
     
     test('Regular users should redirect from /dashboard appropriately', async ({ page }) => {
-      await page.goto('/dashboard', { waitUntil: 'networkidle', timeout: 30_000 });
-      
-      // Wait for any redirects to complete
-      await page.waitForTimeout(2000);
-      
+      const response = await page.goto('/dashboard');
       const finalUrl = page.url();
       
       console.log('Dashboard redirect behavior:');
@@ -326,42 +314,31 @@ test.describe('Navigation Audit - @navigation', () => {
   test.describe('Navigation Component Integration', () => {
     test('AppLayout should render both Header and Sidebar', async ({ page }) => {
       await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
       
-      // Wait for layout components to render - look for any nav element
-      await page.locator('nav, header').first().waitFor({ timeout: 10_000 });
-      
-      // Check for navigation element
-      const hasNav = await page.locator('nav, header').first().isVisible();
-      expect(hasNav).toBeTruthy();
+      // Check for header
+      const header = await page.locator('header').isVisible();
+      expect(header).toBeTruthy();
       
       // Check for sidebar on desktop
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.waitForTimeout(500); // Wait for viewport change
-      
       const sidebar = await page.locator('aside').isVisible();
       
       console.log('Component Integration:');
-      console.log('Navigation present:', hasNav);
+      console.log('Header present:', header);
       console.log('Sidebar present (desktop):', sidebar);
       
       // Check mobile menu button
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.waitForTimeout(500); // Wait for viewport change
-      
       const mobileMenuButton = await page.locator('button:has(svg)').first().isVisible();
       console.log('Mobile menu button present:', mobileMenuButton);
       
       // Take screenshots
-      await page.setViewportSize({ width: 1280, height: 720 });
-      await page.waitForTimeout(500);
       await page.screenshot({ 
         path: 'e2e/screenshots/layout-desktop.png',
         fullPage: false
       });
       
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.waitForTimeout(500);
       await page.screenshot({ 
         path: 'e2e/screenshots/layout-mobile.png',
         fullPage: false

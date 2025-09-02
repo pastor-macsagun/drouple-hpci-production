@@ -9,9 +9,9 @@ import { Users, Search, Mail, Phone, Calendar, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ProfileVisibility, UserRole } from '@prisma/client'
-import { getCurrentUser } from '@/lib/rbac'
+import { getCurrentUser, CurrentUser } from '@/lib/rbac'
 
-async function searchMembers(query: string, currentUser: any) {
+async function searchMembers(query: string, currentUser: NonNullable<CurrentUser>) {
   // For Super Admin, show all users across all churches
   if (currentUser.role === UserRole.SUPER_ADMIN) {
     return prisma.user.findMany({
@@ -48,7 +48,7 @@ async function searchMembers(query: string, currentUser: any) {
   // For all other roles, only show users from their local church(es)
   // Get the user's local church memberships
   const userMemberships = currentUser.memberships || []
-  const localChurchIds = userMemberships.map((m: any) => m.localChurchId)
+  const localChurchIds = userMemberships.map((m) => m.localChurchId)
 
   if (localChurchIds.length === 0) {
     return [] // User is not a member of any local church

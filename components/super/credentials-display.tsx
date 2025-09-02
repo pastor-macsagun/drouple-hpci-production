@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -52,14 +52,17 @@ Note: The user must change this password on their first login.`
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" aria-describedby="credentials-description">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-green-600 flex items-center gap-2">
             <CheckCircle className="h-5 w-5" />
             Admin Account Created Successfully
           </DialogTitle>
+          <DialogDescription>
+            Save these credentials securely. The user must change their password on first login. These credentials will not be shown again.
+          </DialogDescription>
         </DialogHeader>
-        <div id="credentials-description" className="space-y-4">
+        <div className="space-y-4">
           <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
             <p className="text-sm text-warning-foreground font-medium mb-2">
               🔑 Save these credentials securely

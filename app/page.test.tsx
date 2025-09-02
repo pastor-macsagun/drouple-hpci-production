@@ -1,5 +1,14 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render, screen } from '@testing-library/react'
+
+// Mock IntersectionObserver
+beforeAll(() => {
+  global.IntersectionObserver = vi.fn().mockImplementation((callback) => ({
+    observe: vi.fn(),
+    disconnect: vi.fn(),
+    unobserve: vi.fn(),
+  }))
+})
 
 // Mock the getCurrentUser function
 vi.mock('@/lib/rbac', () => ({
@@ -20,9 +29,9 @@ describe('HomePage', () => {
     const Component = await HomePage()
     render(Component)
     
-    // Check for key brand elements
-    expect(screen.getByText('Ministry made')).toBeDefined()
-    expect(screen.getByText(/Stop wrestling with spreadsheets and disconnected tools/)).toBeDefined()
+    // Check for key brand elements 
+    expect(screen.getByText('Ministry made simple.')).toBeDefined()
+    expect(screen.getAllByText('HPCI ChMS').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Sign In').length).toBeGreaterThanOrEqual(1)
   })
 })

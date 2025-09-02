@@ -37,6 +37,14 @@ export const authOptions: any = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
+      /**
+       * Custom authentication logic with rate limiting and security validation.
+       * Handles multi-tenant user lookup, password verification, and membership resolution.
+       * 
+       * @param credentials User-provided email and password
+       * @param req Request object for IP extraction and rate limiting
+       * @returns User object with primary tenant info or null if authentication fails
+       */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async authorize(credentials: any, req: any) {
         const email = credentials?.email as string
@@ -116,7 +124,8 @@ export const authOptions: any = {
           // Reset rate limit on successful login
           resetAttempts(ipAddress, email)
 
-          // Get primary local church ID (first membership or most recent)
+          // Primary tenant resolution: Active membership with most recent join date
+          // Critical for multi-tenant RBAC - determines user's default church context
           const primaryMembership = memberships
             .filter((m) => !m.leftAt)
             .sort((a, b) => b.joinedAt.getTime() - a.joinedAt.getTime())[0]
@@ -159,6 +168,10 @@ export const authOptions: any = {
     error: "/auth/error",
   },
   callbacks: {
+    /**
+     * JWT token construction with user context.
+     * Embeds role, tenant, and membership info for server-side authorization.
+     */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, user }: any) {
       try {
@@ -184,6 +197,10 @@ export const authOptions: any = {
         return token
       }
     },
+    /**
+     * Session object construction from JWT token.
+     * Transfers user context from JWT to session for client/server access.
+     */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: any) {
       try {
@@ -209,6 +226,10 @@ export const authOptions: any = {
         return session
       }
     },
+    /**
+     * Post-authentication redirect handler with security validation.
+     * Prevents open redirect vulnerabilities while supporting relative URLs.
+     */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       // If it's a relative URL that starts with our base URL, use it

@@ -16,12 +16,6 @@ test.describe('Accessibility Tests with Axe', () => {
       await page.goto(pageInfo.url)
       await page.waitForLoadState('networkidle')
       
-      // Additional wait for dynamic content to render
-      await page.getByRole('main').waitFor({ timeout: 10_000 })
-      
-      // Wait a bit more for any async data loading
-      await page.waitForTimeout(1000)
-      
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze()
@@ -59,12 +53,6 @@ test.describe('Accessibility Tests with Axe', () => {
       await page.goto(pageInfo.url)
       await page.waitForLoadState('networkidle')
       
-      // Wait for main content and potential data tables
-      await page.getByRole('main').waitFor({ timeout: 10_000 })
-      
-      // Wait for loading states to clear
-      await page.waitForFunction(() => !document.querySelector('[data-testid="loading"]'), { timeout: 5_000 }).catch(() => {})
-      
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze()
@@ -82,9 +70,6 @@ test.describe('Accessibility Tests with Axe', () => {
     await page.goto('/super/churches')
     await page.waitForLoadState('networkidle')
     
-    // Wait for super admin content
-    await page.getByRole('main').waitFor({ timeout: 10_000 })
-    
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .analyze()
@@ -101,9 +86,6 @@ test.describe('Accessibility Tests with Axe', () => {
     for (const url of authPages) {
       await page.goto(url)
       await page.waitForLoadState('networkidle')
-      
-      // Wait for form elements to be fully rendered
-      await page.getByRole('main').waitFor({ timeout: 10_000 })
       
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'best-practice'])
@@ -138,10 +120,6 @@ test.describe('Manual Accessibility Checks', () => {
       }
       
       await page.goto(pageTest.url)
-      await page.waitForLoadState('networkidle')
-      
-      // Wait for main content to be ready
-      await page.getByRole('main').waitFor({ timeout: 5_000 }).catch(() => {})
 
       // Check for page title
       const title = await page.title()
@@ -298,8 +276,6 @@ test.describe('Manual Accessibility Checks', () => {
 
   test('forms are keyboard accessible', async ({ page, memberAuth }) => {
     await page.goto('/checkin')
-    await page.waitForLoadState('networkidle')
-    await page.getByRole('main').waitFor({ timeout: 10_000 })
     
     // Tab through form
     let tabCount = 0
@@ -332,17 +308,12 @@ test.describe('Manual Accessibility Checks', () => {
     // This test would check if modals properly trap focus
     // Look for any modal triggers
     await page.goto('/events')
-    await page.waitForLoadState('networkidle')
-    await page.getByRole('main').waitFor({ timeout: 10_000 })
     
     // Try to trigger a modal (e.g., RSVP)
     const modalTrigger = page.getByRole('button', { name: /rsvp|details|more/i }).first()
     
     if (await modalTrigger.isVisible()) {
       await modalTrigger.click()
-      
-      // Wait for modal to appear
-      await page.waitForSelector('[role="dialog"], .modal, [class*="modal"]', { timeout: 5_000 }).catch(() => {})
       
       // Check if focus is trapped
       await page.keyboard.press('Tab')
@@ -363,13 +334,9 @@ test.describe('Manual Accessibility Checks', () => {
 
   test('error messages are accessible', async ({ page }) => {
     await page.goto('/auth/signin')
-    await page.waitForLoadState('networkidle')
     
     // Submit invalid form to trigger errors
     await page.getByRole('button', { name: /sign in/i }).click()
-    
-    // Wait for potential error messages
-    await page.waitForTimeout(1000)
     
     // Check for error messages
     const errors = await page.locator('[role="alert"], [aria-live], .error, .text-red-500').all()
@@ -386,11 +353,6 @@ test.describe('Manual Accessibility Checks', () => {
 
   test('tables have proper structure', async ({ page, churchAdminAuth }) => {
     await page.goto('/admin/services')
-    await page.waitForLoadState('networkidle')
-    await page.getByRole('main').waitFor({ timeout: 10_000 })
-    
-    // Wait for tables to load
-    await page.waitForTimeout(2000)
     
     const tables = await page.locator('table').all()
     
@@ -422,8 +384,6 @@ test.describe('Manual Accessibility Checks', () => {
 
   test('interactive elements are large enough', async ({ page, memberAuth }) => {
     await page.goto('/dashboard')
-    await page.waitForLoadState('networkidle')
-    await page.getByRole('main').waitFor({ timeout: 10_000 })
     
     const buttons = await page.locator('button, a[role="button"]').all()
     
@@ -441,16 +401,11 @@ test.describe('Manual Accessibility Checks', () => {
 
   test('page is usable when zoomed', async ({ page, memberAuth }) => {
     await page.goto('/dashboard')
-    await page.waitForLoadState('networkidle')
-    await page.getByRole('main').waitFor({ timeout: 10_000 })
     
     // Zoom to 200%
     await page.evaluate(() => {
       document.body.style.zoom = '2'
     })
-    
-    // Wait for zoom to apply
-    await page.waitForTimeout(500)
     
     // Check if main content is still visible
     const mainContent = page.locator('main, [role="main"]').first()

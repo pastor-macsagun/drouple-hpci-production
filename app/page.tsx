@@ -4,15 +4,14 @@ import { UserRole } from "@prisma/client";
 import { Metadata } from "next";
 import LandingPage from "./public-landing";
 import { unstable_noStore as noStore } from 'next/cache';
+import { BRAND_CONFIG } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "Drouple",
-  description:
-    "Church management made simple. Beautiful tools for modern ministry.",
+  title: BRAND_CONFIG.name,
+  description: BRAND_CONFIG.description,
   openGraph: {
-    title: "Drouple",
-    description:
-      "Church management made simple. Beautiful tools for modern ministry.",
+    title: BRAND_CONFIG.name,
+    description: BRAND_CONFIG.description,
     type: "website",
   },
 };

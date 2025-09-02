@@ -27,6 +27,16 @@ const updateMemberSchema = z.object({
   memberStatus: z.nativeEnum(MemberStatus)
 })
 
+/**
+ * Lists members with pagination, search, and multi-tenant filtering.
+ * Enforces tenant isolation using repository guards.
+ * 
+ * @param search Optional search term for name/email filtering
+ * @param cursor Pagination cursor for infinite scroll
+ * @param take Number of records to return (default 20)
+ * @param churchId Optional church filter for SUPER_ADMIN role
+ * @returns Paginated member list with tenant isolation applied
+ */
 export async function listMembers({
   search,
   cursor,
@@ -115,6 +125,13 @@ export async function listMembers({
   }
 }
 
+/**
+ * Creates a new member with multi-role and multi-church support.
+ * Implements complex business logic for role hierarchy and tenant assignment.
+ * 
+ * @param data Validated member creation data with system roles and church memberships
+ * @returns Created member with generated password, or error details
+ */
 export async function createMember(data: z.infer<typeof createMemberSchema>) {
   try {
     const session = await auth()
@@ -149,7 +166,8 @@ export async function createMember(data: z.infer<typeof createMemberSchema>) {
     const password = generateSecurePassword(12)
     const passwordHash = await hashPassword(password)
 
-    // Select the highest priority role as the primary system role
+    // Role hierarchy resolution: Select highest priority role from multiple selections
+    // Business rule: Primary system role determines base permissions across all churches
     const roleHierarchy: UserRole[] = [
       UserRole.SUPER_ADMIN,
       UserRole.PASTOR, 

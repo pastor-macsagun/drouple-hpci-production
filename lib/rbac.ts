@@ -40,6 +40,13 @@ export type CurrentUser = {
   }>;
 } | null;
 
+/**
+ * Retrieves the currently authenticated user with full membership details.
+ * Handles static generation contexts and JWT errors gracefully.
+ * 
+ * @returns Promise resolving to user object with memberships, or null if unauthenticated
+ * @throws Error only for unexpected authentication failures
+ */
 export async function getCurrentUser(): Promise<CurrentUser> {
   try {
     // Handle static generation context - when headers() is not available
@@ -111,6 +118,14 @@ export async function getCurrentUser(): Promise<CurrentUser> {
   }
 }
 
+/**
+ * Enforces role-based access control with optional local church context.
+ * Redirects unauthenticated users to signin, unauthorized users to forbidden page.
+ * 
+ * @param minRole Minimum required role level
+ * @param context Optional context requiring specific local church membership
+ * @returns Authenticated user if authorized
+ */
 export async function requireRole(
   minRole: UserRole,
   context?: RBACContext
@@ -145,6 +160,14 @@ export async function requireRole(
   return user
 }
 
+/**
+ * Critical tenant isolation guard - prevents cross-tenant data access.
+ * Validates that an entity belongs to the same local church as the actor.
+ * 
+ * @param entityOrId Entity with localChurchId property or direct church ID string
+ * @param actorLocalChurchId Local church ID of the user performing the action
+ * @throws Error if tenant mismatch detected (security violation)
+ */
 export async function assertTenant(
   entityOrId: { localChurchId?: string | null } | string,
   actorLocalChurchId: string
@@ -175,6 +198,14 @@ export function hasAnyRole(
   return allowedRoles.includes(userRole)
 }
 
+/**
+ * Checks if user role meets minimum required level using role hierarchy.
+ * SUPER_ADMIN automatically passes all checks.
+ * 
+ * @param userRole Current user's role
+ * @param minRole Minimum required role level
+ * @returns true if user has sufficient role level
+ */
 export function hasMinRole(
   userRole: UserRole,
   minRole: UserRole
@@ -187,6 +218,15 @@ export function hasMinRole(
   return roleHierarchy[userRole] >= roleHierarchy[minRole]
 }
 
+/**
+ * Domain-specific authorization for entity operations.
+ * Implements fine-grained permissions based on role and entity type.
+ * 
+ * @param userRole Current user's role
+ * @param entityType Type of entity being accessed
+ * @param action CRUD operation being performed
+ * @returns true if user is authorized for this operation
+ */
 export function canManageEntity(
   userRole: UserRole,
   entityType: 'church' | 'localChurch' | 'user' | 'lifeGroup' | 'event' | 'pathway',
@@ -262,11 +302,16 @@ export function canManageEntity(
 }
 
 /**
- * Repository Guard: Get accessible church IDs for the current user
- * Returns:
- * - undefined/null → throws explicit error  
- * - [] (empty array) → return empty array (caller must handle zero results)
- * - [churchIds] → return array of accessible church IDs
+ * Repository Guard: Multi-tenant access control for database queries.
+ * Determines which church IDs the user can access based on their role and tenant.
+ * 
+ * CRITICAL for tenant isolation - prevents cross-church data leaks.
+ * 
+ * @param user User object with role and tenantId
+ * @returns Array of accessible church IDs:
+ *   - SUPER_ADMIN: all church IDs
+ *   - Other roles: [tenantId] or [] if no tenantId
+ * @throws Error if no user provided (security requirement)
  */
 export async function getAccessibleChurchIds(
   user?: { role: UserRole; tenantId?: string | null } | null
@@ -293,8 +338,17 @@ export async function getAccessibleChurchIds(
 }
 
 /**
- * Repository Guard: Create tenant-scoped WHERE clause for Prisma queries
- * Supports both tenantId and localChurchId field names
+ * Repository Guard: Builds tenant-isolated WHERE clauses for database queries.
+ * Essential security function - ALL queries must use this for multi-tenant isolation.
+ * 
+ * Prevents data leaks between churches by enforcing tenant boundaries at query level.
+ * 
+ * @param user User object with role and tenantId
+ * @param additionalWhere Additional WHERE conditions to merge
+ * @param churchIdOverride Specific church filter (for SUPER_ADMIN)
+ * @param fieldName Database field name for tenant ID (tenantId or localChurchId)
+ * @returns Prisma WHERE clause with tenant isolation applied
+ * @throws Error if churchIdOverride violates user's access permissions
  */
 export async function createTenantWhereClause(
   user?: { role: UserRole; tenantId?: string | null } | null,

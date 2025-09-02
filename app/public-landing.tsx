@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Metadata } from "next";
 import LazySection from "./components/LazySection";
 import ScrollIndicator from "./components/ScrollIndicator";
+import { BRAND_CONFIG } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "Drouple",
-  description: "Church management made simple. Beautiful tools for modern ministry.",
+  title: BRAND_CONFIG.name,
+  description: BRAND_CONFIG.description,
   openGraph: {
-    title: "Drouple",
-    description: "Church management made simple. Beautiful tools for modern ministry.",
+    title: BRAND_CONFIG.name,
+    description: BRAND_CONFIG.description,
     type: "website",
   },
 };
@@ -22,9 +23,9 @@ export default function LandingPage() {
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="flex justify-between items-center h-11">
             <div className="text-xl font-semibold text-gray-900 tracking-tight">
-              Drouple
+              {BRAND_CONFIG.name}
             </div>
-            <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl touch-target" aria-label="Sign in to Drouple">
+            <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl touch-target" aria-label={`Sign in to ${BRAND_CONFIG.name}`}>
               <Link href="/auth/signin">Sign In</Link>
             </Button>
           </div>
@@ -169,13 +170,11 @@ export default function LandingPage() {
         </div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-6 hover:text-accent-secondary transition-colors duration-500 cursor-default" 
-              role="banner"
-              aria-label="Drouple - Church Management Platform">
-            Drouple
+          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-6 hover:text-accent-secondary transition-colors duration-500 cursor-default">
+            {BRAND_CONFIG.name}
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl font-medium mb-4 text-gray-100 tracking-tight">
-            Ministry made simple.
+            {BRAND_CONFIG.tagline}
           </p>
           <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
             The most thoughtfully designed church management platform for growing communities worldwide.
@@ -183,12 +182,12 @@ export default function LandingPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3 text-lg font-semibold rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl touch-target" 
-                    aria-label="Sign in to Drouple">
+                    aria-label={`Sign in to ${BRAND_CONFIG.name}`}>
               <Link href="/auth/signin">Sign In</Link>
             </Button>
             <p className="text-sm text-accent-secondary font-semibold" 
                aria-live="polite">
-              Mobile app coming Q4 2025
+              {BRAND_CONFIG.mobileAppRelease}
             </p>
           </div>
         </div>
@@ -816,7 +815,7 @@ export default function LandingPage() {
           <div className="mb-20">
             <p className="text-lg font-medium text-gray-400 mb-4 tracking-tight">Coming Soon</p>
             <h2 id="mobile-app-title" className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter mb-6">
-              Drouple goes mobile
+              {BRAND_CONFIG.name} goes mobile
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 font-medium max-w-4xl mx-auto leading-relaxed tracking-tight">
               Your entire church ecosystem in your pocket. Beautiful, fast, intuitive.
@@ -845,7 +844,7 @@ export default function LandingPage() {
                           
                           {/* App Title */}
                           <div className="text-center mb-12">
-                            <h3 className="text-3xl font-bold text-gray-800 mb-2">Drouple</h3>
+                            <h3 className="text-3xl font-bold text-gray-800 mb-2">{BRAND_CONFIG.name}</h3>
                             <p className="text-gray-500">Church Management System</p>
                           </div>
                           
@@ -936,10 +935,10 @@ export default function LandingPage() {
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="text-center">
             <p className="text-sm font-medium text-gray-300 mb-2 tracking-tight">
-              © 2025 Drouple. Made together by a pastor and church leaders, for pastors and church leaders everywhere.
+              {BRAND_CONFIG.copyright}
             </p>
             <p className="text-xs font-medium text-gray-400 tracking-tight">
-              Proudly Filipino Made 🇵🇭
+              {BRAND_CONFIG.footerTag}
             </p>
           </div>
         </div>

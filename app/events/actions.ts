@@ -121,6 +121,14 @@ export async function deleteEvent(eventId: string) {
   }
 }
 
+/**
+ * Handles event RSVP with race-condition-safe capacity management.
+ * Implements automatic waitlist placement when capacity is exceeded.
+ * Uses database transaction with serializable isolation to prevent overbooking.
+ * 
+ * @param eventId Event ID to RSVP for
+ * @returns RSVP object with GOING or WAITLIST status
+ */
 export async function rsvpToEvent(eventId: string) {
   try {
     const session = await auth()
@@ -168,9 +176,10 @@ export async function rsvpToEvent(eventId: string) {
       return { success: false, error: 'Already registered for this event' }
     }
 
-    // Use transaction to prevent race conditions in capacity checking
+    // Critical race condition prevention: Atomic capacity check and RSVP creation
+    // Serializable isolation prevents concurrent RSVPs from causing overbooking
     const rsvp = await prisma.$transaction(async (tx) => {
-      // Count current attendees within transaction
+      // Count current attendees within transaction for consistent read
       const currentAttendees = await tx.eventRsvp.count({
         where: {
           eventId,
@@ -178,12 +187,12 @@ export async function rsvpToEvent(eventId: string) {
         },
       })
 
-      // Determine RSVP status based on capacity
+      // Business logic: Auto-waitlist when at capacity
       const status = currentAttendees < event.capacity 
         ? RsvpStatus.GOING 
         : RsvpStatus.WAITLIST
 
-      // Create RSVP within same transaction
+      // Create RSVP within same transaction to prevent race conditions
       return await tx.eventRsvp.create({
         data: {
           eventId,
@@ -204,6 +213,14 @@ export async function rsvpToEvent(eventId: string) {
   }
 }
 
+/**
+ * Cancels event RSVP with automatic waitlist promotion.
+ * When a GOING attendee cancels, promotes the first waitlisted person automatically.
+ * Uses database transaction to ensure atomic waitlist management.
+ * 
+ * @param eventId Event ID to cancel RSVP for
+ * @returns Success/failure result
+ */
 export async function cancelRsvp(eventId: string) {
   try {
     const session = await auth()
@@ -223,9 +240,9 @@ export async function cancelRsvp(eventId: string) {
       return { success: false, error: 'RSVP not found' }
     }
 
-    // Use transaction to cancel and potentially promote from waitlist
+    // Atomic cancellation with waitlist promotion to prevent capacity gaps
     await prisma.$transaction(async (tx) => {
-      // Cancel the RSVP
+      // Cancel the user's RSVP
       await tx.eventRsvp.update({
         where: { id: rsvp.id },
         data: {
@@ -234,14 +251,14 @@ export async function cancelRsvp(eventId: string) {
         },
       })
 
-      // If user was GOING, promote first person from waitlist
+      // Business logic: Promote waitlisted person when GOING attendee cancels
       if (rsvp.status === RsvpStatus.GOING) {
         const firstWaitlisted = await tx.eventRsvp.findFirst({
           where: {
             eventId,
             status: RsvpStatus.WAITLIST,
           },
-          orderBy: { rsvpAt: 'asc' },
+          orderBy: { rsvpAt: 'asc' }, // FIFO promotion policy
         })
 
         if (firstWaitlisted) {

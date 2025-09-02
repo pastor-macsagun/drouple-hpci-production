@@ -327,6 +327,14 @@ export async function getLifeGroupRequests(lifeGroupId: string) {
   }
 }
 
+/**
+ * Approves LifeGroup membership request with capacity validation.
+ * Implements atomic request approval and membership creation.
+ * Enforces leader/admin authorization and tenant isolation.
+ * 
+ * @param requestId ID of the request to approve
+ * @returns Success/failure result with capacity checking
+ */
 export async function approveRequest(requestId: string) {
   try {
     const session = await auth()
@@ -373,12 +381,12 @@ export async function approveRequest(requestId: string) {
       return { success: false, error: 'Unauthorized' }
     }
 
-    // Check capacity
+    // Business rule: Enforce capacity limits to prevent overcrowding
     if (request.lifeGroup._count.memberships >= request.lifeGroup.capacity) {
       return { success: false, error: 'Life group is full' }
     }
 
-    // Update request and create membership in transaction
+    // Atomic approval: Update request status and create membership simultaneously
     await prisma.$transaction([
       prisma.lifeGroupMemberRequest.update({
         where: { id: requestId },

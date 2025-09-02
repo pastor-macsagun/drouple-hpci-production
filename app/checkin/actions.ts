@@ -60,6 +60,13 @@ export async function getTodayService() {
   }
 }
 
+/**
+ * Handles Sunday service check-in with auto-enrollment for new believers.
+ * Implements duplicate prevention and ROOTS pathway enrollment business logic.
+ * 
+ * @param formData Form data containing serviceId and isNewBeliever flag
+ * @returns Success/failure result with duplicate prevention
+ */
 export async function checkIn(formData: FormData) {
   try {
     const session = await auth()
@@ -114,14 +121,15 @@ export async function checkIn(formData: FormData) {
       }
     })
 
-    // If new believer, update user profile and auto-enroll in ROOTS pathway
+    // Business logic: New believer auto-enrollment in discipleship pathway
     if (isNewBeliever) {
       await prisma.user.update({
         where: { id: session.user.id },
         data: { isNewBeliever: true }
       })
 
-      // Auto-enroll in ROOTS pathway if it exists
+      // Auto-enroll in ROOTS pathway for discipleship tracking
+      // ROOTS is designed for new believers to complete basic Christian foundations
       const rootsPathway = await prisma.pathway.findFirst({
         where: {
           type: 'ROOTS',
@@ -136,7 +144,7 @@ export async function checkIn(formData: FormData) {
             userId: session.user.id
           }
         }).catch(() => {
-          // Ignore if already enrolled
+          // Graceful handling: Ignore duplicate enrollment attempts
         })
       }
     }

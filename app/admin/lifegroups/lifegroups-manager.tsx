@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -271,6 +271,9 @@ export function LifeGroupsManager({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create LifeGroup</DialogTitle>
+            <DialogDescription>
+              Create a new LifeGroup with a leader and capacity. Members can request to join once created.
+            </DialogDescription>
           </DialogHeader>
           <form 
             id="create-lifegroup-form"
@@ -389,8 +392,10 @@ export function LifeGroupsManager({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete LifeGroup</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this life group? This will also remove all memberships and attendance records.
+            </DialogDescription>
           </DialogHeader>
-          <p>Are you sure you want to delete this life group? This will also remove all memberships and attendance records.</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(null)}>
               Cancel

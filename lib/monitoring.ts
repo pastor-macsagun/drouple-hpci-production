@@ -4,6 +4,7 @@
  */
 
 import { logger } from './logger'
+import { ErrorInfo } from 'react'
 
 /**
  * Enhanced error tracking with business context
@@ -33,7 +34,7 @@ export class ErrorTracker {
     action: string;
     resource?: string;
     severity?: 'low' | 'medium' | 'high';
-    extra?: Record<string, any>;
+    extra?: Record<string, unknown>;
   }) {
     logger.error('Business Logic Error', {
       message,
@@ -77,7 +78,7 @@ export class ErrorTracker {
  * Custom error boundary for React components
  */
 export class ErrorBoundary {
-  static logError(error: Error, errorInfo?: any) {
+  static logError(error: Error, errorInfo?: ErrorInfo) {
     logger.error('React Error Boundary', { error, errorInfo })
   }
 }

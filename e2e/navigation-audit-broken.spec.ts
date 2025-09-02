@@ -121,31 +121,31 @@ test.describe('Navigation Audit - @navigation', () => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
       
-      // Wait for nav to render (public landing page uses nav, not header)
-      await page.locator('nav').waitFor({ timeout: 10_000 });
+      // Wait for header to render
+      await page.locator('header').waitFor({ timeout: 10_000 });
       
-      // Check that navigation bar contains minimal links (just Sign In)
-      const navLinks = await page.locator('nav a').count();
+      // Check that header does not contain navigation links
+      const headerNavLinks = await page.locator('header nav a').count();
       
       console.log('Header Redundancy Analysis:');
-      console.log('Navigation links found in nav:', navLinks);
-      console.log('Expected: 1 (Sign In only)');
+      console.log('Navigation links found in nav:', headerNavLinks);
+      console.log('Expected: 0 (redundancy removed)');
       
-      // Should only have Sign In link
-      expect(navLinks).toBe(1);
+      // Verify no navigation links in header
+      expect(headerNavLinks).toBe(0);
       
-      // Check that nav still has branding
-      const brandingText = await page.locator('nav').getByText('drouple').isVisible();
-      expect(brandingText).toBeTruthy();
+      // Check that header still has branding
+      const brandingLink = await page.locator('header a:has-text("HPCI")').isVisible();
+      expect(brandingLink).toBeTruthy();
       
-      // Take screenshot of nav
+      // Take screenshot of header
       await page.screenshot({ 
         path: 'e2e/screenshots/header-navigation.png',
         fullPage: false,
         clip: { x: 0, y: 0, width: 1280, height: 100 }
       });
       
-      console.log('Nav now contains only branding and sign in (redundancy resolved)');
+      console.log('Header now contains only branding and user menu (redundancy resolved)');
     });
   });
   
@@ -328,12 +328,12 @@ test.describe('Navigation Audit - @navigation', () => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
       
-      // Wait for layout components to render - look for any nav element
-      await page.locator('nav, header').first().waitFor({ timeout: 10_000 });
+      // Wait for layout components to render
+      await page.locator('header').waitFor({ timeout: 10_000 });
       
-      // Check for navigation element
-      const hasNav = await page.locator('nav, header').first().isVisible();
-      expect(hasNav).toBeTruthy();
+      // Check for header
+      const header = await page.locator('header').isVisible();
+      expect(header).toBeTruthy();
       
       // Check for sidebar on desktop
       await page.setViewportSize({ width: 1280, height: 720 });
@@ -342,7 +342,7 @@ test.describe('Navigation Audit - @navigation', () => {
       const sidebar = await page.locator('aside').isVisible();
       
       console.log('Component Integration:');
-      console.log('Navigation present:', hasNav);
+      console.log('Header present:', header);
       console.log('Sidebar present (desktop):', sidebar);
       
       // Check mobile menu button

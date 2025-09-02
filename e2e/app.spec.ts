@@ -5,7 +5,7 @@ test('app boots and shows home page', async ({ page }) => {
   
   await expect(page).toHaveTitle(/HPCI ChMS/);
   await expect(page.getByRole('heading', { name: 'HPCI ChMS' })).toBeVisible();
-  await expect(page.getByText('Church Management System')).toBeVisible();
+  await expect(page.getByText('Ministry made simple.')).toBeVisible();
 });
 
 test('auth page renders correctly', async ({ page }) => {

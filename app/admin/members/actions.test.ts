@@ -438,7 +438,7 @@ describe('Member Management Actions', () => {
       expect(result.success).toBe(true)
       expect(result.data).toEqual(mockChurches)
       expect(prisma.localChurch.findMany).toHaveBeenCalledWith({
-        where: { id: 'church1' },
+        where: { churchId: 'church1' }, // Filter by churchId for tenant isolation
         select: { id: true, name: true },
         orderBy: { name: 'asc' }
       })
@@ -469,7 +469,7 @@ describe('Member Management Actions', () => {
       expect(result.success).toBe(true)
       expect(result.data).toEqual(mockChurches)
       expect(prisma.localChurch.findMany).toHaveBeenCalledWith({
-        where: { id: 'church1' },
+        where: { churchId: 'church1' }, // Filter by churchId for tenant isolation
         select: { id: true, name: true },
         orderBy: { name: 'asc' }
       })
