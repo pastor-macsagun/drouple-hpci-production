@@ -49,6 +49,11 @@
     "deploy:preview": "vercel",
     "vercel:status": "vercel ls",
     "vercel:logs": "vercel logs",
+    "test:production": "tsx scripts/production-testing/run-production-tests.ts",
+    "test:production:headless": "tsx scripts/production-testing/run-production-tests.ts --headless",
+    "test:production:admins": "tsx scripts/production-testing/run-production-tests.ts --accounts \"admin.manila@test.com,admin.cebu@test.com\"",
+    "test:production:auth": "tsx scripts/production-testing/run-production-tests.ts --scenarios \"Authentication Flow\"",
+    "test:production:setup": "cd scripts/production-testing && npm install",
     "postinstall": "prisma generate"
   },
   "dependencies": {

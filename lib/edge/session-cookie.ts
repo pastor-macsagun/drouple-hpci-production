@@ -3,9 +3,11 @@ import { getToken } from "next-auth/jwt"
 
 export async function getSession(req: NextRequest) {
   try {
+    // Use same secret resolution logic as auth.ts for consistency
+    const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
     const token = await getToken({ 
       req,
-      secret: process.env.NEXTAUTH_SECRET
+      secret
     })
     return token
   } catch (error) {
