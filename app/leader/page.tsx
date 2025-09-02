@@ -30,7 +30,7 @@ export default async function LeaderDashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* LifeGroups Leadership */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -89,8 +89,8 @@ export default async function LeaderDashboard() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-100 rounded-xl">
-                  <Calendar className="h-6 w-6 text-amber-600" />
+                <div className="p-2 bg-secondary/10 rounded-xl">
+                  <Calendar className="h-6 w-6 text-secondary" />
                 </div>
                 <h3 className="font-semibold">Events</h3>
               </div>

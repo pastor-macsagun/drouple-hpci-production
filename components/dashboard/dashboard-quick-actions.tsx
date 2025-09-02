@@ -65,7 +65,7 @@ export function DashboardQuickActions({ user }: DashboardQuickActionsProps) {
           )}
           {user.role === UserRole.VIP && (
             <Button asChild variant="outline" className="justify-start hover:bg-primary hover:text-primary-foreground transition-colors">
-              <Link href="/vip/first-timers">
+              <Link href="/vip/firsttimers">
                 <UserPlus className="mr-2 h-4 w-4" />
                 First Timers
               </Link>
