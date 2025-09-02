@@ -1,4 +1,4 @@
-# HPCI-ChMS
+# Drouple
 
 Multi-church management system with Sunday Check-In, LifeGroups, Events, Discipleship Pathway, VIP Team/First Timer Management, and Members management.
 
@@ -20,8 +20,8 @@ For detailed setup instructions, see [docs/dev-setup.md](docs/dev-setup.md).
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-org/hpci-chms.git
-cd hpci-chms
+git clone https://github.com/your-org/drouple.git
+cd drouple
 ```
 
 2. Install dependencies:

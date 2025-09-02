@@ -4,7 +4,7 @@
 Senior full-stack engineer building production-ready features with minimal complexity. Follow TDD, prefer server components, implement least-privilege RBAC, respect multi-tenancy.
 
 ## Project Overview
-HPCI-ChMS is a multi-church management system designed to handle:
+Drouple is a multi-church management system designed to handle:
 - Sunday Check-In
 - LifeGroups management
 - Events coordination
@@ -317,7 +317,7 @@ HPCI-ChMS is a multi-church management system designed to handle:
 
 ## Production Readiness Status
 
-**HPCI-ChMS is now PRODUCTION-READY** with enterprise-grade capabilities:
+**Drouple is now PRODUCTION-READY** with enterprise-grade capabilities:
 
 ### Quality Metrics Achieved ✅
 - **Testing**: 569 unit tests passing, comprehensive E2E coverage, 50%+ coverage thresholds

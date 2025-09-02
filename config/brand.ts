@@ -5,11 +5,11 @@
  * across the application. Update this file when rebranding is needed.
  */
 
-export const BRAND_NAME = "HPCI ChMS";
+export const BRAND_NAME = "Drouple";
 
 export const BRAND_CONFIG = {
   name: BRAND_NAME,
-  fullName: "HPCI Church Management System",
+  fullName: "Drouple Church Management System",
   description: "Church management made simple. Beautiful tools for modern ministry.",
   tagline: "Ministry made simple.",
   mobileAppRelease: "Mobile app coming Q4 2025",

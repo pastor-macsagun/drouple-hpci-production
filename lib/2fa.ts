@@ -10,7 +10,7 @@ export function generate2FASecret(): string {
 }
 
 export function generateQRCodeURL(email: string, secret: string): string {
-  const service = 'HPCI ChMS'
+  const service = 'Drouple'
   const otpauthURL = authenticator.keyuri(email, service, secret)
   return otpauthURL
 }

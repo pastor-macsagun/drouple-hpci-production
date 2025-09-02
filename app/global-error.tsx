@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * Global Error Handler for HPCI-ChMS
+ * Global Error Handler for Drouple
  * 
  * This component catches React rendering errors that occur anywhere in the application
  * and provides a user-friendly error fallback UI.

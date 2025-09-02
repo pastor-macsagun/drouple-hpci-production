@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 test('app boots and shows home page', async ({ page }) => {
   await page.goto('/');
   
-  await expect(page).toHaveTitle(/HPCI ChMS/);
-  await expect(page.getByRole('heading', { name: 'HPCI ChMS' })).toBeVisible();
+  await expect(page).toHaveTitle(/Drouple/);
+  await expect(page.getByRole('heading', { name: 'Drouple' })).toBeVisible();
   await expect(page.getByText('Ministry made simple.')).toBeVisible();
 });
 
@@ -24,5 +24,5 @@ test('health endpoint returns healthy status', async ({ request }) => {
   
   const json = await response.json();
   expect(json.status).toBe('healthy');
-  expect(json.service).toBe('hpci-chms');
+  expect(json.service).toBe('drouple');
 });

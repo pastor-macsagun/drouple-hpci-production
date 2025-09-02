@@ -146,7 +146,7 @@ class AlertManager {
         type: 'email',
         config: {
           to: process.env.ALERT_EMAIL_TO,
-          from: process.env.EMAIL_FROM || 'alerts@hpci-chms.com',
+          from: process.env.EMAIL_FROM || 'alerts@drouple.app',
           smtp: {
             host: process.env.EMAIL_SERVER_HOST,
             port: process.env.EMAIL_SERVER_PORT,
@@ -371,7 +371,7 @@ class AlertManager {
     alert: Alert
   ): Promise<void> {
     // Implementation would use nodemailer or Resend
-    const subject = `🚨 HPCI-ChMS Alert: ${alert.title}`;
+    const subject = `🚨 Drouple Alert: ${alert.title}`;
     const body = `
       Alert Details:
       - Severity: ${alert.severity.toUpperCase()}
@@ -404,7 +404,7 @@ class AlertManager {
 
     const payload = {
       channel: channel.config.channel,
-      username: 'HPCI-ChMS Alerts',
+      username: 'Drouple Alerts',
       icon_emoji: ':warning:',
       attachments: [{
         color: alert.severity === 'critical' ? 'danger' : 
@@ -439,7 +439,7 @@ class AlertManager {
       category: alert.category,
       timestamp: alert.timestamp.toISOString(),
       metadata: alert.metadata,
-      system: 'hpci-chms',
+      system: 'drouple',
     };
 
     // For production, implement actual HTTP request
@@ -453,7 +453,7 @@ class AlertManager {
     channel: NotificationChannel, 
     alert: Alert
   ): Promise<void> {
-    const message = `HPCI-ChMS ${alert.severity.toUpperCase()}: ${alert.title} - ${alert.message}`;
+    const message = `Drouple ${alert.severity.toUpperCase()}: ${alert.title} - ${alert.message}`;
     
     // For production, implement actual SMS sending (Twilio, etc.)
     console.log('SMS notification:', { to: channel.config.phoneNumber, message });

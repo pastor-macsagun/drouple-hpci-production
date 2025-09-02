@@ -31,7 +31,7 @@ describe('HomePage', () => {
     
     // Check for key brand elements 
     expect(screen.getByText('Ministry made simple.')).toBeDefined()
-    expect(screen.getAllByText('HPCI ChMS').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Drouple').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Sign In').length).toBeGreaterThanOrEqual(1)
   })
 })

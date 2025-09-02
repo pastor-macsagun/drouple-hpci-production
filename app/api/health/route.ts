@@ -14,7 +14,7 @@ export async function GET() {
       ok: true,
       status: "healthy",
       time: new Date().toISOString(),
-      service: "hpci-chms",
+      service: "drouple",
       db: {
         status: "up",
         responseTime: `${healthResult.latencyMs}ms`,
@@ -29,7 +29,7 @@ export async function GET() {
       ok: false,
       status: "unhealthy", 
       time: new Date().toISOString(),
-      service: "hpci-chms",
+      service: "drouple",
       db: "down",
       error: error instanceof Error ? error.message : "Unknown error"
     }, { status: 503 });
