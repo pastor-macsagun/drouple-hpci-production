@@ -1,0 +1,29 @@
+{
+  "name": "hpci-chms-production-testing",
+  "version": "1.0.0",
+  "description": "Automated production testing suite for HPCI-ChMS",
+  "main": "run-production-tests.ts",
+  "scripts": {
+    "test": "tsx run-production-tests.ts",
+    "test:headless": "tsx run-production-tests.ts --headless",
+    "test:no-cleanup": "tsx run-production-tests.ts --no-cleanup",
+    "test:admins": "tsx run-production-tests.ts --accounts \"admin.manila@test.com,admin.cebu@test.com\"",
+    "test:auth": "tsx run-production-tests.ts --scenarios \"Authentication Flow\"",
+    "cleanup": "find . -name 'cleanup-*.ts' -exec tsx {} \\;",
+    "install-deps": "npm install playwright @playwright/test tsx"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "playwright": "^1.55.0",
+    "tsx": "^4.20.5"
+  },
+  "keywords": [
+    "testing",
+    "production",
+    "automation",
+    "church-management",
+    "playwright"
+  ],
+  "author": "HPCI-ChMS Team",
+  "license": "MIT"
+}

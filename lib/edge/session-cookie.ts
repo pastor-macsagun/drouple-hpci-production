@@ -1,10 +1,12 @@
 import { NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
+import { getNextAuthSecret } from "../env-utils"
 
 export async function getSession(req: NextRequest) {
   try {
     // Use same secret resolution logic as auth.ts for consistency
-    const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+    // Clean any trailing newlines that Vercel CLI might add
+    const secret = getNextAuthSecret()
     const token = await getToken({ 
       req,
       secret

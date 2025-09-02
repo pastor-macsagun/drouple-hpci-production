@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs"
 import { authLogger } from "./logger"
 import { checkRateLimit, recordAttempt, resetAttempts } from "./auth-rate-limit"
 import { logEnvironmentValidation } from "./env-validation"
+import { getNextAuthSecret } from "./env-utils"
 
 const prisma = new PrismaClient()
 
@@ -15,9 +16,12 @@ if (!envValidation.valid) {
 }
 
 // Check for AUTH_SECRET with fallback to NEXTAUTH_SECRET
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+// Clean any trailing newlines that Vercel CLI might add
+const AUTH_SECRET = getNextAuthSecret()
 if (!AUTH_SECRET) {
   console.warn('[Auth] Missing AUTH_SECRET/NEXTAUTH_SECRET. JWT sessions will fail.')
+} else {
+  console.log('[Auth] Using AUTH_SECRET for JWT signing and verification')
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
