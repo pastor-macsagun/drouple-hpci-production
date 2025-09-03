@@ -16,7 +16,7 @@ export default async function LeaderDashboard() {
     redirect("/auth/signin");
   }
 
-  if (user.role !== UserRole.LEADER) {
+  if (!([UserRole.LEADER, UserRole.VIP, UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN] as UserRole[]).includes(user.role)) {
     redirect("/dashboard");
   }
 

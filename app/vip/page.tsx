@@ -16,7 +16,7 @@ export default async function VipDashboard() {
     redirect("/auth/signin");
   }
 
-  if (user.role !== UserRole.VIP) {
+  if (!([UserRole.VIP, UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN] as UserRole[]).includes(user.role)) {
     redirect("/dashboard");
   }
 

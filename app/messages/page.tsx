@@ -1,4 +1,3 @@
-import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import type { Message, User } from '@prisma/client'
@@ -8,15 +7,22 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { MessageSquare, Send, Inbox, Search, Circle } from 'lucide-react'
 import Link from 'next/link'
+import { getCurrentUser, hasMinRole } from '@/lib/rbac'
+import { UserRole } from '@prisma/client'
 
 type MessageWithSender = Message & { sender: Pick<User, 'id' | 'name' | 'email'> } & { replies: Message[] }
 type MessageWithRecipient = Message & { recipient: Pick<User, 'id' | 'name' | 'email'> } & { replies: Message[] }
 
-async function getMessages(userId: string, filter: 'inbox' | 'sent'): Promise<MessageWithSender[] | MessageWithRecipient[]> {
+async function getMessages(
+  user: { id: string; role: UserRole; tenantId: string | null }, 
+  filter: 'inbox' | 'sent'
+): Promise<MessageWithSender[] | MessageWithRecipient[]> {
+  // Apply tenant isolation to all message queries - messages are already isolated by userId
+  
   if (filter === 'sent') {
     return prisma.message.findMany({
       where: {
-        senderId: userId,
+        senderId: user.id,
         parentMessageId: null
       },
       include: {
@@ -31,7 +37,7 @@ async function getMessages(userId: string, filter: 'inbox' | 'sent'): Promise<Me
   } else {
     return prisma.message.findMany({
       where: {
-        recipientId: userId,
+        recipientId: user.id,
         parentMessageId: null
       },
       include: {
@@ -58,27 +64,30 @@ async function getUnreadCount(userId: string) {
 export default async function MessagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: 'inbox' | 'sent' }>
+  searchParams: Promise<{ filter?: 'inbox' | 'sent'; error?: string }>
 }) {
   const resolvedSearchParams = await searchParams
-  const session = await auth()
-  if (!session?.user) {
-    redirect('/auth/signin')
-  }
-
-  const filter = resolvedSearchParams.filter || 'inbox'
-  const messages = await getMessages(session.user.id, filter)
-  const unreadCount = await getUnreadCount(session.user.id)
-
-  // Get full user details for sidebar
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, email: true, name: true, role: true }
-  })
-
+  
+  // Authentication and RBAC check
+  const user = await getCurrentUser()
   if (!user) {
     redirect('/auth/signin')
   }
+
+  // RBAC enforcement - only MEMBER and above can access messages
+  if (!hasMinRole(user.role, UserRole.MEMBER)) {
+    throw new Error('Insufficient permissions to access messages')
+  }
+
+  const filter = resolvedSearchParams.filter || 'inbox'
+  const messages = await getMessages(user, filter)
+  const unreadCount = await getUnreadCount(user.id)
+  
+  const errorMessage = resolvedSearchParams.error === 'rate_limited'
+    ? 'Rate limit exceeded. Please wait before sending another message.'
+    : resolvedSearchParams.error === 'validation_failed'
+    ? 'Invalid message data. Please check your input.'
+    : null
 
   return (
     <AppLayout user={user}>
@@ -98,6 +107,12 @@ export default async function MessagesPage({
           </Button>
         </Link>
       </div>
+      
+      {errorMessage && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-700">{errorMessage}</p>
+        </div>
+      )}
 
       <div className="flex gap-4">
         <div className="w-48">
