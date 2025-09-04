@@ -41,7 +41,7 @@ vi.mock('@/lib/notifications/queue', () => ({
   queueTopicSubscription: vi.fn(),
 }));
 
-vi.mock('@/lib/auth/rbac', () => ({
+vi.mock('@/lib/rbac', () => ({
   createTenantWhereClause: vi.fn(),
 }));
 
@@ -53,7 +53,7 @@ describe('Push Notification Service', () => {
     queueMultipleNotifications, 
     queueTopicSubscription 
   } = vi.mocked(await import('@/lib/notifications/queue'));
-  const { createTenantWhereClause } = vi.mocked(await import('@/lib/auth/rbac'));
+  const { createTenantWhereClause } = vi.mocked(await import('@/lib/rbac'));
 
   beforeEach(() => {
     vi.clearAllMocks();

@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '@/lib/db';
-import { createTenantWhereClause } from '@/lib/auth/rbac';
+import { createTenantWhereClause } from '@/lib/rbac';
 import { 
   queueSingleNotification,
   queueMultipleNotifications,

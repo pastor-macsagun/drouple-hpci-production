@@ -11,7 +11,7 @@ const completeStepSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { pathwayId: string; stepId: string } }
+  { params }: { params: { id: string; stepId: string } }
 ) {
   try {
     // Check authentication
@@ -27,7 +27,7 @@ export async function POST(
       )
     }
 
-    const { pathwayId, stepId } = params
+    const { id: pathwayId, stepId } = params
     const body = await request.json()
     
     // Validate input
