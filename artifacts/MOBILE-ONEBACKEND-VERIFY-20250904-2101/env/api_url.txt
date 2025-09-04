@@ -1,0 +1,16 @@
+WEB APPLICATION BASE URLs:
+- Development: http://localhost:3000
+- Production: https://drouple-hpci-prod.vercel.app
+- Source: next.config.ts, vercel.json
+
+MOBILE APPLICATION BASE URLs:
+- Development: http://localhost:3000
+- Production: https://drouple-hpci-prod.vercel.app
+- Source: drouple-mobile/src/config/endpoints.ts
+- Configuration: expo-constants with fallback
+
+UNIFIED ENDPOINTS VERIFIED:
+✅ Both clients use identical base URLs
+✅ Both clients target /api/v1/* namespace
+✅ Environment-based configuration working
+✅ HTTPS enforcement enabled for production

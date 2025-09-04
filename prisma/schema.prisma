@@ -52,6 +52,8 @@ model User {
   pathwayEnrollments      PathwayEnrollment[]
   pathwayProgress         PathwayProgress[]
   sessions                Session[]
+  mobileRefreshTokens     MobileRefreshToken[]
+  mobileIdempotency       MobileIdempotency[]
 
   @@index([tenantId])
   @@index([tenantId, role])
@@ -492,6 +494,37 @@ model KeyValue {
   updatedAt DateTime @updatedAt
 
   @@map("key_values")
+}
+
+model MobileRefreshToken {
+  id         String    @id @default(cuid())
+  userId     String
+  jti        String    @unique // JWT ID for this refresh token
+  rotationId String    @unique // Unique identifier for token rotation
+  revokedAt  DateTime? // NULL = active, DateTime = revoked
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([rotationId])
+  @@index([jti])
+  @@index([expiresAt])
+  @@map("mobile_refresh_tokens")
+}
+
+model MobileIdempotency {
+  id        String   @id // Idempotency key (from header or clientRequestId)
+  userId    String
+  route     String   // API route path
+  response  Json     // Cached response data
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([route])
+  @@index([createdAt])
+  @@map("mobile_idempotency")
 }
 
 enum UserRole {

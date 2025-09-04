@@ -1,0 +1,5 @@
+REMAINING /api/mobile/v1/ REFERENCES:
+GROUPS and PATHWAYS endpoints: 7 references (intentionally kept for mobile-specific features)
+TEST files: 2 references (integration tests)
+CORE APIS MIGRATED: Auth, Events, Checkins, Members, Sync, Devices, Live
+STATUS: Critical paths migrated to /api/v1/*

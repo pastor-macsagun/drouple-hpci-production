@@ -1,0 +1,4 @@
+OpenAPI spec generated: openapi/drouple.v1.yaml
+TypeScript contracts: packages/contracts/dist/
+Validation: Spec defines unified endpoints
+Status: VALIDATED - 17 endpoints, consistent response format

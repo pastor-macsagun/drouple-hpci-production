@@ -1,0 +1,7 @@
+Security checks completed:
+✅ HTTPS-only enforced (ENFORCE_HTTPS = !__DEV__)  
+✅ JWT rotation implemented (15min access, 7day refresh)
+✅ Token revocation via jti denylist
+✅ No PII in logs (structured logging with redaction)
+✅ Rate limiting on auth endpoints
+Status: VERIFIED

@@ -1,0 +1,30 @@
+
+> drouple-mobile@1.0.0 prebuild
+> expo prebuild
+
+- Creating native directories (./ios and ./android)
+✔ Created native directories | reusing /ios
+- Updating package.json
+› Using react-native@0.79.5 instead of recommended react-native@0.79.6.
+- Updating package.json
+✔ Updated package.json | no changes
+- Running prebuild
+» android: EDGE_TO_EDGE_PLUGIN: No configuration found for `edgeToEdgeEnabled` field in the project app config, falling back to false. In Android 16+ (targetSdkVersion 36) it will no longer be possible to disable edge-to-edge. Learn more: https://expo.fyi/edge-to-edge-rollout
+- Running prebuild
+» ios: ios.config.usesNonExemptEncryption: "ios.infoPlist.ITSAppUsesNonExemptEncryption" is set in the config. Ignoring abstract property "ios.config.usesNonExemptEncryption": false
+- Running prebuild
+» android: userInterfaceStyle: Install expo-system-ui in your project to enable this feature.
+- Running prebuild
+✔ Finished prebuild
+
+> drouple-mobile@1.0.0 build
+> expo build
+
+Invalid project root: /Users/macsagun/HPCI-ChMS/drouple-mobile/build
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error workspace drouple-mobile@1.0.0
+npm error location /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error command failed
+npm error command sh -c expo build

@@ -1,0 +1,41 @@
+{
+  "discovered_endpoints": {
+    "auth": [
+      "/api/mobile/v1/auth/login",
+      "/api/mobile/v1/auth/refresh",
+      "/api/mobile/v1/profile"
+    ],
+    "checkins": [
+      "/api/mobile/v1/services",
+      "/api/mobile/v1/checkin",
+      "/api/mobile/v1/checkins"
+    ],
+    "events": [
+      "/api/mobile/v1/events",
+      "/api/mobile/v1/events/{id}",
+      "/api/mobile/v1/events/{id}/rsvp",
+      "/api/mobile/v1/events/rsvp"
+    ],
+    "lifegroups": [
+      "/api/mobile/v1/lifegroups",
+      "/api/mobile/v1/lifegroups/{id}",
+      "/api/mobile/v1/lifegroups/{id}/join"
+    ],
+    "pathways": [
+      "/api/mobile/v1/pathways",
+      "/api/mobile/v1/pathways/{id}",
+      "/api/mobile/v1/pathways/{id}/progress",
+      "/api/mobile/v1/pathways/{pathwayId}/steps/{stepId}/complete"
+    ],
+    "directory": [
+      "/api/mobile/v1/directory/search"
+    ],
+    "notifications": [
+      "/api/mobile/v1/notifications/device"
+    ],
+    "websocket": [
+      "/api/mobile/v1/ws"
+    ]
+  },
+  "total_endpoints": 17
+}

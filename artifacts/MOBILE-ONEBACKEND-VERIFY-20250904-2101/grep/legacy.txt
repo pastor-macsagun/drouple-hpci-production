@@ -1,0 +1,22 @@
+LEGACY /api/mobile/v1 PATH VERIFICATION:
+
+INTENTIONAL REMAINING REFERENCES (7 total):
+✅ Groups endpoints (3): /api/mobile/v1/lifegroups/* - Mobile-specific features
+✅ Pathways endpoints (4): /api/mobile/v1/pathways/* - Mobile-specific progress tracking
+
+LEGACY REFERENCES IN TESTS (2 total):
+⚠️ connectivity.test.ts - Legacy test scenarios (non-production)
+
+CRITICAL ENDPOINTS MIGRATED (0 legacy references):
+✅ Authentication: All migrated to /api/v1/auth/*
+✅ Events/RSVP: All migrated to /api/v1/events/*  
+✅ Check-ins: All migrated to /api/v1/checkins/*
+✅ Members: All migrated to /api/v1/members/*
+✅ Sync: All migrated to /api/v1/sync/*
+✅ Devices: All migrated to /api/v1/devices
+✅ Live: All migrated to /api/v1/live/*
+
+VERIFICATION: ✅ PASS
+- Core mobile app uses /api/v1/* for all critical flows
+- Legacy references are intentional for mobile-specific features
+- No unintended legacy path usage detected

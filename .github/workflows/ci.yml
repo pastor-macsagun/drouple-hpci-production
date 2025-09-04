@@ -76,6 +76,56 @@ jobs:
       - name: Run ESLint
         run: npm run lint
       
+      - name: API Migration Guardrails - Legacy Path Check
+        run: |
+          echo "🔍 Checking for unintended legacy /api/mobile/v1 usage..."
+          
+          # Check core web app files (should have zero legacy references)
+          WEB_LEGACY=$(find app lib components -name "*.ts" -o -name "*.tsx" | xargs grep -n "/api/mobile/v1" 2>/dev/null | grep -v "adapters\|middleware" | wc -l)
+          
+          if [ $WEB_LEGACY -gt 0 ]; then
+            echo "❌ Found $WEB_LEGACY unintended /api/mobile/v1 references in web app files!"
+            find app lib components -name "*.ts" -o -name "*.tsx" | xargs grep -n "/api/mobile/v1" 2>/dev/null | grep -v "adapters\|middleware"
+            exit 1
+          fi
+          
+          # Check mobile app critical paths (auth, events, checkins must use /api/v1)
+          MOBILE_AUTH_LEGACY=$(find drouple-mobile -name "*.ts" -o -name "*.tsx" | xargs grep -n "/api/mobile/v1/auth" 2>/dev/null | wc -l)
+          MOBILE_EVENTS_LEGACY=$(find drouple-mobile -name "*.ts" -o -name "*.tsx" | xargs grep -n "/api/mobile/v1/events" 2>/dev/null | wc -l) 
+          MOBILE_CHECKIN_LEGACY=$(find drouple-mobile -name "*.ts" -o -name "*.tsx" | xargs grep -n "/api/mobile/v1/checkin" 2>/dev/null | wc -l)
+          
+          if [ $MOBILE_AUTH_LEGACY -gt 0 ] || [ $MOBILE_EVENTS_LEGACY -gt 0 ] || [ $MOBILE_CHECKIN_LEGACY -gt 0 ]; then
+            echo "❌ Critical mobile endpoints still using legacy paths!"
+            echo "Auth legacy refs: $MOBILE_AUTH_LEGACY (must be 0)"
+            echo "Events legacy refs: $MOBILE_EVENTS_LEGACY (must be 0)" 
+            echo "Checkin legacy refs: $MOBILE_CHECKIN_LEGACY (must be 0)"
+            exit 1
+          fi
+          
+          echo "✅ API migration guardrails passed - no unintended legacy usage"
+      
+      - name: OpenAPI Specification Validation
+        run: |
+          echo "🔍 Validating OpenAPI specification..."
+          
+          if [ ! -f "openapi/drouple.v1.yaml" ]; then
+            echo "❌ OpenAPI specification not found at openapi/drouple.v1.yaml"
+            exit 1
+          fi
+          
+          # Install OpenAPI tools if not present
+          npm install -g @apidevtools/swagger-parser || echo "Parser already installed"
+          
+          # Validate OpenAPI spec syntax
+          swagger-parser validate openapi/drouple.v1.yaml
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ OpenAPI specification is valid"
+          else
+            echo "❌ OpenAPI specification validation failed"
+            exit 1
+          fi
+      
       - name: Check for TODO/FIXME comments
         run: |
           TODO_COUNT=$(grep -r "TODO\|FIXME" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules . | wc -l)
@@ -259,6 +309,55 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
           DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/test
+      
+      - name: Contract & Adapter Parity Tests
+        run: |
+          echo "🔍 Testing API contract and adapter parity..."
+          
+          # Start the application for API testing
+          npm run build
+          npm run start &
+          APP_PID=$!
+          sleep 30
+          
+          # Test critical endpoint parity
+          echo "Testing /api/v1/auth/login endpoint..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/v1/auth/login)
+          if [ "$STATUS" -ne 405 ] && [ "$STATUS" -ne 200 ]; then
+            echo "❌ /api/v1/auth/login endpoint not responding correctly (status: $STATUS)"
+            kill $APP_PID
+            exit 1
+          fi
+          
+          echo "Testing deprecated adapter /api/mobile/v1/auth/login..."
+          ADAPTER_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/mobile/v1/auth/login)
+          if [ "$ADAPTER_STATUS" -ne 405 ] && [ "$ADAPTER_STATUS" -ne 200 ]; then
+            echo "❌ Deprecated adapter not working (status: $ADAPTER_STATUS)"
+            kill $APP_PID
+            exit 1
+          fi
+          
+          # Test deprecation headers
+          HEADERS=$(curl -s -I http://localhost:3000/api/mobile/v1/auth/login | grep -i "deprecation\|sunset\|warning\|link")
+          if [ -z "$HEADERS" ]; then
+            echo "⚠️ Deprecation headers missing from adapter"
+          else
+            echo "✅ Deprecation headers present"
+          fi
+          
+          kill $APP_PID
+          echo "✅ Contract & adapter parity tests passed"
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/test
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: test-secret-key-for-parity
+          EMAIL_SERVER_HOST: smtp.example.com
+          EMAIL_SERVER_PORT: 587
+          EMAIL_SERVER_USER: test@example.com
+          EMAIL_SERVER_PASSWORD: test-password
+          EMAIL_FROM: noreply@example.com
+          RESEND_API_KEY: re_test_key
       
       - name: Run Playwright tests
         run: npm run test:e2e:ci

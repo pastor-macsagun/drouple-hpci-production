@@ -1,0 +1,153 @@
+{
+  "cli": {
+    "version": ">= 5.9.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "env": {
+        "APP_VARIANT": "development",
+        "EXPO_PUBLIC_API_URL": "https://api-dev.drouple.com"
+      },
+      "ios": {
+        "resourceClass": "m-medium",
+        "simulator": true,
+        "buildConfiguration": "Debug"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      }
+    },
+    "internal": {
+      "distribution": "internal",
+      "channel": "internal",
+      "env": {
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_API_URL": "https://api-staging.drouple.com"
+      },
+      "ios": {
+        "resourceClass": "m-medium",
+        "simulator": false,
+        "buildConfiguration": "Release",
+        "bundleIdentifier": "com.drouple.mobile.internal"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "env": {
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_API_URL": "https://api-staging.drouple.com"
+      },
+      "ios": {
+        "resourceClass": "m-medium",
+        "simulator": false,
+        "buildConfiguration": "Release",
+        "bundleIdentifier": "com.drouple.mobile.preview"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "staging": {
+      "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_API_URL": "https://api-staging.drouple.com"
+      },
+      "ios": {
+        "resourceClass": "m-large",
+        "simulator": false,
+        "bundleIdentifier": "com.drouple.mobile.staging"
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "channel": "staging"
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "APP_VARIANT": "production",
+        "EXPO_PUBLIC_API_URL": "https://api.drouple.com"
+      },
+      "ios": {
+        "resourceClass": "m-large",
+        "simulator": false,
+        "bundleIdentifier": "com.drouple.mobile",
+        "autoIncrement": "buildNumber",
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "buildType": "aab",
+        "autoIncrement": "versionCode"
+      },
+      "channel": "production"
+    },
+    "production-apk": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "TBD_APPLE_ID@drouple.com",
+        "ascAppId": "TBD_AFTER_APP_STORE_CONNECT_SETUP",
+        "appleTeamId": "TBD_FROM_APPLE_DEVELOPER_ACCOUNT"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./credentials/google-play-service-account.json",
+        "track": "production",
+        "releaseStatus": "draft"
+      }
+    },
+    "preview": {
+      "ios": {
+        "appleId": "TBD_APPLE_ID@drouple.com",
+        "ascAppId": "TBD_AFTER_APP_STORE_CONNECT_SETUP",
+        "appleTeamId": "TBD_FROM_APPLE_DEVELOPER_ACCOUNT"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./credentials/google-play-service-account.json",
+        "track": "alpha",
+        "releaseStatus": "draft"
+      }
+    },
+    "internal": {
+      "ios": {
+        "appleId": "TBD_APPLE_ID@drouple.com",
+        "ascAppId": "TBD_AFTER_APP_STORE_CONNECT_SETUP",
+        "appleTeamId": "TBD_FROM_APPLE_DEVELOPER_ACCOUNT"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./credentials/google-play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
+    },
+    "staging": {
+      "ios": {
+        "appleId": "TBD_APPLE_ID@drouple.com",
+        "ascAppId": "TBD_AFTER_APP_STORE_CONNECT_SETUP",
+        "appleTeamId": "TBD_FROM_APPLE_DEVELOPER_ACCOUNT"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./credentials/google-play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
+    }
+  }
+}

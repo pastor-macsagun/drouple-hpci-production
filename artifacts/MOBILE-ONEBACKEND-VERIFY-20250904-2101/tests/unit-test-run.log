@@ -1,0 +1,13 @@
+
+> drouple-mobile@1.0.0 test:unit
+> jest --testPathPattern=src/.*\.(test|spec)\.(ts|tsx)$
+
+sh: -c: line 0: syntax error near unexpected token `('
+sh: -c: line 0: `jest --testPathPattern=src/.*\.(test|spec)\.(ts|tsx)$'
+npm error Lifecycle script `test:unit` failed with error:
+npm error code 2
+npm error path /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error workspace drouple-mobile@1.0.0
+npm error location /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error command failed
+npm error command sh -c jest --testPathPattern=src/.*\.(test|spec)\.(ts|tsx)$

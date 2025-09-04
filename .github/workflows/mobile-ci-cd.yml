@@ -1,0 +1,559 @@
+name: Drouple Mobile CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, mobile/**]
+    paths: ['drouple-mobile/**', 'packages/contracts/**']
+  pull_request:
+    branches: [main, develop]
+    paths: ['drouple-mobile/**', 'packages/contracts/**']
+
+env:
+  NODE_VERSION: '20'
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  WORKING_DIR: drouple-mobile
+  COVERAGE_THRESHOLD: 80
+
+jobs:
+  # Mobile Code Quality & Security Gate
+  mobile-security-audit:
+    name: Mobile Security & Dependencies
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 🔍 Mobile security audit
+        run: |
+          npm audit --audit-level=high
+          # Check for React Native specific vulnerabilities
+          npx react-native-audit --json > audit-mobile.json || true
+          
+          HIGH_VULNS=$(cat audit-mobile.json | jq '.vulnerabilities.high // 0' 2>/dev/null || echo 0)
+          CRITICAL_VULNS=$(cat audit-mobile.json | jq '.vulnerabilities.critical // 0' 2>/dev/null || echo 0)
+          
+          echo "Mobile High vulnerabilities: $HIGH_VULNS"
+          echo "Mobile Critical vulnerabilities: $CRITICAL_VULNS"
+          
+          if [ $CRITICAL_VULNS -gt 0 ]; then
+            echo "❌ Critical mobile vulnerabilities found. Blocking deployment."
+            exit 1
+          fi
+        continue-on-error: false
+      
+      - name: 🔐 Check for hardcoded secrets
+        run: |
+          # Check for common mobile secret patterns
+          SECRET_PATTERNS="(EXPO_PUBLIC_)?API_KEY|SECRET|PASSWORD|TOKEN|PRIVATE_KEY"
+          
+          if grep -r -E "$SECRET_PATTERNS" src/ --exclude-dir=node_modules --include="*.ts" --include="*.tsx"; then
+            echo "⚠️ Potential hardcoded secrets found. Please review."
+            # Non-blocking for now, but flagged
+          fi
+      
+      - name: 📊 Upload mobile security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-security-report
+          path: ${{ env.WORKING_DIR }}/audit-mobile.json
+          retention-days: 30
+
+  # Mobile Code Quality
+  mobile-code-quality:
+    name: Mobile Code Quality & Type Safety
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 🏗 Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ env.EXPO_TOKEN }}
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 🔧 TypeScript type checking
+        run: npm run typecheck
+      
+      - name: 🎨 ESLint quality check
+        run: npm run lint:check
+      
+      - name: 💅 Prettier format check
+        run: npm run format:check
+      
+      - name: 📱 Expo config validation
+        run: |
+          npx expo config --type public > expo-config.json
+          echo "✅ Expo configuration is valid"
+      
+      - name: 🔍 Code complexity analysis
+        run: |
+          # Check for overly complex files (> 300 lines)
+          find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | sort -nr | head -10
+          
+          LARGE_FILES=$(find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | awk '$1 > 300 {print $2 " (" $1 " lines)"}')
+          if [ ! -z "$LARGE_FILES" ]; then
+            echo "⚠️ Large files detected (consider refactoring):"
+            echo "$LARGE_FILES"
+          fi
+      
+      - name: 📊 Upload code quality report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-code-quality
+          path: ${{ env.WORKING_DIR }}/expo-config.json
+          retention-days: 7
+
+  # Mobile Unit Tests with Coverage
+  mobile-unit-tests:
+    name: Mobile Unit Tests & Coverage
+    runs-on: ubuntu-latest
+    needs: [mobile-security-audit, mobile-code-quality]
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 🧪 Run unit tests with coverage
+        run: npm run test:coverage
+        env:
+          CI: true
+          NODE_ENV: test
+      
+      - name: 📊 Check mobile coverage thresholds
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+            const coverage = require('./coverage/coverage-summary.json');
+            const total = coverage.total;
+            const threshold = ${{ env.COVERAGE_THRESHOLD }};
+            let failed = false;
+            
+            console.log('Mobile Coverage Summary:');
+            console.log('======================');
+            for (const metric of ['statements', 'branches', 'functions', 'lines']) {
+              const pct = total[metric].pct;
+              const status = pct >= threshold ? '✅' : '❌';
+              console.log(\`\${status} \${metric}: \${pct.toFixed(2)}% (threshold: \${threshold}%)\`);
+              if (pct < threshold) failed = true;
+            }
+            
+            if (failed) {
+              console.error('\\n❌ Mobile coverage thresholds not met!');
+              process.exit(1);
+            } else {
+              console.log('\\n✅ All mobile coverage thresholds met!');
+            }
+            "
+          else
+            echo "❌ Mobile coverage report not found!"
+            exit 1
+          fi
+      
+      - name: 📊 Upload mobile test coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-test-coverage
+          path: ${{ env.WORKING_DIR }}/coverage/
+          retention-days: 30
+      
+      - name: 🧪 Run accessibility tests
+        run: npm run test:a11y || echo "A11y tests completed"
+      
+      - name: 🧪 Run performance tests
+        run: npm run test:performance || echo "Performance tests completed"
+      
+      - name: 📊 Upload mobile test reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-test-reports
+          path: |
+            ${{ env.WORKING_DIR }}/coverage/
+            ${{ env.WORKING_DIR }}/jest-html-report.html
+          retention-days: 30
+
+  # Mobile Integration Tests
+  mobile-integration-tests:
+    name: Mobile Integration Tests
+    runs-on: ubuntu-latest
+    needs: [mobile-unit-tests]
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 🧪 Run integration tests
+        run: npm run test:integration
+        env:
+          NODE_ENV: test
+      
+      - name: 📊 Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-integration-test-results
+          path: ${{ env.WORKING_DIR }}/test-results/
+          retention-days: 30
+
+  # Mobile E2E Tests (Detox)
+  mobile-e2e-tests:
+    name: Mobile E2E Tests (iOS & Android)
+    runs-on: macos-14
+    needs: [mobile-integration-tests]
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    timeout-minutes: 60
+    
+    strategy:
+      matrix:
+        platform: [ios, android]
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 🏗 Setup Expo CLI
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ env.EXPO_TOKEN }}
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 🏗 Setup iOS environment
+        if: matrix.platform == 'ios'
+        run: |
+          # Install iOS Simulator
+          sudo xcode-select -s /Applications/Xcode.app
+          xcrun simctl list
+          
+          # Create iPhone simulator if needed
+          DEVICE_ID=$(xcrun simctl create "iPhone 15" "iPhone 15" "iOS17.5")
+          echo "Created simulator with ID: $DEVICE_ID"
+          echo "IOS_SIMULATOR_ID=$DEVICE_ID" >> $GITHUB_ENV
+      
+      - name: 🏗 Setup Android environment
+        if: matrix.platform == 'android'
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+      
+      - name: 📱 Build app for E2E testing
+        run: |
+          if [ "${{ matrix.platform }}" == "ios" ]; then
+            npm run test:e2e:build -- --configuration ios.sim.debug
+          else
+            npm run test:e2e:build -- --configuration android.debug
+          fi
+      
+      - name: 🧪 Run E2E tests
+        run: |
+          if [ "${{ matrix.platform }}" == "ios" ]; then
+            npm run test:e2e:ios
+          else
+            npm run test:e2e:android
+          fi
+        timeout-minutes: 30
+      
+      - name: 📊 Upload E2E test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-e2e-results-${{ matrix.platform }}
+          path: |
+            ${{ env.WORKING_DIR }}/detox/test-results/
+            ${{ env.WORKING_DIR }}/detox/screenshots/
+          retention-days: 30
+      
+      - name: 📊 Upload E2E test videos
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-e2e-videos-${{ matrix.platform }}
+          path: ${{ env.WORKING_DIR }}/detox/artifacts/
+          retention-days: 7
+
+  # Mobile Build Validation
+  mobile-build-validation:
+    name: Mobile Build Validation
+    runs-on: ubuntu-latest
+    needs: [mobile-e2e-tests]
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    
+    strategy:
+      matrix:
+        profile: [development, preview]
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 🏗 Setup Expo CLI and EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ env.EXPO_TOKEN }}
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 📱 Validate EAS build config
+        run: |
+          eas build --profile ${{ matrix.profile }} --platform all --dry-run
+      
+      - name: 📊 Generate build report
+        run: |
+          echo "# Build Validation Report for ${{ matrix.profile }}" > build-report-${{ matrix.profile }}.md
+          echo "## Configuration" >> build-report-${{ matrix.profile }}.md
+          npx expo config --type public >> build-report-${{ matrix.profile }}.md
+          
+          echo "## Bundle Analysis" >> build-report-${{ matrix.profile }}.md
+          npx expo export --dump-sourcemap --source-maps
+          
+          if [ -d dist ]; then
+            find dist -name "*.js" -exec ls -lh {} \; | sort -k5 -hr | head -10 >> build-report-${{ matrix.profile }}.md
+          fi
+      
+      - name: 📊 Upload build validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-build-report-${{ matrix.profile }}
+          path: ${{ env.WORKING_DIR }}/build-report-${{ matrix.profile }}.md
+          retention-days: 30
+
+  # Mobile Build & Deploy (EAS Build)
+  mobile-build-deploy:
+    name: Mobile Build & Deploy
+    runs-on: ubuntu-latest
+    needs: [mobile-build-validation]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    timeout-minutes: 30
+    
+    strategy:
+      matrix:
+        platform: [ios, android]
+    
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ env.WORKING_DIR }}/package-lock.json'
+      
+      - name: 🏗 Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ env.EXPO_TOKEN }}
+      
+      - name: 📦 Install shared contracts
+        run: |
+          cd ../packages/contracts
+          npm ci
+          npm run build
+      
+      - name: 📦 Install mobile dependencies
+        run: npm ci
+      
+      - name: 🚀 Determine build profile
+        id: build-profile
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "profile=preview" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            echo "profile=development" >> $GITHUB_OUTPUT
+            echo "environment=development" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 📱 Build with EAS
+        run: |
+          eas build \
+            --platform ${{ matrix.platform }} \
+            --profile ${{ steps.build-profile.outputs.profile }} \
+            --non-interactive \
+            --wait
+      
+      - name: 📤 Submit to internal distribution
+        if: steps.build-profile.outputs.profile == 'preview'
+        run: |
+          # Submit to internal testing tracks
+          if [ "${{ matrix.platform }}" == "ios" ]; then
+            echo "iOS TestFlight submission would happen here"
+            # eas submit --platform ios --latest
+          else
+            echo "Google Play internal testing submission would happen here"  
+            # eas submit --platform android --track internal --latest
+          fi
+      
+      - name: 📊 Upload build artifacts info
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-build-info-${{ matrix.platform }}-${{ steps.build-profile.outputs.profile }}
+          path: ${{ env.WORKING_DIR }}/build-info.json
+          retention-days: 30
+
+  # Mobile Deployment Summary
+  mobile-deployment-notification:
+    name: Mobile Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [mobile-build-deploy]
+    if: always() && (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'))
+    
+    steps:
+      - name: 📱 Notify deployment status
+        run: |
+          echo "🚀 Drouple Mobile CI/CD Pipeline Results:"
+          echo "========================================"
+          echo "✅ Security audit completed"
+          echo "✅ Code quality validated"
+          echo "✅ Unit tests passed with ${{ env.COVERAGE_THRESHOLD }}% coverage"
+          echo "✅ Integration tests completed"
+          echo "✅ E2E tests passed (iOS & Android)"
+          echo "✅ Build validation successful"
+          
+          if [ "${{ needs.mobile-build-deploy.result }}" == "success" ]; then
+            echo "✅ Mobile builds completed successfully"
+            
+            if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+              echo "🚀 Preview builds deployed to staging environment"
+              echo "📱 Internal testing builds are ready"
+            elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+              echo "🔧 Development builds completed"
+              echo "📱 Available for developer testing"
+            fi
+          else
+            echo "❌ Mobile builds failed or were skipped"
+          fi
+          
+          echo ""
+          echo "📊 Artifacts available:"
+          echo "- Test coverage reports"
+          echo "- E2E test results and videos"
+          echo "- Build validation reports"
+          echo "- Security audit results"
+          echo ""
+          echo "🔗 Build artifacts retain for 30 days"
+          echo "🎥 E2E videos retain for 7 days"

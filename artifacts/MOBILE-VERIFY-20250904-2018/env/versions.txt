@@ -1,0 +1,4 @@
+11.5.1
+v24.6.0
+0.24.21
+eas: not installed locally

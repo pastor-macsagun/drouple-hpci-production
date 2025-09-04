@@ -1,0 +1,6 @@
+CHECKIN BULK SYNC:
+✅ Endpoint: /api/v1/checkins/bulk
+✅ Offline queue to bulk flush ready
+✅ Idempotency-Key headers available
+✅ Queue processing unchanged
+Status: Ready for bulk sync

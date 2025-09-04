@@ -1,0 +1,38 @@
+{
+  "name": "@drouple/contracts",
+  "version": "0.1.0",
+  "description": "Shared TypeScript contracts between Drouple web and mobile apps",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.9.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

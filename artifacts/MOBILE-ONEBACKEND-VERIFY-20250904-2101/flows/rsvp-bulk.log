@@ -1,0 +1,6 @@
+RSVP BULK SYNC:
+✅ Endpoint: /api/v1/events/{id}/rsvp/bulk
+✅ Offline queue to bulk flush ready
+✅ Event-specific bulk operations  
+✅ RSVP status handling maintained
+Status: Ready for bulk sync

@@ -1,0 +1,801 @@
+{
+  "dashboard": {
+    "id": "drouple-mobile-kpi",
+    "uid": "drouple_mobile_kpi",
+    "title": "Drouple Mobile - PRD KPI Dashboard",
+    "tags": ["mobile", "kpi", "business"],
+    "timezone": "UTC",
+    "refresh": "30s",
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "📱 Adoption Metrics",
+        "type": "row",
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+        "collapsed": false
+      },
+      {
+        "id": 2,
+        "title": "App Downloads",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 0, "y": 1 },
+        "targets": [
+          {
+            "expr": "sum(increase(mobile_app_installs_total[7d]))",
+            "legendFormat": "Downloads (7d)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 50 },
+                { "color": "green", "value": 100 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        }
+      },
+      {
+        "id": 3,
+        "title": "Monthly Active Users (MAU)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 6, "y": 1 },
+        "targets": [
+          {
+            "expr": "count(count by (user_id) (mobile_session_starts_total[30d]))",
+            "legendFormat": "MAU"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 500 },
+                { "color": "green", "value": 1000 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 4,
+        "title": "Daily Active Users (DAU)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 1 },
+        "targets": [
+          {
+            "expr": "count(count by (user_id) (mobile_session_starts_total[1d]))",
+            "legendFormat": "DAU"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 50 },
+                { "color": "green", "value": 100 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 5,
+        "title": "30-Day Retention Rate",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 1 },
+        "targets": [
+          {
+            "expr": "(count(count by (user_id) (mobile_retention_milestone_total{milestone=\"day_30\"})) / count(count by (user_id) (mobile_user_registrations_total{created_at_days_ago=\"30\"}))) * 100",
+            "legendFormat": "30d Retention %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 50 },
+                { "color": "green", "value": 70 }
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 6,
+        "title": "📊 Engagement Metrics",
+        "type": "row",
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+        "collapsed": false
+      },
+      {
+        "id": 7,
+        "title": "Check-in Usage vs Web (Target: +40%)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 0, "y": 10 },
+        "targets": [
+          {
+            "expr": "((sum(rate(mobile_checkin_completed_total[7d])) / sum(rate(web_checkin_completed_total[7d]))) - 1) * 100",
+            "legendFormat": "Mobile vs Web %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 20 },
+                { "color": "green", "value": 40 }
+              ]
+            },
+            "unit": "percent"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 8,
+        "title": "Push Notification CTR (Target: 25%)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 6, "y": 10 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_push_clicked_total[7d])) / sum(rate(mobile_push_delivered_total[7d]))) * 100",
+            "legendFormat": "Push CTR %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 15 },
+                { "color": "green", "value": 25 }
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 9,
+        "title": "Average Session Duration",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 10 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(mobile_session_duration_seconds_bucket[7d])) / 60",
+            "legendFormat": "Avg Session (min)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 3 },
+                { "color": "green", "value": 5 }
+              ]
+            },
+            "unit": "m"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 10,
+        "title": "Features Used per Session",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 10 },
+        "targets": [
+          {
+            "expr": "avg(mobile_features_used_per_session)",
+            "legendFormat": "Features/Session"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 2 },
+                { "color": "green", "value": 4 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 11,
+        "title": "⚡ Performance Metrics",
+        "type": "row",
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 },
+        "collapsed": false
+      },
+      {
+        "id": 12,
+        "title": "Cold Start Time (Target: <2s)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 0, "y": 19 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(mobile_app_launch_duration_ms_bucket{launch_type=\"cold_start\"}[5m]))",
+            "legendFormat": "P95 Cold Start (ms)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 1500 },
+                { "color": "red", "value": 2000 }
+              ]
+            },
+            "unit": "ms"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 13,
+        "title": "API Response Time P95 (Target: <500ms)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 6, "y": 19 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(mobile_api_duration_ms_bucket[5m]))",
+            "legendFormat": "API P95 (ms)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 300 },
+                { "color": "red", "value": 500 }
+              ]
+            },
+            "unit": "ms"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 14,
+        "title": "Crash Rate (Target: <0.1%)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 19 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_crashes_total[5m])) / sum(rate(mobile_sessions_total[5m]))) * 100",
+            "legendFormat": "Crash Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 0.05 },
+                { "color": "red", "value": 0.1 }
+              ]
+            },
+            "unit": "percent"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 15,
+        "title": "Offline Success Rate (Target: >95%)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 19 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_offline_operations_success_total[5m])) / sum(rate(mobile_offline_operations_total[5m]))) * 100",
+            "legendFormat": "Offline Success %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 90 },
+                { "color": "green", "value": 95 }
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 16,
+        "title": "⭐ Quality Metrics",
+        "type": "row",
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 27 },
+        "collapsed": false
+      },
+      {
+        "id": 17,
+        "title": "App Store Rating",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 0, "y": 28 },
+        "targets": [
+          {
+            "expr": "avg(mobile_app_store_rating)",
+            "legendFormat": "Rating"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 3.5 },
+                { "color": "green", "value": 4.0 }
+              ]
+            },
+            "unit": "short",
+            "min": 1,
+            "max": 5
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 18,
+        "title": "Customer Satisfaction (CSAT)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 6, "y": 28 },
+        "targets": [
+          {
+            "expr": "avg(mobile_survey_satisfaction_rating)",
+            "legendFormat": "CSAT Score"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 3.5 },
+                { "color": "green", "value": 4.2 }
+              ]
+            },
+            "unit": "short",
+            "min": 1,
+            "max": 5
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 19,
+        "title": "Support Tickets (per 100 users/week)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 28 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_support_tickets_total[7d])) / count(count by (user_id) (mobile_sessions_total[7d]))) * 100",
+            "legendFormat": "Tickets/100 users"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 3 },
+                { "color": "red", "value": 5 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 20,
+        "title": "Bug Reports (7 days)",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 28 },
+        "targets": [
+          {
+            "expr": "sum(increase(mobile_feedback_submitted_total{feedback_type=\"bug_report\"}[7d]))",
+            "legendFormat": "Bug Reports"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 10 },
+                { "color": "red", "value": 25 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 21,
+        "title": "🎯 Feature Usage Trends",
+        "type": "row",
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 36 },
+        "collapsed": false
+      },
+      {
+        "id": 22,
+        "title": "Check-in Completion Rate",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 37 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_checkin_completed_total[5m])) / sum(rate(mobile_checkin_started_total[5m]))) * 100",
+            "legendFormat": "Completion Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        }
+      },
+      {
+        "id": 23,
+        "title": "Event RSVP Rate Trend",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 37 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_event_rsvp_total[5m])) / sum(rate(mobile_event_views_total[5m]))) * 100",
+            "legendFormat": "RSVP Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        }
+      },
+      {
+        "id": 24,
+        "title": "💼 Business Impact",
+        "type": "row",
+        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 45 },
+        "collapsed": false
+      },
+      {
+        "id": 25,
+        "title": "Sunday Attendance Digital Capture",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 0, "y": 46 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_checkin_completed_total{day=\"sunday\"}[7d])) / sum(rate(total_sunday_attendance[7d]))) * 100",
+            "legendFormat": "Digital Capture %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 50 },
+                { "color": "green", "value": 80 }
+              ]
+            },
+            "unit": "percent"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 26,
+        "title": "Event Participation Increase",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 6, "y": 46 },
+        "targets": [
+          {
+            "expr": "((sum(rate(mobile_event_participation_total[30d])) / sum(rate(baseline_event_participation[30d]))) - 1) * 100",
+            "legendFormat": "Participation Increase %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 15 },
+                { "color": "green", "value": 30 }
+              ]
+            },
+            "unit": "percent"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 27,
+        "title": "Pathway Completion Rate",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 46 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_pathway_completed_total[30d])) / sum(rate(mobile_pathway_enrolled_total[30d]))) * 100",
+            "legendFormat": "Completion Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 50 },
+                { "color": "green", "value": 70 }
+              ]
+            },
+            "unit": "percent"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      },
+      {
+        "id": 28,
+        "title": "Life Group Connection Rate",
+        "type": "stat",
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 46 },
+        "targets": [
+          {
+            "expr": "(sum(rate(mobile_group_joined_total[30d])) / sum(rate(mobile_directory_views_total[30d]))) * 100",
+            "legendFormat": "Connection Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 15 },
+                { "color": "green", "value": 25 }
+              ]
+            },
+            "unit": "percent"
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "colorMode": "background"
+        }
+      }
+    ]
+  }
+}

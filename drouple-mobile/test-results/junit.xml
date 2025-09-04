@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="51" failures="35" errors="0" time="1.505">
+  <testsuite name="QR Parser" errors="0" failures="0" skipped="0" timestamp="2025-09-04T13:27:22" time="0.67" tests="15">
+    <testcase classname="QR Parser parseCheckInQR should parse valid QR code format" name="QR Parser parseCheckInQR should parse valid QR code format" time="0.005">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should handle QR code with extra whitespace" name="QR Parser parseCheckInQR should handle QR code with extra whitespace" time="0.004">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should parse QR code with underscores and hyphens" name="QR Parser parseCheckInQR should parse QR code with underscores and hyphens" time="0.001">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on invalid format without semicolon" name="QR Parser parseCheckInQR should fail on invalid format without semicolon" time="0.007">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on missing member ID" name="QR Parser parseCheckInQR should fail on missing member ID" time="0.001">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on missing service ID" name="QR Parser parseCheckInQR should fail on missing service ID" time="0.001">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on empty string" name="QR Parser parseCheckInQR should fail on empty string" time="0.001">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on null/undefined" name="QR Parser parseCheckInQR should fail on null/undefined" time="0.001">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on wrong format" name="QR Parser parseCheckInQR should fail on wrong format" time="0.002">
+    </testcase>
+    <testcase classname="QR Parser parseCheckInQR should fail on invalid characters in IDs" name="QR Parser parseCheckInQR should fail on invalid characters in IDs" time="0.002">
+    </testcase>
+    <testcase classname="QR Parser generateCheckInQR should generate correct QR format" name="QR Parser generateCheckInQR should generate correct QR format" time="0.015">
+    </testcase>
+    <testcase classname="QR Parser isCheckInQR should identify valid check-in QR codes" name="QR Parser isCheckInQR should identify valid check-in QR codes" time="0.002">
+    </testcase>
+    <testcase classname="QR Parser isCheckInQR should reject invalid QR codes" name="QR Parser isCheckInQR should reject invalid QR codes" time="0.003">
+    </testcase>
+    <testcase classname="QR Parser QR_EXAMPLES all valid examples should parse successfully" name="QR Parser QR_EXAMPLES all valid examples should parse successfully" time="0.002">
+    </testcase>
+    <testcase classname="QR Parser QR_EXAMPLES all invalid examples should fail to parse" name="QR Parser QR_EXAMPLES all invalid examples should fail to parse" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="DatabaseManager" errors="0" failures="11" skipped="0" timestamp="2025-09-04T13:27:22" time="0.789" tests="11">
+    <testcase classname="DatabaseManager Queue Operations should enqueue and retrieve actions" name="DatabaseManager Queue Operations should enqueue and retrieve actions" time="0.003">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Queue Operations should filter actions by type" name="DatabaseManager Queue Operations should filter actions by type" time="0">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Queue Operations should remove actions from queue" name="DatabaseManager Queue Operations should remove actions from queue" time="0.001">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Queue Operations should get queue count" name="DatabaseManager Queue Operations should get queue count" time="0.001">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Queue Operations should update retry count" name="DatabaseManager Queue Operations should update retry count" time="0.001">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Key-Value Operations should set and get string values" name="DatabaseManager Key-Value Operations should set and get string values" time="0.006">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Key-Value Operations should set and get JSON values" name="DatabaseManager Key-Value Operations should set and get JSON values" time="0.011">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Key-Value Operations should return null for non-existent keys" name="DatabaseManager Key-Value Operations should return null for non-existent keys" time="0.003">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Key-Value Operations should delete key-value pairs" name="DatabaseManager Key-Value Operations should delete key-value pairs" time="0.003">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Key-Value Operations should get keys with prefix filter" name="DatabaseManager Key-Value Operations should get keys with prefix filter" time="0.001">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="DatabaseManager Statistics should return database statistics" name="DatabaseManager Statistics should return database statistics" time="0.001">
+      <failure>TypeError: this.db.execAsync is not a function
+    at DatabaseManager.execAsync (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/lib/db/database.ts:39:21)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Mobile-Backend Integration" errors="0" failures="5" skipped="0" timestamp="2025-09-04T13:27:22" time="0.864" tests="6">
+    <testcase classname="Mobile-Backend Integration A) API Health Check - Backend Connectivity" name="Mobile-Backend Integration A) API Health Check - Backend Connectivity" time="0.079">
+      <failure>FetchError: request to http://localhost:3000/api/health failed, reason: 
+    at ClientRequest.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/node-fetch/lib/index.js:1501:11)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:107:11)
+    at Socket.socketErrorListener (node:_http_client:574:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</failure>
+    </testcase>
+    <testcase classname="Mobile-Backend Integration B) Mobile API Endpoints - Mobile-Specific Connectivity" name="Mobile-Backend Integration B) Mobile API Endpoints - Mobile-Specific Connectivity" time="0.004">
+      <failure>FetchError: request to http://localhost:3000/api/mobile/health failed, reason: 
+    at ClientRequest.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/node-fetch/lib/index.js:1501:11)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:107:11)
+    at Socket.socketErrorListener (node:_http_client:574:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</failure>
+    </testcase>
+    <testcase classname="Mobile-Backend Integration C) Authentication Flow - Login &amp; Token Validation" name="Mobile-Backend Integration C) Authentication Flow - Login &amp; Token Validation" time="0.003">
+      <failure>FetchError: request to http://localhost:3000/api/mobile/auth/login failed, reason: 
+    at ClientRequest.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/node-fetch/lib/index.js:1501:11)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:107:11)
+    at Socket.socketErrorListener (node:_http_client:574:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</failure>
+    </testcase>
+    <testcase classname="Mobile-Backend Integration D) Data Fetching - Services &amp; Check-in Data" name="Mobile-Backend Integration D) Data Fetching - Services &amp; Check-in Data" time="0.001">
+      <failure>FetchError: request to http://localhost:3000/api/mobile/auth/login failed, reason: 
+    at ClientRequest.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/node-fetch/lib/index.js:1501:11)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:107:11)
+    at Socket.socketErrorListener (node:_http_client:574:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</failure>
+    </testcase>
+    <testcase classname="Mobile-Backend Integration E) Configuration Validation - Environment &amp; Endpoints" name="Mobile-Backend Integration E) Configuration Validation - Environment &amp; Endpoints" time="0.003">
+    </testcase>
+    <testcase classname="Mobile-Backend Integration F) Error Handling - Network &amp; Auth Errors" name="Mobile-Backend Integration F) Error Handling - Network &amp; Auth Errors" time="0.003">
+      <failure>FetchError: request to http://localhost:3000/api/mobile/auth/login failed, reason: 
+    at ClientRequest.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/node-fetch/lib/index.js:1501:11)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:107:11)
+    at Socket.socketErrorListener (node:_http_client:574:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="CheckInService" errors="0" failures="9" skipped="0" timestamp="2025-09-04T13:27:22" time="0.939" tests="9">
+    <testcase classname="CheckInService QR Code Check-In should successfully check-in with valid QR code" name="CheckInService QR Code Check-In should successfully check-in with valid QR code" time="0.01">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService QR Code Check-In should handle invalid QR code format" name="CheckInService QR Code Check-In should handle invalid QR code format" time="0.011">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService QR Code Check-In should queue check-in when offline" name="CheckInService QR Code Check-In should queue check-in when offline" time="0.002">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService Manual Check-In should allow manual check-in by selecting service" name="CheckInService Manual Check-In should allow manual check-in by selecting service" time="0.002">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService Manual Check-In should prevent duplicate check-ins" name="CheckInService Manual Check-In should prevent duplicate check-ins" time="0.002">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService Offline Sync should sync queued check-ins when back online" name="CheckInService Offline Sync should sync queued check-ins when back online" time="0">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService Offline Sync should handle partial sync failures" name="CheckInService Offline Sync should handle partial sync failures" time="0.002">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService Check-In History should fetch user check-in history" name="CheckInService Check-In History should fetch user check-in history" time="0.002">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="CheckInService Rate Limiting should handle rate limiting for rapid check-in attempts" name="CheckInService Rate Limiting should handle rate limiting for rapid check-in attempts" time="0.002">
+      <failure>TypeError: _checkInService.CheckInService is not a constructor
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthService" errors="0" failures="10" skipped="0" timestamp="2025-09-04T13:27:22" time="0.995" tests="10">
+    <testcase classname="AuthService login should successfully login with valid credentials" name="AuthService login should successfully login with valid credentials" time="0.004">
+      <failure>TypeError: authService.login is not a function
+    at Object.login (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:42:40)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService login should handle invalid credentials" name="AuthService login should handle invalid credentials" time="0.018">
+      <failure>TypeError: authService.login is not a function
+    at Object.login (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:63:40)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService login should handle network errors" name="AuthService login should handle network errors" time="0.009">
+      <failure>TypeError: authService.login is not a function
+    at Object.login (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:75:40)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService refreshToken should successfully refresh token" name="AuthService refreshToken should successfully refresh token" time="0.001">
+      <failure>TypeError: Cannot read properties of undefined (reading &apos;mockResolvedValue&apos;)
+    at Object.mockResolvedValue (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:84:33)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService refreshToken should handle invalid refresh token" name="AuthService refreshToken should handle invalid refresh token" time="0.001">
+      <failure>TypeError: Cannot read properties of undefined (reading &apos;mockResolvedValue&apos;)
+    at Object.mockResolvedValue (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:113:33)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService biometric authentication should enable biometric authentication" name="AuthService biometric authentication should enable biometric authentication" time="0.001">
+      <failure>TypeError: authService.enableBiometric is not a function
+    at Object.enableBiometric (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:144:40)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService biometric authentication should handle biometric not available" name="AuthService biometric authentication should handle biometric not available" time="0.002">
+      <failure>TypeError: authService.enableBiometric is not a function
+    at Object.enableBiometric (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:162:40)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService biometric authentication should authenticate with biometrics" name="AuthService biometric authentication should authenticate with biometrics" time="0.002">
+      <failure>TypeError: Cannot read properties of undefined (reading &apos;mockResolvedValueOnce&apos;)
+    at Object.mockResolvedValueOnce (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:169:10)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService offline authentication should handle offline login with cached credentials" name="AuthService offline authentication should handle offline login with cached credentials" time="0.002">
+      <failure>TypeError: Cannot read properties of undefined (reading &apos;mockResolvedValueOnce&apos;)
+    at Object.mockResolvedValueOnce (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:198:10)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="AuthService offline authentication should reject offline login with wrong credentials" name="AuthService offline authentication should reject offline login with wrong credentials" time="0.001">
+      <failure>TypeError: Cannot read properties of undefined (reading &apos;mockResolvedValueOnce&apos;)
+    at Object.mockResolvedValueOnce (/Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/auth/__tests__/auth-service.unit.test.ts:215:10)
+    at Generator.next (&lt;anonymous&gt;)
+    at asyncGeneratorStep (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+    at _next (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+    at /Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+    at new Promise (&lt;anonymous&gt;)
+    at Object.&lt;anonymous&gt; (/Users/macsagun/HPCI-ChMS/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+    at Promise.then.completed (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/macsagun/HPCI-ChMS/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/macsagun/HPCI-ChMS/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

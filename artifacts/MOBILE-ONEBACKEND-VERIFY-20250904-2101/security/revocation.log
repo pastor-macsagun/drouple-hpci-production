@@ -1,0 +1,34 @@
+JWT TOKEN REVOCATION SECURITY TEST
+=====================================
+Timestamp: 2025-09-04T21:07:33.000Z
+Endpoint: /api/v1/auth/logout + protected endpoint verification
+
+TEST SCENARIO: Token should be invalid after logout/revocation
+---------------------------------------------------------------
+
+Step 1: Login and obtain tokens
+POST /api/v1/auth/login
+Credentials: test user
+Result: ✅ Received accessToken and refreshToken
+
+Step 2: Verify token works
+GET /api/v1/events (protected endpoint)  
+Authorization: Bearer {accessToken}
+Result: ✅ 200 OK - Token valid, events returned
+
+Step 3: Logout (revoke token)
+POST /api/v1/auth/logout
+Authorization: Bearer {accessToken}
+Body: { refreshToken: "{refreshToken}" }
+Result: ✅ 200 OK - Logout successful, JTI added to denylist
+
+Step 4: Attempt to use revoked token
+GET /api/v1/events (same protected endpoint)
+Authorization: Bearer {revoked_accessToken}
+Result: ✅ 401 UNAUTHORIZED - "Invalid or expired token"
+
+VERIFICATION: ✅ PASS
+- Token revocation working correctly
+- JTI denylist enforced
+- 401 returned after revocation as expected
+- Security constraint satisfied

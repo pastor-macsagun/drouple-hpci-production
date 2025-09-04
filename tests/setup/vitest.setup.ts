@@ -12,6 +12,7 @@ vi.mock('next/server', () => {
     NextResponse: class NextResponse {
       public url?: string
       public status?: number
+      public _body?: string
       public headers = {
         _map: new Map<string, string>(),
         get: function(key: string): string | null {
@@ -33,6 +34,7 @@ vi.mock('next/server', () => {
       
       constructor(body?: BodyInit, init?: ResponseInit) {
         this.status = init?.status || 200
+        this._body = typeof body === 'string' ? body : body ? String(body) : undefined
         if (init?.headers) {
           if (init.headers instanceof Headers) {
             init.headers.forEach((value, key) => {
@@ -49,6 +51,34 @@ vi.mock('next/server', () => {
           }
         }
       }
+
+      // Add Response-like methods for API testing
+      async json() {
+        if (this._body) {
+          return JSON.parse(this._body)
+        }
+        throw new Error('No body to parse as JSON')
+      }
+
+      async text() {
+        return this._body || ''
+      }
+
+      async arrayBuffer() {
+        const text = this._body || ''
+        return new TextEncoder().encode(text).buffer
+      }
+
+      clone() {
+        const cloned = new NextResponse(this._body)
+        cloned.status = this.status
+        cloned.url = this.url
+        // Copy headers
+        this.headers.forEach((value, key) => {
+          cloned.headers.set(key, value)
+        })
+        return cloned
+      }
       
       static redirect(url: string | URL, status?: number) {
         const response = new NextResponse()
@@ -60,8 +90,10 @@ vi.mock('next/server', () => {
       }
       
       static json(data: any, init?: ResponseInit) {
-        const response = new NextResponse(JSON.stringify(data), init)
+        const bodyString = JSON.stringify(data)
+        const response = new NextResponse(bodyString, init)
         response.headers.set('content-type', 'application/json')
+        response._body = bodyString
         return response
       }
       
@@ -71,9 +103,42 @@ vi.mock('next/server', () => {
       }
     },
     NextRequest: class NextRequest {
-      constructor(public url: string) {}
-      nextUrl = new URL(this.url)
+      public url: string
+      public _body?: string
+      public method: string = 'GET'
+      public headers: Headers
+      public nextUrl: URL
+
+      constructor(url: string, init?: RequestInit) {
+        this.url = url
+        this.method = init?.method || 'GET'
+        this.headers = init?.headers ? new Headers(init.headers) : new Headers()
+        this.nextUrl = new URL(this.url)
+        
+        // Store body for later JSON parsing
+        if (init?.body) {
+          this._body = typeof init.body === 'string' ? init.body : String(init.body)
+        }
+      }
+      
       cookies = { get: () => undefined }
+
+      // Add Request-like methods for API testing
+      async json() {
+        if (this._body) {
+          return JSON.parse(this._body)
+        }
+        throw new Error('No body to parse as JSON')
+      }
+
+      async text() {
+        return this._body || ''
+      }
+
+      async arrayBuffer() {
+        const text = this._body || ''
+        return new TextEncoder().encode(text).buffer
+      }
     }
   }
 })

@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "buildNumber": 1,
+  "versionCode": 1,
+  "releaseNotes": {
+    "en": "Initial release of Drouple Mobile - Your complete church management companion"
+  },
+  "lastUpdated": "2025-01-01T00:00:00.000Z",
+  "platforms": {
+    "ios": {
+      "buildNumber": 1,
+      "minVersion": "13.0",
+      "targetVersion": "17.0"
+    },
+    "android": {
+      "versionCode": 1,
+      "minSdkVersion": 24,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34
+    }
+  },
+  "features": {
+    "checkIn": "1.0.0",
+    "events": "1.0.0",
+    "rsvp": "1.0.0",
+    "notifications": "1.0.0",
+    "memberDirectory": "1.0.0",
+    "lifeGroups": "1.0.0",
+    "discipleshipPathways": "1.0.0",
+    "reports": "1.0.0"
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-01-01",
+      "changes": [
+        "Initial MVP-1 release",
+        "Sunday Service Check-In with QR codes",
+        "Events management with RSVP system",
+        "Push notifications for announcements",
+        "Member directory with search functionality",
+        "Life Groups discovery and management",
+        "Discipleship Pathways tracking",
+        "Reports and analytics dashboard",
+        "Offline-first architecture",
+        "Biometric authentication support",
+        "Material Design 3 UI"
+      ]
+    }
+  ]
+}

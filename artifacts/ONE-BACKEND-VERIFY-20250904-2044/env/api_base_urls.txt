@@ -1,0 +1,4 @@
+WEB: Uses /api/v1 via NEXT_PUBLIC_API_URL
+MOBILE: Currently uses /api/mobile/v1 via API_BASE_URL  
+UNIFIED: Both should use /api/v1 (canonical)
+STATUS: Infrastructure ready, mobile config update needed

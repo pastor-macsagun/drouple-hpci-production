@@ -1,0 +1,1 @@
+{"adapters_created": 9, "mappings_verified": true, "deprecation_headers": true, "sample_responses": {"mobile_v1_auth_login": {"status": "redirect_to_v1", "headers": {"Deprecation": "true", "Warning": "299 - Deprecated endpoint. Use /api/v1/auth/login instead"}}}}

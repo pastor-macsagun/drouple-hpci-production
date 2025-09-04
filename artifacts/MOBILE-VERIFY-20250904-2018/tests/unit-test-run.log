@@ -1,0 +1,431 @@
+
+> drouple-mobile@1.0.0 test
+> jest
+
+FAIL src/lib/db/__tests__/database.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/utils/__tests__/qrParser.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/__tests__/integration/simple-connectivity.test.js
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/components/scanner/__tests__/QRCodeScanner.component.test.tsx
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/lib/sync/__tests__/syncManager.unit.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/__tests__/integration/connectivity.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/lib/security/__tests__/security-validation.unit.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/features/dashboard/__tests__/dashboard.unit.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/features/auth/__tests__/auth-service.unit.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/features/checkin/__tests__/checkin-service.unit.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+FAIL src/features/auth/__tests__/auth-integration.test.ts
+  ● Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected "19.1.1", but found "19.0.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.1.1
+
+       5 |
+       6 | import '@testing-library/jest-native/extend-expect';
+    >  7 | import { configure } from '@testing-library/react-native';
+         | ^
+       8 |
+       9 | // Configure Testing Library
+      10 | configure({
+
+      at Object.ensurePeerDeps (../node_modules/@testing-library/react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require (../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (src/test/setup.ts:7:1)
+
+📦 report is created on: /Users/macsagun/HPCI-ChMS/drouple-mobile/test-report.html
+-----------------------------------|---------|----------|---------|---------|-------------------
+File                               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------------|---------|----------|---------|---------|-------------------
+All files                          |       0 |        0 |       0 |       0 |                   
+ app/navigation                    |       0 |        0 |       0 |       0 |                   
+  AppNavigator.tsx                 |       0 |        0 |       0 |       0 | 23-150            
+  AppTabs.tsx                      |       0 |        0 |       0 |       0 | 17-116            
+  AuthStack.tsx                    |       0 |        0 |       0 |       0 | 12-36             
+ components                        |       0 |        0 |       0 |       0 |                   
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ components/accessibility          |       0 |        0 |       0 |       0 |                   
+  AccessibilityWrapper.tsx         |       0 |        0 |       0 |       0 | 38-370            
+ components/checkin                |       0 |        0 |       0 |       0 |                   
+  MemberSearch.tsx                 |       0 |        0 |       0 |       0 | 49-345            
+  QRScanner.tsx                    |       0 |        0 |       0 |       0 | 32-210            
+  ServiceStatusChip.tsx            |       0 |        0 |       0 |       0 | 20-93             
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ components/common                 |       0 |        0 |       0 |       0 |                   
+  Button.tsx                       |       0 |        0 |       0 |       0 | 15-20             
+  ErrorBoundary.tsx                |       0 |        0 |       0 |       0 | 23-85             
+  StatusChip.tsx                   |       0 |        0 |       0 |       0 | 38-259            
+ components/events                 |       0 |        0 |       0 |       0 |                   
+  EventCard.tsx                    |       0 |        0 |       0 |       0 | 30-247            
+  EventStatusChip.tsx              |       0 |        0 |       0 |       0 | 18-25             
+  RSVPStatusChip.tsx               |       0 |        0 |       0 |       0 | 20-68             
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ components/feedback               |       0 |        0 |       0 |       0 |                   
+  FeedbackSheet.tsx                |       0 |        0 |       0 |       0 | 58-356            
+ components/navigation             |       0 |        0 |       0 |       0 |                   
+  RoleGuard.tsx                    |       0 |        0 |       0 |       0 | 25-273            
+ components/scanner                |       0 |        0 |       0 |       0 |                   
+  QRCodeScanner.tsx                |       0 |        0 |       0 |       0 | 47-474            
+ components/security               |       0 |        0 |       0 |       0 |                   
+  PermissionGate.tsx               |       0 |        0 |       0 |       0 | 41-220            
+  PrivacyNotice.tsx                |       0 |        0 |       0 |       0 | 38-442            
+ config                            |       0 |        0 |       0 |       0 |                   
+  app.ts                           |       0 |        0 |       0 |       0 | 9-169             
+  endpoints.ts                     |       0 |        0 |       0 |       0 | 9-77              
+  env.ts                           |       0 |        0 |       0 |       0 | 53-244            
+  featureFlags.ts                  |       0 |        0 |       0 |       0 | 63-160            
+ data                              |       0 |        0 |       0 |       0 |                   
+  db.ts                            |       0 |        0 |       0 |       0 | 10-528            
+  mockData.ts                      |       0 |        0 |       0 |       0 | 35-710            
+  mockEvents.ts                    |       0 |        0 |       0 |       0 | 19-169            
+  mockGroups.ts                    |       0 |        0 |       0 |       0 | 62-507            
+  mockMembers.ts                   |       0 |        0 |       0 |       0 | 26-299            
+  mockPathways.ts                  |       0 |        0 |       0 |       0 | 42-524            
+  mockReports.ts                   |       0 |        0 |       0 |       0 | 97-428            
+ features/auth/screens             |       0 |        0 |       0 |       0 |                   
+  OnboardingScreen.tsx             |       0 |        0 |       0 |       0 | 35-308            
+  SignInScreen.tsx                 |       0 |        0 |       0 |       0 | 34-291            
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ features/checkin/screens          |       0 |        0 |       0 |       0 |                   
+  CheckInScreen.tsx                |       0 |        0 |       0 |       0 | 47-362            
+ features/dashboard/screens        |       0 |        0 |       0 |       0 |                   
+  DashboardScreen.instrumented.tsx |       0 |        0 |       0 |       0 | 38-494            
+  DashboardScreen.tsx              |       0 |        0 |       0 |       0 | 36-327            
+  MoreScreen.tsx                   |       0 |        0 |       0 |       0 | 24-192            
+ features/directory/screens        |       0 |        0 |       0 |       0 |                   
+  DirectoryScreen.tsx              |       0 |        0 |       0 |       0 | 39-329            
+ features/events/navigation        |       0 |      100 |       0 |       0 |                   
+  EventsStack.tsx                  |       0 |      100 |       0 |       0 | 18-21             
+ features/events/screens           |       0 |        0 |       0 |       0 |                   
+  EventDetailScreen.tsx            |       0 |        0 |       0 |       0 | 35-420            
+  EventsScreen.instrumented.tsx    |       0 |        0 |       0 |       0 | 35-528            
+  EventsScreen.tsx                 |       0 |        0 |       0 |       0 | 33-304            
+ features/groups/screens           |       0 |        0 |       0 |       0 |                   
+  GroupsScreen.tsx                 |       0 |        0 |       0 |       0 | 50-437            
+ features/members/screens          |       0 |        0 |       0 |       0 |                   
+  MembersScreen.tsx                |       0 |        0 |       0 |       0 | 29-290            
+ features/notifications/screens    |       0 |        0 |       0 |       0 |                   
+  NotificationSettingsScreen.tsx   |       0 |        0 |       0 |       0 | 35-413            
+ features/pathways/screens         |       0 |        0 |       0 |       0 |                   
+  PathwayDetailScreen.tsx          |       0 |        0 |       0 |       0 | 43-412            
+  PathwaysScreen.tsx               |       0 |        0 |       0 |       0 | 39-403            
+ features/reports                  |       0 |        0 |       0 |       0 |                   
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ features/reports/screens          |       0 |        0 |       0 |       0 |                   
+  ReportsScreen.tsx                |       0 |        0 |       0 |       0 | 36-421            
+ features/settings                 |       0 |        0 |       0 |       0 |                   
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ features/settings/screens         |       0 |        0 |       0 |       0 |                   
+  SecurityScreen.tsx               |       0 |        0 |       0 |       0 | 43-436            
+  SettingsScreen.tsx               |       0 |        0 |       0 |       0 | 28-247            
+ hooks                             |       0 |        0 |       0 |       0 |                   
+  useEvents.ts                     |       0 |        0 |       0 |       0 | 21-310            
+  useNotifications.ts              |       0 |        0 |       0 |       0 | 55-336            
+  useOnlineSync.ts                 |       0 |        0 |       0 |       0 | 15-82             
+  useRealtime.ts                   |       0 |        0 |       0 |       0 | 49-254            
+  useRoles.ts                      |       0 |        0 |       0 |       0 | 13-251            
+ hooks/api                         |       0 |        0 |       0 |       0 |                   
+  useAuth.ts                       |       0 |        0 |       0 |       0 | 15-175            
+  useCheckin.ts                    |       0 |        0 |       0 |       0 | 15-216            
+ lib/accessibility                 |       0 |        0 |       0 |       0 |                   
+  accessibilityHelpers.ts          |       0 |        0 |       0 |       0 | 27-362            
+  helpers.ts                       |       0 |        0 |       0 |       0 | 10-398            
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+ lib/api                           |       0 |        0 |       0 |       0 |                   
+  auth.mock.ts                     |       0 |        0 |       0 |       0 | 26-395            
+  auth.ts                          |       0 |        0 |       0 |       0 | 36-267            
+  backendServices.ts               |       0 |        0 |       0 |       0 | 49-624            
+  client.ts                        |       0 |        0 |       0 |       0 | 22-294            
+  contracts.ts                     |       0 |        0 |       0 |       0 |                   
+  http.ts                          |       0 |        0 |       0 |       0 | 37-436            
+  index.ts                         |       0 |        0 |       0 |       0 | 18-234            
+  productionClient.ts              |       0 |        0 |       0 |       0 | 58-614            
+  react-query.ts                   |       0 |        0 |       0 |       0 | 11-215            
+ lib/api/services                  |       0 |        0 |       0 |       0 |                   
+  auth.ts                          |       0 |        0 |       0 |       0 | 12-235            
+  checkin.ts                       |       0 |        0 |       0 |       0 | 12-144            
+  events.ts                        |       0 |        0 |       0 |       0 | 12-212            
+  groups.ts                        |       0 |        0 |       0 |       0 | 137-519           
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+  pathways.ts                      |       0 |        0 |       0 |       0 | 132-492           
+ lib/biometric                     |       0 |        0 |       0 |       0 |                   
+  biometricAuth.ts                 |       0 |        0 |       0 |       0 | 14-307            
+ lib/config                        |       0 |        0 |       0 |       0 |                   
+  environment.ts                   |       0 |        0 |       0 |       0 | 67-390            
+  security.ts                      |       0 |        0 |       0 |       0 | 15-163            
+ lib/db                            |       0 |        0 |       0 |       0 |                   
+  database.ts                      |       0 |        0 |       0 |       0 | 28-296            
+  schema.ts                        |       0 |        0 |       0 |       0 | 45-183            
+ lib/featureFlags                  |       0 |        0 |       0 |       0 |                   
+  KillSwitchMonitor.ts             |       0 |        0 |       0 |       0 | 34-446            
+  index.ts                         |       0 |        0 |       0 |       0 | 38-447            
+ lib/feedback                      |       0 |        0 |       0 |       0 |                   
+  FeedbackService.ts               |       0 |        0 |       0 |       0 | 37-460            
+ lib/monitoring                    |       0 |        0 |       0 |       0 |                   
+  sentry.ts                        |       0 |        0 |       0 |       0 | 13-54             
+  sentryService.ts                 |       0 |        0 |       0 |       0 | 35-529            
+ lib/net                           |       0 |        0 |       0 |       0 |                   
+  networkService.ts                |       0 |        0 |       0 |       0 | 23-295            
+  syncManager.ts                   |       0 |        0 |       0 |       0 | 30-397            
+ lib/notifications                 |       0 |        0 |       0 |       0 |                   
+  manager.ts                       |       0 |        0 |       0 |       0 | 55-500            
+  pushNotificationService.ts       |       0 |        0 |       0 |       0 | 28-504            
+ lib/performance                   |       0 |        0 |       0 |       0 |                   
+  accessibilityManager.ts          |       0 |        0 |       0 |       0 | 14-506            
+  imageOptimizer.ts                |       0 |        0 |       0 |       0 | 43-348            
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+  memoryManager.ts                 |       0 |        0 |       0 |       0 | 40-431            
+  optimization.ts                  |       0 |        0 |       0 |       0 | 20-470            
+  performanceMonitor.ts            |       0 |        0 |       0 |       0 | 19-547            
+  types.ts                         |       0 |        0 |       0 |       0 |                   
+ lib/realtime                      |       0 |        0 |       0 |       0 |                   
+  client.ts                        |       0 |        0 |       0 |       0 | 45-451            
+  wsClient.ts                      |       0 |        0 |       0 |       0 | 23-250            
+ lib/security                      |       0 |        0 |       0 |       0 |                   
+  apiSecurity.ts                   |       0 |        0 |       0 |       0 | 19-418            
+  biometricAuth.ts                 |       0 |        0 |       0 |       0 | 13-331            
+  biometrics.ts                    |       0 |        0 |       0 |       0 | 19-224            
+  certificatePinning.ts            |       0 |        0 |       0 |       0 | 25-233            
+  config.ts                        |       0 |      100 |       0 |       0 | 11-264            
+  index.ts                         |       0 |        0 |       0 |       0 |                   
+  inputValidator.ts                |       0 |        0 |       0 |       0 | 14-437            
+  permissions.ts                   |       0 |        0 |       0 |       0 | 41-258            
+  privacyManager.ts                |       0 |        0 |       0 |       0 | 19-517            
+  secureStorage.ts                 |       0 |        0 |       0 |       0 | 17-272            
+  storage.ts                       |       0 |        0 |       0 |       0 | 10-266            
+  types.ts                         |       0 |        0 |       0 |       0 |                   
+  validation.ts                    |       0 |        0 |       0 |       0 | 12-394            
+ lib/store                         |       0 |        0 |       0 |       0 |                   
+  authStore.ts                     |       0 |        0 |       0 |       0 | 36-186            
+  index.ts                         |       0 |      100 |       0 |       0 | 25-87             
+ lib/surveys                       |       0 |        0 |       0 |       0 |                   
+  WeeklySurveyService.ts           |       0 |        0 |       0 |       0 | 30-468            
+ lib/sync                          |       0 |        0 |       0 |       0 |                   
+  cache.ts                         |       0 |        0 |       0 |       0 | 23-405            
+  manager.ts                       |       0 |        0 |       0 |       0 | 42-374            
+  queue.ts                         |       0 |        0 |       0 |       0 | 31-476            
+  syncManager.ts                   |       0 |        0 |       0 |       0 | 14-541            
+ providers                         |       0 |        0 |       0 |       0 |                   
+  NotificationProvider.tsx         |       0 |        0 |       0 |       0 | 14-30             
+  QueryProvider.tsx                |       0 |        0 |       0 |       0 | 12-25             
+  ThemeProvider.tsx                |       0 |        0 |       0 |       0 | 14-116            
+ screens                           |       0 |        0 |       0 |       0 |                   
+  ConnectivityCheck.tsx            |       0 |        0 |       0 |       0 | 34-430            
+  OfflineAwareCheckin.tsx          |       0 |        0 |       0 |       0 | 43-374            
+ services                          |       0 |        0 |       0 |       0 |                   
+  checkInService.ts                |       0 |        0 |       0 |       0 | 60-332            
+  eventsService.ts                 |       0 |        0 |       0 |       0 | 16-295            
+  notificationService.ts           |       0 |        0 |       0 |       0 | 11-417            
+ theme                             |       0 |      100 |     100 |       0 |                   
+  colors.ts                        |       0 |      100 |     100 |       0 | 7                 
+  paperTheme.ts                    |       0 |      100 |     100 |       0 | 16-118            
+ utils                             |       0 |        0 |       0 |       0 |                   
+  index.ts                         |       0 |        0 |       0 |       0 | 6-83              
+  qrParser.ts                      |       0 |        0 |       0 |       0 | 20-150            
+  toast.ts                         |       0 |        0 |       0 |       0 | 24-121            
+-----------------------------------|---------|----------|---------|---------|-------------------
+Jest: "global" coverage threshold for statements (80%) not met: 0%
+Jest: "global" coverage threshold for branches (80%) not met: 0%
+Jest: "global" coverage threshold for lines (80%) not met: 0%
+Jest: "global" coverage threshold for functions (80%) not met: 0%
+Test Suites: 11 failed, 11 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        2.876 s
+Ran all test suites.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error workspace drouple-mobile@1.0.0
+npm error location /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error command failed
+npm error command sh -c jest

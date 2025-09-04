@@ -1,0 +1,62 @@
+# Additional Package.json Commands for Build & Deploy
+
+Add these commands to your package.json scripts section:
+
+```json
+{
+  "scripts": {
+    "build:internal": "eas build -p all --profile internal",
+    "build:ios:internal": "eas build -p ios --profile internal", 
+    "build:android:internal": "eas build -p android --profile internal",
+    
+    "build:preview": "eas build -p all --profile preview",
+    "build:ios:preview": "eas build -p ios --profile preview",
+    "build:android:preview": "eas build -p android --profile preview",
+    
+    "build:production": "eas build -p all --profile production",
+    "build:ios:production": "eas build -p ios --profile production",
+    "build:android:production": "eas build -p android --profile production",
+    
+    "submit:ios": "eas submit -p ios --profile production",
+    "submit:android": "eas submit -p android --profile production", 
+    "submit:all": "npm run submit:ios && npm run submit:android",
+    
+    "deploy:internal": "./scripts/build-and-deploy.sh internal all",
+    "deploy:ios:internal": "./scripts/build-and-deploy.sh internal ios",
+    "deploy:android:internal": "./scripts/build-and-deploy.sh internal android",
+    
+    "deploy:production": "./scripts/build-and-deploy.sh production all",
+    "deploy:ios:production": "./scripts/build-and-deploy.sh production ios", 
+    "deploy:android:production": "./scripts/build-and-deploy.sh production android",
+    
+    "release:prepare": "npm run test && npm run lint && npm run typecheck",
+    "release:ios": "npm run release:prepare && npm run build:ios:production && npm run submit:ios",
+    "release:android": "npm run release:prepare && npm run build:android:production && npm run submit:android",
+    "release:full": "npm run release:prepare && npm run build:production && npm run submit:all"
+  }
+}
+```
+
+## Quick Build Commands
+
+### Internal Testing
+```bash
+npm run build:internal              # Build both platforms
+npm run deploy:internal             # Build & deploy both platforms 
+npm run deploy:ios:internal         # iOS only
+npm run deploy:android:internal     # Android only
+```
+
+### Production Release
+```bash
+npm run release:full                # Complete release pipeline
+npm run release:ios                 # iOS only release
+npm run release:android            # Android only release
+```
+
+### Custom Script Usage
+```bash
+./scripts/build-and-deploy.sh internal ios      # Internal iOS build
+./scripts/build-and-deploy.sh production all    # Production both platforms
+./scripts/build-and-deploy.sh preview android   # Preview Android build
+```
