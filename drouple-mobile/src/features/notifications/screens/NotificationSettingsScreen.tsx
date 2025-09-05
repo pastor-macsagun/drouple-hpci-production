@@ -1,6 +1,6 @@
 /**
  * Notification Settings Screen
- * Allows users to manage notification preferences and permissions
+ * Allows users to manage MVP notification preferences and permissions
  */
 
 import React, { useState, useEffect } from 'react';
@@ -15,94 +15,59 @@ import {
   Chip,
   Divider,
   IconButton,
-  Surface,
   ActivityIndicator,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import * as Notifications from 'expo-notifications';
 
 import { colors } from '@/theme/colors';
-import { useNotifications } from '@/hooks/useNotifications';
-
-interface NotificationPreferences {
-  eventReminders: boolean;
-  serviceReminders: boolean;
-  rsvpConfirmations: boolean;
-  announcements: boolean;
-  reminderTime: number; // minutes before event
-}
+import { useAuthStore } from '@/lib/store/authStore';
+import { PushNotificationService } from '@/lib/notifications/pushNotificationService';
+import { NotificationPreferencesService } from '@/lib/notifications/notificationPreferences';
+import { NotificationService } from '@/lib/notifications/notificationService';
+import type { NotificationPreferences } from '@/lib/notifications/notificationPreferences';
 
 export const NotificationSettingsScreen: React.FC = () => {
   const navigation = useNavigation();
-  const {
-    isInitialized,
-    permissionStatus,
-    pushToken,
-    initialize,
-    requestPermissions,
-    getScheduledNotifications,
-    cancelAllNotifications,
-  } = useNotifications();
+  const { user } = useAuthStore();
 
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    eventReminders: true,
-    serviceReminders: true,
-    rsvpConfirmations: true,
-    announcements: true,
-    reminderTime: 60, // 1 hour
-  });
-
-  const [scheduledCount, setScheduledCount] = useState<number>(0);
+  const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
+  const [permissionSettings, setPermissionSettings] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     loadSettings();
   }, []);
 
-  useEffect(() => {
-    if (isInitialized) {
-      loadScheduledNotifications();
-    }
-  }, [isInitialized]);
-
   const loadSettings = async () => {
     try {
       setIsLoading(true);
 
-      // Initialize notifications if not already done
-      if (!isInitialized) {
-        await initialize();
-      }
+      // Initialize notification service
+      await NotificationService.initialize();
 
-      // Load preferences from storage (in real app)
-      // For now, use default preferences
-      setPreferences({
-        eventReminders: true,
-        serviceReminders: true,
-        rsvpConfirmations: true,
-        announcements: true,
-        reminderTime: 60,
-      });
+      // Load preferences
+      const prefs = await NotificationPreferencesService.initialize();
+      setPreferences(prefs);
+
+      // Get permission settings
+      const settings = await NotificationService.getNotificationSettings();
+      setPermissionSettings(settings);
     } catch (error) {
       console.error('Failed to load settings:', error);
+      Alert.alert('Error', 'Failed to load notification settings');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const loadScheduledNotifications = async () => {
-    try {
-      const scheduled = await getScheduledNotifications();
-      setScheduledCount(scheduled.length);
-    } catch (error) {
-      console.error('Failed to load scheduled notifications:', error);
-    }
-  };
-
   const handlePermissionRequest = async () => {
     try {
-      const granted = await requestPermissions();
-      if (!granted) {
+      const granted = await NotificationService.requestPermissions();
+      if (granted) {
+        const settings = await NotificationService.getNotificationSettings();
+        setPermissionSettings(settings);
+      } else {
         Alert.alert(
           'Permissions Required',
           'To receive notifications, please enable permissions in Settings.',
@@ -118,21 +83,33 @@ export const NotificationSettingsScreen: React.FC = () => {
     }
   };
 
-  const handlePreferenceChange = (
+  const handlePreferenceChange = async (
     key: keyof NotificationPreferences,
-    value: boolean | number
+    value: boolean
   ) => {
-    const newPreferences = { ...preferences, [key]: value };
-    setPreferences(newPreferences);
+    if (!preferences) return;
 
-    // Save preferences (in real app, save to storage/server)
-    console.log('Saving preferences:', newPreferences);
+    try {
+      setIsSaving(true);
+      const newPreferences = { ...preferences, [key]: value };
+      setPreferences(newPreferences);
+
+      // Save preferences
+      await NotificationPreferencesService.updatePreferences({ [key]: value });
+    } catch (error) {
+      console.error('Failed to save preference:', error);
+      // Revert the change
+      setPreferences(preferences);
+      Alert.alert('Error', 'Failed to save preference');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleClearAllNotifications = () => {
     Alert.alert(
       'Clear All Notifications',
-      'Are you sure you want to cancel all scheduled notifications?',
+      'Are you sure you want to clear all notifications?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -140,8 +117,8 @@ export const NotificationSettingsScreen: React.FC = () => {
           style: 'destructive',
           onPress: async () => {
             try {
-              await cancelAllNotifications();
-              setScheduledCount(0);
+              await NotificationService.clearAllNotifications();
+              Alert.alert('Success', 'All notifications cleared');
             } catch (error) {
               console.error('Failed to clear notifications:', error);
               Alert.alert('Error', 'Failed to clear notifications');
@@ -152,26 +129,34 @@ export const NotificationSettingsScreen: React.FC = () => {
     );
   };
 
-  const getReminderTimeText = (minutes: number): string => {
-    if (minutes < 60) {
-      return `${minutes} minutes`;
-    }
-    const hours = minutes / 60;
-    return hours === 1 ? '1 hour' : `${hours} hours`;
-  };
-
-  const getPermissionStatusColor = (status: string) => {
-    switch (status) {
-      case 'granted':
-        return colors.success;
-      case 'denied':
-        return colors.error;
-      default:
-        return colors.warning;
+  const handleTestNotification = async () => {
+    try {
+      await NotificationService.sendTestNotification();
+    } catch (error) {
+      console.error('Failed to send test notification:', error);
+      Alert.alert('Error', 'Failed to send test notification');
     }
   };
 
-  if (isLoading) {
+  const getPermissionStatusColor = (granted: boolean) => {
+    return granted ? colors.success.main : colors.error.main;
+  };
+
+  const getPermissionStatusText = (granted: boolean) => {
+    return granted ? 'granted' : 'denied';
+  };
+
+  if (!user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text variant='bodyMedium'>Please sign in to access notification settings</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (isLoading || !preferences || !permissionSettings) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -193,6 +178,8 @@ export const NotificationSettingsScreen: React.FC = () => {
       </SafeAreaView>
     );
   }
+
+  const rolePreferences = NotificationPreferencesService.getPreferencesForRole(user);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -218,38 +205,52 @@ export const NotificationSettingsScreen: React.FC = () => {
               <Chip
                 mode='flat'
                 textStyle={{
-                  color: getPermissionStatusColor(permissionStatus.status),
+                  color: getPermissionStatusColor(permissionSettings.granted),
                   fontWeight: '600',
                 }}
                 style={{
                   backgroundColor:
-                    getPermissionStatusColor(permissionStatus.status) + '20',
+                    getPermissionStatusColor(permissionSettings.granted) + '20',
                 }}
               >
-                {permissionStatus.status}
+                {getPermissionStatusText(permissionSettings.granted)}
               </Chip>
             </View>
 
-            {permissionStatus.status !== 'granted' && (
+            {!permissionSettings.granted && (
               <View style={styles.permissionActions}>
                 <Text variant='bodyMedium' style={styles.permissionText}>
-                  {permissionStatus.status === 'denied'
-                    ? 'Notifications are disabled. Enable them in Settings to receive important updates.'
-                    : 'Allow notifications to stay updated with church events and reminders.'}
+                  {permissionSettings.canAskAgain
+                    ? 'Allow notifications to stay updated with church events and reminders.'
+                    : 'Notifications are disabled. Enable them in Settings to receive important updates.'}
                 </Text>
                 <Button
                   mode='contained'
                   onPress={handlePermissionRequest}
                   style={styles.permissionButton}
                 >
-                  {permissionStatus.status === 'denied'
-                    ? 'Open Settings'
-                    : 'Enable Notifications'}
+                  {permissionSettings.canAskAgain
+                    ? 'Enable Notifications'
+                    : 'Open Settings'}
                 </Button>
               </View>
             )}
 
-            {pushToken && (
+            {/* Test Notification Button */}
+            {permissionSettings.granted && (
+              <View style={styles.testSection}>
+                <Button
+                  mode='outlined'
+                  icon='bell'
+                  onPress={handleTestNotification}
+                  style={styles.testButton}
+                >
+                  Send Test Notification
+                </Button>
+              </View>
+            )}
+
+            {permissionSettings.token && (
               <View style={styles.tokenInfo}>
                 <Text variant='bodySmall' style={styles.tokenLabel}>
                   Push Token (for debugging):
@@ -259,7 +260,7 @@ export const NotificationSettingsScreen: React.FC = () => {
                   style={styles.tokenText}
                   numberOfLines={1}
                 >
-                  {pushToken.slice(0, 32)}...
+                  {permissionSettings.token.slice(0, 32)}...
                 </Text>
               </View>
             )}
@@ -272,139 +273,61 @@ export const NotificationSettingsScreen: React.FC = () => {
             <Text variant='titleMedium' style={styles.sectionTitle}>
               Notification Types
             </Text>
-
-            <List.Item
-              title='Event Reminders'
-              description='Get notified before church events start'
-              left={() => <List.Icon icon='calendar-alert' />}
-              right={() => (
-                <Switch
-                  value={preferences.eventReminders}
-                  onValueChange={value =>
-                    handlePreferenceChange('eventReminders', value)
-                  }
-                  disabled={permissionStatus.status !== 'granted'}
+            
+            {rolePreferences.map((pref, index) => (
+              <React.Fragment key={pref.key}>
+                {index > 0 && <Divider style={styles.divider} />}
+                <List.Item
+                  title={pref.title}
+                  description={pref.description}
+                  left={() => <List.Icon icon={getIconForNotificationType(pref.key)} />}
+                  right={() => (
+                    <Switch
+                      value={pref.enabled}
+                      onValueChange={value => handlePreferenceChange(pref.key, value)}
+                      disabled={!permissionSettings.granted || isSaving}
+                    />
+                  )}
                 />
-              )}
-            />
-
-            <Divider style={styles.divider} />
-
-            <List.Item
-              title='Service Reminders'
-              description='Get notified before worship services'
-              left={() => <List.Icon icon='church' />}
-              right={() => (
-                <Switch
-                  value={preferences.serviceReminders}
-                  onValueChange={value =>
-                    handlePreferenceChange('serviceReminders', value)
-                  }
-                  disabled={permissionStatus.status !== 'granted'}
-                />
-              )}
-            />
-
-            <Divider style={styles.divider} />
-
-            <List.Item
-              title='RSVP Confirmations'
-              description='Get notified when your RSVP is confirmed'
-              left={() => <List.Icon icon='check-circle' />}
-              right={() => (
-                <Switch
-                  value={preferences.rsvpConfirmations}
-                  onValueChange={value =>
-                    handlePreferenceChange('rsvpConfirmations', value)
-                  }
-                  disabled={permissionStatus.status !== 'granted'}
-                />
-              )}
-            />
-
-            <Divider style={styles.divider} />
-
-            <List.Item
-              title='Announcements'
-              description='Get notified about church announcements'
-              left={() => <List.Icon icon='bullhorn' />}
-              right={() => (
-                <Switch
-                  value={preferences.announcements}
-                  onValueChange={value =>
-                    handlePreferenceChange('announcements', value)
-                  }
-                  disabled={permissionStatus.status !== 'granted'}
-                />
-              )}
-            />
+              </React.Fragment>
+            ))}
           </Card.Content>
         </Card>
 
-        {/* Reminder Timing */}
-        <Card style={styles.timingCard}>
+        {/* Info Card */}
+        <Card style={styles.infoCard}>
           <Card.Content>
             <Text variant='titleMedium' style={styles.sectionTitle}>
-              Reminder Timing
+              About Notifications
             </Text>
-            <Text variant='bodyMedium' style={styles.timingDescription}>
-              How far in advance should we remind you about events?
+            <Text variant='bodyMedium' style={styles.infoDescription}>
+              • Event reminders are sent 24 hours and 2 hours before events
+              • Pathway milestones celebrate your progress
+              • Admin alerts help monitor system health
+              • VIP assignments notify about new first-timers
+              • Leader requests help with pathway verifications
             </Text>
-
-            <View style={styles.reminderOptions}>
-              {[15, 30, 60, 120].map(minutes => (
-                <Chip
-                  key={minutes}
-                  mode={
-                    preferences.reminderTime === minutes ? 'flat' : 'outlined'
-                  }
-                  selected={preferences.reminderTime === minutes}
-                  onPress={() =>
-                    handlePreferenceChange('reminderTime', minutes)
-                  }
-                  style={[
-                    styles.reminderChip,
-                    preferences.reminderTime === minutes && styles.selectedChip,
-                  ]}
-                >
-                  {getReminderTimeText(minutes)}
-                </Chip>
-              ))}
-            </View>
           </Card.Content>
         </Card>
 
-        {/* Scheduled Notifications */}
-        {isInitialized && (
-          <Card style={styles.scheduledCard}>
-            <Card.Content>
-              <View style={styles.scheduledHeader}>
-                <Text variant='titleMedium' style={styles.sectionTitle}>
-                  Scheduled Notifications
-                </Text>
-                <Chip mode='outlined'>{scheduledCount} scheduled</Chip>
-              </View>
+        {/* Actions */}
+        <Card style={styles.actionsCard}>
+          <Card.Content>
+            <Text variant='titleMedium' style={styles.sectionTitle}>
+              Actions
+            </Text>
 
-              <Text variant='bodyMedium' style={styles.scheduledDescription}>
-                You have {scheduledCount} notifications scheduled. These will
-                remind you about upcoming events and services.
-              </Text>
-
-              {scheduledCount > 0 && (
-                <Button
-                  mode='outlined'
-                  icon='trash-can'
-                  onPress={handleClearAllNotifications}
-                  style={styles.clearButton}
-                  textColor={colors.error}
-                  buttonColor={colors.error + '10'}
-                >
-                  Clear All Notifications
-                </Button>
-              )}
-            </Card.Content>
-          </Card>
-        )}
+            <Button
+              mode='outlined'
+              icon='trash-can'
+              onPress={handleClearAllNotifications}
+              style={styles.clearButton}
+              textColor={colors.error.main}
+            >
+              Clear All Notifications
+            </Button>
+          </Card.Content>
+        </Card>
       </ScrollView>
     </SafeAreaView>
   );
@@ -413,7 +336,7 @@ export const NotificationSettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.main,
   },
   header: {
     flexDirection: 'row',
@@ -484,41 +407,48 @@ const styles = StyleSheet.create({
   divider: {
     backgroundColor: colors.surface.variant,
   },
-  timingCard: {
+  testSection: {
+    marginTop: 12,
+  },
+  testButton: {
+    alignSelf: 'flex-start',
+  },
+  infoCard: {
     marginBottom: 16,
   },
-  timingDescription: {
+  infoDescription: {
     color: colors.text.secondary,
-    marginBottom: 16,
-  },
-  reminderOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  reminderChip: {
-    marginBottom: 8,
-  },
-  selectedChip: {
-    backgroundColor: colors.primary.main + '20',
-  },
-  scheduledCard: {
-    marginBottom: 16,
-  },
-  scheduledHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  scheduledDescription: {
-    color: colors.text.secondary,
-    marginBottom: 16,
     lineHeight: 20,
+  },
+  actionsCard: {
+    marginBottom: 16,
   },
   clearButton: {
     alignSelf: 'flex-start',
   },
 });
+
+// Helper function to get icon for notification type
+const getIconForNotificationType = (type: string) => {
+  switch (type) {
+    case 'announcements':
+      return 'bullhorn';
+    case 'eventReminders24h':
+    case 'eventReminders2h':
+      return 'calendar-alert';
+    case 'pathwayMilestones':
+      return 'trophy';
+    case 'adminSyncErrors':
+    case 'adminCheckInFails':
+      return 'alert';
+    case 'vipNewAssignments':
+      return 'account-plus';
+    case 'leaderGroupUpdates':
+    case 'leaderVerificationRequests':
+      return 'account-group';
+    default:
+      return 'bell';
+  }
+};
 
 export default NotificationSettingsScreen;

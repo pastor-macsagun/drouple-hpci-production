@@ -6,6 +6,7 @@
 
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { productionApiClient } from '@/lib/api/productionClient';
@@ -104,8 +105,9 @@ export class PushNotificationService {
       }
 
       // Get push token
+      const projectId = Constants.expoConfig?.extra?.eas?.projectId || 'drouple-mobile';
       const pushTokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: 'your-expo-project-id', // Replace with your actual project ID
+        projectId,
       });
 
       // Configure notification channel for Android
