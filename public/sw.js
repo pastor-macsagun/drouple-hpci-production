@@ -1,15 +1,15 @@
-const CACHE_VERSION = '3'
-const APP_VERSION = '2025.01.05'
+const CACHE_VERSION = '4'
+const APP_VERSION = '2025.09.06'
 const STATIC_CACHE_NAME = `hpci-chms-static-v${CACHE_VERSION}`
 const API_CACHE_NAME = `hpci-chms-api-v${CACHE_VERSION}`
 const SYNC_QUEUE_NAME = 'hpci-chms-sync-queue'
 
 // Release notes for this version
 const RELEASE_NOTES = [
-  'Enhanced offline capabilities with better sync',
-  'Improved caching strategies for faster loading',
-  'Better update management and notifications',
-  'Enhanced security for offline data'
+  'PWA mobile-only interface with bottom navigation',
+  'Fixed header/sidebar layout overlap issues',
+  'Updated branding to "Drouple" in mobile interface',
+  'Enhanced offline capabilities with better sync'
 ]
 
 // Define cached assets
