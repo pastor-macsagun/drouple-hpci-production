@@ -1,0 +1,1166 @@
+
+> drouple-mobile@1.0.0 test
+> jest --ci --reporters=default --reporters=jest-junit --coverage
+
+FAIL src/__tests__/integration/simple-connectivity.test.js
+  ● Console
+
+    console.log
+      🚀 Starting Mobile-Backend Integration Tests
+
+      at Object.log (src/__tests__/integration/simple-connectivity.test.js:20:13)
+
+    console.log
+      📡 API Base URL: http://localhost:3000
+
+      at Object.log (src/__tests__/integration/simple-connectivity.test.js:21:13)
+
+    console.log
+      📱 Mobile API URL: http://localhost:3000/api/mobile
+
+      at Object.log (src/__tests__/integration/simple-connectivity.test.js:22:13)
+
+    console.log
+      
+      📊 Integration Test Results Summary:
+
+      at Object.log (src/__tests__/integration/simple-connectivity.test.js:26:13)
+
+    console.log
+      ❌ API Health Check: Backend API is not reachable
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:29:15)
+          at Array.forEach (<anonymous>)
+
+    console.log
+         └─ request to http://localhost:3000/api/health failed, reason:
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:30:35)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❌ Mobile API Endpoints: Mobile API endpoints not reachable
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:29:15)
+          at Array.forEach (<anonymous>)
+
+    console.log
+         └─ request to http://localhost:3000/api/mobile/health failed, reason:
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:30:35)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❌ Authentication Flow: Authentication flow error
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:29:15)
+          at Array.forEach (<anonymous>)
+
+    console.log
+         └─ request to http://localhost:3000/api/mobile/auth/login failed, reason:
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:30:35)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❌ Data Fetching: Data fetching error
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:29:15)
+          at Array.forEach (<anonymous>)
+
+    console.log
+         └─ request to http://localhost:3000/api/mobile/auth/login failed, reason:
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:30:35)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ✅ Configuration Validation: Configuration is valid
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:29:15)
+          at Array.forEach (<anonymous>)
+
+    console.log
+         └─ Base URL valid: true, Mobile URL valid: true, URLs consistent: true
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:30:35)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❌ Error Handling: Error handling test failed
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:29:15)
+          at Array.forEach (<anonymous>)
+
+    console.log
+         └─ request to http://localhost:3000/api/mobile/auth/login failed, reason:
+
+      at log (src/__tests__/integration/simple-connectivity.test.js:30:35)
+          at Array.forEach (<anonymous>)
+
+  ● Mobile-Backend Integration › A) API Health Check - Backend Connectivity
+
+    FetchError: request to http://localhost:3000/api/health failed, reason:
+
+      at ClientRequest.<anonymous> (../node_modules/node-fetch/lib/index.js:1501:11)
+
+  ● Mobile-Backend Integration › B) Mobile API Endpoints - Mobile-Specific Connectivity
+
+    FetchError: request to http://localhost:3000/api/mobile/health failed, reason:
+
+      at ClientRequest.<anonymous> (../node_modules/node-fetch/lib/index.js:1501:11)
+
+  ● Mobile-Backend Integration › C) Authentication Flow - Login & Token Validation
+
+    FetchError: request to http://localhost:3000/api/mobile/auth/login failed, reason:
+
+      at ClientRequest.<anonymous> (../node_modules/node-fetch/lib/index.js:1501:11)
+
+  ● Mobile-Backend Integration › D) Data Fetching - Services & Check-in Data
+
+    FetchError: request to http://localhost:3000/api/mobile/auth/login failed, reason:
+
+      at ClientRequest.<anonymous> (../node_modules/node-fetch/lib/index.js:1501:11)
+
+  ● Mobile-Backend Integration › F) Error Handling - Network & Auth Errors
+
+    FetchError: request to http://localhost:3000/api/mobile/auth/login failed, reason:
+
+      at ClientRequest.<anonymous> (../node_modules/node-fetch/lib/index.js:1501:11)
+
+FAIL src/lib/db/__tests__/database.test.ts
+  ● DatabaseManager › Queue Operations › should enqueue and retrieve actions
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Queue Operations › should filter actions by type
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Queue Operations › should remove actions from queue
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Queue Operations › should get queue count
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Queue Operations › should update retry count
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Key-Value Operations › should set and get string values
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Key-Value Operations › should set and get JSON values
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Key-Value Operations › should return null for non-existent keys
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Key-Value Operations › should delete key-value pairs
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Key-Value Operations › should get keys with prefix filter
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● DatabaseManager › Statistics › should return database statistics
+
+    TypeError: SQLite.openDatabaseAsync is not a function
+
+      34 |     try {
+      35 |       // Open database
+    > 36 |       this.db = await SQLite.openDatabaseAsync('drouple_mobile.db');
+         |                              ^
+      37 |
+      38 |       // Create tables
+      39 |       await this.db.execAsync(`
+
+      at DatabaseManager.openDatabaseAsync (src/lib/db/database.ts:36:30)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at DatabaseManager.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+      at DatabaseManager.apply [as initialize] (src/lib/db/database.ts:33:19)
+      at Object.initialize (src/lib/db/__tests__/database.test.ts:10:20)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+FAIL src/features/auth/__tests__/auth-service.unit.test.ts
+  ● AuthService › login › should successfully login with valid credentials
+
+    TypeError: authService.login is not a function
+
+      40 |       });
+      41 |
+    > 42 |       const result = await authService.login('test@example.com', 'password');
+         |                                        ^
+      43 |
+      44 |       expect(result.success).toBe(true);
+      45 |       expect(result.data?.user.email).toBe('test@example.com');
+
+      at Object.login (src/features/auth/__tests__/auth-service.unit.test.ts:42:40)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › login › should handle invalid credentials
+
+    TypeError: authService.login is not a function
+
+      61 |       });
+      62 |
+    > 63 |       const result = await authService.login(
+         |                                        ^
+      64 |         'test@example.com',
+      65 |         'wrongpassword'
+      66 |       );
+
+      at Object.login (src/features/auth/__tests__/auth-service.unit.test.ts:63:40)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › login › should handle network errors
+
+    TypeError: authService.login is not a function
+
+      73 |       global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
+      74 |
+    > 75 |       const result = await authService.login('test@example.com', 'password');
+         |                                        ^
+      76 |
+      77 |       expect(result.success).toBe(false);
+      78 |       expect(result.error).toContain('Network error');
+
+      at Object.login (src/features/auth/__tests__/auth-service.unit.test.ts:75:40)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › refreshToken › should successfully refresh token
+
+    TypeError: Cannot read properties of undefined (reading 'mockResolvedValue')
+
+      82 |   describe('refreshToken', () => {
+      83 |     it('should successfully refresh token', async () => {
+    > 84 |       mockSecureStorage.getItem.mockResolvedValue('old-refresh-token');
+         |                                 ^
+      85 |
+      86 |       const mockResponse = {
+      87 |         success: true,
+
+      at Object.mockResolvedValue (src/features/auth/__tests__/auth-service.unit.test.ts:84:33)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › refreshToken › should handle invalid refresh token
+
+    TypeError: Cannot read properties of undefined (reading 'mockResolvedValue')
+
+      111 |
+      112 |     it('should handle invalid refresh token', async () => {
+    > 113 |       mockSecureStorage.getItem.mockResolvedValue('invalid-refresh-token');
+          |                                 ^
+      114 |
+      115 |       global.fetch = jest.fn().mockResolvedValue({
+      116 |         ok: false,
+
+      at Object.mockResolvedValue (src/features/auth/__tests__/auth-service.unit.test.ts:113:33)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › biometric authentication › should enable biometric authentication
+
+    TypeError: authService.enableBiometric is not a function
+
+      142 |       });
+      143 |
+    > 144 |       const result = await authService.enableBiometric('test@example.com');
+          |                                        ^
+      145 |
+      146 |       expect(result).toBe(true);
+      147 |       expect(mockSecureStorage.setItem).toHaveBeenCalledWith(
+
+      at Object.enableBiometric (src/features/auth/__tests__/auth-service.unit.test.ts:144:40)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › biometric authentication › should handle biometric not available
+
+    TypeError: authService.enableBiometric is not a function
+
+      160 |       );
+      161 |
+    > 162 |       const result = await authService.enableBiometric('test@example.com');
+          |                                        ^
+      163 |
+      164 |       expect(result).toBe(false);
+      165 |     });
+
+      at Object.enableBiometric (src/features/auth/__tests__/auth-service.unit.test.ts:162:40)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › biometric authentication › should authenticate with biometrics
+
+    TypeError: Cannot read properties of undefined (reading 'mockResolvedValueOnce')
+
+      167 |     it('should authenticate with biometrics', async () => {
+      168 |       mockSecureStorage.getItem
+    > 169 |         .mockResolvedValueOnce('true') // biometric_enabled
+          |          ^
+      170 |         .mockResolvedValueOnce('test@example.com') // biometric_email
+      171 |         .mockResolvedValueOnce('stored-refresh-token'); // refresh_token
+      172 |
+
+      at Object.mockResolvedValueOnce (src/features/auth/__tests__/auth-service.unit.test.ts:169:10)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › offline authentication › should handle offline login with cached credentials
+
+    TypeError: Cannot read properties of undefined (reading 'mockResolvedValueOnce')
+
+      196 |     it('should handle offline login with cached credentials', async () => {
+      197 |       mockSecureStorage.getItem
+    > 198 |         .mockResolvedValueOnce('cached-email')
+          |          ^
+      199 |         .mockResolvedValueOnce('cached-password-hash');
+      200 |
+      201 |       // Mock crypto for password verification
+
+      at Object.mockResolvedValueOnce (src/features/auth/__tests__/auth-service.unit.test.ts:198:10)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+  ● AuthService › offline authentication › should reject offline login with wrong credentials
+
+    TypeError: Cannot read properties of undefined (reading 'mockResolvedValueOnce')
+
+      213 |     it('should reject offline login with wrong credentials', async () => {
+      214 |       mockSecureStorage.getItem
+    > 215 |         .mockResolvedValueOnce('cached-email')
+          |          ^
+      216 |         .mockResolvedValueOnce('different-hash');
+      217 |
+      218 |       const result = await authService.loginOffline(
+
+      at Object.mockResolvedValueOnce (src/features/auth/__tests__/auth-service.unit.test.ts:215:10)
+      at asyncGeneratorStep (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+FAIL src/features/checkin/__tests__/checkin-service.unit.test.ts
+  ● CheckInService › QR Code Check-In › should successfully check-in with valid QR code
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › QR Code Check-In › should handle invalid QR code format
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › QR Code Check-In › should queue check-in when offline
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › Manual Check-In › should allow manual check-in by selecting service
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › Manual Check-In › should prevent duplicate check-ins
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › Offline Sync › should sync queued check-ins when back online
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › Offline Sync › should handle partial sync failures
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › Check-In History › should fetch user check-in history
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+  ● CheckInService › Rate Limiting › should handle rate limiting for rapid check-in attempts
+
+    TypeError: _checkInService.CheckInService is not a constructor
+
+      16 |
+      17 |   beforeEach(() => {
+    > 18 |     checkInService = new CheckInService();
+         |                      ^
+      19 |     jest.clearAllMocks();
+      20 |   });
+      21 |
+
+      at Object.<anonymous> (src/features/checkin/__tests__/checkin-service.unit.test.ts:18:22)
+
+PASS src/utils/__tests__/qrParser.test.ts
+FAIL src/lib/sync/__tests__/syncManager.unit.test.ts
+  ● Test suite failed to run
+
+    Cannot find module 'expo-sqlite/next' from 'src/data/db.ts'
+
+    Require stack:
+      src/data/db.ts
+      src/lib/sync/syncManager.ts
+      src/lib/sync/__tests__/syncManager.unit.test.ts
+
+      4 |  */
+      5 |
+    > 6 | import * as SQLite from 'expo-sqlite/next';
+        | ^
+      7 | import type { SQLiteDatabase } from 'expo-sqlite/next';
+      8 |
+      9 | // Database configuration
+
+      at Resolver._throwModNotFoundError (../node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (src/data/db.ts:6:1)
+      at Object.require (src/lib/sync/syncManager.ts:22:1)
+      at Object.require (src/lib/sync/__tests__/syncManager.unit.test.ts:6:1)
+
+FAIL src/lib/security/__tests__/security-validation.unit.test.ts
+  ● Test suite failed to run
+
+    [@RNC/AsyncStorage]: NativeModule: AsyncStorage is null.
+
+    To fix this issue try these steps:
+
+      • Uninstall, rebuild and restart the app.
+
+      • Run the packager with `--reset-cache` flag.
+
+      • If you are using CocoaPods on iOS, run `pod install` in the `ios` directory, then rebuild and re-run the app.
+
+      • Make sure your project's `package.json` depends on `@react-native-async-storage/async-storage`, even if you only depend on it indirectly through other dependencies. CLI only autolinks native modules found in your `package.json`.
+
+      • If this happens while testing with Jest, check out how to integrate AsyncStorage here: https://react-native-async-storage.github.io/async-storage/docs/advanced/jest
+
+    If none of these fix the issue, please open an issue on the GitHub repository: https://github.com/react-native-async-storage/async-storage/issues
+
+      4 |  */
+      5 |
+    > 6 | import AsyncStorage from '@react-native-async-storage/async-storage';
+        | ^
+      7 | import * as Location from 'expo-location';
+      8 | import * as Notifications from 'expo-notifications';
+      9 | import { Platform } from 'react-native';
+
+      at Object.<anonymous> (../node_modules/@react-native-async-storage/async-storage/src/AsyncStorage.native.ts:23:9)
+      at Object.require (../node_modules/@react-native-async-storage/async-storage/src/index.ts:1:1)
+      at Object.require (src/lib/security/privacyManager.ts:6:1)
+      at Object.require (src/lib/security/__tests__/security-validation.unit.test.ts:7:1)
+
+FAIL src/__tests__/integration/connectivity.test.ts
+  ● Test suite failed to run
+
+    Cannot find module '../../src/lib/api/services/auth' from 'src/__tests__/integration/connectivity.test.ts'
+
+       5 |
+       6 | import { jest, describe, beforeAll, afterAll, beforeEach, afterEach, it, expect } from '@jest/globals';
+    >  7 | import { AuthService } from '../../src/lib/api/services/auth';
+         | ^
+       8 | import { CheckinService } from '../../src/lib/api/services/checkin';
+       9 | import { EventsService } from '../../src/lib/api/services/events';
+      10 | import { httpClient, TokenManager, NetworkManager } from '../../src/lib/api/http';
+
+      at Resolver._throwModNotFoundError (../node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (src/__tests__/integration/connectivity.test.ts:7:1)
+
+FAIL src/components/scanner/__tests__/QRCodeScanner.component.test.tsx
+  ● Test suite failed to run
+
+    ReferenceError: /Users/macsagun/HPCI-ChMS/drouple-mobile/src/components/scanner/__tests__/QRCodeScanner.component.test.tsx: The module factory of `jest.mock()` is not allowed to reference any out-of-scope variables.
+    Invalid variable access: React
+    Allowed objects: AbortController, AbortSignal, AggregateError, Array, ArrayBuffer, AsyncDisposableStack, Atomics, BigInt, BigInt64Array, BigUint64Array, Blob, Boolean, BroadcastChannel, Buffer, ByteLengthQueuingStrategy, CloseEvent, CompressionStream, CountQueuingStrategy, Crypto, CryptoKey, CustomEvent, DOMException, DataView, Date, DecompressionStream, DisposableStack, Error, EvalError, Event, EventTarget, File, FinalizationRegistry, Float16Array, Float32Array, Float64Array, FormData, Function, Generator, GeneratorFunction, Headers, Infinity, Int16Array, Int32Array, Int8Array, InternalError, Intl, Iterator, JSON, Map, Math, MessageChannel, MessageEvent, MessagePort, NaN, Navigator, Number, Object, Performance, PerformanceEntry, PerformanceMark, PerformanceMeasure, PerformanceObserver, PerformanceObserverEntryList, PerformanceResourceTiming, Promise, Proxy, RangeError, ReadableByteStreamController, ReadableStream, ReadableStreamBYOBReader, ReadableStreamBYOBRequest, ReadableStreamDefaultController, ReadableStreamDefaultReader, ReferenceError, Reflect, RegExp, Request, Response, Set, SharedArrayBuffer, String, SubtleCrypto, SuppressedError, Symbol, SyntaxError, TextDecoder, TextDecoderStream, TextEncoder, TextEncoderStream, TransformStream, TransformStreamDefaultController, TypeError, URIError, URL, URLPattern, URLSearchParams, Uint16Array, Uint32Array, Uint8Array, Uint8ClampedArray, WeakMap, WeakRef, WeakSet, WebAssembly, WebSocket, WritableStream, WritableStreamDefaultController, WritableStreamDefaultWriter, __dirname, __filename, arguments, atob, btoa, clearImmediate, clearInterval, clearTimeout, console, crypto, decodeURI, decodeURIComponent, encodeURI, encodeURIComponent, escape, eval, expect, exports, fetch, global, globalThis, isFinite, isNaN, jest, module, navigator, parseFloat, parseInt, performance, process, queueMicrotask, require, setImmediate, setInterval, setTimeout, structuredClone, undefined, unescape.
+    Note: This is a precaution to guard against uninitialized mock variables. If it is ensured that the mock is required lazily, variable names prefixed with `mock` (case insensitive) are permitted.
+
+      20 |   CameraView: ({ children, onBarcodeScanned }: any) => {
+      21 |     // Simulate camera view
+    > 22 |     React.useEffect(() => {
+         |     ^^^^^
+      23 |       // Store the scan handler for manual triggering in tests
+      24 |       global.mockCameraOnBarcodeScanned = onBarcodeScanned;
+      25 |     }, [onBarcodeScanned]);
+
+      at File.buildCodeFrameError (../node_modules/@babel/core/src/transformation/file/file.ts:256:12)
+      at NodePath.buildError [as buildCodeFrameError] (../node_modules/@babel/traverse/src/path/index.ts:142:21)
+      at call (../node_modules/@babel/traverse/src/visitors.ts:303:14)
+      at NodePath.call [as _call] (../node_modules/@babel/traverse/src/path/context.ts:36:20)
+      at NodePath.call (../node_modules/@babel/traverse/src/path/context.ts:21:18)
+      at NodePath.call [as visit] (../node_modules/@babel/traverse/src/path/context.ts:97:31)
+      at TraversalContext.visit [as visitQueue] (../node_modules/@babel/traverse/src/context.ts:148:16)
+      at TraversalContext.visitQueue [as visitMultiple] (../node_modules/@babel/traverse/src/context.ts:99:17)
+      at TraversalContext.visitMultiple [as visit] (../node_modules/@babel/traverse/src/context.ts:178:19)
+      at visit (../node_modules/@babel/traverse/src/traverse-node.ts:208:17)
+      at NodePath.visit (../node_modules/@babel/traverse/src/path/context.ts:104:33)
+      at TraversalContext.visit [as visitQueue] (../node_modules/@babel/traverse/src/context.ts:148:16)
+      at TraversalContext.visitQueue [as visitSingle] (../node_modules/@babel/traverse/src/context.ts:109:19)
+      at TraversalContext.visitSingle [as visit] (../node_modules/@babel/traverse/src/context.ts:180:19)
+      at visit (../node_modules/@babel/traverse/src/traverse-node.ts:208:17)
+      at traverse (../node_modules/@babel/traverse/src/index.ts:83:15)
+      at transformFile (../node_modules/@babel/core/src/transformation/index.ts:119:15)
+          at transformFile.next (<anonymous>)
+      at transformFile (../node_modules/@babel/core/src/transformation/index.ts:49:12)
+          at run.next (<anonymous>)
+      at transform (../node_modules/@babel/core/src/transform.ts:29:20)
+          at transform.next (<anonymous>)
+      at evaluateSync (../node_modules/gensync/index.js:251:28)
+      at sync (../node_modules/gensync/index.js:89:14)
+      at fn (../node_modules/@babel/core/src/errors/rewrite-stack-trace.ts:99:14)
+      at transformSync (../node_modules/@babel/core/src/transform.ts:66:52)
+      at ScriptTransformer.transformSource (../node_modules/@jest/transform/build/ScriptTransformer.js:545:31)
+      at ScriptTransformer._transformAndBuildScript (../node_modules/@jest/transform/build/ScriptTransformer.js:674:40)
+      at ScriptTransformer.transform (../node_modules/@jest/transform/build/ScriptTransformer.js:726:19)
+
+FAIL src/features/dashboard/__tests__/dashboard.unit.test.ts
+  ● Test suite failed to run
+
+    SyntaxError: /Users/macsagun/HPCI-ChMS/drouple-mobile/src/features/dashboard/__tests__/dashboard.unit.test.ts: Unexpected token, expected "," (13:50)
+
+      11 |
+      12 |   it('should render dashboard', () => {
+    > 13 |     const { getByText } = render(<DashboardScreen />);
+         |                                                   ^
+      14 |     expect(getByText).toBeDefined();
+      15 |   });
+      16 | });
+
+      at constructor (../node_modules/@babel/parser/src/parse-error.ts:95:45)
+      at TypeScriptParserMixin.toParseError [as raise] (../node_modules/@babel/parser/src/tokenizer/index.ts:1503:19)
+      at TypeScriptParserMixin.raise [as unexpected] (../node_modules/@babel/parser/src/tokenizer/index.ts:1543:16)
+      at TypeScriptParserMixin.unexpected [as expect] (../node_modules/@babel/parser/src/parser/util.ts:157:12)
+      at TypeScriptParserMixin.expect [as tsParseDelimitedListWorker] (../node_modules/@babel/parser/src/plugins/typescript/index.ts:545:16)
+      at TypeScriptParserMixin.tsParseDelimitedListWorker [as tsParseDelimitedList] (../node_modules/@babel/parser/src/plugins/typescript/index.ts:498:14)
+      at TypeScriptParserMixin.tsParseDelimitedList (../node_modules/@babel/parser/src/plugins/typescript/index.ts:574:27)
+      at TypeScriptParserMixin.tsParseBracketedList [as tsParseTypeParameters] (../node_modules/@babel/parser/src/plugins/typescript/index.ts:827:26)
+      at tsParseTypeParameters (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3741:31)
+      at TypeScriptParserMixin.fn [as tryParse] (../node_modules/@babel/parser/src/parser/util.ts:174:20)
+      at TypeScriptParserMixin.tryParse [as parseMaybeAssign] (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3739:26)
+      at parseMaybeAssign (../node_modules/@babel/parser/src/parser/expression.ts:257:12)
+      at TypeScriptParserMixin.callback [as allowInAnd] (../node_modules/@babel/parser/src/parser/expression.ts:3192:12)
+      at TypeScriptParserMixin.allowInAnd [as parseMaybeAssignAllowIn] (../node_modules/@babel/parser/src/parser/expression.ts:256:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn [as parseMaybeAssignAllowInOrVoidPattern] (../node_modules/@babel/parser/src/parser/expression.ts:3306:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern [as parseExprListItem] (../node_modules/@babel/parser/src/parser/expression.ts:2788:18)
+      at TypeScriptParserMixin.parseExprListItem [as parseCallExpressionArguments] (../node_modules/@babel/parser/src/parser/expression.ts:1034:14)
+      at TypeScriptParserMixin.parseCallExpressionArguments [as parseCoverCallAndAsyncArrowHead] (../node_modules/@babel/parser/src/parser/expression.ts:914:29)
+      at TypeScriptParserMixin.parseCoverCallAndAsyncArrowHead (../node_modules/@babel/parser/src/parser/expression.ts:796:19)
+      at TypeScriptParserMixin.parseSubscript (../node_modules/@babel/parser/src/plugins/typescript/index.ts:2850:20)
+      at TypeScriptParserMixin.parseSubscript [as parseSubscripts] (../node_modules/@babel/parser/src/parser/expression.ts:755:19)
+      at TypeScriptParserMixin.parseSubscripts [as parseExprSubscripts] (../node_modules/@babel/parser/src/parser/expression.ts:740:17)
+      at TypeScriptParserMixin.parseExprSubscripts [as parseUpdate] (../node_modules/@babel/parser/src/parser/expression.ts:713:21)
+      at TypeScriptParserMixin.parseUpdate (../node_modules/@babel/parser/src/parser/expression.ts:675:23)
+      at TypeScriptParserMixin.parseMaybeUnary (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3855:20)
+      at TypeScriptParserMixin.parseMaybeUnary [as parseMaybeUnaryOrPrivate] (../node_modules/@babel/parser/src/parser/expression.ts:409:14)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate [as parseExprOps] (../node_modules/@babel/parser/src/parser/expression.ts:421:23)
+      at TypeScriptParserMixin.parseExprOps [as parseMaybeConditional] (../node_modules/@babel/parser/src/parser/expression.ts:376:23)
+      at TypeScriptParserMixin.parseMaybeConditional (../node_modules/@babel/parser/src/parser/expression.ts:301:21)
+      at TypeScriptParserMixin.parseMaybeAssign (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3727:22)
+      at parseMaybeAssign (../node_modules/@babel/parser/src/parser/expression.ts:257:12)
+      at TypeScriptParserMixin.callback [as allowInAnd] (../node_modules/@babel/parser/src/parser/expression.ts:3187:16)
+      at TypeScriptParserMixin.allowInAnd [as parseMaybeAssignAllowIn] (../node_modules/@babel/parser/src/parser/expression.ts:256:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn [as parseVar] (../node_modules/@babel/parser/src/parser/statement.ts:1582:18)
+      at TypeScriptParserMixin.parseVar (../node_modules/@babel/parser/src/parser/statement.ts:1246:10)
+      at TypeScriptParserMixin.parseVarStatement (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3126:33)
+      at TypeScriptParserMixin.parseVarStatement (../node_modules/@babel/parser/src/parser/statement.ts:607:21)
+      at TypeScriptParserMixin.parseStatementContent (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3185:20)
+      at TypeScriptParserMixin.parseStatementContent [as parseStatementLike] (../node_modules/@babel/parser/src/parser/statement.ts:477:17)
+      at TypeScriptParserMixin.parseStatementLike [as parseStatementListItem] (../node_modules/@babel/parser/src/parser/statement.ts:426:17)
+      at TypeScriptParserMixin.parseStatementListItem [as parseBlockOrModuleBlockBody] (../node_modules/@babel/parser/src/parser/statement.ts:1439:16)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody [as parseBlockBody] (../node_modules/@babel/parser/src/parser/statement.ts:1412:10)
+      at TypeScriptParserMixin.parseBlockBody [as parseBlock] (../node_modules/@babel/parser/src/parser/statement.ts:1380:10)
+      at TypeScriptParserMixin.parseBlock [as parseFunctionBody] (../node_modules/@babel/parser/src/parser/expression.ts:2616:24)
+      at TypeScriptParserMixin.parseFunctionBody [as parseArrowExpression] (../node_modules/@babel/parser/src/parser/expression.ts:2553:10)
+      at TypeScriptParserMixin.parseArrowExpression [as parseParenAndDistinguishExpression] (../node_modules/@babel/parser/src/parser/expression.ts:1837:12)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression [as parseExprAtom] (../node_modules/@babel/parser/src/parser/expression.ts:1162:21)
+      at TypeScriptParserMixin.parseExprAtom [as parseExprSubscripts] (../node_modules/@babel/parser/src/parser/expression.ts:734:23)
+      at TypeScriptParserMixin.parseExprSubscripts [as parseUpdate] (../node_modules/@babel/parser/src/parser/expression.ts:713:21)
+      at TypeScriptParserMixin.parseUpdate (../node_modules/@babel/parser/src/parser/expression.ts:675:23)
+      at TypeScriptParserMixin.parseMaybeUnary (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3855:20)
+      at TypeScriptParserMixin.parseMaybeUnary [as parseMaybeUnaryOrPrivate] (../node_modules/@babel/parser/src/parser/expression.ts:409:14)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate [as parseExprOps] (../node_modules/@babel/parser/src/parser/expression.ts:421:23)
+      at TypeScriptParserMixin.parseExprOps [as parseMaybeConditional] (../node_modules/@babel/parser/src/parser/expression.ts:376:23)
+      at TypeScriptParserMixin.parseMaybeConditional (../node_modules/@babel/parser/src/parser/expression.ts:301:21)
+      at TypeScriptParserMixin.parseMaybeAssign (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3727:22)
+      at parseMaybeAssign (../node_modules/@babel/parser/src/parser/expression.ts:257:12)
+      at TypeScriptParserMixin.callback [as allowInAnd] (../node_modules/@babel/parser/src/parser/expression.ts:3192:12)
+      at TypeScriptParserMixin.allowInAnd [as parseMaybeAssignAllowIn] (../node_modules/@babel/parser/src/parser/expression.ts:256:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn [as parseMaybeAssignAllowInOrVoidPattern] (../node_modules/@babel/parser/src/parser/expression.ts:3306:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern [as parseExprListItem] (../node_modules/@babel/parser/src/parser/expression.ts:2788:18)
+      at TypeScriptParserMixin.parseExprListItem [as parseCallExpressionArguments] (../node_modules/@babel/parser/src/parser/expression.ts:1034:14)
+      at TypeScriptParserMixin.parseCallExpressionArguments [as parseCoverCallAndAsyncArrowHead] (../node_modules/@babel/parser/src/parser/expression.ts:914:29)
+      at TypeScriptParserMixin.parseCoverCallAndAsyncArrowHead (../node_modules/@babel/parser/src/parser/expression.ts:796:19)
+      at TypeScriptParserMixin.parseSubscript (../node_modules/@babel/parser/src/plugins/typescript/index.ts:2850:20)
+      at TypeScriptParserMixin.parseSubscript [as parseSubscripts] (../node_modules/@babel/parser/src/parser/expression.ts:755:19)
+      at TypeScriptParserMixin.parseSubscripts [as parseExprSubscripts] (../node_modules/@babel/parser/src/parser/expression.ts:740:17)
+      at TypeScriptParserMixin.parseExprSubscripts [as parseUpdate] (../node_modules/@babel/parser/src/parser/expression.ts:713:21)
+      at TypeScriptParserMixin.parseUpdate (../node_modules/@babel/parser/src/parser/expression.ts:675:23)
+      at TypeScriptParserMixin.parseMaybeUnary (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3855:20)
+      at TypeScriptParserMixin.parseMaybeUnary [as parseMaybeUnaryOrPrivate] (../node_modules/@babel/parser/src/parser/expression.ts:409:14)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate [as parseExprOps] (../node_modules/@babel/parser/src/parser/expression.ts:421:23)
+      at TypeScriptParserMixin.parseExprOps [as parseMaybeConditional] (../node_modules/@babel/parser/src/parser/expression.ts:376:23)
+      at TypeScriptParserMixin.parseMaybeConditional (../node_modules/@babel/parser/src/parser/expression.ts:301:21)
+      at TypeScriptParserMixin.parseMaybeAssign (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3727:22)
+      at TypeScriptParserMixin.parseMaybeAssign [as parseExpressionBase] (../node_modules/@babel/parser/src/parser/expression.ts:226:23)
+      at parseExpressionBase (../node_modules/@babel/parser/src/parser/expression.ts:217:39)
+      at TypeScriptParserMixin.callback [as allowInAnd] (../node_modules/@babel/parser/src/parser/expression.ts:3187:16)
+      at TypeScriptParserMixin.allowInAnd [as parseExpression] (../node_modules/@babel/parser/src/parser/expression.ts:217:17)
+      at TypeScriptParserMixin.parseExpression (../node_modules/@babel/parser/src/parser/statement.ts:683:23)
+      at TypeScriptParserMixin.parseStatementContent (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3185:20)
+      at TypeScriptParserMixin.parseStatementContent [as parseStatementLike] (../node_modules/@babel/parser/src/parser/statement.ts:477:17)
+      at TypeScriptParserMixin.parseStatementLike [as parseStatementListItem] (../node_modules/@babel/parser/src/parser/statement.ts:426:17)
+      at TypeScriptParserMixin.parseStatementListItem [as parseBlockOrModuleBlockBody] (../node_modules/@babel/parser/src/parser/statement.ts:1439:16)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody [as parseBlockBody] (../node_modules/@babel/parser/src/parser/statement.ts:1412:10)
+      at TypeScriptParserMixin.parseBlockBody [as parseBlock] (../node_modules/@babel/parser/src/parser/statement.ts:1380:10)
+      at TypeScriptParserMixin.parseBlock [as parseFunctionBody] (../node_modules/@babel/parser/src/parser/expression.ts:2616:24)
+      at TypeScriptParserMixin.parseFunctionBody [as parseArrowExpression] (../node_modules/@babel/parser/src/parser/expression.ts:2553:10)
+      at TypeScriptParserMixin.parseArrowExpression [as parseParenAndDistinguishExpression] (../node_modules/@babel/parser/src/parser/expression.ts:1837:12)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression [as parseExprAtom] (../node_modules/@babel/parser/src/parser/expression.ts:1162:21)
+      at TypeScriptParserMixin.parseExprAtom [as parseExprSubscripts] (../node_modules/@babel/parser/src/parser/expression.ts:734:23)
+      at TypeScriptParserMixin.parseExprSubscripts [as parseUpdate] (../node_modules/@babel/parser/src/parser/expression.ts:713:21)
+      at TypeScriptParserMixin.parseUpdate (../node_modules/@babel/parser/src/parser/expression.ts:675:23)
+      at TypeScriptParserMixin.parseMaybeUnary (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3855:20)
+      at TypeScriptParserMixin.parseMaybeUnary [as parseMaybeUnaryOrPrivate] (../node_modules/@babel/parser/src/parser/expression.ts:409:14)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate [as parseExprOps] (../node_modules/@babel/parser/src/parser/expression.ts:421:23)
+      at TypeScriptParserMixin.parseExprOps [as parseMaybeConditional] (../node_modules/@babel/parser/src/parser/expression.ts:376:23)
+      at TypeScriptParserMixin.parseMaybeConditional (../node_modules/@babel/parser/src/parser/expression.ts:301:21)
+      at TypeScriptParserMixin.parseMaybeAssign (../node_modules/@babel/parser/src/plugins/typescript/index.ts:3727:22)
+      at parseMaybeAssign (../node_modules/@babel/parser/src/parser/expression.ts:257:12)
+
+FAIL src/features/auth/__tests__/auth-integration.test.ts
+  ● Test suite failed to run
+
+    Cannot find module '../analytics/crashReporting' from 'src/lib/api/productionClient.ts'
+
+    Require stack:
+      src/lib/api/productionClient.ts
+      src/lib/api/backendServices.ts
+      src/lib/api/index.ts
+      src/features/auth/__tests__/auth-integration.test.ts
+
+       6 | import { certificatePinning } from '../security/certificatePinning';
+       7 | import { secureStore } from '../security/storage';
+    >  8 | import { crashReporting } from '../analytics/crashReporting';
+         | ^
+       9 | import { analyticsService } from '../analytics/analyticsService';
+      10 |
+      11 | export interface ApiRequest {
+
+      at Resolver._throwModNotFoundError (../node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (src/lib/api/productionClient.ts:8:1)
+      at Object.require (src/lib/api/backendServices.ts:6:1)
+      at Object.require (src/lib/api/index.ts:14:1)
+      at Object.require (src/features/auth/__tests__/auth-integration.test.ts:7:1)
+
+-----------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------
+File                               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                                                                       
+-----------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------
+All files                          |     1.3 |     0.81 |    0.35 |    1.35 |                                                                                                                                         
+ app/navigation                    |       0 |        0 |       0 |       0 |                                                                                                                                         
+  AppNavigator.tsx                 |       0 |        0 |       0 |       0 | 23-150                                                                                                                                  
+  AppTabs.tsx                      |       0 |        0 |       0 |       0 | 17-116                                                                                                                                  
+  AuthStack.tsx                    |       0 |        0 |       0 |       0 | 12-36                                                                                                                                   
+ components                        |       0 |        0 |       0 |       0 |                                                                                                                                         
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ components/accessibility          |       0 |        0 |       0 |       0 |                                                                                                                                         
+  AccessibilityWrapper.tsx         |       0 |        0 |       0 |       0 | 38-370                                                                                                                                  
+ components/checkin                |       0 |        0 |       0 |       0 |                                                                                                                                         
+  MemberSearch.tsx                 |       0 |        0 |       0 |       0 | 49-345                                                                                                                                  
+  QRScanner.tsx                    |       0 |        0 |       0 |       0 | 32-210                                                                                                                                  
+  ServiceStatusChip.tsx            |       0 |        0 |       0 |       0 | 20-93                                                                                                                                   
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ components/common                 |       0 |        0 |       0 |       0 |                                                                                                                                         
+  Button.tsx                       |       0 |        0 |       0 |       0 | 15-20                                                                                                                                   
+  ErrorBoundary.tsx                |       0 |        0 |       0 |       0 | 23-85                                                                                                                                   
+  StatusChip.tsx                   |       0 |        0 |       0 |       0 | 38-259                                                                                                                                  
+ components/events                 |       0 |        0 |       0 |       0 |                                                                                                                                         
+  EventCard.tsx                    |       0 |        0 |       0 |       0 | 30-247                                                                                                                                  
+  EventStatusChip.tsx              |       0 |        0 |       0 |       0 | 18-25                                                                                                                                   
+  RSVPStatusChip.tsx               |       0 |        0 |       0 |       0 | 20-68                                                                                                                                   
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ components/feedback               |       0 |        0 |       0 |       0 |                                                                                                                                         
+  FeedbackSheet.tsx                |       0 |        0 |       0 |       0 | 58-356                                                                                                                                  
+ components/navigation             |       0 |        0 |       0 |       0 |                                                                                                                                         
+  RoleGuard.tsx                    |       0 |        0 |       0 |       0 | 25-273                                                                                                                                  
+ components/scanner                |       0 |        0 |       0 |       0 |                                                                                                                                         
+  QRCodeScanner.tsx                |       0 |        0 |       0 |       0 | 47-474                                                                                                                                  
+ components/security               |       0 |        0 |       0 |       0 |                                                                                                                                         
+  PermissionGate.tsx               |       0 |        0 |       0 |       0 | 41-220                                                                                                                                  
+  PrivacyNotice.tsx                |       0 |        0 |       0 |       0 | 38-442                                                                                                                                  
+ config                            |   13.67 |      7.6 |    7.69 |   14.03 |                                                                                                                                         
+  app.ts                           |   26.08 |    22.72 |   33.33 |   26.08 | 138-169                                                                                                                                 
+  endpoints.ts                     |      50 |       50 |   11.11 |      50 | 13,21,60-78                                                                                                                             
+  env.ts                           |       0 |        0 |       0 |       0 | 53-244                                                                                                                                  
+  featureFlags.ts                  |       0 |        0 |       0 |       0 | 63-160                                                                                                                                  
+ data                              |    5.45 |        0 |       0 |       6 |                                                                                                                                         
+  db.ts                            |       0 |        0 |       0 |       0 | 10-528                                                                                                                                  
+  mockData.ts                      |   24.52 |        0 |       0 |    26.8 | 207,211,215-220,226,230,234,238-239,250-270,279-291,556,560-562,566-568,574-576,583-584,589,593,600-607,615-626,636-672,681-693,698-710 
+  mockEvents.ts                    |       0 |        0 |       0 |       0 | 19-169                                                                                                                                  
+  mockGroups.ts                    |       0 |        0 |       0 |       0 | 62-507                                                                                                                                  
+  mockMembers.ts                   |       0 |        0 |       0 |       0 | 26-299                                                                                                                                  
+  mockPathways.ts                  |       0 |        0 |       0 |       0 | 42-524                                                                                                                                  
+  mockReports.ts                   |       0 |        0 |       0 |       0 | 97-428                                                                                                                                  
+ features/auth/screens             |       0 |        0 |       0 |       0 |                                                                                                                                         
+  OnboardingScreen.tsx             |       0 |        0 |       0 |       0 | 35-308                                                                                                                                  
+  SignInScreen.tsx                 |       0 |        0 |       0 |       0 | 34-291                                                                                                                                  
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ features/checkin/screens          |       0 |        0 |       0 |       0 |                                                                                                                                         
+  CheckInScreen.tsx                |       0 |        0 |       0 |       0 | 47-362                                                                                                                                  
+ features/dashboard/screens        |       0 |        0 |       0 |       0 |                                                                                                                                         
+  DashboardScreen.instrumented.tsx |       0 |        0 |       0 |       0 | 38-494                                                                                                                                  
+  DashboardScreen.tsx              |       0 |        0 |       0 |       0 | 36-327                                                                                                                                  
+  MoreScreen.tsx                   |       0 |        0 |       0 |       0 | 24-192                                                                                                                                  
+ features/directory/screens        |       0 |        0 |       0 |       0 |                                                                                                                                         
+  DirectoryScreen.tsx              |       0 |        0 |       0 |       0 | 39-329                                                                                                                                  
+ features/events/navigation        |       0 |      100 |       0 |       0 |                                                                                                                                         
+  EventsStack.tsx                  |       0 |      100 |       0 |       0 | 18-21                                                                                                                                   
+ features/events/screens           |       0 |        0 |       0 |       0 |                                                                                                                                         
+  EventDetailScreen.tsx            |       0 |        0 |       0 |       0 | 35-420                                                                                                                                  
+  EventsScreen.instrumented.tsx    |       0 |        0 |       0 |       0 | 35-528                                                                                                                                  
+  EventsScreen.tsx                 |       0 |        0 |       0 |       0 | 33-304                                                                                                                                  
+ features/groups/screens           |       0 |        0 |       0 |       0 |                                                                                                                                         
+  GroupsScreen.tsx                 |       0 |        0 |       0 |       0 | 50-437                                                                                                                                  
+ features/members/screens          |       0 |        0 |       0 |       0 |                                                                                                                                         
+  MembersScreen.tsx                |       0 |        0 |       0 |       0 | 29-290                                                                                                                                  
+ features/notifications/screens    |       0 |        0 |       0 |       0 |                                                                                                                                         
+  NotificationSettingsScreen.tsx   |       0 |        0 |       0 |       0 | 35-413                                                                                                                                  
+ features/pathways/screens         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  PathwayDetailScreen.tsx          |       0 |        0 |       0 |       0 | 43-412                                                                                                                                  
+  PathwaysScreen.tsx               |       0 |        0 |       0 |       0 | 39-403                                                                                                                                  
+ features/reports                  |       0 |        0 |       0 |       0 |                                                                                                                                         
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ features/reports/screens          |       0 |        0 |       0 |       0 |                                                                                                                                         
+  ReportsScreen.tsx                |       0 |        0 |       0 |       0 | 36-421                                                                                                                                  
+ features/settings                 |       0 |        0 |       0 |       0 |                                                                                                                                         
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ features/settings/screens         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  SecurityScreen.tsx               |       0 |        0 |       0 |       0 | 43-436                                                                                                                                  
+  SettingsScreen.tsx               |       0 |        0 |       0 |       0 | 28-247                                                                                                                                  
+ hooks                             |       0 |        0 |       0 |       0 |                                                                                                                                         
+  useEvents.ts                     |       0 |        0 |       0 |       0 | 21-310                                                                                                                                  
+  useNotifications.ts              |       0 |        0 |       0 |       0 | 55-336                                                                                                                                  
+  useOnlineSync.ts                 |       0 |        0 |       0 |       0 | 15-82                                                                                                                                   
+  useRealtime.ts                   |       0 |        0 |       0 |       0 | 49-254                                                                                                                                  
+  useRoles.ts                      |       0 |        0 |       0 |       0 | 13-251                                                                                                                                  
+ hooks/api                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  useAuth.ts                       |       0 |        0 |       0 |       0 | 15-175                                                                                                                                  
+  useCheckin.ts                    |       0 |        0 |       0 |       0 | 15-216                                                                                                                                  
+ lib/accessibility                 |       0 |        0 |       0 |       0 |                                                                                                                                         
+  accessibilityHelpers.ts          |       0 |        0 |       0 |       0 | 27-362                                                                                                                                  
+  helpers.ts                       |       0 |        0 |       0 |       0 | 10-398                                                                                                                                  
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ lib/api                           |    2.12 |     0.84 |    1.04 |    2.18 |                                                                                                                                         
+  auth.mock.ts                     |       0 |        0 |       0 |       0 | 26-395                                                                                                                                  
+  auth.ts                          |       0 |        0 |       0 |       0 | 36-267                                                                                                                                  
+  backendServices.ts               |       0 |        0 |       0 |       0 | 49-624                                                                                                                                  
+  client.ts                        |    6.15 |     2.38 |    5.88 |    6.15 | 33-289                                                                                                                                  
+  contracts.ts                     |       0 |        0 |       0 |       0 |                                                                                                                                         
+  http.ts                          |    6.42 |      2.4 |    3.84 |    6.66 | 37-52,63-120,130-154,171-431                                                                                                            
+  index.ts                         |       0 |        0 |       0 |       0 | 18-234                                                                                                                                  
+  productionClient.ts              |       0 |        0 |       0 |       0 | 58-614                                                                                                                                  
+  react-query.ts                   |       0 |        0 |       0 |       0 | 11-215                                                                                                                                  
+ lib/api/services                  |    1.23 |        0 |       0 |    1.23 |                                                                                                                                         
+  auth.ts                          |    5.17 |        0 |       0 |    5.17 | 80-236                                                                                                                                  
+  checkin.ts                       |       0 |        0 |       0 |       0 | 12-144                                                                                                                                  
+  events.ts                        |       0 |        0 |       0 |       0 | 12-212                                                                                                                                  
+  groups.ts                        |       0 |        0 |       0 |       0 | 137-519                                                                                                                                 
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  pathways.ts                      |       0 |        0 |       0 |       0 | 132-492                                                                                                                                 
+ lib/biometric                     |       0 |        0 |       0 |       0 |                                                                                                                                         
+  biometricAuth.ts                 |       0 |        0 |       0 |       0 | 14-307                                                                                                                                  
+ lib/config                        |       0 |        0 |       0 |       0 |                                                                                                                                         
+  environment.ts                   |       0 |        0 |       0 |       0 | 67-390                                                                                                                                  
+  security.ts                      |       0 |        0 |       0 |       0 | 15-163                                                                                                                                  
+ lib/db                            |    5.94 |        0 |     2.7 |    6.06 |                                                                                                                                         
+  database.ts                      |    8.82 |        0 |    5.55 |    9.09 | 39-60,71-290                                                                                                                            
+  schema.ts                        |       0 |        0 |       0 |       0 | 45-183                                                                                                                                  
+ lib/featureFlags                  |       0 |        0 |       0 |       0 |                                                                                                                                         
+  KillSwitchMonitor.ts             |       0 |        0 |       0 |       0 | 34-446                                                                                                                                  
+  index.ts                         |       0 |        0 |       0 |       0 | 38-447                                                                                                                                  
+ lib/feedback                      |       0 |        0 |       0 |       0 |                                                                                                                                         
+  FeedbackService.ts               |       0 |        0 |       0 |       0 | 37-460                                                                                                                                  
+ lib/monitoring                    |       0 |        0 |       0 |       0 |                                                                                                                                         
+  sentry.ts                        |       0 |        0 |       0 |       0 | 13-54                                                                                                                                   
+  sentryService.ts                 |       0 |        0 |       0 |       0 | 35-529                                                                                                                                  
+ lib/net                           |    1.79 |        0 |       0 |    1.84 |                                                                                                                                         
+  networkService.ts                |       0 |        0 |       0 |       0 | 23-295                                                                                                                                  
+  syncManager.ts                   |    3.05 |        0 |       0 |    3.07 | 44-392                                                                                                                                  
+ lib/notifications                 |       0 |        0 |       0 |       0 |                                                                                                                                         
+  manager.ts                       |       0 |        0 |       0 |       0 | 55-500                                                                                                                                  
+  pushNotificationService.ts       |       0 |        0 |       0 |       0 | 28-504                                                                                                                                  
+ lib/performance                   |       0 |        0 |       0 |       0 |                                                                                                                                         
+  accessibilityManager.ts          |       0 |        0 |       0 |       0 | 14-506                                                                                                                                  
+  imageOptimizer.ts                |       0 |        0 |       0 |       0 | 43-348                                                                                                                                  
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  memoryManager.ts                 |       0 |        0 |       0 |       0 | 40-431                                                                                                                                  
+  optimization.ts                  |       0 |        0 |       0 |       0 | 20-470                                                                                                                                  
+  performanceMonitor.ts            |       0 |        0 |       0 |       0 | 19-547                                                                                                                                  
+  types.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+ lib/realtime                      |       0 |        0 |       0 |       0 |                                                                                                                                         
+  client.ts                        |       0 |        0 |       0 |       0 | 45-451                                                                                                                                  
+  wsClient.ts                      |       0 |        0 |       0 |       0 | 23-250                                                                                                                                  
+ lib/security                      |       0 |        0 |       0 |       0 |                                                                                                                                         
+  apiSecurity.ts                   |       0 |        0 |       0 |       0 | 19-418                                                                                                                                  
+  biometricAuth.ts                 |       0 |        0 |       0 |       0 | 13-331                                                                                                                                  
+  biometrics.ts                    |       0 |        0 |       0 |       0 | 19-224                                                                                                                                  
+  certificatePinning.ts            |       0 |        0 |       0 |       0 | 25-233                                                                                                                                  
+  config.ts                        |       0 |      100 |       0 |       0 | 11-264                                                                                                                                  
+  index.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  inputValidator.ts                |       0 |        0 |       0 |       0 | 14-437                                                                                                                                  
+  permissions.ts                   |       0 |        0 |       0 |       0 | 41-258                                                                                                                                  
+  privacyManager.ts                |       0 |        0 |       0 |       0 | 19-517                                                                                                                                  
+  secureStorage.ts                 |       0 |        0 |       0 |       0 | 17-272                                                                                                                                  
+  storage.ts                       |       0 |        0 |       0 |       0 | 10-266                                                                                                                                  
+  types.ts                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  validation.ts                    |       0 |        0 |       0 |       0 | 12-394                                                                                                                                  
+ lib/store                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  authStore.ts                     |       0 |        0 |       0 |       0 | 36-186                                                                                                                                  
+  index.ts                         |       0 |      100 |       0 |       0 | 25-87                                                                                                                                   
+ lib/surveys                       |       0 |        0 |       0 |       0 |                                                                                                                                         
+  WeeklySurveyService.ts           |       0 |        0 |       0 |       0 | 30-468                                                                                                                                  
+ lib/sync                          |       0 |        0 |       0 |       0 |                                                                                                                                         
+  cache.ts                         |       0 |        0 |       0 |       0 | 23-405                                                                                                                                  
+  manager.ts                       |       0 |        0 |       0 |       0 | 42-374                                                                                                                                  
+  queue.ts                         |       0 |        0 |       0 |       0 | 31-476                                                                                                                                  
+  syncManager.ts                   |       0 |        0 |       0 |       0 | 14-541                                                                                                                                  
+ providers                         |       0 |        0 |       0 |       0 |                                                                                                                                         
+  NotificationProvider.tsx         |       0 |        0 |       0 |       0 | 14-30                                                                                                                                   
+  QueryProvider.tsx                |       0 |        0 |       0 |       0 | 12-25                                                                                                                                   
+  ThemeProvider.tsx                |       0 |        0 |       0 |       0 | 14-116                                                                                                                                  
+ screens                           |       0 |        0 |       0 |       0 |                                                                                                                                         
+  ConnectivityCheck.tsx            |       0 |        0 |       0 |       0 | 34-430                                                                                                                                  
+  OfflineAwareCheckin.tsx          |       0 |        0 |       0 |       0 | 43-374                                                                                                                                  
+ services                          |    0.36 |        0 |       0 |    0.36 |                                                                                                                                         
+  checkInService.ts                |    1.26 |        0 |       0 |    1.29 | 60-326                                                                                                                                  
+  eventsService.ts                 |       0 |        0 |       0 |       0 | 16-295                                                                                                                                  
+  notificationService.ts           |       0 |        0 |       0 |       0 | 11-417                                                                                                                                  
+ theme                             |      20 |      100 |     100 |      20 |                                                                                                                                         
+  colors.ts                        |     100 |      100 |     100 |     100 |                                                                                                                                         
+  paperTheme.ts                    |       0 |      100 |     100 |       0 | 16-118                                                                                                                                  
+ utils                             |   37.38 |    42.18 |   10.71 |   38.09 |                                                                                                                                         
+  index.ts                         |       0 |        0 |       0 |       0 | 6-83                                                                                                                                    
+  qrParser.ts                      |    87.8 |       90 |     100 |    87.8 | 33,70,103,117-118                                                                                                                       
+  toast.ts                         |   14.28 |        0 |       0 |   14.81 | 28-82,95-105,111-121                                                                                                                    
+-----------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------
+Jest: "global" coverage threshold for statements (80%) not met: 1.3%
+Jest: "global" coverage threshold for branches (80%) not met: 0.81%
+Jest: "global" coverage threshold for lines (80%) not met: 1.35%
+Jest: "global" coverage threshold for functions (80%) not met: 0.35%
+Test Suites: 10 failed, 1 passed, 11 total
+Tests:       35 failed, 16 passed, 51 total
+Snapshots:   0 total
+Time:        3.505 s
+Ran all test suites.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error workspace drouple-mobile@1.0.0
+npm error location /Users/macsagun/HPCI-ChMS/drouple-mobile
+npm error command failed
+npm error command sh -c jest --ci --reporters=default --reporters=jest-junit --coverage

@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		1AAA6B7FB9E7320AE7C80683 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6AAC61BFFE9FF70D8D430D /* ExpoModulesProvider.swift */; };
-		2B4CCE876ECDF1E6BE7444D2 /* libPods-DroupleMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4D46CDB04E03644871B7DC4 /* libPods-DroupleMobile.a */; };
+		1EB8927136F8D104C6F0FE8A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 897C59430C663C8D670CD150 /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		47CDBC7F293DA8FBD448E77B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 693EC7B1B4523CD39B5CC922 /* PrivacyInfo.xcprivacy */; };
+		738A4DEA5322AE51514D2EA9 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590ABDADD5407FEA2873821A /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		FCFAEB19BF8330985A906516 /* libPods-DroupleMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DCD34E0054DDA086CF3083A /* libPods-DroupleMobile.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* DroupleMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DroupleMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DroupleMobile/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DroupleMobile/Info.plist; sourceTree = "<group>"; };
-		60A1CDE27F56AA4719422A5D /* Pods-DroupleMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroupleMobile.release.xcconfig"; path = "Target Support Files/Pods-DroupleMobile/Pods-DroupleMobile.release.xcconfig"; sourceTree = "<group>"; };
-		693EC7B1B4523CD39B5CC922 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DroupleMobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		8C6AAC61BFFE9FF70D8D430D /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DroupleMobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		2DCD34E0054DDA086CF3083A /* libPods-DroupleMobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DroupleMobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AAFE413AAC64F9A3FA9BC2D /* Pods-DroupleMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroupleMobile.release.xcconfig"; path = "Target Support Files/Pods-DroupleMobile/Pods-DroupleMobile.release.xcconfig"; sourceTree = "<group>"; };
+		4E4D1451E1F817C3AD404076 /* Pods-DroupleMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroupleMobile.debug.xcconfig"; path = "Target Support Files/Pods-DroupleMobile/Pods-DroupleMobile.debug.xcconfig"; sourceTree = "<group>"; };
+		590ABDADD5407FEA2873821A /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DroupleMobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		897C59430C663C8D670CD150 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DroupleMobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = DroupleMobile/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		DE49439C82F7C13C7020C41B /* Pods-DroupleMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroupleMobile.debug.xcconfig"; path = "Target Support Files/Pods-DroupleMobile/Pods-DroupleMobile.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DroupleMobile/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* DroupleMobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "DroupleMobile-Bridging-Header.h"; path = "DroupleMobile/DroupleMobile-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4D46CDB04E03644871B7DC4 /* libPods-DroupleMobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DroupleMobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,13 +37,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B4CCE876ECDF1E6BE7444D2 /* libPods-DroupleMobile.a in Frameworks */,
+				FCFAEB19BF8330985A906516 /* libPods-DroupleMobile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		076216872E8919B80EA548B1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4E4D1451E1F817C3AD404076 /* Pods-DroupleMobile.debug.xcconfig */,
+				4AAFE413AAC64F9A3FA9BC2D /* Pods-DroupleMobile.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* DroupleMobile */ = {
 			isa = PBXGroup;
 			children = (
@@ -53,7 +63,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				693EC7B1B4523CD39B5CC922 /* PrivacyInfo.xcprivacy */,
+				897C59430C663C8D670CD150 /* PrivacyInfo.xcprivacy */,
 			);
 			name = DroupleMobile;
 			sourceTree = "<group>";
@@ -62,27 +72,17 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				F4D46CDB04E03644871B7DC4 /* libPods-DroupleMobile.a */,
+				2DCD34E0054DDA086CF3083A /* libPods-DroupleMobile.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		3D872F39DCDC24DDE78FC6E8 /* Pods */ = {
+		3CFAB94C139F1630F1AD6842 /* DroupleMobile */ = {
 			isa = PBXGroup;
 			children = (
-				DE49439C82F7C13C7020C41B /* Pods-DroupleMobile.debug.xcconfig */,
-				60A1CDE27F56AA4719422A5D /* Pods-DroupleMobile.release.xcconfig */,
+				590ABDADD5407FEA2873821A /* ExpoModulesProvider.swift */,
 			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		69E1670A15A6DEAC92775BB4 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				EC3920AF1246CE9A31339E75 /* DroupleMobile */,
-			);
-			name = ExpoModulesProviders;
+			name = DroupleMobile;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -99,8 +99,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				3D872F39DCDC24DDE78FC6E8 /* Pods */,
-				69E1670A15A6DEAC92775BB4 /* ExpoModulesProviders */,
+				076216872E8919B80EA548B1 /* Pods */,
+				926AA46E8783AEB1A28DEA56 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -115,6 +115,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		926AA46E8783AEB1A28DEA56 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				3CFAB94C139F1630F1AD6842 /* DroupleMobile */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,14 +130,6 @@
 			);
 			name = Supporting;
 			path = DroupleMobile/Supporting;
-			sourceTree = "<group>";
-		};
-		EC3920AF1246CE9A31339E75 /* DroupleMobile */ = {
-			isa = PBXGroup;
-			children = (
-				8C6AAC61BFFE9FF70D8D430D /* ExpoModulesProvider.swift */,
-			);
-			name = DroupleMobile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DroupleMobile" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				FE011144801ED8368EF801BA /* [Expo] Configure project */,
+				3CCA0E261E3C55B6E0FC01D9 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				B7C6083FEB9EC6D8BA69FD31 /* [CP] Embed Pods Frameworks */,
+				BD191C59A6462875F6482D29 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				47CDBC7F293DA8FBD448E77B /* PrivacyInfo.xcprivacy in Resources */,
+				1EB8927136F8D104C6F0FE8A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +239,25 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		3CCA0E261E3C55B6E0FC01D9 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DroupleMobile/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -326,7 +345,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DroupleMobile/Pods-DroupleMobile-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B7C6083FEB9EC6D8BA69FD31 /* [CP] Embed Pods Frameworks */ = {
+		BD191C59A6462875F6482D29 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -344,25 +363,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DroupleMobile/Pods-DroupleMobile-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FE011144801ED8368EF801BA /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DroupleMobile/expo-configure-project.sh\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -371,7 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				1AAA6B7FB9E7320AE7C80683 /* ExpoModulesProvider.swift in Sources */,
+				738A4DEA5322AE51514D2EA9 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,7 +380,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DE49439C82F7C13C7020C41B /* Pods-DroupleMobile.debug.xcconfig */;
+			baseConfigurationReference = 4E4D1451E1F817C3AD404076 /* Pods-DroupleMobile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -405,7 +405,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drouple.mobile;
-				PRODUCT_NAME = "DroupleMobile";
+				PRODUCT_NAME = DroupleMobile;
 				SWIFT_OBJC_BRIDGING_HEADER = "DroupleMobile/DroupleMobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -416,7 +416,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 60A1CDE27F56AA4719422A5D /* Pods-DroupleMobile.release.xcconfig */;
+			baseConfigurationReference = 4AAFE413AAC64F9A3FA9BC2D /* Pods-DroupleMobile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -436,7 +436,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drouple.mobile;
-				PRODUCT_NAME = "DroupleMobile";
+				PRODUCT_NAME = DroupleMobile;
 				SWIFT_OBJC_BRIDGING_HEADER = "DroupleMobile/DroupleMobile-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

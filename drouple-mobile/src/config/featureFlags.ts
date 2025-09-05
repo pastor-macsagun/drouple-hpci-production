@@ -73,7 +73,7 @@ export const featureFlags: FeatureFlags = {
   // Events features
   eventRsvp: true,
   eventWaitlist: true,
-  eventCalendarSync: false, // TODO: Enable after calendar integration
+  eventCalendarSync: true, // MVP: Add to calendar enabled
 
   // Pathways features
   discipleshipPathways: true,

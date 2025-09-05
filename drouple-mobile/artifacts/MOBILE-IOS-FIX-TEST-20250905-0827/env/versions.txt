@@ -1,0 +1,8 @@
+Node.js: v24.6.0
+NPM: 11.5.1
+Expo CLI: 0.24.21
+Ruby: ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin24]
+CocoaPods: 1.16.2
+Xcode: Xcode 16.4 Build version 16F6 
+Simctl: Available
+Pod: 1.16.2
