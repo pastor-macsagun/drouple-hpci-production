@@ -5,7 +5,7 @@
 
 ## Executive Summary
 
-This report documents comprehensive backend performance optimizations implemented across the HPCI-ChMS system to ensure production-ready performance characteristics. The optimizations focus on eliminating N+1 query patterns, optimizing database queries, and enhancing connection pooling for serverless environments.
+This report documents comprehensive backend performance optimizations implemented across the Drouple - Church Management System system to ensure production-ready performance characteristics. The optimizations focus on eliminating N+1 query patterns, optimizing database queries, and enhancing connection pooling for serverless environments.
 
 ## Key Performance Improvements
 

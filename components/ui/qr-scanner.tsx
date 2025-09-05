@@ -73,7 +73,7 @@ export function QRScanner({ onScan, onError, onClose }: QRScannerProps) {
             <Camera className="h-5 w-5" />
             <CardTitle>Scan QR Code</CardTitle>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleClose}>
+          <Button variant="ghost" size="icon" onClick={handleClose} aria-label="Close QR scanner">
             <X className="h-4 w-4" />
           </Button>
         </div>

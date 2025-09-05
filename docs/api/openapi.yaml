@@ -1,22 +1,22 @@
 openapi: 3.1.0
 info:
-  title: HPCI-ChMS Mobile API
+  title: Drouple - Church Management System API
   version: 2.0.0
   description: |
-    Single, versioned REST API for HPCI Church Management System.
+    Single, versioned REST API for Drouple - Church Management System.
     Supports both web and mobile clients with Bearer JWT authentication,
     multi-tenant isolation, cursor-based pagination, ETags, and idempotency.
   contact:
-    name: HPCI-ChMS API Support
-    url: https://github.com/hpci-chms/api
+    name: Drouple API Support
+    url: https://github.com/drouple/api
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://api.hpci-chms.com/api/v2
+  - url: https://api.drouple.com/api/v2
     description: Production API
-  - url: https://staging-api.hpci-chms.com/api/v2
+  - url: https://staging-api.drouple.com/api/v2
     description: Staging API
   - url: http://localhost:3000/api/v2
     description: Local Development API

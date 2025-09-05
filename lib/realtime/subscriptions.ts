@@ -8,7 +8,7 @@
  * - announcement.published
  */
 
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { getRealtimeClient, RealtimeEvent } from './client'
 import { useSession } from 'next-auth/react'
@@ -18,6 +18,29 @@ export interface SubscriptionConfig {
   enableAutoInvalidate?: boolean
   enableOptimisticUpdates?: boolean
 }
+
+interface Attendance {
+  id: string
+  memberId: string
+  serviceId: string
+  [key: string]: unknown
+}
+
+interface Event {
+  id: string
+  [key: string]: unknown
+}
+
+interface Member {
+  id: string
+  [key: string]: unknown
+}
+
+interface Announcement {
+  id: string
+  [key: string]: unknown
+}
+
 
 /**
  * Hook to manage realtime subscriptions with React Query cache integration
@@ -60,7 +83,7 @@ export function useRealtimeSubscriptions(config: SubscriptionConfig) {
       unsubscribeFunctions.current.forEach(unsubscribe => unsubscribe())
       unsubscribeFunctions.current = []
     }
-  }, [session?.user?.tenantId, config, queryClient])
+  }, [session?.user?.tenantId, config, queryClient, realtimeClient])
 
   return {
     isConnected: realtimeClient.isClientConnected(),
@@ -73,10 +96,9 @@ export function useRealtimeSubscriptions(config: SubscriptionConfig) {
  */
 function handleRealtimeEvent(
   event: RealtimeEvent,
-  queryClient: any,
+  queryClient: QueryClient,
   config: SubscriptionConfig
 ) {
-  console.log('[RealtimeSubscriptions] Received event:', event.type, event.data)
 
   switch (event.type) {
     case 'attendance.created':
@@ -107,7 +129,7 @@ function handleRealtimeEvent(
  */
 function handleAttendanceEvent(
   event: RealtimeEvent,
-  queryClient: any,
+  queryClient: QueryClient,
   config: SubscriptionConfig
 ) {
   const { data } = event
@@ -116,10 +138,10 @@ function handleAttendanceEvent(
   if (config.enableOptimisticUpdates) {
     queryClient.setQueryData(
       ['services', data.serviceId, 'attendances'],
-      (old: any) => {
+      (old: Attendance[]) => {
         if (!old) return old
 
-        const existingIndex = old.findIndex((attendance: any) => 
+        const existingIndex = old.findIndex((attendance: Attendance) => 
           attendance.id === data.id || attendance.memberId === data.memberId
         )
 
@@ -127,7 +149,7 @@ function handleAttendanceEvent(
           return existingIndex >= 0 ? old : [...old, data]
         } else {
           return existingIndex >= 0 
-            ? old.map((attendance: any, index: number) => 
+            ? old.map((attendance: Attendance, index: number) => 
                 index === existingIndex ? { ...attendance, ...data } : attendance
               )
             : old
@@ -149,23 +171,23 @@ function handleAttendanceEvent(
  */
 function handleEventEvent(
   event: RealtimeEvent,
-  queryClient: any,
+  queryClient: QueryClient,
   config: SubscriptionConfig
 ) {
   const { data } = event
 
   // Update events list
   if (config.enableOptimisticUpdates) {
-    queryClient.setQueryData(['events'], (old: any) => {
+    queryClient.setQueryData(['events'], (old: Event[]) => {
       if (!old) return old
 
-      const existingIndex = old.findIndex((evt: any) => evt.id === data.id)
+      const existingIndex = old.findIndex((evt: Event) => evt.id === data.id)
 
       if (event.type === 'event.created') {
         return existingIndex >= 0 ? old : [data, ...old]
       } else {
         return existingIndex >= 0
-          ? old.map((evt: any, index: number) =>
+          ? old.map((evt: Event, index: number) =>
               index === existingIndex ? { ...evt, ...data } : evt
             )
           : old
@@ -173,7 +195,7 @@ function handleEventEvent(
     })
 
     // Update individual event cache
-    queryClient.setQueryData(['events', data.id], (old: any) => {
+    queryClient.setQueryData(['events', data.id], (old: Event[]) => {
       return old ? { ...old, ...data } : data
     })
   }
@@ -191,27 +213,27 @@ function handleEventEvent(
  */
 function handleMemberEvent(
   event: RealtimeEvent,
-  queryClient: any,
+  queryClient: QueryClient,
   config: SubscriptionConfig
 ) {
   const { data } = event
 
   // Update members list
   if (config.enableOptimisticUpdates) {
-    queryClient.setQueryData(['members'], (old: any) => {
+    queryClient.setQueryData(['members'], (old: Member[]) => {
       if (!old) return old
 
-      const existingIndex = old.findIndex((member: any) => member.id === data.id)
+      const existingIndex = old.findIndex((member: Member) => member.id === data.id)
       
       return existingIndex >= 0
-        ? old.map((member: any, index: number) =>
+        ? old.map((member: Member, index: number) =>
             index === existingIndex ? { ...member, ...data } : member
           )
         : old
     })
 
     // Update individual member cache
-    queryClient.setQueryData(['members', data.id], (old: any) => {
+    queryClient.setQueryData(['members', data.id], (old: Event[]) => {
       return old ? { ...old, ...data } : data
     })
   }
@@ -229,17 +251,17 @@ function handleMemberEvent(
  */
 function handleAnnouncementEvent(
   event: RealtimeEvent,
-  queryClient: any,
+  queryClient: QueryClient,
   config: SubscriptionConfig
 ) {
   const { data } = event
 
   // Update announcements list
   if (config.enableOptimisticUpdates) {
-    queryClient.setQueryData(['announcements'], (old: any) => {
+    queryClient.setQueryData(['announcements'], (old: Announcement[]) => {
       if (!old) return old
 
-      const existingIndex = old.findIndex((announcement: any) => 
+      const existingIndex = old.findIndex((announcement: Announcement) => 
         announcement.id === data.id
       )
 

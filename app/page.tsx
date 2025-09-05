@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/rbac";
 import { UserRole } from "@prisma/client";
 import { Metadata } from "next";
 import LandingPage from "./public-landing";
+import SplashScreen from "@/components/splash-screen";
 import { unstable_noStore as noStore } from 'next/cache';
 import { BRAND_CONFIG } from "@/config/brand";
 
@@ -20,7 +21,19 @@ export default async function HomePage() {
   noStore(); // Opt out of static generation for role-based routing
   const user = await getCurrentUser();
   
-  // Redirect authenticated users based on role
+  return (
+    <>
+      {/* Splash screen - only shows for PWA mode */}
+      <SplashScreen user={user} />
+      
+      {/* Landing page and redirects for web mode */}
+      <WebHomePage user={user} />
+    </>
+  );
+}
+
+function WebHomePage({ user }: { user: { id: string; role: UserRole } | null }) {
+  // For web users (non-PWA), handle redirects and show landing page
   if (user) {
     switch (user.role) {
       case UserRole.SUPER_ADMIN:
@@ -38,6 +51,6 @@ export default async function HomePage() {
     }
   }
   
-  // Show public landing page for non-authenticated users
+  // Show public landing page for non-authenticated web users
   return <LandingPage />;
 }

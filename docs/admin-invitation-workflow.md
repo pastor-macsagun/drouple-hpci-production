@@ -32,7 +32,7 @@ The admin/pastor invitation system has been completely updated to generate tempo
 ### 2. First Login Experience
 
 **User receives credentials manually** from Super Admin:
-- Email: `admin@church.com`
+- Email: `admin@drouple.app`
 - Password: `Swift-Mountain-847`
 
 **Login Process:**

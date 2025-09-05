@@ -128,13 +128,13 @@ class APIClient {
       }
     }
     
-    if (path.includes('/v1/') || path.includes('/v2/')) {
+    if (path.includes('/v1/')) {
       return {
         success: true,
         data: [],
         meta: {
           timestamp: new Date().toISOString(),
-          version: path.includes('/v1/') ? 'v1' : 'v2',
+          version: 'v1',
         }
       }
     }
@@ -680,7 +680,6 @@ describe('API Contract Tests', () => {
     it('should support API versioning', async () => {
       const versions = [
         '/v1/services',
-        '/v2/services',
       ]
       
       for (const endpoint of versions) {

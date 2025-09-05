@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Comprehensive Functional Test Runner
- * Executes all HPCI-ChMS functionality tests in production
+ * Executes all Drouple - Church Management System functionality tests in production
  */
 
 import { chromium, Browser, Page, BrowserContext } from 'playwright';
@@ -368,7 +368,7 @@ class FunctionalTestRunner {
     const total = this.results.length;
     
     const report = `
-# HPCI-ChMS Functional Test Report
+# Drouple - Church Management System Functional Test Report
 **Generated:** ${new Date().toISOString()}
 **Environment:** ${PROD_CONFIG.baseUrl}
 **Test Type:** Comprehensive Functionality Testing

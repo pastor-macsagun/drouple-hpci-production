@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Production Test Runner
- * Automated testing system for HPCI-ChMS production environment
+ * Automated testing system for Drouple - Church Management System production environment
  */
 
 import { chromium, Browser, Page, BrowserContext } from 'playwright';

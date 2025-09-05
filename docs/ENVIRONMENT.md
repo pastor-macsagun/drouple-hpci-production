@@ -22,7 +22,7 @@ This document describes all environment variables used by Drouple Web Applicatio
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `NEXTAUTH_URL` | Base URL of your application | `https://your-domain.com` |
+| `NEXTAUTH_URL` | Base URL of your application | `https://drouple.app` |
 | `NEXTAUTH_SECRET` | Secret for JWT token signing | Generate with `openssl rand -base64 32` |
 
 **Security Notes:**
@@ -39,14 +39,14 @@ This document describes all environment variables used by Drouple Web Applicatio
 | `EMAIL_SERVER_PORT` | SMTP server port | `465` |
 | `EMAIL_SERVER_USER` | SMTP username | `resend` |
 | `EMAIL_SERVER_PASSWORD` | SMTP password | `your-smtp-password` |
-| `EMAIL_FROM` | Default from email address | `noreply@your-domain.com` |
+| `EMAIL_FROM` | Default from email address | `hello@drouple.app` |
 
 ### Optional Variables (Resend Integration)
 
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `RESEND_API_KEY` | Resend service API key | `re_123abc...` |
-| `RESEND_FROM_EMAIL` | Resend from email address | `noreply@your-domain.com` |
+| `RESEND_FROM_EMAIL` | Resend from email address | `hello@drouple.app` |
 
 **Email Provider Notes:**
 - Choose either generic SMTP or Resend-specific configuration
@@ -132,13 +132,13 @@ DATABASE_URL="postgresql://user:pass@pooled-host.neon.tech:5432/hpci_chms?sslmod
 DATABASE_URL_UNPOOLED="postgresql://user:pass@direct-host.neon.tech:5432/hpci_chms?sslmode=require"
 
 # Auth (Production)
-NEXTAUTH_URL="https://your-domain.com"
+NEXTAUTH_URL="https://drouple.app"
 NEXTAUTH_SECRET="[GENERATE-SECURE-SECRET-32-CHARS]"
 
 # Email (Production - Resend)
 RESEND_API_KEY="re_[YOUR-RESEND-API-KEY]"
-RESEND_FROM_EMAIL="noreply@your-domain.com"
-EMAIL_FROM="noreply@your-domain.com"
+RESEND_FROM_EMAIL="hello@drouple.app"
+EMAIL_FROM="hello@drouple.app"
 
 # Application
 APP_ENV="production"
@@ -160,7 +160,7 @@ DATABASE_URL="postgresql://staging-user:pass@staging-host:5432/hpci_chms_staging
 DATABASE_URL_UNPOOLED="postgresql://staging-user:pass@staging-host:5432/hpci_chms_staging"
 
 # Auth (Staging)
-NEXTAUTH_URL="https://staging.your-domain.com"
+NEXTAUTH_URL="https://staging.drouple.app"
 NEXTAUTH_SECRET="[STAGING-SPECIFIC-SECRET]"
 
 # Email (Staging - can use development SMTP)
@@ -168,7 +168,7 @@ EMAIL_SERVER_HOST="smtp.resend.com"
 EMAIL_SERVER_PORT="465"
 EMAIL_SERVER_USER="resend"
 EMAIL_SERVER_PASSWORD="[STAGING-SMTP-PASSWORD]"
-EMAIL_FROM="staging@your-domain.com"
+EMAIL_FROM="hello@drouple.app"
 
 # Rate Limiting (Moderate for staging)
 RL_AUTH_MIN_REQUESTS=10

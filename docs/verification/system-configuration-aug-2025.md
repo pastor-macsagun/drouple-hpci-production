@@ -206,7 +206,7 @@ NEXTAUTH_SECRET="..."
 
 # Email Provider (Resend)
 RESEND_API_KEY="..."
-EMAIL_FROM="noreply@hpci.church"
+EMAIL_FROM="hello@drouple.app"
 
 # Application
 NODE_ENV="development|staging|production"
@@ -603,11 +603,11 @@ NEXTAUTH_URL=http://localhost:3000
 
 # Staging  
 DATABASE_URL=postgresql://staging-db:5432/hpci_chms
-NEXTAUTH_URL=https://staging.hpci.church
+NEXTAUTH_URL=https://staging.drouple.app
 
 # Production
 DATABASE_URL=postgresql://prod-db:5432/hpci_chms  
-NEXTAUTH_URL=https://hpci.church
+NEXTAUTH_URL=https://drouple.app
 ```
 
 ### Configuration Validation Script

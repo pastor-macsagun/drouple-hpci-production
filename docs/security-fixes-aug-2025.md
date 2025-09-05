@@ -1,6 +1,6 @@
 # Security Fixes - August 2025
 
-This document details the critical security fixes applied to HPCI-ChMS on August 26, 2025.
+This document details the critical security fixes applied to Drouple - Church Management System on August 26, 2025.
 
 ## Issue Summary
 

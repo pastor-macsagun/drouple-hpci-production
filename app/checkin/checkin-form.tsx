@@ -1,15 +1,38 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { CheckCircle, Calendar, Users, Loader2, QrCode } from 'lucide-react'
-import { QRScanner } from '@/components/ui/qr-scanner'
 import { checkIn } from './actions'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
+
+// Lazy load QR Scanner only when needed
+const QRScanner = dynamic(() => import('@/components/ui/qr-scanner').then(mod => ({ default: mod.QRScanner })), {
+  loading: () => (
+    <Card className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          Loading QR Scanner...
+        </CardTitle>
+        <CardDescription>
+          Initializing camera and QR detection libraries...
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-center items-center h-48">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </CardContent>
+    </Card>
+  ),
+  ssr: false // QR Scanner needs client-side camera APIs
+})
 
 interface CheckInFormProps {
   service: {

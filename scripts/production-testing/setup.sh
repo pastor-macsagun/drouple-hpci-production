@@ -3,7 +3,7 @@
 
 set -e
 
-echo "🚀 Setting up HPCI-ChMS Production Testing Suite"
+echo "🚀 Setting up Drouple - Church Management System Production Testing Suite"
 echo "═════════════════════════════════════════════="
 
 # Check if Node.js is available

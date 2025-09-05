@@ -2,7 +2,7 @@
 
 ## Overview
 
-HPCI-ChMS implements a comprehensive error handling system that provides consistent error responses, user-friendly messages, and proper error recovery mechanisms across the application.
+Drouple - Church Management System implements a comprehensive error handling system that provides consistent error responses, user-friendly messages, and proper error recovery mechanisms across the application.
 
 ## Error Architecture
 

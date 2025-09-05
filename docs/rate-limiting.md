@@ -2,7 +2,7 @@
 
 ## Overview
 
-HPCI-ChMS implements endpoint-specific rate limiting to protect against abuse while maintaining a good user experience. The system uses a sliding window algorithm with different policies for different endpoints.
+Drouple - Church Management System implements endpoint-specific rate limiting to protect against abuse while maintaining a good user experience. The system uses a sliding window algorithm with different policies for different endpoints.
 
 ## Key Features
 

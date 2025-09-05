@@ -14,9 +14,9 @@ describe('API Versioning', () => {
       expect(result).toBe('v1')
     })
 
-    it('should extract version from v2 path', () => {
+    it('should return null for removed v2 path', () => {
       const result = getApiVersion('/api/v2/users')
-      expect(result).toBe('v2')
+      expect(result).toBe(null)
     })
 
     it('should return null for non-versioned path', () => {
@@ -56,57 +56,10 @@ describe('API Versioning', () => {
       expect(result).not.toHaveProperty('phone')
     })
 
-    it('should transform user data for v2 with nested structure', () => {
-      const result = responseTransformers.v2.user(mockUser)
-      
-      expect(result).toEqual({
-        id: 'user123',
-        email: 'test@test.com',
-        profile: {
-          name: 'Test User',
-          bio: 'Test bio',
-          phone: '+1234567890'
-        },
-        role: 'MEMBER',
-        metadata: {
-          createdAt: '2025-01-01T00:00:00Z',
-          updatedAt: '2025-01-02T00:00:00Z'
-        }
-      })
-    })
-
-    it('should transform event data with different field names in v2', () => {
-      const mockEvent = {
-        id: 'event123',
-        name: 'Test Event',
-        description: 'Event description',
-        startDateTime: '2025-01-01T10:00:00Z',
-        endDateTime: '2025-01-01T12:00:00Z',
-        location: 'Test Location',
-        capacity: 50,
-        currentAttendees: 20
-      }
-
-      const v1Result = responseTransformers.v1.event(mockEvent)
-      const v2Result = responseTransformers.v2.event(mockEvent)
-
-      // v1 uses original field names
-      expect(v1Result.name).toBe('Test Event')
-      expect(v1Result.description).toBe('Event description')
-      expect(v1Result.location).toBe('Test Location')
-
-      // v2 uses renamed fields and nested structure
-      expect(v2Result.title).toBe('Test Event') // name -> title
-      expect(v2Result.content).toBe('Event description') // description -> content  
-      expect(v2Result.venue).toBe('Test Location') // location -> venue
-      expect(v2Result.schedule).toEqual({
-        start: '2025-01-01T10:00:00Z',
-        end: '2025-01-01T12:00:00Z'
-      })
-      expect(v2Result.capacity).toEqual({
-        total: 50,
-        available: 30
-      })
+    it('should only have v1 transformer available', () => {
+      expect(responseTransformers.v1).toBeDefined()
+      expect(responseTransformers.v1.user).toBeDefined()
+      expect(responseTransformers.v1.event).toBeDefined()
     })
   })
 
@@ -128,11 +81,11 @@ describe('API Versioning', () => {
   describe('configuration', () => {
     it('should have supported versions configured', () => {
       expect(SUPPORTED_VERSIONS).toContain('v1')
-      expect(SUPPORTED_VERSIONS).toContain('v2')
+      expect(SUPPORTED_VERSIONS).not.toContain('v2')
     })
 
     it('should have current version set', () => {
-      expect(CURRENT_VERSION).toBe('v2')
+      expect(CURRENT_VERSION).toBe('v1')
     })
   })
 })

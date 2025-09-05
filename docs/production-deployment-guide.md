@@ -63,12 +63,12 @@ DATABASE_URL="postgresql://user:password@host.neon.tech/dbname?sslmode=require&p
 DATABASE_URL_UNPOOLED="postgresql://user:password@host.neon.tech/dbname?sslmode=require"
 
 # NextAuth
-NEXTAUTH_URL="https://your-domain.com"
+NEXTAUTH_URL="https://drouple.app"
 NEXTAUTH_SECRET="your-32-character-secret"
 
 # Email (Resend)
 RESEND_API_KEY="re_your_api_key"
-RESEND_FROM_EMAIL="noreply@your-domain.com"
+RESEND_FROM_EMAIL="hello@drouple.app"
 
 # Performance
 RATE_LIMIT_ENABLED="true"
@@ -132,7 +132,7 @@ Ensure `vercel.json` is properly configured:
    
    # Login and create project
    neon auth
-   neon projects create --name hpci-chms-prod
+   neon projects create --name drouple-prod
    ```
 
 2. **Configure Connection Pooling**
@@ -354,7 +354,7 @@ npm run deploy
 1. **User Authentication**
    ```bash
    # Test user login
-   curl -X POST https://your-domain.com/api/auth/signin \
+   curl -X POST https://drouple.app/api/auth/signin \
      -H "Content-Type: application/json" \
      -d '{"email": "test@example.com", "password": "password"}'
    ```

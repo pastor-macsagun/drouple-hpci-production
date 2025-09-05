@@ -1,4 +1,4 @@
-# HPCI-ChMS Functional Test Report
+# Drouple - Church Management System Functional Test Report
 **Generated:** 2025-09-02T06:41:36.815Z
 **Environment:** https://www.drouple.app
 **Test Type:** Comprehensive Functionality Testing

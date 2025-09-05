@@ -41,7 +41,8 @@ describe('RealtimeClient', () => {
         id: 'user-1',
         tenantId: 'tenant-1',
         role: 'MEMBER'
-      }
+      },
+      expires: '2025-12-31T23:59:59.999Z'
     })
 
     client = new RealtimeClient({
@@ -82,7 +83,8 @@ describe('RealtimeClient', () => {
           id: 'user-1',
           tenantId: null,
           role: 'MEMBER'
-        }
+        },
+        expires: '2025-12-31T23:59:59.999Z'
       })
       
       await expect(client.connect()).rejects.toThrow('No valid session found')

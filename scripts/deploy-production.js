@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 
-console.log('🚀 HPCI-ChMS Production Deployment Script');
+console.log('🚀 Drouple - Church Management System Production Deployment Script');
 console.log('=========================================\n');
 
 const prodDatabaseUrl = "postgresql://neondb_owner:npg_GKaWA3zDOZ6n@ep-flat-glade-ad7dfexu-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true";
@@ -19,11 +19,11 @@ try {
   const prodEnv = `# Temporary production environment for deployment
 DATABASE_URL="${prodDatabaseUrl}"
 DATABASE_URL_UNPOOLED="${unpooledUrl}"
-NEXTAUTH_URL="https://drouple-hpci-prod.vercel.app"
+NEXTAUTH_URL="https://drouple.app"
 NEXTAUTH_SECRET="4SXeUeyyXepmKPMUWOpjNU8swaXzMRGFbTXnOeDQY3s="
 RESEND_API_KEY="re_6Kqgy68i_CXmGXFdtk4YHdBqmtNAvTZxv"
-RESEND_FROM_EMAIL="noreply@hpci-chms.com"
-EMAIL_FROM="HPCI ChMS <noreply@hpci-chms.com>"
+RESEND_FROM_EMAIL="hello@drouple.app"
+EMAIL_FROM="hello@drouple.app"
 NODE_ENV="production"
 APP_ENV="production"
 RATE_LIMIT_ENABLED="true"
@@ -42,7 +42,7 @@ RATE_LIMIT_ENABLED="true"
   execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
   
   console.log('\n✅ Production deployment completed successfully!');
-  console.log('🌐 Application URL: https://drouple-hpci-prod.vercel.app');
+  console.log('🌐 Application URL: https://drouple.app');
   
 } catch (error) {
   console.error('\n❌ Deployment failed:', error.message);

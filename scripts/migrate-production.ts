@@ -36,7 +36,7 @@ class ProductionMigrator {
     console.log('🔄 Creating pre-migration backup...');
     
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const backupName = `hpci-chms-backup-${timestamp}`;
+    const backupName = `drouple-church-management-system-backup-${timestamp}`;
 
     // In production with Neon, this would use Neon's backup API
     // For now, we'll create a logical backup using pg_dump
@@ -229,7 +229,7 @@ async function runMigration() {
   const dryRun = args.includes('--dry-run');
   const skipBackup = args.includes('--skip-backup');
 
-  console.log('🗄️  HPCI-ChMS Production Migration Tool');
+  console.log('🗄️  Drouple - Church Management System Production Migration Tool');
   console.log('=====================================');
   
   if (dryRun) {

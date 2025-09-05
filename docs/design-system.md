@@ -1,7 +1,7 @@
-# HPCI-ChMS Drouple Design System
+# Drouple - Church Management System Design System
 
 ## Overview
-This document defines the token-based design patterns, components, and guidelines for maintaining a consistent user experience across the HPCI Church Management System. Drouple is our minimal, calm design system inspired by modern, high-contrast interfaces.
+This document defines the token-based design patterns, components, and guidelines for maintaining a consistent user experience across the Drouple - Church Management System. Drouple is our minimal, calm design system inspired by modern, high-contrast interfaces.
 
 ## Design Philosophy
 

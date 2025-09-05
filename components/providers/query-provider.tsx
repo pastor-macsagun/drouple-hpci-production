@@ -17,7 +17,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       queries: {
         staleTime: 5 * 60 * 1000, // 5 minutes
         gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
-        retry: (failureCount, error: any) => {
+        retry: (failureCount, error: Error & { status?: number }) => {
           // Don't retry on 401/403 errors (auth issues)
           if (error?.status === 401 || error?.status === 403) {
             return false

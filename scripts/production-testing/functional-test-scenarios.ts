@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Comprehensive Functional Test Scenarios
- * Tests all HPCI-ChMS functionality with production test accounts
+ * Tests all Drouple - Church Management System functionality with production test accounts
  */
 
 export interface FunctionalTestScenario {

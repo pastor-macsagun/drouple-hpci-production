@@ -173,7 +173,7 @@ function analyzeNavigation() {
 }
 
 // Main execution
-console.log('🔍 HPCI-ChMS Navigation Audit\n');
+console.log('🔍 Drouple - Church Management System Navigation Audit\n');
 console.log('=' .repeat(50) + '\n');
 
 const auditResults = analyzeNavigation();

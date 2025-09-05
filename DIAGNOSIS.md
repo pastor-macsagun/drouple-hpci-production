@@ -1,6 +1,6 @@
 # COMPREHENSIVE ISSUE DIAGNOSIS REPORT
 **Generated**: January 2, 2025  
-**Project**: HPCI-ChMS Multi-Church Management System  
+**Project**: Drouple - Church Management System  
 **Status**: Ready for surgical fixes to make CI green
 
 ## EXECUTIVE SUMMARY
@@ -20,16 +20,16 @@ After comprehensive reconnaissance, I've identified **3 CRITICAL ISSUES** and **
 - **Impact**: 2 failing tests in `getLocalChurches` function
 
 ### 2. **HOMEPAGE BRANDING MISMATCH**
-- **Test Expectation**: `HPCI ChMS` 
-- **Actual Display**: `Drouple`
+- **Current State**: Mixed branding between `HPCI ChMS` and `Drouple`
+- **New Standard**: `Drouple - Church Management System`
 - **Locations**:
-  - `app/layout.tsx:13` → `title: "HPCI ChMS"` ✅ (correct)
-  - `app/page.tsx:9` → `title: "Drouple"` ❌ (wrong)  
-  - `app/public-landing.tsx:8` → `title: "Drouple"` ❌ (wrong)
-  - `app/public-landing.tsx:25` → Navigation brand: `Drouple` ❌ (wrong)
-  - `app/public-landing.tsx:126` → Hero heading: `Drouple` ❌ (wrong)
-- **Test Location**: `e2e/app.spec.ts` expects page title and heading to contain "HPCI ChMS"
-- **Solution**: Replace all `Drouple` instances with `HPCI ChMS` in homepage files
+  - `app/layout.tsx:13` → `title: "HPCI ChMS"` ❌ (needs update)
+  - `app/page.tsx:9` → `title: "Drouple"` ❌ (needs update)  
+  - `app/public-landing.tsx:8` → `title: "Drouple"` ❌ (needs update)
+  - `app/public-landing.tsx:25` → Navigation brand: `Drouple` ❌ (needs update)
+  - `app/public-landing.tsx:126` → Hero heading: `Drouple` ❌ (needs update)
+- **Test Location**: `e2e/app.spec.ts` needs updating to expect "Drouple - Church Management System"
+- **Solution**: Standardize all branding to `Drouple - Church Management System`
 
 ### 3. **PLAYWRIGHT E2E TIMEOUT CONFIGURATION**
 - **Current Config**: `/Users/macsagun/HPCI-ChMS/playwright.config.ts`
@@ -79,7 +79,7 @@ After comprehensive reconnaissance, I've identified **3 CRITICAL ISSUES** and **
 
 ### Phase A: Critical CI Fixes (Immediate)
 1. **Fix test assertions** - Replace `id` with `churchId` in 2 test cases
-2. **Fix branding consistency** - Replace 4 instances of "Drouple" with "HPCI ChMS" 
+2. **Fix branding consistency** - Standardize all branding to "Drouple - Church Management System" 
 3. **Increase timeout** - Bump accessibility test timeout from 30s to 45s
 
 ### Phase B: Quality Improvements (Optional)
@@ -99,10 +99,10 @@ After comprehensive reconnaissance, I've identified **3 CRITICAL ISSUES** and **
 
 ### Branding Fix Locations:
 ```
-/app/page.tsx:9 → title: "HPCI ChMS"
-/app/public-landing.tsx:8 → title: "HPCI ChMS"  
-/app/public-landing.tsx:25 → HPCI ChMS
-/app/public-landing.tsx:126 → HPCI ChMS
+/app/page.tsx:9 → title: "Drouple - Church Management System"
+/app/public-landing.tsx:8 → title: "Drouple - Church Management System"  
+/app/public-landing.tsx:25 → Drouple - Church Management System
+/app/public-landing.tsx:126 → Drouple - Church Management System
 ```
 
 ### Timeout Fix Location:

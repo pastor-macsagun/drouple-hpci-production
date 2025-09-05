@@ -16,12 +16,12 @@ DATABASE_URL="postgresql://neondb_owner:npg_GKaWA3zDOZ6n@ep-flat-glade-ad7dfexu-
 DATABASE_URL_UNPOOLED="postgresql://neondb_owner:npg_GKaWA3zDOZ6n@ep-flat-glade-ad7dfexu.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 # NextAuth (MUST CHANGE)
-NEXTAUTH_URL="https://your-production-domain.com"  # ❌ UPDATE THIS
+NEXTAUTH_URL="https://drouple.app"
 NEXTAUTH_SECRET="[generate-with: openssl rand -base64 32]"  # ❌ GENERATE NEW
 
 # Email Service (MUST CONFIGURE)
 RESEND_API_KEY="re_xxxxx"  # ❌ ADD YOUR RESEND API KEY
-RESEND_FROM_EMAIL="noreply@your-domain.com"  # ❌ UPDATE EMAIL
+RESEND_FROM_EMAIL="hello@drouple.app"
 
 # Optional but Recommended
 NODE_ENV="production"

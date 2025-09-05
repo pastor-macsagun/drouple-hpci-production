@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HPCI-ChMS Production Deployment Script
+# Drouple - Church Management System Production Deployment Script
 # Run this after authenticating with Vercel
 
 set -e  # Exit on error
 
-echo "🚀 HPCI-ChMS Production Deployment"
+echo "🚀 Drouple - Church Management System Production Deployment"
 echo "=================================="
 echo ""
 
@@ -59,7 +59,7 @@ echo "1. [ ] Run database migrations on production:"
 echo "       DATABASE_URL=<PROD_URL> npx prisma migrate deploy"
 echo ""
 echo "2. [ ] Verify deployment:"
-echo "       - Check https://your-domain.com"
+echo "       - Check https://drouple.app"
 echo "       - Test /api/health endpoint"
 echo "       - Verify sign in works"
 echo ""

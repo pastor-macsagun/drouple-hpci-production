@@ -1,7 +1,7 @@
 # Auth.js v5 Session Persistence Diagnosis
 
 ## Executive Summary
-The HPCI-ChMS application is experiencing session persistence failures in production where sessions "work momentarily then expire." Based on comprehensive analysis of the Auth.js v5 configuration, this appears to be a **cookie naming and security attribute mismatch** issue combined with **domain canonicalization problems**.
+The Drouple - Church Management System application is experiencing session persistence failures in production where sessions "work momentarily then expire." Based on comprehensive analysis of the Auth.js v5 configuration, this appears to be a **cookie naming and security attribute mismatch** issue combined with **domain canonicalization problems**.
 
 ## Critical Findings
 

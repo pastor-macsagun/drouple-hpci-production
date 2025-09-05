@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Production Validation Script for HPCI-ChMS
+ * Production Validation Script for Drouple - Church Management System
  * Performs comprehensive testing against live production deployment
  */
 

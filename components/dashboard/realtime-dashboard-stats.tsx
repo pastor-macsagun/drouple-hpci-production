@@ -31,7 +31,7 @@ interface RealtimeDashboardStatsProps {
   }
 }
 
-async function fetchDashboardStats(user: any) {
+async function fetchDashboardStats(user: RealtimeDashboardStatsProps['user']) {
   const response = await fetch('/api/dashboard/stats', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

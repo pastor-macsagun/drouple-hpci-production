@@ -2,7 +2,7 @@
 
 ## Overview
 
-HPCI-ChMS implements a multi-tenant architecture where each local church operates as an isolated tenant within the larger church network. This ensures data privacy and operational independence while maintaining network-wide coordination capabilities.
+Drouple - Church Management System implements a multi-tenant architecture where each local church operates as an isolated tenant within the larger church network. This ensures data privacy and operational independence while maintaining network-wide coordination capabilities.
 
 ## Architecture
 

@@ -11,7 +11,7 @@ The VIP Team feature enables church volunteers and staff to effectively manage a
 ## Key Concepts
 
 ### First Timers as Members
-Unlike traditional visitor tracking systems, first timers in HPCI-ChMS are immediately created as full members. This approach ensures:
+Unlike traditional visitor tracking systems, first timers in Drouple - Church Management System are immediately created as full members. This approach ensures:
 - First timers can immediately participate in church activities
 - They receive member privileges from day one
 - Their journey is tracked from the very beginning

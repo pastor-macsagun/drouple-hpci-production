@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides comprehensive troubleshooting procedures for common issues in HPCI-ChMS production and development environments.
+This guide provides comprehensive troubleshooting procedures for common issues in Drouple - Church Management System production and development environments.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ This guide provides comprehensive troubleshooting procedures for common issues i
 
 ```bash
 # Check application health
-curl https://your-domain.com/api/health
+curl https://drouple.app/api/health
 
 # Check database connectivity
 npm run db:status
@@ -135,7 +135,7 @@ npx prisma db pull
 **Diagnosis:**
 ```bash
 # Check NextAuth configuration
-curl -X GET https://your-domain.com/api/auth/session
+curl -X GET https://drouple.app/api/auth/session
 
 # Verify JWT secret
 echo $NEXTAUTH_SECRET | wc -c  # Should be >= 32
@@ -187,7 +187,7 @@ echo $RATE_LIMIT_MAX_REQUESTS
 echo $RATE_LIMIT_WINDOW_MS
 
 # Test rate limiting
-curl -X POST https://your-domain.com/api/test-endpoint
+curl -X POST https://drouple.app/api/test-endpoint
 ```
 
 **Solutions:**
@@ -338,7 +338,7 @@ DATABASE_URL="${DATABASE_URL}&log=query"
 1. **Missing Environment Variables**
    ```bash
    # Required variables
-   NEXTAUTH_URL="https://your-domain.com"
+   NEXTAUTH_URL="https://drouple.app"
    NEXTAUTH_SECRET="your-secret-key"
    
    # Email provider

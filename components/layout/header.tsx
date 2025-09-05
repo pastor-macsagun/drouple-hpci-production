@@ -6,6 +6,7 @@ import { Menu, Moon, Sun } from "lucide-react";
 import { UserRole } from "@prisma/client";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { OfflineIndicator } from "@/components/pwa/offline-indicator";
 
 interface HeaderProps {
   user?: {
@@ -15,9 +16,10 @@ interface HeaderProps {
   };
   onMenuClick?: () => void;
   showMenuButton?: boolean;
+  sidebarOpen?: boolean;
 }
 
-export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProps) {
+export function Header({ user, onMenuClick, showMenuButton = false, sidebarOpen = false }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -26,8 +28,8 @@ export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProp
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-bg/95 backdrop-blur supports-[backdrop-filter]:bg-bg/80">
-      <div className="flex h-14 items-center px-4 sm:px-6">
+    <header className="border-b border-border bg-bg">
+      <div className="flex h-16 items-center px-4 sm:px-6">
         {showMenuButton && (
           <Button
             variant="ghost"
@@ -40,13 +42,17 @@ export function Header({ user, onMenuClick, showMenuButton = false }: HeaderProp
           </Button>
         )}
 
-        <div className="mr-4 flex lg:hidden">
-          <Link href="/" className="flex items-center space-x-2 focus-ring rounded">
-            <span className="text-lg font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">HPCI</span>
-          </Link>
-        </div>
+        {!sidebarOpen && (
+          <div className="mr-4 flex lg:hidden">
+            <Link href="/" className="flex items-center space-x-2 focus-ring rounded">
+              <span className="text-lg font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">Drouple</span>
+            </Link>
+          </div>
+        )}
 
         <div className="ml-auto flex items-center space-x-2">
+          <OfflineIndicator />
+          
           {mounted && (
             <Button
               variant="ghost"

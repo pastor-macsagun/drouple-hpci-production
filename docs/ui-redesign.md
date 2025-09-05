@@ -1,7 +1,7 @@
-# HPCI-ChMS UI Redesign Documentation
+# Drouple - Church Management System UI Redesign Documentation
 
 ## Overview
-Complete UI/UX redesign implemented on August 24, 2025, transforming the HPCI Church Management System into a modern, aesthetic, and user-friendly application while preserving all existing functionality.
+Complete UI/UX redesign implemented on August 24, 2025, transforming the Drouple - Church Management System into a modern, aesthetic, and user-friendly application while preserving all existing functionality.
 
 ## Design Philosophy
 - **Modern & Minimalist**: Clean interfaces with purposeful whitespace

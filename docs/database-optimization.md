@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the database optimization strategies implemented in the HPCI-ChMS system, focusing on indexing, query optimization, and performance best practices.
+This document outlines the database optimization strategies implemented in the Drouple - Church Management System, focusing on indexing, query optimization, and performance best practices.
 
 ## Indexing Strategy
 

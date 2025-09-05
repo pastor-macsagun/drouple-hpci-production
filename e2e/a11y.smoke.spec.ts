@@ -68,7 +68,8 @@ for (const route of ROUTES_TO_TEST) {
       const ariaLabel = await button.getAttribute('aria-label');
       const title = await button.getAttribute('title');
       const ariaLabelledBy = await button.getAttribute('aria-labelledby');
-      const srOnlyText = await button.locator('.sr-only').textContent();
+      const srOnlyElement = button.locator('.sr-only');
+      const srOnlyText = await srOnlyElement.count() > 0 ? await srOnlyElement.textContent() : null;
       
       // Button must have some form of accessible text
       const hasAccessibleText = ariaLabel || title || ariaLabelledBy || (srOnlyText && srOnlyText.trim());

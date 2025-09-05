@@ -1,11 +1,29 @@
 export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
+import NextDynamic from 'next/dynamic'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
-import PathwayForm from '../pathway-form'
 import { AppLayout } from '@/components/layout/app-layout'
+import { Card, CardContent } from '@/components/ui/card'
+import { Loader2 } from 'lucide-react'
+
+// Lazy load pathway form to reduce initial bundle size
+const PathwayForm = NextDynamic(() => import('../pathway-form'), {
+  loading: () => (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-center h-48">
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Loading form...</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+})
 
 export default async function NewPathwayPage() {
   const session = await auth()

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The HPCI-ChMS implements a hierarchical RBAC system with multi-tenancy support. Each user has a global role and can have church-specific memberships with potentially different roles.
+The Drouple - Church Management System implements a hierarchical RBAC system with multi-tenancy support. Each user has a global role and can have church-specific memberships with potentially different roles.
 
 ## Role Hierarchy
 

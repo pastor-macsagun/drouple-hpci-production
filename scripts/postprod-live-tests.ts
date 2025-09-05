@@ -72,7 +72,7 @@ const testResults = {
 
 async function main() {
   console.log('========================================');
-  console.log('HPCI-ChMS POST-PRODUCTION VALIDATION');
+  console.log('Drouple - Church Management System POST-PRODUCTION VALIDATION');
   console.log(`URL: ${BASE_URL}`);
   console.log(`Test Prefix: ${TEST_PREFIX}`);
   console.log(`Started: ${new Date().toISOString()}`);
@@ -93,7 +93,7 @@ async function main() {
     const context = await browser.newContext({
       ignoreHTTPSErrors: true,
       viewport: { width: 1280, height: 720 },
-      userAgent: 'HPCI-ChMS-PostProd-Validator/2.0'
+      userAgent: 'Drouple-Church-Management-System-PostProd-Validator/2.0'
     });
 
     // Run test suites

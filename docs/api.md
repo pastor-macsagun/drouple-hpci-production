@@ -1,8 +1,8 @@
-# HPCI-ChMS API Reference
+# Drouple - Church Management System API Reference
 
 ## Overview
 
-HPCI-ChMS uses Next.js server actions and route handlers for API functionality. All actions require authentication unless explicitly noted as public.
+Drouple - Church Management System uses Next.js server actions and route handlers for API functionality. All actions require authentication unless explicitly noted as public.
 
 ## Authentication
 

@@ -1,7 +1,7 @@
 # JWT Mobile Authentication Implementation
 
 ## Overview
-AUTH-CZAR implementation complete. The system provides secure JWT-based authentication for mobile apps connecting to the HPCI-ChMS web backend.
+AUTH-CZAR implementation complete. The system provides secure JWT-based authentication for mobile apps connecting to the Drouple - Church Management System web backend.
 
 ## ✅ Completed Components
 

@@ -279,7 +279,7 @@ export async function cancelRsvp(eventId: string) {
   }
 }
 
-export async function getEvents() {
+export async function getEvents({ search }: { search?: string } = {}) {
   try {
     const session = await auth()
     if (!session?.user) {
@@ -288,10 +288,19 @@ export async function getEvents() {
 
     const isAdmin = hasMinRole(session.user.role, UserRole.ADMIN)
 
+    // Build search conditions
+    const searchWhere = search ? {
+      OR: [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { location: { contains: search, mode: 'insensitive' } }
+      ]
+    } : {}
+
     // Get tenant-scoped events using proper isolation
     const localChurchWhere = await createTenantWhereClause(
       session.user,
-      { scope: EventScope.LOCAL_CHURCH },
+      { scope: EventScope.LOCAL_CHURCH, ...searchWhere },
       undefined,
       'localChurchId'
     )
@@ -299,6 +308,7 @@ export async function getEvents() {
     let events = await prisma.event.findMany({
       where: {
         isActive: true,
+        ...searchWhere,
         OR: [
           // WHOLE_CHURCH events visible to all
           { scope: EventScope.WHOLE_CHURCH },

@@ -104,7 +104,7 @@ echo -e "\n${YELLOW}⚙️ Setting staging environment variables...${NC}"
 
 # Create staging variants
 STAGING_NEXTAUTH_URL="https://staging.drouple.app"
-STAGING_RESEND_FROM_EMAIL="staging@drouple.app"
+STAGING_RESEND_FROM_EMAIL="hello@drouple.app"
 STAGING_APP_ENV="staging"
 
 echo "$STAGING_NEXTAUTH_URL" | vercel env add NEXTAUTH_URL preview

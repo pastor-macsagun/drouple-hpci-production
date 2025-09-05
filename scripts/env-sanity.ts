@@ -137,7 +137,7 @@ function checkEmailConfig(): { success: boolean; message: string } {
 }
 
 async function main() {
-  console.log('🔍 HPCI-ChMS Environment Sanity Check\n')
+  console.log('🔍 Drouple - Church Management System Environment Sanity Check\n')
   
   let hasErrors = false
   let hasWarnings = false

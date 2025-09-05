@@ -164,17 +164,18 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
         className
       )}
     >
-      <div className="flex h-14 items-center justify-between px-4 sm:px-6 border-b border-border">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         {!collapsed && (
           <Link href="/" className="flex items-center space-x-2 focus-ring rounded">
-            <span className="text-xl font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">HPCI</span>
+            <span className="text-lg font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">Drouple</span>
           </Link>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex hover:bg-elevated focus-ring"
+          className="hidden lg:flex hover:bg-elevated focus-ring h-8 w-8"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
@@ -228,18 +229,15 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-fast focus-ring",
                     isActive(item.href)
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-elevated text-ink shadow-sm"
+                      : "hover:bg-elevated/50 text-ink-muted hover:text-ink",
                     collapsed && "justify-center"
                   )}
                   title={collapsed ? item.name : undefined}
                 >
-                  <Icon className={cn(
-                    "h-4 w-4 flex-shrink-0",
-                    isActive(item.href) && "text-primary-foreground"
-                  )} />
+                  <Icon className="h-4 w-4 flex-shrink-0" />
                   {!collapsed && <span>{item.name}</span>}
                 </Link>
               );
@@ -265,18 +263,15 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-fast focus-ring",
                     isActive(item.href)
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-elevated text-ink shadow-sm"
+                      : "hover:bg-elevated/50 text-ink-muted hover:text-ink",
                     collapsed && "justify-center"
                   )}
                   title={collapsed ? item.name : undefined}
                 >
-                  <Icon className={cn(
-                    "h-4 w-4 flex-shrink-0",
-                    isActive(item.href) && "text-primary-foreground"
-                  )} />
+                  <Icon className="h-4 w-4 flex-shrink-0" />
                   {!collapsed && <span>{item.name}</span>}
                 </Link>
               );
@@ -302,18 +297,15 @@ export function Sidebar({ user, className, onClose }: SidebarProps) {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-fast focus-ring",
                     isActive(item.href)
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-elevated text-ink shadow-sm"
+                      : "hover:bg-elevated/50 text-ink-muted hover:text-ink",
                     collapsed && "justify-center"
                   )}
                   title={collapsed ? item.name : undefined}
                 >
-                  <Icon className={cn(
-                    "h-4 w-4 flex-shrink-0",
-                    isActive(item.href) && "text-primary-foreground"
-                  )} />
+                  <Icon className="h-4 w-4 flex-shrink-0" />
                   {!collapsed && <span>{item.name}</span>}
                 </Link>
               );

@@ -1,7 +1,7 @@
 {
-  "name": "hpci-chms-production-testing",
+  "name": "drouple-church-management-system-production-testing",
   "version": "1.0.0",
-  "description": "Automated production testing suite for HPCI-ChMS",
+  "description": "Automated production testing suite for Drouple - Church Management System",
   "main": "run-production-tests.ts",
   "scripts": {
     "test": "tsx run-production-tests.ts",
@@ -24,6 +24,6 @@
     "church-management",
     "playwright"
   ],
-  "author": "HPCI-ChMS Team",
+  "author": "Drouple - Church Management System Team",
   "license": "MIT"
 }

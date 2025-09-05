@@ -326,6 +326,18 @@ describe('RSVP Concurrency Tests', () => {
 
   describe('Race condition prevention', () => {
     it('should prevent duplicate RSVPs even when attempted simultaneously', async () => {
+      // Clean up any existing test data
+      await prisma.eventRsvp.deleteMany({
+        where: { 
+          OR: [
+            { eventId: 'test_conc_unique_event' },
+            { userId: 'test_conc_unique' }
+          ]
+        }
+      })
+      await prisma.event.deleteMany({ where: { id: 'test_conc_unique_event' } })
+      await prisma.user.deleteMany({ where: { id: 'test_conc_unique' } })
+
       const uniqueUser = await prisma.user.create({
         data: {
           id: 'test_conc_unique',
@@ -349,8 +361,13 @@ describe('RSVP Concurrency Tests', () => {
         },
       })
 
-      // Attempt to create duplicate RSVPs simultaneously
-      const duplicateAttempts = Array(5).fill(null).map(async () => {
+      // Attempt to create duplicate RSVPs simultaneously with tiny delays to increase race condition likelihood
+      const duplicateAttempts = Array(5).fill(null).map(async (_, index) => {
+        // Add a tiny random delay to increase race condition probability
+        if (index > 0) {
+          await new Promise(resolve => setTimeout(resolve, Math.random() * 10))
+        }
+        
         try {
           const rsvp = await prisma.eventRsvp.create({
             data: {
@@ -360,8 +377,9 @@ describe('RSVP Concurrency Tests', () => {
             },
           })
           return { success: true, rsvp }
-        } catch (error: any) {
-          return { success: false, error: error.message }
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : String(error)
+          return { success: false, error: errorMessage }
         }
       })
 

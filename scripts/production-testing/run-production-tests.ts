@@ -34,7 +34,7 @@ class ProductionTestOrchestrator {
   }
 
   async run(): Promise<void> {
-    console.log('🚀 Starting HPCI-ChMS Production Test Suite');
+    console.log('🚀 Starting Drouple - Church Management System Production Test Suite');
     console.log('═══════════════════════════════════════════');
     console.log(`📍 Target Environment: ${PROD_CONFIG.baseUrl}`);
     console.log(`🔧 Headless Mode: ${this.options.headless ? 'ON' : 'OFF'}`);
@@ -147,7 +147,7 @@ async function main() {
 
 function printHelp() {
   console.log(`
-HPCI-ChMS Production Testing Suite
+Drouple - Church Management System Production Testing Suite
 ═════════════════════════════════
 
 USAGE:

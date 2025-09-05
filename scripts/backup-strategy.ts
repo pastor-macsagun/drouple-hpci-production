@@ -127,7 +127,7 @@ class BackupManager {
     const backup: any = {
       version: '1.0',
       timestamp: new Date().toISOString(),
-      database: 'hpci-chms',
+      database: 'drouple-church-management-system',
       tables: {},
     };
 
@@ -448,7 +448,7 @@ async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
   
-  console.log('💾 HPCI-ChMS Backup Management Tool');
+  console.log('💾 Drouple - Church Management System Backup Management Tool');
   console.log('===================================');
   
   const backupManager = new BackupManager();

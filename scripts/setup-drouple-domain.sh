@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Drouple.app Domain Setup Script
-# This script automates the complete setup of drouple.app domain for HPCI-ChMS
+# This script automates the complete setup of drouple.app domain for Drouple - Church Management System
 
 set -e
 
@@ -17,7 +17,7 @@ DOMAIN="drouple.app"
 STAGING_DOMAIN="staging.drouple.app"
 PROJECT_NAME="drouple-hpci"
 
-echo -e "${BLUE}🚀 Setting up drouple.app domain for HPCI-ChMS${NC}"
+echo -e "${BLUE}🚀 Setting up drouple.app domain for Drouple - Church Management System${NC}"
 echo -e "${BLUE}================================================${NC}"
 
 # Check if Vercel CLI is installed
@@ -134,8 +134,8 @@ After setting up DNS records, run:
 
 ✅ NEXTAUTH_URL (production): https://drouple.app
 ✅ NEXTAUTH_URL (preview): https://staging.drouple.app  
-✅ RESEND_FROM_EMAIL (production): noreply@drouple.app
-✅ RESEND_FROM_EMAIL (preview): staging@drouple.app
+✅ RESEND_FROM_EMAIL (production): hello@drouple.app
+✅ RESEND_FROM_EMAIL (preview): hello@drouple.app
 
 ## Next Steps
 

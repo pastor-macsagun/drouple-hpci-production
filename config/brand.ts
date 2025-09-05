@@ -12,7 +12,7 @@ export const BRAND_CONFIG = {
   fullName: "Drouple Church Management System",
   description: "Church management made simple. Beautiful tools for modern ministry.",
   tagline: "Ministry made simple.",
-  mobileAppRelease: "Mobile app coming Q4 2025",
+  webPlatform: "Comprehensive web-based platform",
   copyright: "© 2025 " + BRAND_NAME + ". Made together by a pastor and church leaders, for pastors and church leaders everywhere.",
   footerTag: "Proudly Filipino Made 🇵🇭"
 } as const;

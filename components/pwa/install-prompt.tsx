@@ -1,95 +1,40 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Download, X } from 'lucide-react'
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: string[]
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed'
-    platform: string
-  }>
-  prompt(): Promise<void>
-}
-
-declare global {
-  interface WindowEventMap {
-    beforeinstallprompt: BeforeInstallPromptEvent
-  }
-}
+import { usePWA } from '@/lib/pwa/use-pwa'
+import { useState } from 'react'
 
 export function InstallPrompt() {
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-  const [isVisible, setIsVisible] = useState(false)
-  const [isInstalled, setIsInstalled] = useState(false)
-
-  useEffect(() => {
-    // Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true)
-      return
-    }
-
-    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault()
-      setInstallPrompt(e)
-      
-      // Check if user dismissed it recently
-      const dismissed = localStorage.getItem('pwa-install-dismissed')
-      const dismissedDate = dismissed ? new Date(dismissed) : null
-      const now = new Date()
-      
-      // Show prompt if not dismissed or if it's been more than 7 days
-      if (!dismissed || (dismissedDate && now.getTime() - dismissedDate.getTime() > 7 * 24 * 60 * 60 * 1000)) {
-        setIsVisible(true)
-      }
-    }
-
-    const handleAppInstalled = () => {
-      setIsInstalled(true)
-      setIsVisible(false)
-      setInstallPrompt(null)
-    }
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    window.addEventListener('appinstalled', handleAppInstalled)
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      window.removeEventListener('appinstalled', handleAppInstalled)
-    }
-  }, [])
+  const { isInstalled, canInstall, installApp } = usePWA()
+  const [isDismissed, setIsDismissed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    
+    const dismissed = localStorage.getItem('pwa-install-dismissed')
+    if (!dismissed) return false
+    
+    const dismissedDate = new Date(dismissed)
+    const now = new Date()
+    
+    // Show prompt again after 7 days
+    return now.getTime() - dismissedDate.getTime() < 7 * 24 * 60 * 60 * 1000
+  })
 
   const handleInstallClick = async () => {
-    if (!installPrompt) return
-
     try {
-      await installPrompt.prompt()
-      const { outcome } = await installPrompt.userChoice
-      
-      if (outcome === 'accepted') {
-        setIsVisible(false)
-      } else {
-        // User dismissed, remember for 7 days
-        localStorage.setItem('pwa-install-dismissed', new Date().toISOString())
-        setIsVisible(false)
-      }
+      await installApp()
     } catch (error) {
-      console.error('Install prompt failed:', error)
+      console.error('Install failed:', error)
     }
-    
-    setInstallPrompt(null)
   }
 
   const handleDismiss = () => {
     localStorage.setItem('pwa-install-dismissed', new Date().toISOString())
-    setIsVisible(false)
+    setIsDismissed(true)
   }
 
-  if (isInstalled || !isVisible || !installPrompt) {
+  if (isInstalled || !canInstall || isDismissed) {
     return null
   }
 
@@ -100,7 +45,7 @@ export function InstallPrompt() {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Download className="h-5 w-5 text-primary" />
-              <CardTitle className="text-base">Install HPCI ChMS</CardTitle>
+              <CardTitle className="text-base">Install Drouple</CardTitle>
             </div>
             <Button 
               variant="ghost" 
@@ -112,7 +57,7 @@ export function InstallPrompt() {
             </Button>
           </div>
           <CardDescription className="text-sm">
-            Add to your home screen for quick access like a native app
+            Add to your home screen for quick access like a native app. Works offline with sync when back online!
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">

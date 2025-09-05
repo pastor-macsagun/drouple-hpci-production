@@ -1,6 +1,6 @@
-# HPCI-ChMS Production Testing Suite
+# Drouple - Church Management System Production Testing Suite
 
-Comprehensive automated testing system for the production HPCI-ChMS deployment at https://www.drouple.app.
+Comprehensive automated testing system for the production Drouple - Church Management System deployment at https://www.drouple.app.
 
 ## Overview
 

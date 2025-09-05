@@ -17,7 +17,7 @@ const colors = {
   blue: '\x1b[34m',
 };
 
-console.log(`${colors.blue}🔍 HPCI-ChMS Production Configuration Verification${colors.reset}`);
+console.log(`${colors.blue}🔍 Drouple - Church Management System Production Configuration Verification${colors.reset}`);
 console.log('=' .repeat(50));
 
 // Load .env.production

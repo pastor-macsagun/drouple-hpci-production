@@ -48,7 +48,7 @@ const createdArtifacts = {
 
 async function runValidation() {
   console.log('========================================');
-  console.log('HPCI-ChMS PRODUCTION VALIDATION');
+  console.log('DROUPLE - CHURCH MANAGEMENT SYSTEM PRODUCTION VALIDATION');
   console.log(`URL: ${BASE_URL}`);
   console.log(`Test Prefix: ${TEST_PREFIX}`);
   console.log(`Started: ${new Date().toISOString()}`);
@@ -57,7 +57,7 @@ async function runValidation() {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
-    userAgent: 'HPCI-ChMS-Validator/1.0'
+    userAgent: 'Drouple-Validator/1.0'
   });
 
   try {

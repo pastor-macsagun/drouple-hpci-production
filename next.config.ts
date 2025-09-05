@@ -57,6 +57,8 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https:",
               "font-src 'self' data:",
               "connect-src 'self'",
+              "worker-src 'self'", // Allow service workers from same origin
+              "manifest-src 'self'", // Allow web app manifest from same origin
               "frame-ancestors 'none'",
               "upgrade-insecure-requests",
             ].join('; '),

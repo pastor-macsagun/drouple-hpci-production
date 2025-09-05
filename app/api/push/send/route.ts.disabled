@@ -1,0 +1,229 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { NotificationPayloadSchema, NotificationType } from '@/lib/pwa/push-notifications'
+import { UserRole } from '@prisma/client'
+import { z } from 'zod'
+import webpush from 'web-push'
+
+// Configure web-push with VAPID keys
+// In production, these should be environment variables
+const VAPID_PUBLIC_KEY = 'BFIBn4JHMoR-2Y8_9fVQ_Hm9lIJZZBM_u8LZRhcKiQO6BvSTIcHJY0rALAe9xkVkLKHJBFYnBPmJp6aNb4OXcCE'
+const VAPID_PRIVATE_KEY = 'YOUR_VAPID_PRIVATE_KEY_HERE' // This should be from env in production
+
+webpush.setVapidDetails(
+  'mailto:admin@example.com', // Contact email
+  VAPID_PUBLIC_KEY,
+  VAPID_PRIVATE_KEY
+)
+
+const SendNotificationSchema = z.object({
+  type: z.nativeEnum(NotificationType),
+  title: z.string().min(1).max(100),
+  body: z.string().min(1).max(300),
+  url: z.string().optional(),
+  icon: z.string().optional(),
+  badge: z.string().optional(),
+  image: z.string().optional(),
+  targetUserIds: z.array(z.string()).optional(), // Specific users
+  targetRoles: z.array(z.string()).optional(), // User roles
+  targetChurchIds: z.array(z.string()).optional(), // Specific churches
+  data: z.record(z.any()).optional()
+})
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    // Get user with tenant info
+    const userWithTenant = await db.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        role: true,
+        tenantId: true,
+        name: true,
+        email: true
+      }
+    })
+    
+    if (!userWithTenant) {
+      return NextResponse.json(
+        { success: false, error: 'User not found' },
+        { status: 404 }
+      )
+    }
+
+    // Check if user has permission to send notifications (ADMIN and above)
+    const allowedRoles = [UserRole.SUPER_ADMIN, UserRole.PASTOR, UserRole.ADMIN] as const
+    if (!allowedRoles.includes(userWithTenant.role as typeof allowedRoles[number])) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+
+    // Parse and validate notification data
+    const body = await request.json()
+    const notificationData = SendNotificationSchema.parse(body)
+
+    // Build notification payload
+    const payload = NotificationPayloadSchema.parse({
+      id: `notif_${Date.now()}`,
+      type: notificationData.type,
+      title: notificationData.title,
+      body: notificationData.body,
+      icon: notificationData.icon || '/icon-192x192.png',
+      badge: notificationData.badge || '/icon-192x192.png',
+      image: notificationData.image,
+      url: notificationData.url,
+      churchId: userWithTenant.tenantId || '',
+      data: notificationData.data || {},
+      timestamp: Date.now()
+    })
+
+    // Determine target subscriptions based on criteria
+    const whereClause: Record<string, any> = {
+      isActive: true
+    }
+
+    // Filter by target users
+    if (notificationData.targetUserIds && notificationData.targetUserIds.length > 0) {
+      whereClause.userId = {
+        in: notificationData.targetUserIds
+      }
+    } else {
+      // Apply role and church filters
+      const userWhere: Record<string, any> = {}
+      
+      if (notificationData.targetRoles && notificationData.targetRoles.length > 0) {
+        userWhere.role = {
+          in: notificationData.targetRoles
+        }
+      }
+
+      if (notificationData.targetChurchIds && notificationData.targetChurchIds.length > 0) {
+        whereClause.churchId = {
+          in: notificationData.targetChurchIds
+        }
+      } else if (userWithTenant.tenantId) {
+        // Default to sender's church
+        whereClause.churchId = userWithTenant.tenantId
+      }
+
+      if (Object.keys(userWhere).length > 0) {
+        whereClause.user = userWhere
+      }
+    }
+
+    // Get target subscriptions
+    const subscriptions = await db.pushSubscription.findMany({
+      where: whereClause,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true
+          }
+        }
+      }
+    })
+
+    if (subscriptions.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'No active subscriptions found for the specified criteria',
+        sent: 0,
+        failed: 0
+      })
+    }
+
+    // Send push notifications
+    const results = await Promise.allSettled(
+      subscriptions.map(async (subscription) => {
+        try {
+          const pushSubscription = {
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: subscription.p256dh,
+              auth: subscription.auth
+            }
+          }
+
+          await webpush.sendNotification(
+            pushSubscription,
+            JSON.stringify(payload),
+            {
+              TTL: 86400, // 24 hours
+              urgency: getUrgency(notificationData.type)
+            }
+          )
+
+          return { success: true, userId: subscription.userId }
+        } catch (error) {
+          console.error(`Failed to send notification to user ${subscription.userId}:`, error)
+          
+          // If subscription is no longer valid, mark as inactive
+          if (error instanceof Error && (error.message.includes('410') || error.message.includes('expired'))) {
+            await db.pushSubscription.update({
+              where: { id: subscription.id },
+              data: { isActive: false }
+            })
+          }
+
+          return { success: false, userId: subscription.userId, error: error instanceof Error ? error.message : 'Unknown error' }
+        }
+      })
+    )
+
+    // Count successful and failed sends
+    const successful = results.filter(r => r.status === 'fulfilled' && r.value.success).length
+    const failed = results.length - successful
+
+    return NextResponse.json({
+      success: true,
+      message: `Notification sent to ${successful} recipients`,
+      sent: successful,
+      failed,
+      details: results.map(r => r.status === 'fulfilled' ? r.value : { success: false, error: 'Promise rejected' })
+    })
+  } catch (error) {
+    console.error('Error sending push notification:', error)
+    
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid notification data', details: error.errors },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      { success: false, error: 'Failed to send push notification' },
+      { status: 500 }
+    )
+  }
+}
+
+function getUrgency(type: NotificationType): 'very-low' | 'low' | 'normal' | 'high' {
+  switch (type) {
+    case NotificationType.URGENT_ANNOUNCEMENT:
+    case NotificationType.ADMIN_ALERT:
+      return 'high'
+    case NotificationType.SERVICE_REMINDER:
+    case NotificationType.EVENT_ANNOUNCEMENT:
+      return 'normal'
+    case NotificationType.PATHWAY_MILESTONE:
+    case NotificationType.LIFEGROUP_UPDATE:
+      return 'low'
+    default:
+      return 'normal'
+  }
+}

@@ -14,7 +14,7 @@ import { io, Socket } from 'socket.io-client'
 export interface RealtimeEvent {
   type: 'attendance.created' | 'attendance.updated' | 'event.created' | 'event.updated' | 'member.updated' | 'announcement.published'
   tenantId: string
-  data: any
+  data: Record<string, unknown>
   timestamp: number
   eventId: string
 }
@@ -91,7 +91,7 @@ export class RealtimeClient {
     this.startHeartbeat()
   }
 
-  private async connectWebSocket(session: any): Promise<void> {
+  private async connectWebSocket(session: { accessToken?: string; user: { id: string } }): Promise<void> {
     return new Promise((resolve, reject) => {
       const token = session.accessToken || session.user.id
 
@@ -135,7 +135,7 @@ export class RealtimeClient {
     })
   }
 
-  private async connectSSE(session: any): Promise<void> {
+  private async connectSSE(session: { accessToken?: string; user: { id: string } }): Promise<void> {
     return new Promise((resolve, reject) => {
       const token = session.accessToken || session.user.id
       const url = new URL('/api/realtime/sse', this.config.url.replace(/^ws/, 'http'))

@@ -1,8 +1,8 @@
-# HPCI-ChMS Deployment Guide
+# Drouple - Church Management System Deployment Guide
 
 ## Overview
 
-Comprehensive deployment guide for the HPCI Church Management System, covering environment setup, deployment procedures, and post-deployment verification.
+Comprehensive deployment guide for the Drouple - Church Management System, covering environment setup, deployment procedures, and post-deployment verification.
 
 ## Environments
 
@@ -13,12 +13,12 @@ Comprehensive deployment guide for the HPCI Church Management System, covering e
 - **Setup**: See [Development Setup Guide](./dev-setup.md)
 
 ### Staging
-- **URL**: https://staging.hpci-chms.vercel.app
+- **URL**: https://staging.drouple.vercel.app
 - **Database**: Neon staging branch
 - **Purpose**: Pre-production testing and QA
 
 ### Production
-- **URL**: https://hpci-chms.vercel.app
+- **URL**: https://drouple.vercel.app
 - **Database**: Neon production database (pooled connections)
 - **Purpose**: Live environment for end users
 - **Last Deployment**: Aug 27, 2025
@@ -40,12 +40,12 @@ Comprehensive deployment guide for the HPCI Church Management System, covering e
    DATABASE_URL_UNPOOLED="postgresql://user:pass@host/db?sslmode=require"
    
    # NextAuth
-   NEXTAUTH_URL="https://your-production-domain.com"
+   NEXTAUTH_URL="https://drouple.app"
    NEXTAUTH_SECRET="[generate-with: openssl rand -base64 32]"
    
    # Email Service (Resend)
    RESEND_API_KEY="re_xxxxx"
-   RESEND_FROM_EMAIL="noreply@your-domain.com"
+   RESEND_FROM_EMAIL="hello@drouple.app"
    
    # Application
    NODE_ENV="production"
@@ -200,10 +200,10 @@ psql $DATABASE_URL < backup_file.sql
 # Required
 DATABASE_URL=postgres://...?sslmode=require&pgbouncer=true  # Pooled connection
 DATABASE_URL_UNPOOLED=postgres://...?sslmode=require        # Direct connection
-NEXTAUTH_URL=https://your-production-domain.com
+NEXTAUTH_URL=https://drouple.app
 NEXTAUTH_SECRET=<32+ character random string>
 RESEND_API_KEY=re_...
-RESEND_FROM_EMAIL=noreply@your-domain.com
+RESEND_FROM_EMAIL=hello@drouple.app
 
 # Security & Performance
 RATE_LIMIT_ENABLED=true
@@ -229,7 +229,7 @@ npm run build
 vercel --prod
 
 # Post-deployment verification
-curl https://your-domain.com/api/health
+curl https://drouple.app/api/health
 ```
 
 ### Security Headers (vercel.json)

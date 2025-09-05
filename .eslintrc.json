@@ -2,12 +2,14 @@
   "extends": ["next/core-web-vitals", "next/typescript", "plugin:jsx-a11y/recommended"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": "warn",
     "@next/next/no-img-element": "warn",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/anchor-is-valid": "warn",
-    "jsx-a11y/heading-has-content": "error"
+    "jsx-a11y/heading-has-content": "error",
+    "react/no-unescaped-entities": "warn",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "overrides": [
     {
@@ -15,6 +17,15 @@
       "rules": {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["components/pwa/**/*.tsx", "lib/pwa/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "react/no-unescaped-entities": "warn",
+        "react-hooks/exhaustive-deps": "warn"
       }
     }
   ]

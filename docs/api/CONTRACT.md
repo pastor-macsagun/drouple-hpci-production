@@ -1,13 +1,13 @@
-# HPCI-ChMS API Contract
+# Drouple - Church Management System API Contract
 
 ## Overview
 
-This document describes the HPCI Church Management System REST API v2.0, designed as a single, versioned contract for both web and mobile applications. The API follows industry standards for security, caching, pagination, and error handling.
+This document describes the Drouple - Church Management System REST API v2.0, designed as a single, versioned contract for both web and mobile applications. The API follows industry standards for security, caching, pagination, and error handling.
 
 ## Base URLs
 
-- **Production**: `https://api.hpci-chms.com/api/v2`
-- **Staging**: `https://staging-api.hpci-chms.com/api/v2`
+- **Production**: `https://api.drouple.com/api/v2`
+- **Staging**: `https://staging-api.drouple.com/api/v2`
 - **Development**: `http://localhost:3000/api/v2`
 
 ## Authentication

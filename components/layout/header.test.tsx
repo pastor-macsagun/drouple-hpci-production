@@ -5,7 +5,7 @@ import { Header } from './header'
 describe('Header', () => {
   it('renders the logo', () => {
     render(<Header />)
-    expect(screen.getByText('HPCI')).toBeInTheDocument()
+    expect(screen.getByText('Drouple')).toBeInTheDocument()
   })
 
   it('does not render navigation links', () => {

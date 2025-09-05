@@ -40,7 +40,7 @@ class VisualTester {
   }
 
   async init() {
-    console.log('🚀 Starting HPCI-ChMS Visual Testing...');
+    console.log('🚀 Starting Drouple - Church Management System Visual Testing...');
     
     // Create screenshot directory
     if (!fs.existsSync(SCREENSHOT_DIR)) {

@@ -1,13 +1,13 @@
-# HPCI-ChMS Production Deployment Runbook
+# Drouple - Church Management System Production Deployment Runbook
 
 ## Overview
-This runbook provides step-by-step instructions for deploying HPCI-ChMS to production.
+This runbook provides step-by-step instructions for deploying Drouple - Church Management System to production.
 
 **Production Environment:**
-- **URL**: https://drouple-hpci-prod.vercel.app
+- **URL**: https://drouple.vercel.app
 - **Database**: Neon Postgres (ep-flat-glade-ad7dfexu)
 - **Platform**: Vercel (pastormacsagun-9316s-projects/drouple-hpci-prod)
-- **Release**: v1.0.0-hpci
+- **Release**: v1.0.0
 
 ## Pre-Deployment Checklist
 
@@ -64,13 +64,13 @@ vercel ls
 
 ```bash
 # 1. Build Docker image
-docker build -t hpci-chms:latest .
+docker build -t drouple:latest .
 
 # 2. Tag for registry
-docker tag hpci-chms:latest registry.example.com/hpci-chms:latest
+docker tag drouple:latest registry.example.com/drouple:latest
 
 # 3. Push to registry
-docker push registry.example.com/hpci-chms:latest
+docker push registry.example.com/drouple:latest
 
 # 4. Deploy to Kubernetes/Docker Swarm
 kubectl apply -f k8s/production/
@@ -80,13 +80,13 @@ kubectl apply -f k8s/production/
 
 ```bash
 # 1. Check application health
-curl https://drouple-hpci-prod.vercel.app
+curl https://drouple.vercel.app
 
 # 2. Verify auth flow
-curl https://drouple-hpci-prod.vercel.app/api/auth/providers
+curl https://drouple.vercel.app/api/auth/providers
 
 # 3. Check sign-in page loads
-curl https://drouple-hpci-prod.vercel.app/auth/signin
+curl https://drouple.vercel.app/auth/signin
 ```
 
 ### Step 4: Smoke Tests
@@ -101,13 +101,13 @@ curl https://drouple-hpci-prod.vercel.app/auth/signin
    ```bash
    # Verify auth pages are NOT rate limited on GET
    for i in {1..10}; do
-     curl -s -o /dev/null -w "%{http_code}\n" https://drouple-hpci-prod.vercel.app/auth/signin
+     curl -s -o /dev/null -w "%{http_code}\n" https://drouple.vercel.app/auth/signin
    done
    # Should all return 200, never 429
    
    # Verify POST login has proper limits
    for i in {1..6}; do
-     curl -X POST https://drouple-hpci-prod.vercel.app/api/auth/callback/credentials \
+     curl -X POST https://drouple.vercel.app/api/auth/callback/credentials \
        -H "Content-Type: application/json" \
        -d '{"email":"test@example.com","password":"wrong"}' \
        -i | grep -E "(HTTP|X-RateLimit|Retry-After)"
@@ -149,7 +149,7 @@ vercel logs --prod
 vercel rollback
 
 # Docker
-kubectl rollout undo deployment/hpci-chms
+kubectl rollout undo deployment/drouple
 ```
 
 ### Database Rollback
@@ -196,7 +196,7 @@ npx prisma db pull --force
 #### 2. Authentication Issues
 ```bash
 # Verify NextAuth configuration
-curl https://drouple-hpci-prod.vercel.app/api/auth/session
+curl https://drouple.vercel.app/api/auth/session
 
 # Check email provider
 curl -X POST https://api.resend.com/emails \
@@ -275,7 +275,7 @@ vercel promote [deployment-url]
 
 | Version | Date | Changes | Deployed By |
 |---------|------|---------|-------------|
-| v1.0.0-hpci | 2025-08-26 | Initial production release with all validation gaps closed | Claude |
+| v1.0.0 | 2025-08-26 | Initial production release with all validation gaps closed | Claude |
 
 ## Notes
 

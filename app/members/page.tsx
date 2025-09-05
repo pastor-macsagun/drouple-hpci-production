@@ -110,24 +110,10 @@ export default async function MembersPage({
     redirect('/auth/signin')
   }
 
-  // Debug session
-  console.log('DEBUG Member page:', {
-    userId: currentUser.id,
-    tenantId: currentUser.tenantId,
-    role: currentUser.role,
-    memberships: currentUser.memberships?.map(m => ({ 
-      localChurchId: m.localChurchId, 
-      churchName: m.localChurch.name 
-    })),
-    query: resolvedSearchParams.q || ''
-  })
-
   const members = await searchMembers(
     resolvedSearchParams.q || '', 
     currentUser
   )
-
-  console.log('DEBUG Found members:', members.length)
 
   return (
     <AppLayout user={session.user}>

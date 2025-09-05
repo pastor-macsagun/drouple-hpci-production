@@ -1,6 +1,6 @@
 # 🚀 Complete drouple.app Setup Guide
 
-This guide walks you through setting up your HPCI-ChMS application on your new domain `drouple.app`. Everything is automated with the scripts provided.
+This guide walks you through setting up your Drouple - Church Management System application on your new domain `drouple.app`. Everything is automated with the scripts provided.
 
 ## 📋 Prerequisites
 
@@ -224,7 +224,7 @@ After successful deployment:
 
 ## 🎉 Success!
 
-Once all steps complete successfully, your HPCI-ChMS will be live at:
+Once all steps complete successfully, your Drouple - Church Management System will be live at:
 
 - **Production**: https://drouple.app
 - **Staging**: https://staging.drouple.app  

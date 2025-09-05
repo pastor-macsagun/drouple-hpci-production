@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Production Deployment Script for HPCI-ChMS
+# Production Deployment Script for Drouple - Church Management System
 # This script sets up environment variables in Vercel and deploys to production
 
-echo "🚀 HPCI-ChMS Production Deployment Script"
+echo "🚀 Drouple - Church Management System Production Deployment Script"
 echo "========================================="
 
 # Colors for output

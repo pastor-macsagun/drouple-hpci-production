@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HPCI-ChMS API Contract Testing with Mock Server
+# Drouple - Church Management System API Contract Testing with Mock Server
 # This script starts a Prism mock server and runs Dredd contract tests
 
 set -e
 
-echo "🚀 Starting HPCI-ChMS API Contract Tests"
+echo "🚀 Starting Drouple - Church Management System API Contract Tests"
 
 # Configuration
 SPEC_FILE="docs/api/openapi.yaml"

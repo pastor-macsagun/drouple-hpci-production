@@ -70,6 +70,7 @@ export function MembersManager({
   const [editingMember, setEditingMember] = useState<Member | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [generatedPassword, setGeneratedPassword] = useState('')
+  const [selectedMembers, setSelectedMembers] = useState<Set<string>>(new Set())
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
 
@@ -269,6 +270,71 @@ export function MembersManager({
     })
   }, [generatedPassword, toast])
 
+  const handleSelectMember = useCallback((memberId: string, selected: boolean) => {
+    setSelectedMembers(prev => {
+      const newSelection = new Set(prev)
+      if (selected) {
+        newSelection.add(memberId)
+      } else {
+        newSelection.delete(memberId)
+      }
+      return newSelection
+    })
+  }, [])
+
+  const handleSelectAll = useCallback((selected: boolean) => {
+    if (selected) {
+      setSelectedMembers(new Set(members.map(m => m.id)))
+    } else {
+      setSelectedMembers(new Set())
+    }
+  }, [members])
+
+  const handleBulkDeactivate = useCallback(() => {
+    if (selectedMembers.size === 0) return
+    
+    const memberIds = Array.from(selectedMembers)
+    startTransition(async () => {
+      let successCount = 0
+      let errorCount = 0
+      
+      for (const memberId of memberIds) {
+        const result = await deactivateMember(memberId)
+        if (result.success) {
+          successCount++
+        } else {
+          errorCount++
+        }
+      }
+      
+      if (successCount > 0) {
+        toast({
+          title: 'Success',
+          description: `${successCount} member(s) deactivated successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`
+        })
+        setSelectedMembers(new Set())
+        handleSearch()
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to deactivate members',
+          variant: 'destructive'
+        })
+      }
+    })
+  }, [selectedMembers, toast, handleSearch])
+
+  const handleBulkActivate = useCallback(() => {
+    if (selectedMembers.size === 0) return
+    
+    // This would require a new server action to activate members
+    // For PWA simplicity, we'll show a message for now
+    toast({
+      title: 'Feature Coming Soon',
+      description: 'Bulk activation will be available in a future update'
+    })
+  }, [selectedMembers, toast])
+
   const handleExportCsv = useCallback(async () => {
     try {
       const response = await exportMembersCsv({ churchId: selectedChurch === 'all' ? undefined : selectedChurch || undefined })
@@ -362,15 +428,79 @@ export function MembersManager({
           Export CSV
         </Button>
         
-        <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Member
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={members.length > 0 && selectedMembers.size === members.length}
+              onCheckedChange={handleSelectAll}
+              aria-label="Select all members"
+            />
+            <span className="text-sm text-muted-foreground">Select All</span>
+          </div>
+          <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Member
+          </Button>
+        </div>
       </div>
+
+      {/* Bulk Actions Bar */}
+      {selectedMembers.size > 0 && (
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium">
+                {selectedMembers.size} member{selectedMembers.size === 1 ? '' : 's'} selected
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedMembers(new Set())}
+                className="text-xs"
+              >
+                Clear Selection
+              </Button>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkActivate}
+                disabled={isPending}
+                className="flex-1 sm:flex-none"
+              >
+                Activate Selected
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDeactivate}
+                disabled={isPending}
+                className="flex-1 sm:flex-none"
+              >
+                Deactivate Selected
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <DataTable
         data={members}
         columns={[
+          {
+            key: 'select',
+            header: 'Select',
+            mobileLabel: 'Select',
+            className: 'w-12',
+            cell: (member) => (
+              <Checkbox
+                checked={selectedMembers.has(member.id)}
+                onCheckedChange={(checked) => handleSelectMember(member.id, !!checked)}
+                aria-label={`Select ${member.name || member.email}`}
+              />
+            )
+          },
           {
             key: 'name',
             header: 'Name',
