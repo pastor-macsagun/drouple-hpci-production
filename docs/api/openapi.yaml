@@ -1,0 +1,924 @@
+openapi: 3.1.0
+info:
+  title: HPCI-ChMS Mobile API
+  version: 2.0.0
+  description: |
+    Single, versioned REST API for HPCI Church Management System.
+    Supports both web and mobile clients with Bearer JWT authentication,
+    multi-tenant isolation, cursor-based pagination, ETags, and idempotency.
+  contact:
+    name: HPCI-ChMS API Support
+    url: https://github.com/hpci-chms/api
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.hpci-chms.com/api/v2
+    description: Production API
+  - url: https://staging-api.hpci-chms.com/api/v2
+    description: Staging API
+  - url: http://localhost:3000/api/v2
+    description: Local Development API
+
+security:
+  - bearerAuth: []
+
+paths:
+  /healthz:
+    get:
+      summary: Health check endpoint
+      operationId: getHealth
+      tags: [system]
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: Current server time in RFC3339 UTC
+                required: [status, timestamp]
+
+  /auth/token:
+    post:
+      summary: Exchange credentials for JWT access token
+      operationId: createToken
+      tags: [authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  minLength: 8
+                  description: User's password
+                deviceId:
+                  type: string
+                  description: Unique device identifier for mobile clients
+                  pattern: '^[a-zA-Z0-9-_]+$'
+              required: [email, password]
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: JWT access token (5-15 min TTL)
+                  refreshToken:
+                    type: string
+                    description: Refresh token for token exchange
+                  expiresIn:
+                    type: integer
+                    description: Token lifetime in seconds
+                  user:
+                    $ref: '#/components/schemas/Me'
+                required: [accessToken, refreshToken, expiresIn, user]
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /me:
+    get:
+      summary: Get current user profile
+      operationId: getMe
+      tags: [profile]
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /members:
+    get:
+      summary: List members with pagination and filtering
+      operationId: getMembers
+      tags: [members]
+      parameters:
+        - name: updatedSince
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter members updated since this timestamp (RFC3339 UTC)
+        - name: q
+          in: query
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 100
+          description: Search query for name or email
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Pagination cursor for next page
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          description: Number of items per page
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+          description: ETag for cache validation
+      responses:
+        '200':
+          description: List of members
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: ETag for caching
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Member'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+                required: [data, meta]
+        '304':
+          description: Not Modified - use cached response
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /members/{id}:
+    get:
+      summary: Get member by ID
+      operationId: getMemberById
+      tags: [members]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-z0-9]+$'
+          description: Member ID (CUID)
+      responses:
+        '200':
+          description: Member details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /events:
+    get:
+      summary: List events with pagination and filtering
+      operationId: getEvents
+      tags: [events]
+      parameters:
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter events starting from this date (RFC3339 UTC)
+        - name: q
+          in: query
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 100
+          description: Search query for event title or description
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Pagination cursor for next page
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          description: Number of items per page
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+          description: ETag for cache validation
+      responses:
+        '200':
+          description: List of events
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: ETag for caching
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+                required: [data, meta]
+        '304':
+          description: Not Modified - use cached response
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /events/{id}:
+    get:
+      summary: Get event by ID
+      operationId: getEventById
+      tags: [events]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-z0-9]+$'
+          description: Event ID (CUID)
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /events/{id}/rsvp:
+    post:
+      summary: RSVP to an event
+      operationId: createEventRsvp
+      tags: [events]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-z0-9]+$'
+          description: Event ID (CUID)
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID v4 for request deduplication (24h window)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+                  enum: [going, interested, not_going]
+                  description: RSVP response type
+              required: [response]
+      responses:
+        '200':
+          description: RSVP created or updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rsvp:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        pattern: '^[a-z0-9]+$'
+                        description: RSVP ID (CUID)
+                      eventId:
+                        type: string
+                        pattern: '^[a-z0-9]+$'
+                        description: Event ID (CUID)
+                      memberId:
+                        type: string
+                        pattern: '^[a-z0-9]+$'
+                        description: Member ID (CUID)
+                      response:
+                        type: string
+                        enum: [going, interested, not_going]
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: RFC3339 UTC timestamp
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        description: RFC3339 UTC timestamp
+                    required: [id, eventId, memberId, response, createdAt, updatedAt]
+                required: [rsvp]
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Conflict - duplicate request detected via Idempotency-Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /attendance/checkin:
+    post:
+      summary: Check in member for attendance
+      operationId: createAttendanceCheckin
+      tags: [attendance]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID v4 for request deduplication (24h window)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceCheckinRequest'
+      responses:
+        '201':
+          description: Attendance check-in created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkin:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        pattern: '^[a-z0-9]+$'
+                        description: Check-in ID (CUID)
+                      memberId:
+                        type: string
+                        pattern: '^[a-z0-9]+$'
+                        description: Member ID (CUID)
+                      eventId:
+                        type: string
+                        pattern: '^[a-z0-9]+$'
+                        description: Event/Service ID (CUID)
+                      scannedAt:
+                        type: string
+                        format: date-time
+                        description: When QR was scanned (RFC3339 UTC)
+                      deviceId:
+                        type: string
+                        description: Device that performed scan
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: Server timestamp (RFC3339 UTC)
+                    required: [id, memberId, eventId, scannedAt, deviceId, createdAt]
+                required: [checkin]
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Conflict - duplicate check-in or Idempotency-Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unprocessable Entity - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /announcements:
+    get:
+      summary: List announcements with pagination
+      operationId: getAnnouncements
+      tags: [announcements]
+      parameters:
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter announcements published since this date (RFC3339 UTC)
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Pagination cursor for next page
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          description: Number of items per page
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+          description: ETag for cache validation
+      responses:
+        '200':
+          description: List of announcements
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: ETag for caching
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Announcement'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+                required: [data, meta]
+        '304':
+          description: Not Modified - use cached response
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Bearer JWT with claims: sub, tenantId, roles[], iat, exp.
+        Token TTL: 5-15 minutes. Refresh via token exchange.
+
+  schemas:
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: User ID (CUID)
+        email:
+          type: string
+          format: email
+          description: User's email address
+        firstName:
+          type: string
+          maxLength: 100
+          description: User's first name
+        lastName:
+          type: string
+          maxLength: 100
+          description: User's last name
+        roles:
+          type: array
+          items:
+            type: string
+            enum: [SUPER_ADMIN, CHURCH_ADMIN, VIP, LEADER, MEMBER]
+          description: User's roles in the system
+        tenantId:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: Tenant/Church ID (CUID)
+        churchName:
+          type: string
+          maxLength: 200
+          description: Name of user's church
+        isActive:
+          type: boolean
+          description: Whether user account is active
+        lastLoginAt:
+          type: [string, "null"]
+          format: date-time
+          description: Last login timestamp (RFC3339 UTC)
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp (RFC3339 UTC)
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp (RFC3339 UTC)
+      required: [id, email, firstName, lastName, roles, tenantId, churchName, isActive, createdAt, updatedAt]
+
+    Member:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: Member ID (CUID)
+        firstName:
+          type: string
+          maxLength: 100
+          description: Member's first name
+        lastName:
+          type: string
+          maxLength: 100
+          description: Member's last name
+        email:
+          type: [string, "null"]
+          format: email
+          description: Member's email address
+        phone:
+          type: [string, "null"]
+          maxLength: 20
+          description: Member's phone number
+        role:
+          type: string
+          enum: [SUPER_ADMIN, CHURCH_ADMIN, VIP, LEADER, MEMBER]
+          description: Member's role in the church
+        isActive:
+          type: boolean
+          description: Whether member is active
+        believerStatus:
+          oneOf:
+            - type: string
+              enum: [ACTIVE, INACTIVE, COMPLETED]
+            - type: "null"
+          description: Believer status for new converts
+        dateJoined:
+          type: [string, "null"]
+          format: date
+          description: Date member joined church (YYYY-MM-DD)
+        notes:
+          type: [string, "null"]
+          maxLength: 1000
+          description: Admin notes about member
+        createdAt:
+          type: string
+          format: date-time
+          description: Record creation timestamp (RFC3339 UTC)
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp (RFC3339 UTC)
+      required: [id, firstName, lastName, role, isActive, createdAt, updatedAt]
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: Event ID (CUID)
+        title:
+          type: string
+          maxLength: 200
+          description: Event title
+        description:
+          type: [string, "null"]
+          maxLength: 2000
+          description: Event description
+        startDate:
+          type: string
+          format: date-time
+          description: Event start date and time (RFC3339 UTC)
+        endDate:
+          type: [string, "null"]
+          format: date-time
+          description: Event end date and time (RFC3339 UTC)
+        location:
+          type: [string, "null"]
+          maxLength: 200
+          description: Event location
+        capacity:
+          type: [integer, "null"]
+          minimum: 1
+          description: Maximum number of attendees
+        fee:
+          type: [number, "null"]
+          minimum: 0
+          multipleOf: 0.01
+          description: Event fee (if applicable)
+        isPublic:
+          type: boolean
+          description: Whether event is visible to all members
+        status:
+          type: string
+          enum: [DRAFT, PUBLISHED, CANCELLED, COMPLETED]
+          description: Event status
+        attendeeCount:
+          type: integer
+          minimum: 0
+          description: Current number of confirmed attendees
+        waitlistCount:
+          type: integer
+          minimum: 0
+          description: Current number on waitlist
+        myRsvp:
+          oneOf:
+            - type: string
+              enum: [going, interested, not_going]
+            - type: "null"
+          description: Current user's RSVP status (if any)
+        createdAt:
+          type: string
+          format: date-time
+          description: Record creation timestamp (RFC3339 UTC)
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp (RFC3339 UTC)
+      required: [id, title, startDate, isPublic, status, attendeeCount, waitlistCount, createdAt, updatedAt]
+
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: Announcement ID (CUID)
+        title:
+          type: string
+          maxLength: 200
+          description: Announcement title
+        content:
+          type: string
+          maxLength: 5000
+          description: Announcement content (markdown supported)
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT]
+          description: Announcement priority level
+        publishedAt:
+          type: string
+          format: date-time
+          description: Publication timestamp (RFC3339 UTC)
+        expiresAt:
+          type: [string, "null"]
+          format: date-time
+          description: Expiration timestamp (RFC3339 UTC)
+        isActive:
+          type: boolean
+          description: Whether announcement is currently active
+        authorName:
+          type: string
+          maxLength: 200
+          description: Name of announcement author
+        createdAt:
+          type: string
+          format: date-time
+          description: Record creation timestamp (RFC3339 UTC)
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp (RFC3339 UTC)
+      required: [id, title, content, priority, publishedAt, isActive, authorName, createdAt, updatedAt]
+
+    AttendanceCheckinRequest:
+      type: object
+      properties:
+        memberId:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: Member ID (CUID)
+        eventId:
+          type: string
+          pattern: '^[a-z0-9]+$'
+          description: Event/Service ID (CUID)
+        scannedAt:
+          type: string
+          format: date-time
+          description: When QR code was scanned (RFC3339 UTC)
+        deviceId:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Unique device identifier
+      required: [memberId, eventId, scannedAt, deviceId]
+
+    PageMeta:
+      type: object
+      properties:
+        nextCursor:
+          type: [string, "null"]
+          description: Cursor for next page (null if last page)
+        hasNextPage:
+          type: boolean
+          description: Whether there are more pages available
+        totalCount:
+          type: [integer, "null"]
+          minimum: 0
+          description: Total number of items (if efficiently calculable)
+      required: [hasNextPage]
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Error code for programmatic handling
+            message:
+              type: string
+              description: Human-readable error message
+            details:
+              type: [object, "null"]
+              description: Additional error details (validation errors, etc.)
+          required: [code, message]
+      required: [error]
+
+  responses:
+    BadRequest:
+      description: Bad Request - invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: VALIDATION_FAILED
+              message: Request validation failed
+              details:
+                fieldErrors:
+                  email: ["must be a valid email address"]
+
+    Unauthorized:
+      description: Unauthorized - missing or invalid authentication
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: UNAUTHORIZED
+              message: Authentication required
+
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: FORBIDDEN
+              message: Insufficient permissions for this resource
+
+    NotFound:
+      description: Not Found - resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: NOT_FOUND
+              message: Resource not found
+
+    RateLimited:
+      description: Rate Limited - too many requests
+      headers:
+        RateLimit-Limit:
+          schema:
+            type: integer
+          description: Request limit per window
+        RateLimit-Remaining:
+          schema:
+            type: integer
+          description: Requests remaining in current window
+        RateLimit-Reset:
+          schema:
+            type: integer
+          description: Unix timestamp when rate limit resets
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: RATE_LIMITED
+              message: Rate limit exceeded. Try again later.
+
+    ServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: An internal server error occurred
+
+# Realtime Events Documentation (WebSocket/Server-Sent Events)
+# These events complement the REST API for real-time updates:
+#
+# Event Types:
+# - attendance.created: { type, data: { checkin: AttendanceCheckin } }
+# - attendance.updated: { type, data: { checkin: AttendanceCheckin } }
+# - event.created: { type, data: { event: Event } }
+# - event.updated: { type, data: { event: Event } }
+# - member.updated: { type, data: { member: Member } }
+# - announcement.published: { type, data: { announcement: Announcement } }
+#
+# Connection: WSS endpoint with Bearer JWT authentication
+# Filtering: Events are automatically tenant-scoped based on JWT claims
+# Delivery: At-least-once delivery with client-side deduplication recommended

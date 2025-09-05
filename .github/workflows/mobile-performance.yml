@@ -1,0 +1,337 @@
+name: Mobile Performance Testing
+
+on:
+  push:
+    branches: [main, develop]
+    paths: 
+      - 'drouple-mobile/**'
+      - '.github/workflows/mobile-performance.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'drouple-mobile/**'
+
+env:
+  NODE_VERSION: '20'
+  EXPO_CLI_VERSION: 'latest'
+
+jobs:
+  performance-analysis:
+    name: Performance Budget Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'drouple-mobile/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: drouple-mobile
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli@${{ env.EXPO_CLI_VERSION }}
+
+      - name: Bundle Size Analysis
+        working-directory: drouple-mobile
+        run: |
+          echo "📦 Running bundle size analysis..."
+          node scripts/check-bundle-size.mjs --skip-build || BUNDLE_FAILED=true
+          
+          if [ "$BUNDLE_FAILED" = true ]; then
+            echo "❌ Bundle size analysis failed - budgets exceeded"
+            exit 1
+          fi
+          
+          echo "✅ Bundle size analysis passed"
+
+      - name: Performance Test Suite
+        working-directory: drouple-mobile
+        run: |
+          echo "🧪 Running performance tests..."
+          
+          # Run performance tests (would use Detox in real setup)
+          npm run test:performance || PERF_FAILED=true
+          
+          if [ "$PERF_FAILED" = true ]; then
+            echo "❌ Performance tests failed - budgets exceeded"
+            exit 1
+          fi
+          
+          echo "✅ Performance tests passed"
+
+      - name: Generate Performance Report
+        working-directory: drouple-mobile
+        if: always()
+        run: |
+          echo "📊 Generating performance report..."
+          
+          # Collect all performance results
+          mkdir -p performance-report
+          
+          if [ -d "tests/perf/results" ]; then
+            cp -r tests/perf/results/* performance-report/ || true
+          fi
+          
+          # Generate summary
+          cat > performance-report/summary.md << 'EOF'
+          # Performance Analysis Summary
+          
+          ## Bundle Size Analysis
+          - Base bundle size budget: ≤50MB
+          - Installed app size budget: ≤120MB  
+          - Route chunk size budget: ≤200KB
+          
+          ## Startup Performance
+          - iOS cold start budget: <1.5s
+          - Android cold start budget: <2.5s
+          - Home TTI budget: <2.0s
+          
+          ## Rendering Performance
+          - Long frames budget: <1%
+          - Target FPS: 60
+          - Max consecutive drops: ≤3
+          
+          EOF
+
+      - name: Upload Performance Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-report-${{ github.sha }}
+          path: drouple-mobile/performance-report/
+          retention-days: 30
+
+      - name: Comment Performance Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            let comment = '## 📊 Performance Analysis Results\n\n';
+            
+            // Check if performance reports exist
+            const reportDir = 'drouple-mobile/performance-report';
+            if (fs.existsSync(reportDir)) {
+              const files = fs.readdirSync(reportDir);
+              
+              if (files.length > 0) {
+                comment += '### Bundle Analysis\n';
+                comment += '✅ Bundle size analysis completed\n\n';
+                
+                comment += '### Performance Tests\n';
+                comment += '✅ Performance test suite completed\n\n';
+                
+                comment += `### Artifacts\n`;
+                comment += `📄 Detailed reports available in workflow artifacts\n\n`;
+              } else {
+                comment += '⚠️ No performance reports generated\n\n';
+              }
+            } else {
+              comment += '❌ Performance analysis failed to generate reports\n\n';
+            }
+            
+            comment += '### Performance Budgets\n';
+            comment += '- **Cold Start**: iOS <1.5s, Android <2.5s\n';
+            comment += '- **Home TTI**: <2.0s\n';
+            comment += '- **Bundle Size**: ≤50MB base, ≤120MB installed\n';
+            comment += '- **Frame Rate**: <1% long frames, 60 FPS target\n';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  ios-performance:
+    name: iOS Performance Testing
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main' # Only run on main branch
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'drouple-mobile/package-lock.json'
+
+      - name: Setup iOS Simulator
+        run: |
+          # List available simulators
+          xcrun simctl list devices available
+          
+          # Boot iPhone simulator
+          DEVICE_ID=$(xcrun simctl create "Performance Test" "iPhone 15" "iOS-17-0")
+          xcrun simctl boot "$DEVICE_ID"
+          echo "DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        working-directory: drouple-mobile
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli@${{ env.EXPO_CLI_VERSION }}
+
+      - name: Build iOS App
+        working-directory: drouple-mobile
+        run: |
+          echo "🍎 Building iOS app for performance testing..."
+          npx expo run:ios --no-install --no-bundler --device "$DEVICE_ID"
+
+      - name: Run iOS Performance Tests
+        working-directory: drouple-mobile
+        timeout-minutes: 15
+        run: |
+          echo "🧪 Running iOS performance measurements..."
+          
+          # Run startup performance tests
+          node scripts/measure-startup.mjs ios release || IOS_PERF_FAILED=true
+          
+          if [ "$IOS_PERF_FAILED" = true ]; then
+            echo "❌ iOS performance tests failed"
+            exit 1
+          fi
+          
+          echo "✅ iOS performance tests passed"
+
+      - name: Cleanup Simulator
+        if: always()
+        run: |
+          if [ -n "$DEVICE_ID" ]; then
+            xcrun simctl shutdown "$DEVICE_ID" || true
+            xcrun simctl delete "$DEVICE_ID" || true
+          fi
+
+  android-performance:
+    name: Android Performance Testing  
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # Only run on main branch
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'drouple-mobile/package-lock.json'
+
+      - name: Setup Android Emulator
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          script: echo "Android emulator started"
+
+      - name: Install dependencies
+        working-directory: drouple-mobile
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli@${{ env.EXPO_CLI_VERSION }}
+
+      - name: Build Android App
+        working-directory: drouple-mobile
+        run: |
+          echo "🤖 Building Android app for performance testing..."
+          npx expo run:android --no-install --no-bundler
+
+      - name: Run Android Performance Tests
+        working-directory: drouple-mobile
+        timeout-minutes: 15
+        run: |
+          echo "🧪 Running Android performance measurements..."
+          
+          # Run startup performance tests
+          node scripts/measure-startup.mjs android release || ANDROID_PERF_FAILED=true
+          
+          if [ "$ANDROID_PERF_FAILED" = true ]; then
+            echo "❌ Android performance tests failed"
+            exit 1
+          fi
+          
+          echo "✅ Android performance tests passed"
+
+  performance-gate:
+    name: Performance Gate
+    runs-on: ubuntu-latest
+    needs: [performance-analysis]
+    if: always()
+    
+    steps:
+      - name: Check Performance Results
+        run: |
+          if [ "${{ needs.performance-analysis.result }}" != "success" ]; then
+            echo "❌ Performance analysis failed - blocking merge"
+            echo "Performance budgets were exceeded. Please optimize before merging."
+            exit 1
+          fi
+          
+          echo "✅ All performance checks passed"
+
+  performance-regression-check:
+    name: Performance Regression Detection
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Get full history for comparison
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'drouple-mobile/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: drouple-mobile
+        run: npm ci
+
+      - name: Compare Bundle Size with Base Branch
+        working-directory: drouple-mobile
+        run: |
+          echo "📊 Comparing bundle sizes with base branch..."
+          
+          # Get current bundle size
+          node scripts/check-bundle-size.mjs --skip-build > current-bundle.txt || true
+          
+          # Checkout base branch and get its bundle size
+          git checkout ${{ github.base_ref }}
+          npm ci
+          node scripts/check-bundle-size.mjs --skip-build > base-bundle.txt || true
+          
+          # Compare results (this would be a more sophisticated comparison in reality)
+          echo "Current PR bundle analysis:"
+          cat current-bundle.txt
+          echo ""
+          echo "Base branch bundle analysis:"
+          cat base-bundle.txt
+          
+          # In a real implementation, you'd parse the JSON reports and compare sizes
+          echo "✅ Bundle size comparison completed"
+
+      - name: Performance Regression Summary
+        run: |
+          echo "📈 Performance regression analysis completed"
+          echo "Check the workflow logs for detailed comparison results"

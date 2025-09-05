@@ -9,15 +9,15 @@
 
 ## Quick Start
 
-The HPCI-ChMS is now production-ready with enterprise-grade features. This guide will get you up and running with the full development environment including testing, monitoring, and debugging capabilities.
+Drouple is now production-ready with enterprise-grade features. This guide will get you up and running with the full development environment including testing, monitoring, and debugging capabilities.
 
 ## Environment Setup
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/hpci-chms.git
-cd hpci-chms
+git clone https://github.com/your-org/drouple.git
+cd drouple
 ```
 
 ### 2. Install Dependencies
@@ -144,7 +144,7 @@ The application will be available at http://localhost:3000
 npm run build && npm run test:unit && npm run lint && npm run typecheck
 
 # Individual commands
-npm run test:unit              # Unit tests (569 tests)
+npm run test:unit              # Unit tests (662 tests)
 npm run test:unit:watch        # Unit tests in watch mode
 npm run test:unit:coverage     # Unit tests with coverage report
 npm run test:e2e               # End-to-end tests
@@ -289,7 +289,7 @@ npm run build && npm run test:unit && npm run lint && npm run typecheck
 ```
 
 ### Testing Strategy
-- Write unit tests for business logic (currently 569 tests)
+- Write unit tests for business logic (currently 662 tests)
 - Use E2E tests for critical user flows
 - Follow TDD principles for new features
 - Maintain 50%+ test coverage
@@ -319,4 +319,4 @@ Recommended extensions:
 
 ---
 
-**Development Status**: ✅ Production-ready with 569 passing tests, comprehensive monitoring, and enterprise-grade infrastructure.
+**Development Status**: ✅ Production-ready with 662 passing tests, comprehensive monitoring, and enterprise-grade infrastructure.

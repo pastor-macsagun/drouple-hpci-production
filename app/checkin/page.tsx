@@ -6,7 +6,7 @@ import { getCurrentUser } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { getTodayService, getUserCheckin } from "./actions";
 import { CheckInForm } from "./checkin-form";
-import { AttendanceList } from "./attendance-list";
+import { RealtimeAttendanceList } from "./realtime-attendance-list";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
@@ -75,7 +75,7 @@ export default async function CheckInPage() {
         )}
 
         {isAdmin && (
-          <AttendanceList 
+          <RealtimeAttendanceList 
             serviceId={service.id}
             serviceName={`${service.localChurch.name} - ${format(new Date(service.date), 'MMMM d, yyyy')}`}
           />

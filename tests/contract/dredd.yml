@@ -1,0 +1,161 @@
+reporter: apiary
+custom:
+  apiaryApiKey: null
+  apiaryApiName: null
+dry-run: null
+hookfiles: null
+language: nodejs
+sandbox: false
+server: http://localhost:4010
+server-wait: 3
+init: false
+names: false
+only: []
+output: []
+header: []
+sorted: false
+user: null
+inline-errors: false
+details: false
+method: []
+color: true
+level: info
+timestamp: false
+silent: false
+path: []
+hooks-worker-timeout: 5000
+hooks-worker-connect-timeout: 1500
+hooks-worker-connect-retry: 500
+hooks-worker-after-connect-wait: 100
+hooks-worker-term-timeout: 5000
+hooks-worker-term-retry: 500
+hooks-worker-handler-host: 127.0.0.1
+hooks-worker-handler-port: 61321
+config: ./tests/contract/dredd.yml
+blueprint: ./docs/api/openapi.yaml
+endpoint: http://localhost:3000/api/v2
+data:
+  testToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXItaWQiLCJ0ZW5hbnRJZCI6InRlc3QtdGVuYW50LWlkIiwicm9sZXMiOlsiTUVNQkVSIl0sImlhdCI6MTYzMDAwMDAwMCwiZXhwIjo5OTk5OTk5OTk5fQ.test-signature
+  testMemberId: test-member-id
+  testEventId: test-event-id
+  testIdempotencyKey: 550e8400-e29b-41d4-a716-446655440000
+  testETag: "test-etag-value"
+hooks-worker-new-line: |
+  
+  const hooks = require('hooks');
+  const uuid = require('crypto').randomUUID;
+  
+  // Test authentication token (valid for testing)
+  const TEST_TOKEN = process.env.DREDD_TEST_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXItaWQiLCJ0ZW5hbnRJZCI6InRlc3QtdGVuYW50LWlkIiwicm9sZXMiOlsiTUVNQkVSIl0sImlhdCI6MTYzMDAwMDAwMCwiZXhwIjo5OTk5OTk5OTk5fQ.test-signature';
+  
+  // Add authorization header to all authenticated requests
+  hooks.beforeEach(function(transaction) {
+    // Skip authentication for health check and auth endpoints
+    if (transaction.name.includes('/healthz') || 
+        transaction.name.includes('POST /auth/token')) {
+      return;
+    }
+    
+    transaction.request.headers.Authorization = `Bearer ${TEST_TOKEN}`;
+  });
+  
+  // Handle idempotency key requirements
+  hooks.before('POST /events/{id}/rsvp', function(transaction) {
+    transaction.request.headers['Idempotency-Key'] = uuid();
+  });
+  
+  hooks.before('POST /attendance/checkin', function(transaction) {
+    transaction.request.headers['Idempotency-Key'] = uuid();
+    
+    // Ensure valid request body
+    transaction.request.body = JSON.stringify({
+      memberId: 'test-member-id',
+      eventId: 'test-event-id',
+      scannedAt: new Date().toISOString(),
+      deviceId: 'test-device-001'
+    });
+  });
+  
+  // Test ETag header for list endpoints
+  hooks.before('GET /members', function(transaction) {
+    // First request without ETag should work normally
+    if (transaction.name.includes('with ETag')) {
+      transaction.request.headers['If-None-Match'] = '"test-etag"';
+    }
+  });
+  
+  hooks.before('GET /events', function(transaction) {
+    if (transaction.name.includes('with ETag')) {
+      transaction.request.headers['If-None-Match'] = '"test-etag"';
+    }
+  });
+  
+  hooks.before('GET /announcements', function(transaction) {
+    if (transaction.name.includes('with ETag')) {
+      transaction.request.headers['If-None-Match'] = '"test-etag"';
+    }
+  });
+  
+  // Handle path parameters for specific resources
+  hooks.before('GET /members/{id}', function(transaction) {
+    transaction.fullPath = transaction.fullPath.replace('{id}', 'test-member-id');
+    transaction.request.uri = transaction.request.uri.replace('{id}', 'test-member-id');
+  });
+  
+  hooks.before('GET /events/{id}', function(transaction) {
+    transaction.fullPath = transaction.fullPath.replace('{id}', 'test-event-id');
+    transaction.request.uri = transaction.request.uri.replace('{id}', 'test-event-id');
+  });
+  
+  hooks.before('POST /events/{id}/rsvp', function(transaction) {
+    transaction.fullPath = transaction.fullPath.replace('{id}', 'test-event-id');
+    transaction.request.uri = transaction.request.uri.replace('{id}', 'test-event-id');
+    
+    transaction.request.body = JSON.stringify({
+      response: 'going'
+    });
+  });
+  
+  // Handle rate limiting tests
+  hooks.after('Rate Limited Response', function(transaction) {
+    if (transaction.real.statusCode === 429) {
+      console.log('Rate limit headers:', {
+        limit: transaction.real.headers['RateLimit-Limit'],
+        remaining: transaction.real.headers['RateLimit-Remaining'],
+        reset: transaction.real.headers['RateLimit-Reset'],
+        retryAfter: transaction.real.headers['Retry-After']
+      });
+    }
+  });
+  
+  // Validate error response format
+  hooks.afterEach(function(transaction) {
+    if (transaction.real.statusCode >= 400) {
+      const body = JSON.parse(transaction.real.body || '{}');
+      
+      if (!body.error) {
+        throw new Error(`Error response missing 'error' field: ${transaction.real.body}`);
+      }
+      
+      if (!body.error.code || !body.error.message) {
+        throw new Error(`Error response missing required fields: ${transaction.real.body}`);
+      }
+    }
+  });
+  
+  // Test idempotency behavior
+  let idempotencyTests = {};
+  
+  hooks.after('POST /events/{id}/rsvp', function(transaction) {
+    if (transaction.real.statusCode === 200) {
+      const idempotencyKey = transaction.request.headers['Idempotency-Key'];
+      idempotencyTests[idempotencyKey] = transaction.real.body;
+    }
+  });
+  
+  hooks.after('POST /attendance/checkin', function(transaction) {
+    if (transaction.real.statusCode === 201) {
+      const idempotencyKey = transaction.request.headers['Idempotency-Key'];
+      idempotencyTests[idempotencyKey] = transaction.real.body;
+    }
+  });

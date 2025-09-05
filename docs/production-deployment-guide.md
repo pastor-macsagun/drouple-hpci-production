@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the complete production deployment process for HPCI-ChMS, including environment setup, CI/CD pipeline configuration, monitoring, and troubleshooting procedures.
+This guide covers the complete production deployment process for Drouple Web Application, including environment setup, CI/CD pipeline configuration, monitoring, and troubleshooting procedures.
 
 ## Table of Contents
 
@@ -32,8 +32,8 @@ This guide covers the complete production deployment process for HPCI-ChMS, incl
 ### Local Development Setup
 ```bash
 # Clone repository
-git clone https://github.com/your-org/hpci-chms.git
-cd hpci-chms
+git clone https://github.com/your-org/drouple.git
+cd drouple
 
 # Install dependencies
 npm ci
@@ -145,7 +145,7 @@ Ensure `vercel.json` is properly configured:
    # Create staging branch
    neon branches create --name staging
    
-   # Create development branch
+   # Create development branch  
    neon branches create --name development
    ```
 

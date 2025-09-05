@@ -1,297 +1,231 @@
 /**
- * Enhanced API Client
- * Bearer token authentication, 401 refresh handling, idempotency support
+ * Mobile API Client - PRD-compliant with auth, caching, and error handling
+ * Features: JWT auth, ETag caching, idempotency, proper error handling
  */
 
-import {
-  ENDPOINTS,
-  API_BASE_URL,
-  HEADERS,
-  REQUEST_TIMEOUT,
-} from '@/config/endpoints';
-import type { ApiResponse } from './contracts';
+import { getSecureItem } from '../auth/secure';
+import { authClient } from '../auth/client';
 
-export interface RequestConfig extends RequestInit {
-  idempotencyKey?: string;
-  localChurchId?: string;
-  skipAuthRefresh?: boolean;
+export interface ApiClientOptions {
+  baseUrl?: string;
+  timeout?: number;
 }
 
-class EnhancedApiClient {
-  private baseURL: string;
-  private authToken: string | null = null;
-  private refreshPromise: Promise<boolean> | null = null;
+export interface ApiRequestOptions extends RequestInit {
+  skipAuth?: boolean;
+  idempotencyKey?: string;
+  etag?: string;
+  timeout?: number;
+}
 
-  constructor(baseURL: string = API_BASE_URL) {
-    this.baseURL = baseURL;
+export interface ApiResponse<T = any> {
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+  success: boolean;
+}
+
+class ApiClient {
+  private baseUrl: string;
+  private defaultTimeout: number;
+
+  constructor(options: ApiClientOptions = {}) {
+    this.baseUrl = options.baseUrl || process.env.EXPO_PUBLIC_API_BASE || 'http://localhost:3000/api/v2';
+    this.defaultTimeout = options.timeout || 10000;
   }
 
-  /**
-   * Set Bearer token for authenticated requests
-   */
-  setAuthToken(token: string): void {
-    this.authToken = token;
-  }
+  async request<T = any>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
+    const {
+      skipAuth = false,
+      idempotencyKey,
+      etag,
+      timeout = this.defaultTimeout,
+      ...fetchOptions
+    } = options;
 
-  /**
-   * Remove Bearer token
-   */
-  removeAuthToken(): void {
-    this.authToken = null;
-  }
+    // Build headers
+    const headers = new Headers(fetchOptions.headers);
+    headers.set('Content-Type', 'application/json');
+    headers.set('Accept', 'application/json');
 
-  /**
-   * Get current Bearer token
-   */
-  getAuthToken(): string | null {
-    return this.authToken;
-  }
-
-  /**
-   * Build request headers
-   */
-  private buildHeaders(config: RequestConfig = {}): HeadersInit {
-    const headers: HeadersInit = {
-      [HEADERS.CONTENT_TYPE]: 'application/json',
-    };
-
-    // Add Bearer token if available
-    if (this.authToken && !config.skipAuthRefresh) {
-      headers[HEADERS.AUTHORIZATION] = `Bearer ${this.authToken}`;
+    // Add authorization header unless skipped
+    if (!skipAuth) {
+      const token = await getSecureItem('access_token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
     }
 
-    // Add idempotency key if provided
-    if (config.idempotencyKey) {
-      headers[HEADERS.IDEMPOTENCY_KEY] = config.idempotencyKey;
+    // Add idempotency key for write operations
+    if (idempotencyKey) {
+      headers.set('Idempotency-Key', idempotencyKey);
     }
 
-    // Add local church ID for tenant isolation
-    if (config.localChurchId) {
-      headers[HEADERS.LOCAL_CHURCH_ID] = config.localChurchId;
+    // Add ETag for cache validation
+    if (etag) {
+      headers.set('If-None-Match', etag);
     }
 
-    // Merge custom headers
-    if (config.headers) {
-      Object.assign(headers, config.headers);
-    }
-
-    return headers;
-  }
-
-  /**
-   * Handle 401 responses with token refresh
-   */
-  private async handleAuthRefresh(): Promise<boolean> {
-    // Prevent multiple concurrent refresh attempts
-    if (this.refreshPromise) {
-      return this.refreshPromise;
-    }
-
-    this.refreshPromise = this.performTokenRefresh();
-    const success = await this.refreshPromise;
-    this.refreshPromise = null;
-
-    return success;
-  }
-
-  /**
-   * Perform actual token refresh (override in auth store)
-   */
-  private async performTokenRefresh(): Promise<boolean> {
-    // TODO: Implement token refresh logic
-    // This should be connected to the auth store's refresh method
-    console.warn('Token refresh not implemented - redirecting to login');
-    return false;
-  }
-
-  /**
-   * Set token refresh handler
-   */
-  setTokenRefreshHandler(handler: () => Promise<boolean>): void {
-    this.performTokenRefresh = handler;
-  }
-
-  /**
-   * Core request method with error handling and retry logic
-   */
-  private async request<T>(
-    endpoint: string,
-    config: RequestConfig = {}
-  ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
-    const headers = this.buildHeaders(config);
-
-    const requestConfig: RequestInit = {
-      ...config,
-      headers,
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT),
-    };
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      const response = await fetch(url, requestConfig);
-      const data = await response.json();
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        ...fetchOptions,
+        headers,
+        signal: controller.signal,
+      });
 
-      // Handle 401 - Unauthorized (token expired/invalid)
-      if (response.status === 401 && !config.skipAuthRefresh) {
-        const refreshSuccess = await this.handleAuthRefresh();
+      clearTimeout(timeoutId);
 
-        if (refreshSuccess) {
-          // Retry original request with new token
-          return this.request<T>(endpoint, {
-            ...config,
-            skipAuthRefresh: true,
-          });
-        } else {
-          // Refresh failed - return error
-          return {
-            success: false,
-            error: 'Authentication failed - please login again',
-          };
-        }
+      // Handle 304 Not Modified for ETag caching
+      if (response.status === 304) {
+        throw new NotModifiedError('Resource not modified', response);
       }
 
-      // Handle other HTTP errors
+      // Handle authentication errors
+      if (response.status === 401) {
+        // Auto-logout on unauthorized
+        await authClient.logout();
+        throw new AuthError('Authentication required');
+      }
+
+      // Parse response body
+      const contentType = response.headers.get('content-type');
+      let responseData: any;
+      
+      if (contentType?.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        responseData = await response.text();
+      }
+
+      // Handle error responses
       if (!response.ok) {
-        return {
-          success: false,
-          error:
-            data.message ||
-            data.error ||
-            `HTTP ${response.status}: ${response.statusText}`,
-        };
+        throw new ApiError(
+          responseData?.error?.message || responseData?.message || 'API request failed',
+          response.status,
+          responseData?.error || responseData
+        );
       }
 
-      return {
-        success: true,
-        data,
-      };
+      // Return data directly for successful responses
+      return responseData.data || responseData;
+
     } catch (error) {
-      // Handle network/timeout errors
-      if (error instanceof Error) {
-        if (error.name === 'TimeoutError') {
-          return {
-            success: false,
-            error: 'Request timeout - please check your connection',
-          };
-        }
-        if (error.name === 'AbortError') {
-          return {
-            success: false,
-            error: 'Request was cancelled',
-          };
-        }
+      clearTimeout(timeoutId);
+      
+      // Re-throw custom errors
+      if (error instanceof ApiError || error instanceof AuthError || error instanceof NotModifiedError) {
+        throw error;
       }
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Network error',
-      };
+      
+      // Handle timeout
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new ApiError('Request timeout', 408);
+      }
+      
+      // Handle network errors
+      throw new ApiError('Network error', 0, error);
     }
   }
 
   /**
-   * GET request
+   * GET request with ETag support
    */
-  async get<T>(
-    endpoint: string,
-    config?: RequestConfig
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'GET' });
+  async get<T = any>(
+    endpoint: string, 
+    params?: Record<string, string>, 
+    options: Omit<ApiRequestOptions, 'method'> = {}
+  ): Promise<T> {
+    let url = endpoint;
+    if (params) {
+      const searchParams = new URLSearchParams(params);
+      url += `?${searchParams.toString()}`;
+    }
+
+    return this.request<T>(url, { ...options, method: 'GET' });
   }
 
   /**
-   * POST request with optional body and idempotency
+   * POST request with idempotency support
    */
-  async post<T>(
+  async post<T = any>(
     endpoint: string,
-    body?: unknown,
-    config?: RequestConfig
-  ): Promise<ApiResponse<T>> {
-    const requestConfig: RequestConfig = {
-      ...config,
+    data?: any,
+    options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
       method: 'POST',
-    };
-
-    if (body) {
-      requestConfig.body = JSON.stringify(body);
-    }
-
-    return this.request<T>(endpoint, requestConfig);
+      body: data ? JSON.stringify(data) : undefined,
+    });
   }
 
   /**
-   * PUT request
+   * PUT request with idempotency support
    */
-  async put<T>(
+  async put<T = any>(
     endpoint: string,
-    body?: unknown,
-    config?: RequestConfig
-  ): Promise<ApiResponse<T>> {
-    const requestConfig: RequestConfig = {
-      ...config,
+    data?: any,
+    options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
       method: 'PUT',
-    };
-
-    if (body) {
-      requestConfig.body = JSON.stringify(body);
-    }
-
-    return this.request<T>(endpoint, requestConfig);
-  }
-
-  /**
-   * PATCH request
-   */
-  async patch<T>(
-    endpoint: string,
-    body?: unknown,
-    config?: RequestConfig
-  ): Promise<ApiResponse<T>> {
-    const requestConfig: RequestConfig = {
-      ...config,
-      method: 'PATCH',
-    };
-
-    if (body) {
-      requestConfig.body = JSON.stringify(body);
-    }
-
-    return this.request<T>(endpoint, requestConfig);
+      body: data ? JSON.stringify(data) : undefined,
+    });
   }
 
   /**
    * DELETE request
    */
-  async delete<T>(
-    endpoint: string,
-    config?: RequestConfig
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...config, method: 'DELETE' });
+  async delete<T = any>(endpoint: string, options: Omit<ApiRequestOptions, 'method'> = {}): Promise<T> {
+    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 
   /**
-   * Generate idempotency key (UUID v4)
+   * Health check endpoint (no auth required)
    */
-  generateIdempotencyKey(): string {
-    return 'xxxx-xxxx-4xxx-yxxx-xxxx'.replace(/[xy]/g, c => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
+  async healthCheck(): Promise<{ status: string; timestamp: string }> {
+    return this.request('/healthz', { skipAuth: true });
   }
+}
 
-  /**
-   * Health check endpoint
-   */
-  async healthCheck(): Promise<
-    ApiResponse<{ status: string; timestamp: string }>
-  > {
-    return this.get('/api/health', { skipAuthRefresh: true });
+// Custom error classes following PRD error format
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export class AuthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
+export class NotModifiedError extends Error {
+  constructor(message: string, public response: Response) {
+    super(message);
+    this.name = 'NotModifiedError';
   }
 }
 
 // Create singleton instance
-export const apiClient = new EnhancedApiClient();
+export function createApiClient(options: ApiClientOptions = {}): ApiClient {
+  return new ApiClient(options);
+}
 
-// Export class for testing
-export default EnhancedApiClient;
+// Default export for ease of use
+export const apiClient = createApiClient();

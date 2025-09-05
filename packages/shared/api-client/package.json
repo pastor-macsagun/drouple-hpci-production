@@ -1,0 +1,25 @@
+{
+  "name": "@hpci-chms/api-client",
+  "version": "1.0.0",
+  "description": "Typed API client for HPCI-ChMS mobile and web applications",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "generate": "openapi-typescript ../../docs/api/openapi.yaml -o types.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.14.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.2",
+    "typescript": "^5.7.2"
+  },
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "types.ts"
+  ]
+}

@@ -1,0 +1,101 @@
+/* Global styles for NativeWind */
+@tailwind base;
+@tailwind components;  
+@tailwind utilities;
+
+/* Custom utility classes for design system */
+@layer utilities {
+  .text-display-lg {
+    font-size: 34px;
+    line-height: 40px;
+    font-family: 'Montserrat';
+    font-weight: 700;
+  }
+  
+  .text-display-md {
+    font-size: 28px;
+    line-height: 34px;
+    font-family: 'Montserrat';
+    font-weight: 700;
+  }
+  
+  .text-headline-lg {
+    font-size: 24px;
+    line-height: 30px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+  }
+  
+  .text-headline-md {
+    font-size: 22px;
+    line-height: 28px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+  }
+  
+  .text-title-lg {
+    font-size: 20px;
+    line-height: 26px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+  }
+  
+  .text-title-md {
+    font-size: 18px;
+    line-height: 24px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+  }
+  
+  .text-body-lg {
+    font-size: 16px;
+    line-height: 24px;
+    font-family: 'Open Sans';
+    font-weight: 400;
+  }
+  
+  .text-body-md {
+    font-size: 15px;
+    line-height: 22px;
+    font-family: 'Open Sans';
+    font-weight: 400;
+  }
+  
+  .text-label-lg {
+    font-size: 14px;
+    line-height: 20px;
+    font-family: 'Open Sans';
+    font-weight: 600;
+  }
+  
+  .text-label-md {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: 'Open Sans';
+    font-weight: 600;
+  }
+}
+
+/* Light theme classes */
+@layer components {
+  .theme-light .bg-surface { background-color: #FFFFFF; }
+  .theme-light .bg-elevated { background-color: #F8F9FA; }
+  .theme-light .text-primary { color: #0C2E4F; }
+  .theme-light .text-secondary { color: #435365; }
+  .theme-light .text-tertiary { color: #6B7280; }
+  .theme-light .border-muted { border-color: #E6EAF0; }
+  .theme-light .accent-primary { color: #FFB703; }
+  .theme-light .accent-muted { background-color: #FFF3CD; }
+}
+
+/* Dark theme classes */
+@layer components {
+  .theme-dark .bg-surface { background-color: #0F1720; }
+  .theme-dark .bg-elevated { background-color: #1A202C; }
+  .theme-dark .text-primary { color: #E6EFFA; }
+  .theme-dark .text-secondary { color: #B3C0D0; }
+  .theme-dark .text-tertiary { color: #9CA3AF; }
+  .theme-dark .border-muted { border-color: #243446; }
+  .theme-dark .accent-primary { color: #FFD480; }
+  .theme-dark .accent-muted { background-color: #2D1B00; }
+}

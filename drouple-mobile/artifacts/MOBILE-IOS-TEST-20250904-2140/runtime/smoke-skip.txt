@@ -1,1 +1,0 @@
-Runtime Smoke Tests: SKIPPED - App failed to build and launch due to iOS simulator build errors

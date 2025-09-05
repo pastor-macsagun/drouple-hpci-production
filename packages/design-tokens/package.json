@@ -1,0 +1,50 @@
+{
+  "name": "@hpci-chms/design-tokens",
+  "version": "1.0.0",
+  "description": "Design tokens for HPCI ChMS mobile app",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./colors": {
+      "import": "./dist/colors.esm.js",
+      "require": "./dist/colors.js",
+      "types": "./dist/colors.d.ts"
+    },
+    "./typography": {
+      "import": "./dist/typography.esm.js",
+      "require": "./dist/typography.js",
+      "types": "./dist/typography.d.ts"
+    },
+    "./spacing": {
+      "import": "./dist/spacing.esm.js",
+      "require": "./dist/spacing.js",
+      "types": "./dist/spacing.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "~5.3.0"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "keywords": [
+    "design-tokens",
+    "design-system", 
+    "react-native",
+    "mobile"
+  ],
+  "author": "HPCI ChMS",
+  "license": "MIT"
+}

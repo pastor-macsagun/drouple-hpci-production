@@ -1,1 +1,0 @@
-Removed react-native-worklets dependency that required New Architecture

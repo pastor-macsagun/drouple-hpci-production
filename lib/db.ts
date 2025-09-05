@@ -3,4 +3,4 @@
  * Re-export prisma client as db for consistency
  */
 
-export { prisma as db } from './prisma';
+export { prisma as db, prisma } from './prisma';

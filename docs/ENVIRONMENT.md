@@ -1,6 +1,6 @@
 # Environment Variables Configuration
 
-This document describes all environment variables used by HPCI-ChMS, their purposes, and recommended values for different environments.
+This document describes all environment variables used by Drouple Web Application, their purposes, and recommended values for different environments.
 
 ## Database Configuration
 

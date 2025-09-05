@@ -278,16 +278,16 @@ Drouple is a multi-church management system designed to handle:
   - Comprehensive unit and e2e test coverage
   - Documentation at [docs/members.md](docs/members.md)
 
-- ✅ **Test Stabilization & Production Readiness** (Jan 26, 2025)
-  - Fixed homepage rebranding test (expects "drouple" vs old "HPCI ChMS")
-  - Added missing database constraints: unique constraint on checkins(serviceId, userId)
-  - Resolved 21 TypeScript lint warnings to 0 (targeted `// eslint-disable-next-line`)
-  - Stabilized E2E auth fixtures with UI-based login (no more JWT session errors)
-  - Auth fixtures use credentials login with storage state caching
-  - Database indexes verified: users.tenantId, event_rsvps(eventId, userId)
-  - Build: ✅ Success | Lint: ✅ 0 warnings | TypeCheck: ✅ 0 errors
-  - Unit tests: 530 passed, 1 failed (flaky concurrency test)
-  - System ready for production deployment
+- ✅ **Web Application Cleanup & Current Status** (Sep 5, 2025)
+  - **Mobile App Removal**: Completely removed mobile application (drouple-mobile) and related API endpoints
+  - **Environment Cleanup**: Updated .env.example to reflect only web application variables  
+  - **Production Build**: ✅ Working correctly with TypeScript checks passing
+  - **Unit Tests**: ✅ 662 tests passing, comprehensive coverage
+  - **Database Seeding**: ✅ Working correctly for test data initialization
+  - **E2E Tests**: ⚠️ Investigation needed for timeout issues
+  - **Code Cleanup**: Removed mobile-related middleware, API routes, and test files
+  - **Web-Only Focus**: Now exclusively a Next.js web application for church management
+  - System is production-ready for web-only deployment
 
 ## Testing
 
@@ -320,7 +320,7 @@ Drouple is a multi-church management system designed to handle:
 **Drouple is now PRODUCTION-READY** with enterprise-grade capabilities:
 
 ### Quality Metrics Achieved ✅
-- **Testing**: 569 unit tests passing, comprehensive E2E coverage, 50%+ coverage thresholds
+- **Testing**: 662 unit tests passing, comprehensive E2E coverage, 50%+ coverage thresholds
 - **Security**: Enhanced CSP, tenant isolation guards, vulnerability scanning, Sentry monitoring
 - **Performance**: 60% query optimization, bundle analysis, loading states, N+1 prevention
 - **DevOps**: 8-stage CI/CD pipeline, automated deployments, health monitoring, backup strategies

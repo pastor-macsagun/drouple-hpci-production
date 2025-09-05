@@ -1,1 +1,0 @@
-Detox E2E: build timeout due to ongoing iOS build issues, but app successfully launched in simulator
