@@ -32,6 +32,11 @@ import {
   canEnrollInPathway,
   type MockPathway,
 } from '@/data/mockPathways';
+import {
+  initializePathwaysService,
+  pathwaysService,
+} from '@/services/pathwaysService';
+import { queryClient } from '@/lib/api/react-query';
 
 type FilterType = 'enrolled' | 'available' | 'completed' | 'category';
 type CategoryType = 'spiritual_growth' | 'ministry' | 'leadership' | 'service';
@@ -44,24 +49,58 @@ export const PathwaysScreen: React.FC = () => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [allPathways, setAllPathways] = useState<MockPathway[]>([]);
 
   // Mock completed pathways (in real app, this would come from user data)
   const completedPathwayIds = ['new-believer-foundation'];
 
-  const allPathways = useMemo(() => {
-    return searchPathways(searchQuery);
-  }, [searchQuery]);
+  // Initialize pathways service
+  React.useEffect(() => {
+    initializePathwaysService(queryClient);
+  }, []);
+
+  // Load pathways data
+  React.useEffect(() => {
+    const loadPathways = async () => {
+      try {
+        setIsLoading(true);
+        const pathwaysData = await pathwaysService.getUserPathways();
+        setAllPathways(pathwaysData);
+      } catch (error) {
+        console.error('Failed to load pathways:', error);
+        // Fallback to mock data
+        setAllPathways(searchPathways(searchQuery));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPathways();
+  }, []);
+
+  // Filter pathways based on search
+  const searchedPathways = useMemo(() => {
+    if (!searchQuery.trim()) return allPathways;
+    
+    return allPathways.filter(pathway =>
+      pathway.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      pathway.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      pathway.tags.some(tag =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [allPathways, searchQuery]);
 
   const filteredPathways = useMemo(() => {
-    let pathways = allPathways;
+    let pathways = searchedPathways;
 
     switch (activeFilter) {
       case 'enrolled':
-        pathways = getEnrolledPathways();
+        pathways = pathways.filter(pathway => pathway.isEnrolled);
         break;
       case 'available':
-        pathways = getAvailablePathways().filter(pathway =>
-          canEnrollInPathway(pathway, completedPathwayIds)
+        pathways = pathways.filter(pathway => 
+          !pathway.isEnrolled && canEnrollInPathway(pathway, completedPathwayIds)
         );
         break;
       case 'completed':
@@ -69,22 +108,9 @@ export const PathwaysScreen: React.FC = () => {
         break;
       case 'category':
         if (selectedCategory) {
-          pathways = getPathwaysByCategory(selectedCategory);
+          pathways = pathways.filter(pathway => pathway.category === selectedCategory);
         }
         break;
-    }
-
-    if (searchQuery.trim()) {
-      pathways = pathways.filter(
-        pathway =>
-          pathway.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          pathway.description
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          pathway.tags.some(tag =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-      );
     }
 
     return pathways.sort((a, b) => {
@@ -98,10 +124,9 @@ export const PathwaysScreen: React.FC = () => {
       return a.title.localeCompare(b.title);
     });
   }, [
-    allPathways,
+    searchedPathways,
     activeFilter,
     selectedCategory,
-    searchQuery,
     completedPathwayIds,
   ]);
 
@@ -110,9 +135,18 @@ export const PathwaysScreen: React.FC = () => {
     // In a real app, navigate to pathway detail screen
   };
 
-  const handleEnroll = (pathway: MockPathway) => {
-    console.log('Enroll in pathway:', pathway.id);
-    // In a real app, call enrollment API
+  const handleEnroll = async (pathway: MockPathway) => {
+    try {
+      const success = await pathwaysService.enrollInPathway(pathway.id);
+      
+      if (success) {
+        // Reload pathways data to show updated enrollment status
+        const updatedPathways = await pathwaysService.getUserPathways();
+        setAllPathways(updatedPathways);
+      }
+    } catch (error) {
+      console.error('Failed to enroll in pathway:', error);
+    }
   };
 
   const renderPathwayCard = ({ item: pathway }: { item: MockPathway }) => (
@@ -309,14 +343,18 @@ export const PathwaysScreen: React.FC = () => {
         {renderFilterChip(
           'enrolled',
           'My Pathways',
-          getEnrolledPathways().length
+          allPathways.filter(p => p.isEnrolled).length
         )}
         {renderFilterChip(
           'available',
           'Available',
-          getAvailablePathways().length
+          allPathways.filter(p => !p.isEnrolled && canEnrollInPathway(p, completedPathwayIds)).length
         )}
-        {renderFilterChip('completed', 'Completed', 0)}
+        {renderFilterChip(
+          'completed', 
+          'Completed', 
+          allPathways.filter(p => p.completedAt).length
+        )}
         {renderFilterChip('category', 'By Category')}
       </ScrollView>
 

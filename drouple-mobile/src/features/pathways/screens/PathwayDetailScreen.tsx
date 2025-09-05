@@ -34,6 +34,11 @@ import {
   type MockPathway,
   type PathwayStep,
 } from '@/data/mockPathways';
+import {
+  initializePathwaysService,
+  pathwaysService,
+} from '@/services/pathwaysService';
+import { queryClient } from '@/lib/api/react-query';
 
 type PathwayDetailRouteProp = RouteProp<
   { PathwayDetail: { pathwayId: string } },
@@ -48,8 +53,28 @@ export const PathwayDetailScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [completingStepId, setCompletingStepId] = useState<string | null>(null);
   const [stepNotes, setStepNotes] = useState<{ [stepId: string]: string }>({});
+  const [pathway, setPathway] = useState<MockPathway | null>(null);
 
-  const pathway = getPathwayById(pathwayId);
+  // Initialize pathways service
+  React.useEffect(() => {
+    initializePathwaysService(queryClient);
+  }, []);
+
+  // Load pathway data
+  React.useEffect(() => {
+    const loadPathway = async () => {
+      try {
+        const pathwayData = await pathwaysService.getPathway(pathwayId);
+        setPathway(pathwayData);
+      } catch (error) {
+        console.error('Failed to load pathway:', error);
+        // Fallback to mock data
+        setPathway(getPathwayById(pathwayId));
+      }
+    };
+
+    loadPathway();
+  }, [pathwayId]);
 
   if (!pathway) {
     return (
@@ -79,21 +104,27 @@ export const PathwayDetailScreen: React.FC = () => {
   };
 
   const completeStep = async (step: PathwayStep) => {
+    if (!pathway) return;
+
     setCompletingStepId(step.id);
 
     try {
-      // In a real app, this would call the API
-      console.log('Completing step:', {
-        pathwayId: pathway.id,
-        stepId: step.id,
-        notes: stepNotes[step.id] || '',
-      });
+      const success = await pathwaysService.completeStep(
+        pathway.id, 
+        step.id, 
+        stepNotes[step.id] || ''
+      );
 
-      // Mock delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // In a real app, this would update the pathway data
-      console.log('Step completed successfully');
+      if (success) {
+        // Reload pathway data to show updated progress
+        const updatedPathway = await pathwaysService.getPathway(pathway.id);
+        if (updatedPathway) {
+          setPathway(updatedPathway);
+        }
+        
+        // Clear the notes input
+        setStepNotes(prev => ({ ...prev, [step.id]: '' }));
+      }
     } catch (error) {
       console.error('Failed to complete step:', error);
       Alert.alert('Error', 'Failed to complete step. Please try again.');
@@ -103,15 +134,20 @@ export const PathwayDetailScreen: React.FC = () => {
   };
 
   const handleEnrollNow = async () => {
+    if (!pathway) return;
+
     setIsLoading(true);
 
     try {
-      // In a real app, this would call the enrollment API
-      console.log('Enrolling in pathway:', pathway.id);
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      console.log('Enrolled successfully');
+      const success = await pathwaysService.enrollInPathway(pathway.id);
+      
+      if (success) {
+        // Reload pathway data to show enrollment status
+        const updatedPathway = await pathwaysService.getPathway(pathway.id);
+        if (updatedPathway) {
+          setPathway(updatedPathway);
+        }
+      }
     } catch (error) {
       console.error('Failed to enroll:', error);
       Alert.alert('Error', 'Failed to enroll in pathway. Please try again.');
