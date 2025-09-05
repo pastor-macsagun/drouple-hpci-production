@@ -18,14 +18,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { role, tenantId, memberships } = await request.json()
+    const { role, memberships } = await request.json()
 
     // Verify the requesting user matches the role
     if (user.role !== role) {
       return NextResponse.json({ error: 'Role mismatch' }, { status: 403 })
     }
 
-    const stats: any = {}
+    const stats: Record<string, unknown> = {}
 
     switch (role) {
       case UserRole.SUPER_ADMIN:
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         break
 
       case UserRole.ADMIN:
-        const churchIds = memberships.map((m: any) => m.localChurchId)
+        const churchIds = memberships.map((m: { localChurchId: string }) => m.localChurchId)
         
         const [adminMemberCount, todayCheckins, lifeGroupCount, eventCount] = await Promise.all([
           prisma.membership.count({
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
           prisma.event.count({
             where: {
               localChurchId: { in: churchIds },
-              startDate: {
+              startDateTime: {
                 gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
                 lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
               }
@@ -85,22 +85,36 @@ export async function POST(request: NextRequest) {
         break
 
       case UserRole.VIP:
-        const churchIdsVip = memberships.map((m: any) => m.localChurchId)
+        const churchIdsVip = memberships.map((m: { localChurchId: string }) => m.localChurchId)
         
         const [firstTimersCount, gospelCount, rootsCount] = await Promise.all([
           prisma.firstTimer.count({
             where: {
-              localChurchId: { in: churchIdsVip },
-              visitDate: {
+              member: {
+                memberships: {
+                  some: {
+                    localChurchId: { in: churchIdsVip },
+                    leftAt: null
+                  }
+                }
+              },
+              createdAt: {
                 gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
               }
             }
           }),
           prisma.firstTimer.count({
             where: {
-              localChurchId: { in: churchIdsVip },
+              member: {
+                memberships: {
+                  some: {
+                    localChurchId: { in: churchIdsVip },
+                    leftAt: null
+                  }
+                }
+              },
               gospelShared: true,
-              visitDate: {
+              createdAt: {
                 gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
               }
             }
@@ -109,9 +123,9 @@ export async function POST(request: NextRequest) {
             where: {
               pathway: {
                 type: 'ROOTS',
-                localChurchId: { in: churchIdsVip }
+                tenantId: { in: churchIdsVip }
               },
-              status: 'IN_PROGRESS'
+              status: 'ENROLLED'
             }
           })
         ])

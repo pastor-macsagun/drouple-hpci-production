@@ -40,6 +40,12 @@ export async function POST(request: NextRequest) {
     }
 
     const { user } = tokenResult;
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'User not found' },
+        { status: 401 }
+      );
+    }
 
     // Parse and validate request body
     const body = await request.json();
@@ -119,7 +125,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { user } = tokenResult;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { user: _user } = tokenResult;
     const deviceId = request.nextUrl.searchParams.get('deviceId');
 
     if (!deviceId) {

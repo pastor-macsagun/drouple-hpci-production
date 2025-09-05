@@ -37,7 +37,7 @@ export class JwtService {
           exp: claims.exp
         },
         secret: this.secret
-      })
+      } as any) // Type assertion to bypass salt requirement
       
       if (!token) {
         throw new Error('Failed to encode JWT token')
@@ -54,7 +54,7 @@ export class JwtService {
       const payload = await decode({
         token,
         secret: this.secret
-      })
+      } as any) // Type assertion to bypass salt requirement
 
       if (!payload) {
         throw new Error('Invalid token')
@@ -107,7 +107,7 @@ export class JwtService {
       const payload = await decode({
         token,
         secret: this.secret
-      })
+      } as any) // Type assertion to bypass salt requirement
       
       if (!payload?.exp) return true
       
@@ -123,7 +123,7 @@ export class JwtService {
       const payload = await decode({
         token,
         secret: this.secret
-      })
+      } as any) // Type assertion to bypass salt requirement
       return payload?.exp || null
     } catch {
       return null

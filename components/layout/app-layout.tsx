@@ -3,6 +3,10 @@
 import { ReactNode, useState } from "react";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
+import { InstallPrompt } from "../pwa/install-prompt";
+import { ServiceWorkerRegistration } from "../pwa/service-worker";
+import { NotificationBanner } from "../notifications/notification-banner";
+import { OfflineIndicator } from "../offline/offline-indicator";
 import { UserRole } from "@prisma/client";
 
 interface AppLayoutProps {
@@ -20,6 +24,9 @@ export function AppLayout({ children, user, showSidebar = true }: AppLayoutProps
 
   return (
     <div className="min-h-screen bg-bg">
+      <ServiceWorkerRegistration />
+      <NotificationBanner />
+      <InstallPrompt />
       <Header
         user={user}
         showMenuButton={showSidebar}
@@ -57,6 +64,7 @@ export function AppLayout({ children, user, showSidebar = true }: AppLayoutProps
           <div className="page-container">{children}</div>
         </main>
       </div>
+      <OfflineIndicator />
     </div>
   );
 }

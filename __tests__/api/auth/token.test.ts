@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { POST } from '@/app/api/auth/token/route'
 import { NextRequest } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from '@/lib/auth'
 
 // Mock dependencies
-vi.mock('next-auth', () => ({
+vi.mock('@/lib/auth', () => ({
   getServerSession: vi.fn()
 }))
 

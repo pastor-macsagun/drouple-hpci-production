@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { CheckCircle, Calendar, Users, Loader2 } from 'lucide-react'
+import { CheckCircle, Calendar, Users, Loader2, QrCode } from 'lucide-react'
+import { QRScanner } from '@/components/ui/qr-scanner'
 import { checkIn } from './actions'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
@@ -31,6 +32,7 @@ interface CheckInFormProps {
 export function CheckInForm({ service, existingCheckin }: CheckInFormProps) {
   const [isNewBeliever, setIsNewBeliever] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showScanner, setShowScanner] = useState(false)
 
   const handleCheckIn = async () => {
     setIsLoading(true)
@@ -51,6 +53,13 @@ export function CheckInForm({ service, existingCheckin }: CheckInFormProps) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleQRScan = (result: string) => {
+    // For now, just show the scanned result and close scanner
+    toast.success(`QR Code scanned: ${result}`)
+    setShowScanner(false)
+    // In a real implementation, you would process the QR code for check-in
   }
 
   if (existingCheckin) {
@@ -79,6 +88,16 @@ export function CheckInForm({ service, existingCheckin }: CheckInFormProps) {
           </div>
         </CardContent>
       </Card>
+    )
+  }
+
+  if (showScanner) {
+    return (
+      <QRScanner
+        onScan={handleQRScan}
+        onError={(error) => toast.error(`Scanner error: ${error}`)}
+        onClose={() => setShowScanner(false)}
+      />
     )
   }
 
@@ -111,21 +130,32 @@ export function CheckInForm({ service, existingCheckin }: CheckInFormProps) {
             </Label>
           </div>
 
-          <Button 
-            onClick={handleCheckIn} 
-            disabled={isLoading}
-            className="w-full"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Checking in...
-              </>
-            ) : (
-              'Check In'
-            )}
-          </Button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Button 
+              onClick={handleCheckIn} 
+              disabled={isLoading}
+              className="w-full"
+              size="lg"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Checking in...
+                </>
+              ) : (
+                'Check In'
+              )}
+            </Button>
+            <Button 
+              onClick={() => setShowScanner(true)}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              <QrCode className="mr-2 h-4 w-4" />
+              Scan QR Code
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

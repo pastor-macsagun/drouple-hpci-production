@@ -235,7 +235,10 @@ export class HpciApiClient {
     const key = idempotencyKey || this.generateIdempotencyKey();
     
     const { data, error, response } = await this.client.POST('/events/{id}/rsvp', {
-      params: { path: { id: eventId } },
+      params: { 
+        path: { id: eventId },
+        header: { "Idempotency-Key": key }
+      },
       body: rsvpData,
       headers: this.withIdempotencyKey(key).headers,
     });
@@ -259,6 +262,9 @@ export class HpciApiClient {
     const key = idempotencyKey || this.generateIdempotencyKey();
     
     const { data, error, response } = await this.client.POST('/attendance/checkin', {
+      params: { 
+        header: { "Idempotency-Key": key }
+      },
       body: validatedData,
       headers: this.withIdempotencyKey(key).headers,
     });

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getServerSession } from '@/lib/auth'
 import { JwtService, createClaims, MobileTokenResponse } from '@/packages/shared/auth'
 import { authLogger } from '@/lib/logger'
 import { checkRateLimit, recordAttempt } from '@/lib/auth-rate-limit'
@@ -13,7 +12,7 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
     const ipAddress = Array.isArray(ip) ? ip[0] : ip.split(',')[0].trim()
     
-    const { allowed, remainingAttempts } = checkRateLimit(ipAddress, 'token-request')
+    const { allowed } = checkRateLimit(ipAddress, 'token-request')
     
     if (!allowed) {
       authLogger.warn('Token request rate limit exceeded', { 
@@ -29,7 +28,7 @@ export async function POST(req: NextRequest) {
     recordAttempt(ipAddress, 'token-request')
 
     // Get authenticated session
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession()
     
     if (!session?.user?.id) {
       authLogger.warn('Token request without valid session', { 
