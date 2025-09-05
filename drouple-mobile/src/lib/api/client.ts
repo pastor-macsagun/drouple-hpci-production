@@ -3,8 +3,7 @@
  * Features: JWT auth, ETag caching, idempotency, proper error handling
  */
 
-import { getSecureItem } from '../auth/secure';
-import { authClient } from '../auth/client';
+import { getSecureItem, deleteSecureItem } from '../auth/secure';
 
 export interface ApiClientOptions {
   baseUrl?: string;
@@ -89,8 +88,12 @@ class ApiClient {
 
       // Handle authentication errors
       if (response.status === 401) {
-        // Auto-logout on unauthorized
-        await authClient.logout();
+        // Clear stored tokens on unauthorized
+        await Promise.all([
+          getSecureItem('access_token').then(() => deleteSecureItem('access_token')).catch(() => {}),
+          getSecureItem('refresh_token').then(() => deleteSecureItem('refresh_token')).catch(() => {}),
+          getSecureItem('user_data').then(() => deleteSecureItem('user_data')).catch(() => {}),
+        ]);
         throw new AuthError('Authentication required');
       }
 

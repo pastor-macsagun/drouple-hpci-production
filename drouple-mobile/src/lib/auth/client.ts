@@ -4,7 +4,6 @@
  */
 
 import { setSecureItem, getSecureItem, deleteSecureItem } from './secure';
-import { JwtClaims } from '@shared/auth';
 
 export interface AuthTokens {
   accessToken: string;
