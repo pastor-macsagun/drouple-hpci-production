@@ -37,6 +37,11 @@ import {
   getGroupAvailableSpots,
   type MockLifeGroup,
 } from '@/data/mockGroups';
+import {
+  initializeLifeGroupsService,
+  lifeGroupsService,
+} from '@/services/lifeGroupsService';
+import { queryClient } from '@/lib/api/react-query';
 
 type FilterType = 'all' | 'my_groups' | 'available' | 'category';
 type CategoryType =
@@ -56,11 +61,32 @@ export const GroupsScreen: React.FC = () => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [allGroups, setAllGroups] = useState<MockLifeGroup[]>([]);
 
-  // Get groups for user's church
-  const allGroups = useMemo(() => {
-    if (!user?.churchId) return [];
-    return getLifeGroupsByChurch(user.churchId);
+  // Initialize life groups service
+  React.useEffect(() => {
+    initializeLifeGroupsService(queryClient);
+  }, []);
+
+  // Load life groups data
+  React.useEffect(() => {
+    const loadLifeGroups = async () => {
+      try {
+        setIsLoading(true);
+        const groupsData = await lifeGroupsService.getLifeGroups(user?.churchId);
+        setAllGroups(groupsData);
+      } catch (error) {
+        console.error('Failed to load life groups:', error);
+        // Fallback to mock data
+        setAllGroups(user?.churchId ? getLifeGroupsByChurch(user.churchId) : []);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (user?.churchId) {
+      loadLifeGroups();
+    }
   }, [user?.churchId]);
 
   const filteredGroups = useMemo(() => {
@@ -126,14 +152,17 @@ export const GroupsScreen: React.FC = () => {
   const handleJoinRequest = async (group: MockLifeGroup) => {
     if (!user?.id) return;
 
-    console.log('Requesting to join group:', {
-      groupId: group.id,
-      userId: user.id,
-      message: 'Hi! I would like to join this life group.',
-    });
-
-    // In a real app, this would call the API to create a join request
-    // For now, just show a success message
+    const success = await lifeGroupsService.requestToJoinGroup(
+      group.id,
+      user.id,
+      `Hi! I'd like to join ${group.name}. Looking forward to fellowship and growth together!`
+    );
+    
+    if (success) {
+      // Reload groups data to show updated join request status
+      const updatedGroups = await lifeGroupsService.getLifeGroups(user.churchId);
+      setAllGroups(updatedGroups);
+    }
   };
 
   const handleFilterChange = (filter: FilterType) => {
