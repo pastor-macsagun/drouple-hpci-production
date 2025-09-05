@@ -11,6 +11,9 @@ import { database } from '@/lib/db/database';
 import { ENDPOINTS } from '@/config/endpoints';
 import { getUpcomingEvents, getEventById, MockEvent } from '@/data/mockEvents';
 import { notificationService } from '@/services/notificationService';
+import { CalendarService } from '@/lib/calendar/calendarService';
+import { NotificationService } from '@/lib/notifications/notificationService';
+import { isFeatureEnabled } from '@/config/featureFlags';
 import toast from '@/utils/toast';
 
 const EVENTS_CACHE_KEY = 'cached_events';
@@ -101,14 +104,24 @@ class EventsService {
       // Update local state optimistically
       await this.updateLocalRSVPStatus(eventId, action);
 
-      // Show success notification
+      // Show success notification and schedule event reminders
       const event = getEventById(eventId);
       if (event && action === 'RSVP') {
         try {
           const status = event.spotsLeft === 0 ? 'waitlisted' : 'confirmed';
           await notificationService.showRSVPConfirmation(event.title, status);
+          
+          // Schedule event reminder notifications
+          if (status === 'confirmed') {
+            await NotificationService.scheduleEventReminders(
+              eventId,
+              event.title,
+              new Date(event.startsAt),
+              event.location
+            );
+          }
         } catch (error) {
-          console.log('Failed to show RSVP notification:', error);
+          console.log('Failed to show RSVP notification or schedule reminders:', error);
         }
       }
 
@@ -186,12 +199,19 @@ class EventsService {
               updatedEvent.waitlistCount += 1;
             }
           } else {
-            // CANCEL
+            // CANCEL - also cancel event reminders
             if (event.userRSVPStatus === 'confirmed') {
               updatedEvent.userRSVPStatus = 'none';
               updatedEvent.currentAttendees -= 1;
               if (updatedEvent.spotsLeft !== undefined) {
                 updatedEvent.spotsLeft += 1;
+              }
+              
+              // Cancel scheduled event reminders
+              try {
+                await NotificationService.cancelEventReminders(eventId);
+              } catch (error) {
+                console.log('Failed to cancel event reminders:', error);
               }
             } else if (event.userRSVPStatus === 'waitlisted') {
               updatedEvent.userRSVPStatus = 'none';
@@ -284,6 +304,71 @@ class EventsService {
         event.userRSVPStatus === 'confirmed' ||
         event.userRSVPStatus === 'waitlisted'
     );
+  }
+
+  /**
+   * Add event to device calendar
+   */
+  async addEventToCalendar(eventId: string): Promise<boolean> {
+    if (!isFeatureEnabled('eventCalendarSync')) {
+      console.log('Calendar sync feature is disabled');
+      return false;
+    }
+
+    try {
+      const event = await this.getEvent(eventId);
+      if (!event) {
+        throw new Error('Event not found');
+      }
+
+      // Check if calendar service is available
+      if (!CalendarService.isCalendarAvailable()) {
+        throw new Error('Calendar service is not available');
+      }
+
+      // Create calendar event
+      const startDate = new Date(event.startsAt);
+      const endDate = new Date(event.endsAt);
+      
+      const calendarEvent = CalendarService.formatEventForCalendar(
+        event.title,
+        event.description,
+        startDate,
+        endDate,
+        event.location
+      );
+
+      const calendarEventId = await CalendarService.addEventToCalendar(calendarEvent);
+      
+      if (calendarEventId) {
+        // Store the calendar event ID for future reference (could be used for updates/deletions)
+        console.log(`Event "${event.title}" added to calendar with ID: ${calendarEventId}`);
+        toast.success('Event added to your calendar');
+        return true;
+      } else {
+        throw new Error('Failed to add event to calendar');
+      }
+    } catch (error) {
+      console.error('Error adding event to calendar:', error);
+      toast.error('Unable to add event to calendar');
+      return false;
+    }
+  }
+
+  /**
+   * Check if calendar integration is available and enabled
+   */
+  async isCalendarIntegrationAvailable(): Promise<boolean> {
+    if (!isFeatureEnabled('eventCalendarSync')) {
+      return false;
+    }
+
+    if (!CalendarService.isCalendarAvailable()) {
+      return false;
+    }
+
+    const permissions = await CalendarService.checkPermissions();
+    return permissions.granted || permissions.canAskAgain;
   }
 }
 

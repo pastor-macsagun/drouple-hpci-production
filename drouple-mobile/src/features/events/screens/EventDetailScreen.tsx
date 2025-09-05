@@ -3,7 +3,7 @@
  * Shows detailed event information with RSVP functionality
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -43,6 +43,7 @@ export const EventDetailScreen: React.FC = () => {
   const queryClientInstance = useQueryClient();
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [calendarAvailable, setCalendarAvailable] = useState(false);
 
   // Query for event details
   const {
@@ -58,6 +59,36 @@ export const EventDetailScreen: React.FC = () => {
     retry: failureCount => {
       if (!syncStatus.isOnline) return false;
       return failureCount < 2;
+    },
+  });
+
+  // Check calendar availability on mount
+  useEffect(() => {
+    const checkCalendarAvailability = async () => {
+      const available = await eventsService.isCalendarIntegrationAvailable();
+      setCalendarAvailable(available);
+    };
+    
+    checkCalendarAvailability();
+  }, []);
+
+  // Add to calendar mutation
+  const addToCalendarMutation = useMutation({
+    mutationFn: async () => {
+      return eventsService.addEventToCalendar(eventId);
+    },
+    onSuccess: (success) => {
+      if (success) {
+        setSnackbarMessage('Event added to your calendar');
+      } else {
+        setSnackbarMessage('Unable to add event to calendar');
+      }
+      setSnackbarVisible(true);
+    },
+    onError: (error) => {
+      console.error('Add to calendar error:', error);
+      setSnackbarMessage('Failed to add event to calendar');
+      setSnackbarVisible(true);
     },
   });
 
@@ -376,6 +407,7 @@ export const EventDetailScreen: React.FC = () => {
       <View style={styles.actionContainer}>
         <Divider style={styles.actionDivider} />
         <View style={styles.actionButtons}>
+          {/* Primary RSVP Action */}
           {canUserCancelRSVP() ? (
             <Button
               mode='outlined'
@@ -401,6 +433,20 @@ export const EventDetailScreen: React.FC = () => {
               {event.userRSVPStatus !== 'none'
                 ? `Already ${event.userRSVPStatus}`
                 : 'RSVP Closed'}
+            </Button>
+          )}
+
+          {/* Add to Calendar Button */}
+          {calendarAvailable && (
+            <Button
+              mode='outlined'
+              icon='calendar-plus'
+              onPress={() => addToCalendarMutation.mutate()}
+              style={styles.calendarButton}
+              loading={addToCalendarMutation.isPending}
+              disabled={addToCalendarMutation.isPending}
+            >
+              Add to Calendar
             </Button>
           )}
         </View>
@@ -572,6 +618,10 @@ const styles = StyleSheet.create({
   disabledButton: {
     marginVertical: 4,
     opacity: 0.5,
+  },
+  calendarButton: {
+    marginVertical: 4,
+    borderColor: colors.secondary.main,
   },
 });
 

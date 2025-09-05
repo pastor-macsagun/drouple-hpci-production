@@ -85,7 +85,8 @@
     "react-native-vector-icons": "^10.2.0",
     "socket.io-client": "^4.8.0",
     "zod": "^4.1.5",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "expo-calendar": "~14.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
