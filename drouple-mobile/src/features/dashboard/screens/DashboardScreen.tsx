@@ -3,7 +3,7 @@
  * Role-aware dashboard with contextual cards and quick actions
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -14,109 +14,72 @@ import {
   IconButton,
   Chip,
   Divider,
+  ActivityIndicator,
 } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 import { useAuthStore } from '@/lib/store/authStore';
 import { useOnlineSync } from '@/hooks/useOnlineSync';
 import { colors } from '@/theme/colors';
+import { DashboardService } from '@/services/dashboardService';
+import { isFeatureEnabled } from '@/config/featureFlags';
 import type { UserRole } from '@/types/auth';
+import type { DashboardCard, DashboardStats } from '@/services/dashboardService';
 
-interface DashboardCard {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  action: string;
-  roles: UserRole[];
-  color?: string;
-  count?: number;
-}
-
-// Role-based dashboard cards (placeholders for now)
-const DASHBOARD_CARDS: DashboardCard[] = [
-  {
-    id: 'quick-checkin',
-    title: 'Quick Check-In',
-    description: 'Scan QR or search members',
-    icon: 'qrcode-scan',
-    action: 'Check-In',
-    roles: ['MEMBER', 'LEADER', 'VIP', 'ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.primary.main,
-  },
-  {
-    id: 'upcoming-events',
-    title: 'Upcoming Events',
-    description: 'View and RSVP to events',
-    icon: 'calendar-heart',
-    action: 'View Events',
-    roles: ['MEMBER', 'LEADER', 'VIP', 'ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.secondary.main,
-    count: 3,
-  },
-  {
-    id: 'first-timers',
-    title: 'First-Timer Care',
-    description: 'New believers and visitors',
-    icon: 'account-heart',
-    action: 'View List',
-    roles: ['VIP', 'ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.success.main,
-    count: 2,
-  },
-  {
-    id: 'my-pathways',
-    title: 'My Pathways',
-    description: 'Continue discipleship journey',
-    icon: 'map-marker-path',
-    action: 'Continue',
-    roles: ['MEMBER', 'LEADER', 'VIP', 'ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.info.main,
-  },
-  {
-    id: 'life-groups',
-    title: 'LifeGroups',
-    description: 'Join or manage groups',
-    icon: 'account-group',
-    action: 'Browse',
-    roles: ['MEMBER', 'LEADER', 'VIP', 'ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.pathways.inProgress,
-  },
-  {
-    id: 'admin-reports',
-    title: 'Reports & Analytics',
-    description: 'Church metrics and trends',
-    icon: 'chart-line',
-    action: 'View Reports',
-    roles: ['ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.roles.churchAdmin,
-    count: 5,
-  },
-  {
-    id: 'member-directory',
-    title: 'Member Directory',
-    description: 'Search and connect with members',
-    icon: 'account-search',
-    action: 'Search',
-    roles: ['MEMBER', 'LEADER', 'VIP', 'ADMIN', 'PASTOR', 'SUPER_ADMIN'],
-    color: colors.outline.main,
-  },
-];
 
 export const DashboardScreen: React.FC = () => {
-  const { user, hasRole } = useAuthStore();
+  const { user } = useAuthStore();
   const { status: syncStatus, syncNow, isInitialized } = useOnlineSync();
+  const navigation = useNavigation();
+  
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [dashboardCards, setDashboardCards] = useState<DashboardCard[]>([]);
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
 
-  // Filter cards based on user roles
-  const visibleCards = DASHBOARD_CARDS.filter(card =>
-    card.roles.some(role => hasRole(role))
-  );
+  // Check if dashboard feature is enabled
+  const isDashboardEnabled = isFeatureEnabled('realTimeDashboard');
+
+  useEffect(() => {
+    if (user && isDashboardEnabled) {
+      loadDashboardData();
+    }
+  }, [user, isDashboardEnabled]);
+
+  const loadDashboardData = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const [cards, stats] = await Promise.all([
+        DashboardService.getDashboardCards(user),
+        DashboardService.getDashboardStats(user),
+      ]);
+      
+      setDashboardCards(cards);
+      setDashboardStats(stats);
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      // Fallback to empty state
+      setDashboardCards([]);
+      setDashboardStats(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      if (isInitialized) {
-        await syncNow();
+      if (user) {
+        // Refresh dashboard data
+        await DashboardService.refreshDashboard(user);
+        await loadDashboardData();
+        
+        // Also sync if available
+        if (isInitialized) {
+          await syncNow();
+        }
       }
     } catch (error) {
       console.error('Refresh failed:', error);
@@ -131,9 +94,31 @@ export const DashboardScreen: React.FC = () => {
     }
   };
 
-  const handleCardPress = (cardId: string) => {
-    console.log(`Navigating to ${cardId}`);
-    // TODO: Navigate to appropriate screens
+  const handleCardPress = (card: DashboardCard) => {
+    // Navigate based on card's navigateTo property or fallback logic
+    if (card.navigateTo) {
+      switch (card.navigateTo) {
+        case 'CheckIn':
+          navigation.navigate('CheckIn' as never);
+          break;
+        case 'Events':
+          navigation.navigate('Events' as never);
+          break;
+        case 'Pathways':
+          navigation.navigate('Pathways' as never);
+          break;
+        case 'Groups':
+          navigation.navigate('Groups' as never);
+          break;
+        case 'VIP':
+          navigation.navigate('VIP' as never);
+          break;
+        default:
+          console.log(`Navigating to ${card.navigateTo}`);
+      }
+    } else {
+      console.log(`Card action: ${card.action}`);
+    }
   };
 
   const getRoleDisplayName = (role: UserRole): string => {
@@ -154,6 +139,34 @@ export const DashboardScreen: React.FC = () => {
     if (hour < 17) return 'Good afternoon';
     return 'Good evening';
   };
+
+  // Show loading state
+  if (loading && isDashboardEnabled) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size='large' color={colors.primary.main} />
+          <Text variant='bodyMedium' style={styles.loadingText}>
+            Loading dashboard...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show fallback if dashboard feature is disabled
+  if (!isDashboardEnabled || !user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text variant='headlineSmall'>Welcome to Drouple</Text>
+          <Text variant='bodyMedium' style={styles.loadingText}>
+            Your personalized dashboard will appear here.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -209,21 +222,21 @@ export const DashboardScreen: React.FC = () => {
         {/* Sync Status Section */}
         <View style={styles.syncSection}>
           <Chip
-            icon={syncStatus.isOnline ? 'cloud-check' : 'cloud-off'}
+            icon={(dashboardStats?.isOnline ?? syncStatus.isOnline) ? 'cloud-check' : 'cloud-off'}
             mode='flat'
             textStyle={styles.syncText}
             style={[
               styles.syncChip,
               {
-                backgroundColor: syncStatus.isOnline
+                backgroundColor: (dashboardStats?.isOnline ?? syncStatus.isOnline)
                   ? colors.success.light + '20'
                   : colors.error.light + '20',
               },
             ]}
           >
-            {syncStatus.isOnline
-              ? syncStatus.lastSync
-                ? `Last synced: ${syncStatus.lastSync.toLocaleTimeString()}`
+            {(dashboardStats?.isOnline ?? syncStatus.isOnline)
+              ? dashboardStats?.lastSync || syncStatus.lastSync
+                ? `Last synced: ${(dashboardStats?.lastSync || syncStatus.lastSync)?.toLocaleTimeString()}`
                 : 'Online'
               : 'Offline'}
             {syncStatus.queueCount > 0 && ` • ${syncStatus.queueCount} pending`}
@@ -235,90 +248,88 @@ export const DashboardScreen: React.FC = () => {
             onPress={handleSyncNow}
             textColor={colors.primary.main}
             loading={syncStatus.isSync}
-            disabled={!syncStatus.isOnline || syncStatus.isSync}
+            disabled={!(dashboardStats?.isOnline ?? syncStatus.isOnline) || syncStatus.isSync}
           >
             Sync Now
           </Button>
         </View>
 
-        {/* Quick Actions Grid */}
+        {/* Dashboard Cards */}
         <Text variant='titleMedium' style={styles.sectionTitle}>
-          Quick Actions
+          {getRoleDashboardTitle(user?.role || 'MEMBER')}
         </Text>
 
-        <View style={styles.cardsGrid}>
-          {visibleCards.map(card => (
-            <Card
-              key={card.id}
-              style={styles.actionCard}
-              onPress={() => handleCardPress(card.id)}
-              accessibilityLabel={`${card.title} - ${card.description}`}
-              accessibilityRole='button'
-            >
-              <Card.Content style={styles.cardContent}>
-                <View style={styles.cardHeader}>
-                  <IconButton
-                    icon={card.icon}
-                    size={28}
-                    iconColor={card.color || colors.primary.main}
-                    style={styles.cardIcon}
-                  />
-                  {card.count !== undefined && (
-                    <Chip
-                      mode='flat'
-                      compact
-                      style={[
-                        styles.countChip,
-                        { backgroundColor: card.color },
-                      ]}
-                      textStyle={styles.countText}
-                    >
-                      {card.count}
-                    </Chip>
+        {dashboardCards.length > 0 ? (
+          <View style={styles.cardsGrid}>
+            {dashboardCards.map(card => (
+              <Card
+                key={card.id}
+                style={styles.actionCard}
+                onPress={() => handleCardPress(card)}
+                accessibilityLabel={`${card.title}${card.subtitle ? ` - ${card.subtitle}` : ''}`}
+                accessibilityRole='button'
+              >
+                <Card.Content style={styles.cardContent}>
+                  <View style={styles.cardHeader}>
+                    <IconButton
+                      icon={card.icon}
+                      size={28}
+                      iconColor={card.color}
+                      style={styles.cardIcon}
+                    />
+                    {card.value !== undefined && (
+                      <View style={styles.valueContainer}>
+                        <Text variant='titleLarge' style={[styles.cardValue, { color: card.color }]}>
+                          {card.value}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <Text variant='titleSmall' style={styles.cardTitle}>
+                    {card.title}
+                  </Text>
+
+                  {card.subtitle && (
+                    <Text variant='bodySmall' style={styles.cardSubtitle}>
+                      {card.subtitle}
+                    </Text>
                   )}
-                </View>
 
-                <Text variant='titleSmall' style={styles.cardTitle}>
-                  {card.title}
-                </Text>
+                  {card.action && (
+                    <Button
+                      mode='outlined'
+                      compact
+                      style={styles.cardAction}
+                      buttonColor='transparent'
+                      textColor={card.color}
+                    >
+                      {card.action}
+                    </Button>
+                  )}
 
-                <Text variant='bodySmall' style={styles.cardDescription}>
-                  {card.description}
-                </Text>
-
-                <Button
-                  mode='outlined'
-                  compact
-                  style={styles.cardAction}
-                  buttonColor='transparent'
-                  textColor={card.color || colors.primary.main}
-                >
-                  {card.action}
-                </Button>
-              </Card.Content>
-            </Card>
-          ))}
-        </View>
-
-        <Divider style={styles.divider} />
-
-        {/* Recent Activity Placeholder */}
-        <Text variant='titleMedium' style={styles.sectionTitle}>
-          Recent Activity
-        </Text>
-
-        <Surface style={styles.activitySurface} elevation={1}>
-          <View style={styles.activityPlaceholder}>
+                  {card.lastUpdated && (
+                    <Text variant='bodySmall' style={styles.lastUpdated}>
+                      Updated {card.lastUpdated.toLocaleTimeString()}
+                    </Text>
+                  )}
+                </Card.Content>
+              </Card>
+            ))}
+          </View>
+        ) : (
+          <Surface style={styles.emptyState} elevation={1}>
             <IconButton
-              icon='history'
+              icon='view-dashboard'
               size={48}
               iconColor={colors.outline.main}
             />
-            <Text variant='bodyMedium' style={styles.placeholderText}>
-              Your recent church activities will appear here
+            <Text variant='bodyMedium' style={styles.emptyStateText}>
+              Your dashboard cards will appear here based on your role and activity
             </Text>
-          </View>
-        </Surface>
+          </Surface>
+        )}
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -327,7 +338,18 @@ export const DashboardScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.main,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  loadingText: {
+    marginTop: 16,
+    color: colors.text.secondary,
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
@@ -406,43 +428,60 @@ const styles = StyleSheet.create({
   cardIcon: {
     margin: 0,
   },
-  countChip: {
-    height: 20,
-    paddingHorizontal: 8,
+  valueContainer: {
+    alignItems: 'flex-end',
   },
-  countText: {
-    fontSize: 11,
-    color: 'white',
-    fontWeight: '600',
+  cardValue: {
+    fontWeight: '700',
+    fontSize: 20,
+  },
+  cardSubtitle: {
+    color: colors.text.secondary,
+    marginBottom: 8,
+    lineHeight: 16,
   },
   cardTitle: {
     marginBottom: 4,
     color: colors.text.primary,
     fontWeight: '500',
   },
-  cardDescription: {
-    color: colors.text.secondary,
-    marginBottom: 12,
-    lineHeight: 16,
-  },
   cardAction: {
     alignSelf: 'flex-start',
+    marginTop: 4,
   },
-  divider: {
-    marginVertical: 24,
+  lastUpdated: {
+    color: colors.text.secondary,
+    fontSize: 10,
+    marginTop: 8,
   },
-  activitySurface: {
+  emptyState: {
     borderRadius: 12,
     padding: 24,
-  },
-  activityPlaceholder: {
     alignItems: 'center',
+    marginBottom: 16,
   },
-  placeholderText: {
+  emptyStateText: {
     color: colors.text.secondary,
     textAlign: 'center',
     marginTop: 8,
   },
 });
+
+// Helper function to get role-specific dashboard title
+const getRoleDashboardTitle = (role: UserRole): string => {
+  switch (role) {
+    case 'SUPER_ADMIN':
+    case 'PASTOR':
+    case 'ADMIN':
+      return 'Church Overview';
+    case 'VIP':
+      return 'First-Timer Care';
+    case 'LEADER':
+      return 'Ministry Dashboard';
+    case 'MEMBER':
+    default:
+      return 'My Dashboard';
+  }
+};
 
 export default DashboardScreen;
