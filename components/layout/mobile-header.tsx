@@ -28,7 +28,7 @@ export function MobileHeader({ user }: MobileHeaderProps) {
       <div className="flex h-14 items-center justify-between px-4">
         <div className="flex items-center space-x-2">
           <span className="text-lg font-bold bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">
-            HPCI ChMS
+            Drouple
           </span>
         </div>
 
