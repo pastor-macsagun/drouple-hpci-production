@@ -17,11 +17,29 @@ interface MobileNavigationProps {
 export function MobileNavigation({ user }: MobileNavigationProps) {
   const pathname = usePathname();
 
+  // Helper function to get role-specific dashboard URL
+  const getDashboardUrl = (role?: UserRole) => {
+    switch (role) {
+      case UserRole.SUPER_ADMIN:
+        return "/super";
+      case UserRole.ADMIN:
+      case UserRole.PASTOR:
+        return "/admin";
+      case UserRole.VIP:
+        return "/vip";
+      case UserRole.LEADER:
+        return "/leader";
+      case UserRole.MEMBER:
+      default:
+        return "/dashboard";
+    }
+  };
+
   // Core mobile navigation - only essential features
   const navigation = [
     {
       name: "Home",
-      href: "/dashboard",
+      href: getDashboardUrl(user?.role),
       icon: Home,
       roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.VIP, UserRole.LEADER, UserRole.MEMBER, UserRole.PASTOR],
     },
