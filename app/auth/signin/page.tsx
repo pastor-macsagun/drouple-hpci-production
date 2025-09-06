@@ -3,7 +3,6 @@
 import { useState, Suspense, useEffect } from "react";
 import { signIn, getCsrfToken } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { MobileButton } from "@/components/mobile/mobile-button";
 import { MobileInput } from "@/components/mobile/mobile-form";
 import { MobileSpinner } from "@/components/mobile/mobile-loading";
@@ -188,7 +187,7 @@ function SignInContent() {
             type="submit"
             disabled={!isValid || loading}
             className="w-full h-14 text-lg font-semibold"
-            touchTarget="large"
+            
             hapticFeedback
           >
             {loading ? (

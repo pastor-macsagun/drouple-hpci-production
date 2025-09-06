@@ -2,17 +2,25 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { AppLayout } from '@/components/layout/app-layout'
+import { PageHeader } from '@/components/layout/page-header'
+import { 
+  NativeCard, 
+  NativeCardContent, 
+  NativeCardDescription, 
+  NativeCardHeader, 
+  NativeCardTitle,
+  NativeButton,
+  NativeInput
+} from '@/components/ui/native'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Shield, CheckCircle, AlertCircle, QrCode } from 'lucide-react'
 import { setup2FA, enable2FA, disable2FA, get2FAStatus } from './actions'
-import { toast } from 'sonner'
+import { useMobileNotifications } from '@/components/mobile/notification-manager'
 
 export default function TwoFactorAuthPage() {
+  const { showSuccess, showError } = useMobileNotifications()
   const [status, setStatus] = useState<{
     enabled: boolean
     required: boolean
@@ -46,7 +54,7 @@ export default function TwoFactorAuthPage() {
       const result = await setup2FA()
       if (result.success && result.data) {
         setSetupData(result.data)
-        toast.success('2FA setup initiated. Scan the QR code with your authenticator app.')
+        showSuccess('Setup Initiated', '2FA setup initiated. Scan the QR code with your authenticator app.')
       } else {
         setError(result.error || 'Failed to setup 2FA')
       }
@@ -68,7 +76,7 @@ export default function TwoFactorAuthPage() {
     try {
       const result = await enable2FA(token)
       if (result.success) {
-        toast.success(result.message)
+        showSuccess('2FA Enabled', result.message || '2FA has been successfully enabled')
         setSetupData(null)
         setToken('')
         await loadStatus()
@@ -93,7 +101,7 @@ export default function TwoFactorAuthPage() {
     try {
       const result = await disable2FA(token)
       if (result.success) {
-        toast.success(result.message)
+        showSuccess('2FA Disabled', result.message || '2FA has been successfully disabled')
         setToken('')
         await loadStatus()
       } else {
@@ -106,61 +114,79 @@ export default function TwoFactorAuthPage() {
 
   if (!status) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <Card>
-          <CardContent className="py-8">
-            <div className="text-center text-muted-foreground">
-              Loading 2FA status...
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <AppLayout>
+        <PageHeader 
+          title="Two-Factor Authentication"
+          description="Additional security for your account"
+        />
+        <div className="max-w-2xl mx-auto p-6">
+          <NativeCard>
+            <NativeCardContent className="py-8">
+              <div className="text-center text-ink-muted flex items-center justify-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-accent"></div>
+                Loading 2FA status...
+              </div>
+            </NativeCardContent>
+          </NativeCard>
+        </div>
+      </AppLayout>
     )
   }
 
   if (!status.serverEnabled) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Two-Factor Authentication
-            </CardTitle>
-            <CardDescription>
-              Additional security for your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Two-factor authentication is not enabled on this server.
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-      </div>
+      <AppLayout>
+        <PageHeader 
+          title="Two-Factor Authentication"
+          description="Additional security for your account"
+        />
+        <div className="max-w-2xl mx-auto p-6">
+          <NativeCard>
+            <NativeCardHeader>
+              <NativeCardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                Two-Factor Authentication
+              </NativeCardTitle>
+              <NativeCardDescription>
+                Additional security for your account
+              </NativeCardDescription>
+            </NativeCardHeader>
+            <NativeCardContent>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Two-factor authentication is not enabled on this server.
+                </AlertDescription>
+              </Alert>
+            </NativeCardContent>
+          </NativeCard>
+        </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Two-Factor Authentication
-          </CardTitle>
-          <CardDescription>
-            Additional security for your account using TOTP codes
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+    <AppLayout>
+      <PageHeader 
+        title="Two-Factor Authentication"
+        description="Additional security for your account using TOTP codes"
+      />
+      <div className="max-w-2xl mx-auto p-6 space-y-6">
+        <NativeCard>
+          <NativeCardHeader>
+            <NativeCardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Two-Factor Authentication
+            </NativeCardTitle>
+            <NativeCardDescription>
+              Additional security for your account using TOTP codes
+            </NativeCardDescription>
+          </NativeCardHeader>
+        <NativeCardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Status</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-ink-muted">
                 {status.enabled ? 'Two-factor authentication is active' : 'Two-factor authentication is disabled'}
               </p>
             </div>
@@ -193,13 +219,16 @@ export default function TwoFactorAuthPage() {
           {!status.enabled && (
             <div className="space-y-4">
               {!setupData ? (
-                <Button 
+                <NativeButton 
                   onClick={handleSetup} 
                   disabled={loading}
+                  loading={loading}
                   className="w-full"
+                  
+                  hapticFeedback
                 >
                   Setup Two-Factor Authentication
-                </Button>
+                </NativeButton>
               ) : (
                 <div className="space-y-4">
                   <Alert>
@@ -231,8 +260,8 @@ export default function TwoFactorAuthPage() {
 
                   <form onSubmit={handleEnable} className="space-y-4">
                     <div>
-                      <Label htmlFor="token">Verification Code</Label>
-                      <Input
+                      <NativeInput
+                        label="Verification Code"
                         id="token"
                         type="text"
                         placeholder="Enter 6-digit code"
@@ -241,11 +270,19 @@ export default function TwoFactorAuthPage() {
                         maxLength={6}
                         pattern="\d{6}"
                         required
+                        disabled={loading}
                       />
                     </div>
-                    <Button type="submit" disabled={loading} className="w-full">
+                    <NativeButton 
+                      type="submit" 
+                      disabled={loading} 
+                      loading={loading}
+                      className="w-full"
+                      
+                      hapticFeedback
+                    >
                       {loading ? 'Verifying...' : 'Enable 2FA'}
-                    </Button>
+                    </NativeButton>
                   </form>
                 </div>
               )}
@@ -265,8 +302,8 @@ export default function TwoFactorAuthPage() {
               {!status.required && (
                 <form onSubmit={handleDisable} className="space-y-4">
                   <div>
-                    <Label htmlFor="disable-token">Enter current verification code to disable</Label>
-                    <Input
+                    <NativeInput
+                      label="Enter current verification code to disable"
                       id="disable-token"
                       type="text"
                       placeholder="Enter 6-digit code"
@@ -275,22 +312,27 @@ export default function TwoFactorAuthPage() {
                       maxLength={6}
                       pattern="\d{6}"
                       required
+                      disabled={loading}
                     />
                   </div>
-                  <Button 
+                  <NativeButton 
                     type="submit" 
                     variant="destructive" 
                     disabled={loading}
+                    loading={loading}
                     className="w-full"
+                    
+                    hapticFeedback
                   >
                     {loading ? 'Disabling...' : 'Disable 2FA'}
-                  </Button>
+                  </NativeButton>
                 </form>
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </NativeCardContent>
+      </NativeCard>
     </div>
+    </AppLayout>
   )
 }

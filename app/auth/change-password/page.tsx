@@ -2,10 +2,15 @@
 
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { 
+  NativeButton,
+  NativeInput,
+  NativeCard,
+  NativeCardContent,
+  NativeCardDescription,
+  NativeCardHeader,
+  NativeCardTitle
+} from '@/components/ui/native'
 import { useToast } from '@/components/ui/use-toast'
 import { Lock } from 'lucide-react'
 import { changePassword } from './actions'
@@ -47,59 +52,86 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center">
-            <Lock className="h-8 w-8 text-yellow-600" />
+    <main className="min-h-screen bg-gradient-to-br from-warning/5 via-bg to-warning/10 flex flex-col">
+      {/* Native App Header */}
+      <div className="relative flex items-center justify-center p-4 pt-safe-area-top">
+        <div className="text-lg font-semibold text-ink">Change Password</div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-8">
+        {/* Warning Icon */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-warning flex items-center justify-center shadow-lg">
+            <Lock className="w-10 h-10 text-white" />
           </div>
-          <CardTitle className="text-2xl">Change Password Required</CardTitle>
-          <CardDescription>
+          <h1 className="text-2xl font-bold text-ink mb-2">Change Password Required</h1>
+          <p className="text-ink-muted">
             You must change your password before continuing
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input
-                id="currentPassword"
-                type="password"
-                value={formData.currentPassword}
-                onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="newPassword">New Password</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                value={formData.newPassword}
-                onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                required
-                minLength={8}
-              />
-              <p className="text-sm text-ink-muted mt-1">
-                Must be at least 8 characters
-              </p>
-            </div>
-            <div>
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Changing...' : 'Change Password'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          </p>
+        </div>
+
+        <NativeCard className="max-w-md mx-auto w-full">
+          <NativeCardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <NativeInput
+                  label="Current Password"
+                  id="currentPassword"
+                  type="password"
+                  value={formData.currentPassword}
+                  onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                  required
+                  disabled={isLoading}
+                />
+
+                <div>
+                  <NativeInput
+                    label="New Password"
+                    id="newPassword"
+                    type="password"
+                    value={formData.newPassword}
+                    onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                    required
+                    minLength={8}
+                    disabled={isLoading}
+                  />
+                  <p className="text-sm text-ink-muted mt-1">
+                    Must be at least 8 characters
+                  </p>
+                </div>
+
+                <NativeInput
+                  label="Confirm New Password"
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              <NativeButton 
+                type="submit" 
+                className="w-full h-14 text-lg font-semibold" 
+                disabled={isLoading}
+                loading={isLoading}
+                hapticFeedback
+              >
+                {isLoading ? 'Changing...' : 'Change Password'}
+              </NativeButton>
+            </form>
+          </NativeCardContent>
+        </NativeCard>
+      </div>
+
+      {/* Footer */}
+      <div className="px-6 pb-safe-area-bottom pb-4 text-center">
+        <p className="text-sm text-ink-muted">
+          For security reasons, you must create a new password
+        </p>
+      </div>
+    </main>
   )
 }

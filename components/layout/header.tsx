@@ -7,6 +7,7 @@ import { UserRole } from "@prisma/client";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { OfflineIndicator } from "@/components/pwa/offline-indicator";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   user?: {
@@ -17,9 +18,10 @@ interface HeaderProps {
   onMenuClick?: () => void;
   showMenuButton?: boolean;
   sidebarOpen?: boolean;
+  className?: string;
 }
 
-export function Header({ user, onMenuClick, showMenuButton = false, sidebarOpen = false }: HeaderProps) {
+export function Header({ user, onMenuClick, showMenuButton = false, sidebarOpen = false, className }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -28,7 +30,7 @@ export function Header({ user, onMenuClick, showMenuButton = false, sidebarOpen 
   }, []);
 
   return (
-    <header className="border-b border-border bg-bg">
+    <header className={cn("border-b border-border bg-bg", className)}>
       <div className="flex h-16 items-center px-4 sm:px-6">
         {showMenuButton && (
           <Button

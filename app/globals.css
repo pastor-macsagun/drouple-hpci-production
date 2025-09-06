@@ -28,7 +28,60 @@
   /* Muted text utility */
   .text-muted { color: rgb(var(--color-ink-muted)); }
 
-  /* Mobile PWA specific styles */
+  /* Native-like scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-ink-muted) / 0.3);
+  }
+
+  /* Native-like selection styling */
+  ::selection {
+    background: rgb(var(--color-accent) / 0.2);
+    color: rgb(var(--color-ink));
+  }
+
+  /* Remove tap highlighting on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow text selection for specific elements */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: auto;
+    -khtml-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+  }
+
+  p, span, div[data-selectable="true"] {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* Universal native-like styles for all platforms */
   /* Safe area support for notched devices */
   body {
     padding-top: env(safe-area-inset-top);
@@ -86,6 +139,208 @@
     }
   }
 
+  /* Native-like touch interactions */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .touch-target-48 {
+    min-height: 48px;
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Native-like button styles */
+  .btn-native {
+    @apply touch-target rounded-xl px-6 py-3 font-medium transition-all duration-base;
+    @apply bg-accent text-accent-ink shadow-sm;
+    @apply active:scale-95 active:shadow-none;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:pointer-events-none;
+    transform-origin: center;
+  }
+
+  .btn-native:hover {
+    @apply shadow-md;
+    transform: translateY(-1px);
+  }
+
+  .btn-native:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  .btn-secondary-native {
+    @apply btn-native bg-surface text-ink border border-border;
+  }
+
+  .btn-ghost-native {
+    @apply touch-target rounded-xl px-4 py-2 font-medium transition-all duration-base;
+    @apply text-ink bg-transparent;
+    @apply hover:bg-surface active:scale-95;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  /* Native-like card styles */
+  .card-native {
+    @apply bg-elevated rounded-2xl p-6 shadow-sm border border-border/50;
+    @apply transition-all duration-base;
+  }
+
+  .card-native:hover {
+    @apply shadow-md;
+    transform: translateY(-2px);
+  }
+
+  .card-interactive {
+    @apply card-native cursor-pointer;
+    @apply active:scale-98 active:shadow-sm;
+  }
+
+  /* Native-like input styles */
+  .input-native {
+    @apply touch-target w-full rounded-xl border border-border bg-bg px-4 py-3;
+    @apply text-ink placeholder:text-ink-muted;
+    @apply transition-all duration-base;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply disabled:opacity-50 disabled:bg-surface;
+  }
+
+  .input-native:focus {
+    @apply shadow-md;
+    transform: translateY(-1px);
+  }
+
+  /* Native-like list item styles */
+  .list-item-native {
+    @apply touch-target-48 w-full px-4 py-3 bg-bg border-b border-border/30;
+    @apply transition-all duration-base cursor-pointer;
+    @apply hover:bg-surface active:bg-elevated;
+    @apply flex items-center justify-between;
+  }
+
+  .list-item-native:last-child {
+    @apply border-b-0;
+  }
+
+  /* Native-like tab styles */
+  .tab-native {
+    @apply touch-target px-6 py-3 text-sm font-medium transition-all duration-base;
+    @apply text-ink-muted hover:text-ink;
+    @apply border-b-2 border-transparent;
+    @apply focus:outline-none focus:text-ink;
+  }
+
+  .tab-native.active {
+    @apply text-accent border-accent;
+  }
+
+  /* Native-like modal/sheet styles */
+  .sheet-native {
+    @apply bg-bg rounded-t-3xl shadow-xl border-t border-border;
+    @apply animate-[slideInFromBottom_0.3s_ease-out];
+  }
+
+  .modal-native {
+    @apply bg-bg rounded-2xl shadow-xl border border-border;
+    @apply animate-[bounceIn_0.3s_ease-out];
+    @apply max-w-md w-full mx-4;
+  }
+
+  /* Native-like loading states */
+  .skeleton-native {
+    @apply animate-pulse bg-surface rounded;
+  }
+
+  .loading-spinner-native {
+    @apply animate-spin rounded-full border-2 border-border border-t-accent;
+  }
+
+  /* Native-like notification styles */
+  .notification-native {
+    @apply bg-elevated border border-border rounded-xl shadow-lg p-4;
+    @apply animate-[slideInFromRight_0.3s_ease-out];
+  }
+
+  .notification-success {
+    @apply notification-native border-success/20 bg-success/5;
+  }
+
+  .notification-error {
+    @apply notification-native border-danger/20 bg-danger/5;
+  }
+
+  .notification-warning {
+    @apply notification-native border-warning/20 bg-warning/5;
+  }
+
+  /* Native-like ripple effect */
+  .ripple-container {
+    @apply relative overflow-hidden;
+  }
+
+  .ripple-effect {
+    @apply absolute rounded-full bg-current opacity-30 pointer-events-none;
+    animation: ripple 0.6s linear;
+  }
+
+  /* Utility classes for native feel */
+  .scale-98 {
+    transform: scale(0.98);
+  }
+
+  .scale-102 {
+    transform: scale(1.02);
+  }
+
+  /* Glass morphism effect */
+  .glass-native {
+    background: rgba(248, 250, 252, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.2);
+  }
+
+  .dark .glass-native {
+    background: rgba(24, 24, 27, 0.8);
+    border: 1px solid rgba(39, 39, 42, 0.2);
+  }
+
+  /* Page transitions */
+  .page-enter {
+    @apply animate-[fadeInUp_0.3s_ease-out];
+  }
+
+  .page-container {
+    @apply px-4 py-6 max-w-7xl mx-auto;
+  }
+
+  /* Responsive native styles */
+  @media (min-width: 768px) {
+    .page-container {
+      @apply px-6 py-8;
+    }
+    
+    .card-native {
+      @apply p-8;
+    }
+    
+    .btn-native {
+      @apply px-8 py-4;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .page-container {
+      @apply px-8 py-10;
+    }
+  }
+
   /* Native-like animations with spring physics */
   @keyframes ripple {
     0% {
@@ -95,6 +350,80 @@
     100% {
       transform: scale(4);
       opacity: 0;
+    }
+  }
+
+  @keyframes slideInFromBottom {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInFromRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-2px);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(2px);
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
 

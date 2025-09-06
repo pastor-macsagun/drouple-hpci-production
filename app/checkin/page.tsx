@@ -7,7 +7,13 @@ import { redirect } from "next/navigation";
 import { getTodayService, getUserCheckin } from "./actions";
 import { CheckInForm } from "./checkin-form";
 import { RealtimeAttendanceList } from "./realtime-attendance-list";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  NativeCard, 
+  NativeCardContent, 
+  NativeCardDescription, 
+  NativeCardHeader, 
+  NativeCardTitle 
+} from "@/components/ui/native";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
 
@@ -28,22 +34,22 @@ export default async function CheckInPage() {
           title="Sunday Check-In" 
           description="Check in for today's service"
         />
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
+        <NativeCard className="max-w-2xl mx-auto">
+          <NativeCardHeader>
             <div className="flex items-center gap-2 text-ink-muted">
               <Calendar className="h-5 w-5" />
-              <CardTitle>No Service Today</CardTitle>
+              <NativeCardTitle>No Service Today</NativeCardTitle>
             </div>
-            <CardDescription>
+            <NativeCardDescription>
               There is no service scheduled for today. Please check back on Sunday.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </NativeCardDescription>
+          </NativeCardHeader>
+          <NativeCardContent>
             <p className="text-sm text-ink-muted">
               Today is {format(new Date(), 'EEEE, MMMM d, yyyy')}
             </p>
-          </CardContent>
-        </Card>
+          </NativeCardContent>
+        </NativeCard>
       </AppLayout>
     );
   }
