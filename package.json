@@ -47,6 +47,7 @@
     "performance:analyze": "npm run analyze && echo 'Check .next/analyze for bundle analysis'",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel",
+    "deploy:status": "./scripts/check-deployment.sh",
     "vercel:status": "vercel ls",
     "vercel:logs": "vercel logs",
     "test:production": "tsx scripts/production-testing/run-production-tests.ts",
