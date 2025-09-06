@@ -242,7 +242,7 @@ export default function LandingPage() {
           </div>
           
           <div className="relative max-w-6xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-20 border border-gray-200">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 md:p-16 lg:p-20 border border-gray-200">
               <div className="space-y-12">
                 {/* Header with search bar */}
                 <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-accent to-accent-secondary rounded-2xl shadow-lg" role="search" aria-label="Member search">
@@ -304,21 +304,21 @@ export default function LandingPage() {
                   </div>
                   
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4" role="group" aria-label="Membership statistics">
-                    <div className="text-center p-4 bg-gradient-to-br from-accent/10 to-accent/20 rounded-xl">
-                      <div className="text-2xl font-bold text-accent">47</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-4" role="group" aria-label="Membership statistics">
+                    <div className="text-center p-3 sm:p-4 bg-gradient-to-br from-accent/10 to-accent/20 rounded-xl">
+                      <div className="text-xl sm:text-2xl font-bold text-accent">47</div>
                       <div className="text-xs text-gray-600">Pastors</div>
                     </div>
-                    <div className="text-center p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl">
-                      <div className="text-2xl font-bold text-purple-600">89</div>
+                    <div className="text-center p-3 sm:p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl">
+                      <div className="text-xl sm:text-2xl font-bold text-purple-600">89</div>
                       <div className="text-xs text-gray-600">Leaders</div>
                     </div>
-                    <div className="text-center p-4 bg-gradient-to-br from-green-100 to-green-200 rounded-xl">
-                      <div className="text-2xl font-bold text-green-600">156</div>
+                    <div className="text-center p-3 sm:p-4 bg-gradient-to-br from-green-100 to-green-200 rounded-xl">
+                      <div className="text-xl sm:text-2xl font-bold text-green-600">156</div>
                       <div className="text-xs text-gray-600">Active</div>
                     </div>
-                    <div className="text-center p-4 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl">
-                      <div className="text-2xl font-bold text-orange-600">23</div>
+                    <div className="text-center p-3 sm:p-4 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl">
+                      <div className="text-xl sm:text-2xl font-bold text-orange-600">23</div>
                       <div className="text-xs text-gray-600">New</div>
                     </div>
                   </div>
@@ -327,8 +327,8 @@ export default function LandingPage() {
             </div>
           </div>
           
-          <div className="mt-20 max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8 text-left">
+          <div className="mt-12 sm:mt-16 md:mt-20 max-w-4xl mx-auto">
+            <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Complete Profiles</h3>
                 <p className="text-gray-600">Detailed member information with contact details, roles, and church assignments.</p>
@@ -838,7 +838,7 @@ export default function LandingPage() {
       {/* Progressive Web App - iPhone Style */}
       <LazySection 
         fallback={<div className="min-h-screen bg-gradient-to-b from-black via-accent/10 to-black flex items-center justify-center"><div className="animate-pulse text-center"><div className="h-16 bg-gray-700 rounded-lg w-64 mx-auto mb-4"></div><div className="h-4 bg-gray-700 rounded w-48 mx-auto"></div></div></div>}
-        className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-accent/10 to-black text-white overflow-hidden py-16 sm:py-32"
+        className="relative min-h-screen flex items-center justify-center bg-black text-white overflow-hidden py-16 sm:py-32"
       >
       <section aria-labelledby="pwa-platform-title">
         <div className="max-w-7xl mx-auto px-6 text-center">

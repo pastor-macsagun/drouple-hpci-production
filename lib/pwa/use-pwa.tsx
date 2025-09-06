@@ -63,13 +63,26 @@ export function usePWA(): PWAState & PWAActions {
     pathways: [] as any[]
   })
 
-  const syncManager = getSyncManager()
-  const storage = getOfflineStorage()
-  const [backgroundSyncManager] = useState(() => BackgroundSyncManager.getInstance())
-  const [pushNotificationManager] = useState(() => PushNotificationManager.getInstance())
+  const [syncManager, setSyncManager] = useState<ReturnType<typeof getSyncManager> | null>(null)
+  const [storage, setStorage] = useState<ReturnType<typeof getOfflineStorage> | null>(null)
+  const [backgroundSyncManager] = useState(() => typeof window !== 'undefined' ? BackgroundSyncManager.getInstance() : null)
+  const [pushNotificationManager] = useState(() => typeof window !== 'undefined' ? PushNotificationManager.getInstance() : null)
+
+  // Initialize client-side only components
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        setSyncManager(getSyncManager())
+        setStorage(getOfflineStorage())
+      } catch (error) {
+        console.warn('Failed to initialize PWA components:', error)
+      }
+    }
+  }, [])
 
   // Check if app is installed (PWA mode)
   const checkInstallStatus = useCallback(() => {
+    if (typeof window === 'undefined') return
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
     const isInWebAppiOS = (window.navigator as any).standalone === true
     setIsInstalled(isStandalone || isInWebAppiOS)
@@ -77,6 +90,7 @@ export function usePWA(): PWAState & PWAActions {
 
   // Update sync status
   const updateSyncStatus = useCallback(async () => {
+    if (!syncManager) return
     try {
       const status = await syncManager.getSyncStatus()
       setSyncStatus(status)
@@ -87,7 +101,7 @@ export function usePWA(): PWAState & PWAActions {
 
   // Load offline data for current tenant
   const loadOfflineData = useCallback(async () => {
-    if (!session?.user?.tenantId) return
+    if (!session?.user?.tenantId || !storage) return
 
     try {
       const [members, events, lifegroups, checkins, pathways] = await Promise.all([
@@ -214,8 +228,9 @@ export function usePWA(): PWAState & PWAActions {
   }, [installPrompt])
 
   const triggerSync = useCallback(async () => {
+    if (!syncManager) return
     try {
-      await syncManager.forcSync()
+      await syncManager.forceSync()
       await updateSyncStatus()
     } catch (error) {
       console.error('Error triggering sync:', error)
@@ -223,6 +238,7 @@ export function usePWA(): PWAState & PWAActions {
   }, [syncManager, updateSyncStatus])
 
   const clearOfflineData = useCallback(async () => {
+    if (!storage) return
     try {
       if (session?.user?.tenantId) {
         await storage.clearTenant(session.user.tenantId)
@@ -236,7 +252,7 @@ export function usePWA(): PWAState & PWAActions {
   }, [session?.user?.tenantId, storage, loadOfflineData])
 
   const storeOfflineData = useCallback(async (entity: string, data: any[]) => {
-    if (!session?.user?.tenantId) return
+    if (!session?.user?.tenantId || !storage) return
 
     try {
       switch (entity) {
@@ -266,7 +282,7 @@ export function usePWA(): PWAState & PWAActions {
   }, [session?.user?.tenantId, storage, loadOfflineData])
 
   const getOfflineData = useCallback(async (entity: string): Promise<any[]> => {
-    if (!session?.user?.tenantId) return []
+    if (!session?.user?.tenantId || !storage) return []
 
     try {
       switch (entity) {

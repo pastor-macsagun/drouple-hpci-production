@@ -60,7 +60,7 @@ class OfflineStorage {
 
   private async initDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      if (!('indexedDB' in window)) {
+      if (typeof window === 'undefined' || !('indexedDB' in window)) {
         reject(new Error('IndexedDB not supported'))
         return
       }
@@ -392,6 +392,9 @@ class OfflineStorage {
 let offlineStorage: OfflineStorage | null = null
 
 export function getOfflineStorage(): OfflineStorage {
+  if (typeof window === 'undefined') {
+    throw new Error('OfflineStorage can only be used on the client side')
+  }
   if (!offlineStorage) {
     offlineStorage = new OfflineStorage()
   }

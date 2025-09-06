@@ -15,14 +15,24 @@ const DEFAULT_CONFIG: SyncConfig = {
 }
 
 export class SyncManager {
-  private storage = getOfflineStorage()
+  private storage: ReturnType<typeof getOfflineStorage> | null = null
   private config: SyncConfig
   private syncInProgress = false
   private onlineStatusCleanup: (() => void) | null = null
 
   constructor(config: Partial<SyncConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config }
-    this.setupOnlineListener()
+    if (typeof window !== 'undefined') {
+      this.storage = getOfflineStorage()
+      this.setupOnlineListener()
+    }
+  }
+
+  private getStorage() {
+    if (!this.storage) {
+      throw new Error('SyncManager can only be used on the client side')
+    }
+    return this.storage
   }
 
   private setupOnlineListener(): void {
@@ -42,7 +52,7 @@ export class SyncManager {
     method: string,
     headers: Record<string, string> = {}
   ): Promise<string> {
-    const operationId = await this.storage.addToSyncQueue({
+    const operationId = await this.getStorage().addToSyncQueue({
       type,
       entity,
       data,
@@ -68,7 +78,7 @@ export class SyncManager {
     this.syncInProgress = true
     
     try {
-      const operations = await this.storage.getSyncQueue()
+      const operations = await this.getStorage().getSyncQueue()
       const failedOperations: string[] = []
 
       // Process operations in batches
@@ -78,7 +88,7 @@ export class SyncManager {
         for (const operation of batch) {
           try {
             await this.executeOperation(operation)
-            await this.storage.removeFromSyncQueue(operation.id)
+            await this.getStorage().removeFromSyncQueue(operation.id)
             
             // Notify client of successful sync
             this.notifyClient('sync-success', {
@@ -89,11 +99,11 @@ export class SyncManager {
           } catch (error) {
             console.error('Sync operation failed:', operation.id, error)
             
-            await this.storage.incrementRetryCount(operation.id)
+            await this.getStorage().incrementRetryCount(operation.id)
             
             if ((operation.retryCount || 0) >= this.config.maxRetries) {
               // Remove operations that have exceeded max retries
-              await this.storage.removeFromSyncQueue(operation.id)
+              await this.getStorage().removeFromSyncQueue(operation.id)
               failedOperations.push(operation.id)
               
               // Notify client of permanent failure
@@ -114,10 +124,10 @@ export class SyncManager {
       }
 
       // Update last sync timestamp
-      await this.storage.setMetadata('lastSyncAttempt', Date.now())
+      await this.getStorage().setMetadata('lastSyncAttempt', Date.now())
       
       if (failedOperations.length === 0) {
-        await this.storage.setMetadata('lastSuccessfulSync', Date.now())
+        await this.getStorage().setMetadata('lastSuccessfulSync', Date.now())
       }
 
     } catch (error) {
@@ -158,7 +168,7 @@ export class SyncManager {
   private async updateLocalRecord(entity: string, localData: any, serverData: any): Promise<void> {
     try {
       // Get tenant ID from the local data or current session
-      const tenantId = localData.tenantId || await this.storage.getMetadata('currentTenantId')
+      const tenantId = localData.tenantId || await this.getStorage().getMetadata('currentTenantId')
       
       if (!tenantId) {
         console.warn('No tenant ID available for local record update')
@@ -176,7 +186,7 @@ export class SyncManager {
 
       const storeName = storeMap[entity]
       if (storeName) {
-        await this.storage.store(storeName, [serverData], tenantId)
+        await this.getStorage().store(storeName, [serverData], tenantId)
       }
     } catch (error) {
       console.warn('Failed to update local record:', error)
@@ -195,9 +205,9 @@ export class SyncManager {
     lastSuccessfulSync: number | null
     syncInProgress: boolean
   }> {
-    const operations = await this.storage.getSyncQueue()
-    const lastSync = await this.storage.getMetadata('lastSyncAttempt')
-    const lastSuccessfulSync = await this.storage.getMetadata('lastSuccessfulSync')
+    const operations = await this.getStorage().getSyncQueue()
+    const lastSync = await this.getStorage().getMetadata('lastSyncAttempt')
+    const lastSuccessfulSync = await this.getStorage().getMetadata('lastSuccessfulSync')
 
     return {
       queuedOperations: operations.length,
@@ -209,9 +219,9 @@ export class SyncManager {
 
   // Clear sync queue (for testing or reset)
   async clearSyncQueue(): Promise<void> {
-    const operations = await this.storage.getSyncQueue()
+    const operations = await this.getStorage().getSyncQueue()
     for (const operation of operations) {
-      await this.storage.removeFromSyncQueue(operation.id)
+      await this.getStorage().removeFromSyncQueue(operation.id)
     }
   }
 
@@ -246,6 +256,9 @@ export class SyncManager {
 let syncManager: SyncManager | null = null
 
 export function getSyncManager(): SyncManager {
+  if (typeof window === 'undefined') {
+    throw new Error('SyncManager can only be used on the client side')
+  }
   if (!syncManager) {
     syncManager = new SyncManager()
   }

@@ -250,7 +250,7 @@ export function PerformanceOptimizer() {
   }
 
   // Expose methods for debugging or manual optimization
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
     (window as any).__pwaOptimizer = {
       metrics,
       cleanupCache,
