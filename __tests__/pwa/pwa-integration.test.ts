@@ -31,6 +31,9 @@ class MockServiceWorkerRegistration {
     this.removeEventListener = vi.fn()
     this.update = vi.fn()
     this.unregister = vi.fn()
+    this.sync = {
+      register: vi.fn().mockResolvedValue(undefined)
+    }
   }
 
   installing: any
@@ -41,6 +44,7 @@ class MockServiceWorkerRegistration {
   removeEventListener: any
   update: any
   unregister: any
+  sync: any
 }
 
 // Mock service worker registration
@@ -114,14 +118,22 @@ Object.defineProperty(window, 'indexedDB', {
   configurable: true
 })
 
+// Create a mock CryptoKey
+const mockCryptoKey: CryptoKey = {
+  algorithm: { name: 'AES-GCM' },
+  extractable: true,
+  type: 'secret',
+  usages: ['encrypt', 'decrypt']
+}
+
 // Mock crypto.subtle for encryption tests
 Object.defineProperty(window, 'crypto', {
   value: {
     ...window.crypto,
     subtle: {
-      generateKey: vi.fn().mockResolvedValue({}),
+      generateKey: vi.fn().mockResolvedValue(mockCryptoKey),
       exportKey: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
-      importKey: vi.fn().mockResolvedValue({}),
+      importKey: vi.fn().mockResolvedValue(mockCryptoKey),
       encrypt: vi.fn().mockResolvedValue(new ArrayBuffer(64)),
       decrypt: vi.fn().mockResolvedValue(new ArrayBuffer(32))
     },
@@ -147,7 +159,7 @@ describe('PWA Integration Tests', () => {
       const registration = await navigator.serviceWorker.getRegistration()
       
       expect(registration).toBe(mockRegistration)
-      expect(registration.addEventListener).toBeDefined()
+      expect(registration?.addEventListener).toBeDefined()
     })
   })
 
@@ -207,7 +219,7 @@ describe('PWA Integration Tests', () => {
       
       const encryptedData = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv },
-        {},
+        mockCryptoKey,
         data
       )
       

@@ -41,14 +41,14 @@ export function MobileStepperForm({
     if (step.validation) {
       const isValid = await step.validation();
       if (!isValid) {
-        triggerHapticFeedback('heavy');
+        triggerHapticFeedback('impact-heavy');
         return;
       }
     }
     
     // Mark step as completed
     setCompletedSteps(prev => new Set([...prev, currentStep]));
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
     
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -57,9 +57,9 @@ export function MobileStepperForm({
       setIsSubmitting(true);
       try {
         await onComplete();
-        triggerHapticFeedback('medium');
-      } catch (error) {
-        triggerHapticFeedback('heavy');
+        triggerHapticFeedback('impact-medium');
+      } catch {
+        triggerHapticFeedback('impact-heavy');
       } finally {
         setIsSubmitting(false);
       }
@@ -69,7 +69,7 @@ export function MobileStepperForm({
   const handlePrevious = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      triggerHapticFeedback('light');
+      triggerHapticFeedback('impact-light');
     }
   }, [currentStep]);
 
@@ -77,12 +77,11 @@ export function MobileStepperForm({
     // Allow jumping to previous steps or next step if current is completed
     if (stepIndex <= currentStep || completedSteps.has(stepIndex - 1)) {
       setCurrentStep(stepIndex);
-      triggerHapticFeedback('light');
+      triggerHapticFeedback('impact-light');
     }
   }, [currentStep, completedSteps]);
 
   const isLastStep = currentStep === steps.length - 1;
-  const canGoNext = currentStep < steps.length;
   const canGoPrevious = currentStep > 0;
 
   return (

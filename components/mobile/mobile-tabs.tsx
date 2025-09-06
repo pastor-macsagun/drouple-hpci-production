@@ -42,7 +42,7 @@ export function MobileTabs({
     
     setActiveTab(tabId);
     onTabChange?.(tabId);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
   }, [activeTab, onTabChange]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -93,7 +93,7 @@ export function MobileTabs({
         const newTabId = tabs[newIndex].id;
         setActiveTab(newTabId);
         onTabChange?.(newTabId);
-        triggerHapticFeedback('medium');
+        triggerHapticFeedback('impact-medium');
       }
     }
     
@@ -104,7 +104,7 @@ export function MobileTabs({
     <div className={cn("w-full", className)}>
       {/* Tab Headers */}
       <div className="flex border-b border-border bg-bg sticky top-0 z-10">
-        {tabs.map((tab, index) => (
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabClick(tab.id)}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { X, Bell, BellOff, Check, AlertCircle, Info } from "lucide-react";
+import { X, Check, AlertCircle, Info } from "lucide-react";
 import { triggerHapticFeedback } from "@/lib/mobile-utils";
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
@@ -54,13 +54,13 @@ export function NotificationManager({
     const notification = notifications.find(n => n.id === id);
     notification?.onDismiss?.();
     onRemove(id);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
   }, [notifications, onRemove]);
 
   const handleAction = useCallback((notification: MobileNotification) => {
     notification.action?.onClick();
     handleDismiss(notification.id);
-    triggerHapticFeedback('medium');
+    triggerHapticFeedback('impact-medium');
   }, [handleDismiss]);
 
   const getIcon = (type: NotificationType) => {
@@ -175,7 +175,7 @@ export function useMobileNotifications() {
     setNotifications(prev => [...prev, newNotification]);
     
     // Haptic feedback for new notifications
-    triggerHapticFeedback(notification.type === 'error' ? 'heavy' : 'light');
+    triggerHapticFeedback(notification.type === 'error' ? 'impact-heavy' : 'impact-light');
     
     return id;
   }, []);

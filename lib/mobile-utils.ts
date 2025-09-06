@@ -3,20 +3,51 @@
  */
 
 /**
- * Trigger haptic feedback on supported devices
+ * Enhanced haptic feedback patterns for native-like feel
  */
-export function triggerHapticFeedback(type: 'light' | 'medium' | 'heavy' = 'light') {
+export type HapticType = 
+  | 'selection' | 'impact-light' | 'impact-medium' | 'impact-heavy'
+  | 'success' | 'warning' | 'error' | 'notification'
+  | 'tap' | 'double-tap' | 'long-press' | 'swipe'
+  | 'refresh' | 'delete' | 'toggle' | 'scroll-end';
+
+export function triggerHapticFeedback(type: HapticType = 'selection') {
   if (typeof window === 'undefined' || !('vibrate' in navigator)) {
     return;
   }
 
   const patterns = {
-    light: 10,
-    medium: 20,
-    heavy: 30,
+    // Basic impacts (compatible with legacy calls)
+    'selection': 10,
+    'impact-light': 10,
+    'impact-medium': 20,
+    'impact-heavy': 30,
+    
+    // Contextual feedback
+    'success': [50, 30, 100],
+    'warning': [100, 50, 100, 50, 100],
+    'error': [200, 100, 200],
+    'notification': [50, 50, 50],
+    
+    // Interaction patterns
+    'tap': 15,
+    'double-tap': [15, 30, 15],
+    'long-press': [30, 20, 50],
+    'swipe': [20, 10, 20],
+    
+    // Action feedback
+    'refresh': [30, 20, 30, 20, 60],
+    'delete': [50, 30, 100, 30, 50],
+    'toggle': [15, 10, 25],
+    'scroll-end': 40,
   };
 
-  navigator.vibrate(patterns[type]);
+  const pattern = patterns[type];
+  if (Array.isArray(pattern)) {
+    navigator.vibrate(pattern);
+  } else {
+    navigator.vibrate(pattern);
+  }
 }
 
 /**

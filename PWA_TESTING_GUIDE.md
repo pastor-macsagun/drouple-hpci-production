@@ -1,7 +1,9 @@
-# PWA Splash Screen Testing Guide
+# PWA Quick Testing Guide
 
 ## Overview
-The splash screen should **ONLY** appear when the app is opened in PWA/standalone mode (installed app). Regular web browser users should see the landing page.
+This is a quick testing guide for PWA splash screen behavior and basic installation. For comprehensive PWA testing procedures, see the [Complete PWA Testing Guide](docs/pwa-testing.md).
+
+**Key Behavior**: The splash screen should **ONLY** appear when the app is opened in PWA/standalone mode (installed app). Regular web browser users should see the landing page.
 
 ## Server Information
 - **Local URL**: http://localhost:3000
@@ -131,3 +133,16 @@ Please test and report:
 4. ✅/❌ Mobile PWA shows splash screen
 5. ✅/❌ Redirects work correctly
 6. Any unexpected behavior or errors
+
+## 📚 Complete PWA Documentation
+
+For comprehensive PWA testing, mobile component testing, service worker debugging, and performance validation, see:
+
+- **[📱 PWA Documentation](docs/pwa.md)** - Complete implementation guide
+- **[🧪 PWA Testing Guide](docs/pwa-testing.md)** - Comprehensive testing procedures  
+- **[📱 Mobile Components](docs/mobile-components.md)** - Mobile component library
+- **[🚀 Development Setup](docs/dev-setup.md)** - Development environment setup
+
+---
+
+*This quick guide covers basic PWA installation testing. Use the comprehensive guides above for thorough PWA validation.*

@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Loader2, Wifi, WifiOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { usePWA } from '@/lib/pwa/use-pwa'
+import { isPWAStandalone, getSafeAreaInsets, triggerHapticFeedback } from '@/lib/mobile-utils'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -14,12 +16,35 @@ interface AppShellProps {
 
 export function AppShell({ children, showLoadingIndicator = false, className }: AppShellProps) {
   const { isOnline, syncStatus } = usePWA()
+  const { data: session } = useSession()
   const [isNavigating, setIsNavigating] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
+  const [safeAreaInsets, setSafeAreaInsets] = useState({ top: 0, right: 0, bottom: 0, left: 0 })
   const router = useRouter()
 
+  // Initialize PWA shell features
   useEffect(() => {
-    const handleStart = () => setIsNavigating(true)
-    const handleComplete = () => setIsNavigating(false)
+    setIsStandalone(isPWAStandalone())
+    setSafeAreaInsets(getSafeAreaInsets())
+    
+    // Add PWA-specific CSS variables
+    const root = document.documentElement
+    const insets = getSafeAreaInsets()
+    root.style.setProperty('--safe-area-inset-top', `${insets.top}px`)
+    root.style.setProperty('--safe-area-inset-right', `${insets.right}px`)
+    root.style.setProperty('--safe-area-inset-bottom', `${insets.bottom}px`)
+    root.style.setProperty('--safe-area-inset-left', `${insets.left}px`)
+  }, [])
+
+  useEffect(() => {
+    const handleStart = () => {
+      setIsNavigating(true)
+      triggerHapticFeedback('tap')
+    }
+    const handleComplete = () => {
+      setIsNavigating(false)
+      triggerHapticFeedback('selection')
+    }
 
     // Listen for navigation events
     const originalPush = router.push
@@ -37,36 +62,107 @@ export function AppShell({ children, showLoadingIndicator = false, className }: 
     }
   }, [router])
 
+  // PWA Shell styles
+  const shellStyles: React.CSSProperties = {
+    paddingTop: isStandalone ? safeAreaInsets.top : undefined,
+    paddingBottom: isStandalone ? safeAreaInsets.bottom : undefined,
+    paddingLeft: isStandalone ? safeAreaInsets.left : undefined,
+    paddingRight: isStandalone ? safeAreaInsets.right : undefined,
+  }
+
   return (
-    <div className={cn('min-h-screen bg-background', className)}>
+    <div 
+      className={cn(
+        'min-h-screen bg-canvas transition-colors duration-300',
+        isStandalone && 'pwa-standalone',
+        className
+      )}
+      style={shellStyles}
+      data-pwa={isStandalone}
+    >
       {/* Global loading indicator */}
-      {(showLoadingIndicator || isNavigating) && <GlobalLoadingIndicator />}
+      {(showLoadingIndicator || isNavigating) && <GlobalLoadingIndicator isStandalone={isStandalone} />}
       
       {/* Connection status indicator */}
-      <ConnectionStatusIndicator isOnline={isOnline} />
+      <ConnectionStatusIndicator isOnline={isOnline} isStandalone={isStandalone} />
       
       {/* Sync status indicator */}
-      {syncStatus.syncInProgress && <SyncStatusIndicator />}
+      {syncStatus.syncInProgress && <SyncStatusIndicator isStandalone={isStandalone} />}
       
       {/* Main app content */}
-      <main className="relative">
+      <main className="relative app-content" id="app-content">
         {children}
       </main>
+
+      {/* PWA-specific global styles */}
+      <style jsx global>{`
+        /* PWA Standalone Mode Styles */
+        .pwa-standalone {
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+        }
+
+        .pwa-standalone .app-content {
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+        }
+
+        /* Safe Area Support */
+        @supports (padding: max(0px)) {
+          .pwa-standalone {
+            padding-top: max(env(safe-area-inset-top), var(--safe-area-inset-top, 0px));
+            padding-right: max(env(safe-area-inset-right), var(--safe-area-inset-right, 0px));
+            padding-bottom: max(env(safe-area-inset-bottom), var(--safe-area-inset-bottom, 0px));
+            padding-left: max(env(safe-area-inset-left), var(--safe-area-inset-left, 0px));
+          }
+        }
+
+        /* iOS Specific Adjustments */
+        @supports (-webkit-touch-callout: none) {
+          .pwa-standalone {
+            height: 100vh;
+            height: -webkit-fill-available;
+          }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+          .pwa-standalone {
+            filter: contrast(1.2);
+          }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+          .pwa-standalone * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }
 
-function GlobalLoadingIndicator() {
+function GlobalLoadingIndicator({ isStandalone }: { isStandalone: boolean }) {
+  useEffect(() => {
+    triggerHapticFeedback('tap')
+  }, [])
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50">
-      <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse">
-        <div className="h-full bg-gradient-to-r from-blue-600 to-purple-600 animate-bounce" />
+    <div className={cn("fixed left-0 right-0 z-50", isStandalone ? "top-[var(--safe-area-inset-top,0px)]" : "top-0")}>
+      <div className="h-1 bg-gradient-to-r from-accent to-secondary animate-pulse">
+        <div className="h-full bg-gradient-to-r from-accent/80 to-secondary/80 animate-spring-in" 
+             style={{ animation: 'spring-in 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)' }} />
       </div>
     </div>
   )
 }
 
-function ConnectionStatusIndicator({ isOnline }: { isOnline: boolean }) {
+function ConnectionStatusIndicator({ isOnline, isStandalone }: { isOnline: boolean; isStandalone: boolean }) {
   const [showIndicator, setShowIndicator] = useState(false)
   const [justWentOnline, setJustWentOnline] = useState(false)
 
@@ -74,9 +170,11 @@ function ConnectionStatusIndicator({ isOnline }: { isOnline: boolean }) {
     if (!isOnline) {
       setShowIndicator(true)
       setJustWentOnline(false)
+      triggerHapticFeedback('warning')
     } else if (showIndicator) {
       // User just came back online
       setJustWentOnline(true)
+      triggerHapticFeedback('success')
       setTimeout(() => {
         setShowIndicator(false)
         setJustWentOnline(false)
@@ -89,11 +187,13 @@ function ConnectionStatusIndicator({ isOnline }: { isOnline: boolean }) {
   return (
     <div 
       className={cn(
-        'fixed top-4 right-4 z-50 flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg transition-all',
+        'fixed right-4 z-50 flex items-center gap-2 px-3 py-2 rounded-xl shadow-lg transition-all backdrop-blur-sm',
+        isStandalone ? 'top-[calc(var(--safe-area-inset-top,0px)+1rem)]' : 'top-4',
         isOnline 
-          ? 'bg-green-100 text-green-800 border border-green-200'
-          : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+          ? 'bg-success/20 text-success border border-success/30'
+          : 'bg-warning/20 text-warning border border-warning/30'
       )}
+      style={{ animation: 'spring-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)' }}
     >
       {isOnline ? (
         <>
@@ -110,9 +210,17 @@ function ConnectionStatusIndicator({ isOnline }: { isOnline: boolean }) {
   )
 }
 
-function SyncStatusIndicator() {
+function SyncStatusIndicator({ isStandalone }: { isStandalone: boolean }) {
+  useEffect(() => {
+    triggerHapticFeedback('refresh')
+  }, [])
+
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-800 border border-blue-200 rounded-lg shadow-lg">
+    <div className={cn(
+      "fixed right-4 z-50 flex items-center gap-2 px-3 py-2 rounded-xl shadow-lg transition-all backdrop-blur-sm",
+      "bg-accent/20 text-accent border border-accent/30",
+      isStandalone ? 'bottom-[calc(var(--safe-area-inset-bottom,0px)+1rem)]' : 'bottom-4'
+    )}>
       <Loader2 className="h-4 w-4 animate-spin" />
       <span className="text-sm font-medium">Syncing data...</span>
     </div>

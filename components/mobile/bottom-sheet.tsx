@@ -79,7 +79,7 @@ export function BottomSheet({
     
     // Close if dragged below 25%
     if (finalHeight < 25) {
-      triggerHapticFeedback('medium');
+      triggerHapticFeedback('impact-medium');
       onClose();
       return;
     }
@@ -99,11 +99,11 @@ export function BottomSheet({
     setCurrentSnapPoint(closestSnapIndex);
     setDragOffset(0);
     
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
   }, [isDragging, actualHeight, snapPoints, onClose]);
 
   const handleBackdropClick = useCallback(() => {
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
     onClose();
   }, [onClose]);
 

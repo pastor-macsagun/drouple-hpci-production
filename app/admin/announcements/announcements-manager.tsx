@@ -64,8 +64,7 @@ const priorityColors = {
 
 export function AnnouncementsManager({ 
   initialAnnouncements, 
-  churches, 
-  userRole: _userRole, 
+  churches,
   userChurchId 
 }: AnnouncementsManagerProps) {
   const [announcements] = useState(initialAnnouncements.items)

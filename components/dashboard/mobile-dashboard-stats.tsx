@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserCheck, Calendar, Users, Route } from "lucide-react";
-import { UserRole } from "@prisma/client";
 
 interface MobileDashboardStatsProps {
   stats?: {

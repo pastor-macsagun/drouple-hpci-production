@@ -61,7 +61,7 @@ export function EventsManager({ initialEvents }: EventsManagerProps) {
     })
   }, [search, toast])
 
-  const handleEventClick = useCallback((event: any) => {
+  const handleEventClick = useCallback((event: Event | { id: string }) => {
     // Navigate to event details page
     window.location.href = `/admin/events/${event.id}`
   }, [])

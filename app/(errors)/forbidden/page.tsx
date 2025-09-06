@@ -1,7 +1,5 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ShieldOff, Home } from 'lucide-react'
+import { ShieldOff } from 'lucide-react'
 
 export default function ForbiddenPage() {
   return (

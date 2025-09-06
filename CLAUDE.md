@@ -15,6 +15,8 @@ Drouple is a multi-church management system designed to handle:
 ## Tech Stack
 - **Frontend**: Next.js 15 with TypeScript, App Router
 - **Styling**: Tailwind CSS + shadcn/ui components
+- **PWA**: Native-like mobile experience with service worker, haptic feedback, and offline capabilities
+- **Mobile**: 11+ mobile components with touch-optimized interactions and camera integration
 - **Database**: Neon Postgres (pooled connections) + Prisma ORM
 - **Auth**: NextAuth v5 with JWT Credentials Provider
 - **Testing**: Vitest (unit/component), Playwright (e2e)
@@ -30,7 +32,9 @@ Drouple is a multi-church management system designed to handle:
 6. **Security**: Enhanced CSP policy, rate limiting with Redis fallback, comprehensive security headers
 7. **Performance**: Bundle analysis monitoring, N+1 query prevention, database connection pooling
 8. **DevOps**: Vercel deployment with GitHub integration, automated CI/CD pipeline
-9. **Monitoring**: Comprehensive analytics with Vercel Analytics (user behavior) and Speed Insights (Core Web Vitals)
+9. **PWA Architecture**: Native app shell with offline-first design, background sync, and push notifications
+10. **Mobile-First Design**: Touch-optimized UI components with haptic feedback and safe area handling
+11. **Monitoring**: Comprehensive analytics with Vercel Analytics (user behavior) and Speed Insights (Core Web Vitals)
 
 ## Development Workflow
 1. Write tests first (TDD)
@@ -52,8 +56,11 @@ Drouple is a multi-church management system designed to handle:
 - Unit tests for business logic
 - Component tests for UI interactions
 - E2E tests for critical user flows
+- PWA testing for mobile components and native features
+- Service worker testing for offline functionality
 - Run `npm run test` before commits
 - Run `npx playwright test` for e2e validation
+- PWA installation and feature testing across devices
 
 ### Test Scripts
 - `npm run test:unit` - Run unit tests once
@@ -97,15 +104,18 @@ Drouple is a multi-church management system designed to handle:
 - **Real-time Analytics**: Vercel Analytics for user behavior tracking and conversion analysis
 - **Performance Monitoring**: Vercel Speed Insights with Core Web Vitals (LCP, FID, CLS, TTFB, INP, FCP)
 
-## Design System (Updated Aug 24, 2025)
+## Design System (Updated Sep 6, 2025)
 - **Color Palette**: Sacred Blue (#1e7ce8) + Soft Gold (#e5c453) 
 - **Tokens**: CSS custom properties for colors, spacing, typography, shadows, z-index
 - **Base Components**: Header (with dark mode), Sidebar (collapsible), PageHeader, AppLayout
 - **Patterns**: EmptyState (modernized), DataTable, ListItem, Spinner/LoadingCard
+- **Mobile Components**: 11+ native-like mobile components (buttons, forms, sheets, notifications)
+- **PWA Shell**: App shell with safe area support, offline indicators, and native loading states
 - **Utilities**: Responsive container, focus styles, status badges, gradient text
 - **Theme**: Light/Dark mode support via next-themes, system preference detection
-- **Mobile**: Responsive grids, touch-friendly targets, drawer navigation
-- **Documentation**: Full redesign details at docs/ui-redesign.md
+- **Mobile**: Responsive grids, touch-friendly targets, drawer navigation, haptic feedback patterns
+- **Animations**: Native spring-based animations with cubic-bezier timing functions
+- **Documentation**: Full redesign details at docs/ui-redesign.md, PWA features at docs/pwa.md
 
 ## Monitoring & Analytics Integration (Aug 29, 2025)
 
@@ -126,6 +136,36 @@ Drouple is a multi-church management system designed to handle:
 - **Enhanced Security**: Improved session cleanup and authentication flow
 - **Development Experience**: Silenced OpenTelemetry warnings in dev builds only
 - **Production Impact**: Zero authentication-related crashes, improved user experience
+
+## PWA Native-Like Features (Sep 6, 2025)
+
+**✅ Progressive Web Application Implementation**
+- **App Shell Architecture**: Native app shell with PWA-optimized loading and navigation
+- **Service Worker**: Advanced caching strategies, background sync, and offline functionality
+- **Push Notifications**: Rich notifications with contextual actions and haptic feedback
+- **Offline Support**: Comprehensive offline-first design with intelligent sync queuing
+- **Installation**: Native install prompts and standalone app experience
+
+**✅ Mobile Component Library (11+ Components)**
+- **Touch-Optimized Interactions**: Native-feeling buttons, forms, and navigation components
+- **Haptic Feedback System**: 16+ feedback patterns for enhanced user experience
+- **Camera Integration**: Native camera capture and gallery selection with validation
+- **Share API Integration**: Native sharing with intelligent clipboard fallbacks
+- **Mobile Utilities**: PWA detection, safe area handling, touch validation, and performance helpers
+
+**✅ Native Mobile Experience**
+- **Safe Area Support**: Comprehensive notched device support with CSS environment variables
+- **Spring Animations**: Native-style spring-based animations with cubic-bezier timing
+- **Pull-to-Refresh**: Native pull-to-refresh patterns with haptic feedback
+- **Bottom Sheets**: Native-style modal presentations with gesture support
+- **Loading States**: Progressive loading patterns with skeleton screens
+
+**✅ Advanced Service Worker Features**
+- **Background Sync**: Intelligent queuing and retry mechanisms for offline actions
+- **Cache Optimization**: Multi-layered caching with performance monitoring
+- **Push Notifications**: Rich notification system with action handlers and analytics
+- **Version Management**: Seamless app updates with user-controlled installation
+- **Performance Metrics**: Real-time cache hit rates and sync status tracking
 
 ## Recent Achievements
 
@@ -339,6 +379,8 @@ Drouple is a multi-church management system designed to handle:
 For comprehensive project documentation, see:
 - **[📚 Documentation Index](docs/README.md)** - Complete navigation to all documentation
 - **[🚀 Development Setup](docs/dev-setup.md)** - Setup guide for new developers  
+- **[📱 PWA Documentation](docs/pwa.md)** - Progressive Web App features and mobile components
+- **[🧪 PWA Testing Guide](docs/pwa-testing.md)** - Mobile testing procedures and PWA installation
 - **[🔧 Production Deployment Guide](docs/production-deployment-guide.md)** - Complete production procedures
 - **[🛠️ Troubleshooting Guide](docs/troubleshooting-guide.md)** - Issue diagnosis and resolution
 - **[📊 DevOps Infrastructure](docs/devops-infrastructure-summary.md)** - Complete infrastructure overview

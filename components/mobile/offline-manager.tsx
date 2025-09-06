@@ -33,7 +33,7 @@ export function OfflineManager({
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      triggerHapticFeedback('light');
+      triggerHapticFeedback('impact-light');
       // Trigger sync when coming back online
       if (queuedActions.length > 0) {
         processSyncQueue();
@@ -42,7 +42,7 @@ export function OfflineManager({
 
     const handleOffline = () => {
       setIsOnline(false);
-      triggerHapticFeedback('medium');
+      triggerHapticFeedback('impact-medium');
     };
 
     window.addEventListener('online', handleOnline);
@@ -110,7 +110,7 @@ export function OfflineManager({
     };
     
     setQueuedActions(prev => [...prev, action]);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
   }, [isOnline, onOfflineAction]);
 
   return (

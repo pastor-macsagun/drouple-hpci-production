@@ -143,16 +143,4 @@ vi.mock('next/server', () => {
   }
 })
 
-// Mock next/navigation for next-auth compatibility
-vi.mock('next/navigation', () => ({
-  redirect: vi.fn(),
-  useRouter: () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn(),
-    refresh: vi.fn(),
-  }),
-  useSearchParams: () => new URLSearchParams(),
-  usePathname: () => '/',
-}))
+// Note: next/navigation mocking is handled in test/setup.ts

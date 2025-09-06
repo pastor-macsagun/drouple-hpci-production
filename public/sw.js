@@ -477,7 +477,7 @@ function promisifyRequest(request) {
   })
 }
 
-// Push notification event handler
+// Push notification event handler with rich content support
 self.addEventListener('push', (event) => {
   if (!event.data) {
     console.log('Push event received without data')
@@ -491,33 +491,52 @@ self.addEventListener('push', (event) => {
     const notificationOptions = {
       body: payload.body,
       icon: payload.icon || '/icon-192x192.png',
-      badge: payload.badge || '/icon-192x192.png',
+      badge: payload.badge || '/icon-72x72.png',
       image: payload.image,
       data: {
-        url: payload.url,
-        timestamp: payload.timestamp,
-        type: payload.type,
+        url: payload.url || '/',
+        timestamp: payload.timestamp || Date.now(),
+        type: payload.type || 'general',
+        churchId: payload.churchId,
+        userId: payload.userId,
         ...payload.data
       },
       actions: getNotificationActions(payload.type),
       requireInteraction: isHighPriority(payload.type),
-      renotify: true,
-      tag: `${payload.type}_${payload.churchId}`,
-      vibrate: getVibrationPattern(payload.type)
+      renotify: payload.renotify || true,
+      tag: payload.tag || `${payload.type}_${payload.churchId || 'general'}`,
+      vibrate: payload.vibrate || getVibrationPattern(payload.type),
+      silent: payload.silent || false,
+      dir: 'auto',
+      lang: 'en'
+    }
+
+    // Add custom visual styling based on type
+    if (payload.type === 'urgent_announcement') {
+      notificationOptions.badge = '/icon-192x192-urgent.png' // If available
     }
 
     event.waitUntil(
       self.registration.showNotification(payload.title, notificationOptions)
+        .then(() => {
+          // Track notification display
+          trackNotificationInteraction(payload.type, 'displayed')
+        })
     )
   } catch (error) {
     console.error('Error handling push notification:', error)
     
     // Show generic notification if parsing fails
     event.waitUntil(
-      self.registration.showNotification('New Church Notification', {
-        body: 'You have a new notification from your church.',
+      self.registration.showNotification('New Church Update', {
+        body: 'You have a new update from Drouple Church Management.',
         icon: '/icon-192x192.png',
-        badge: '/icon-192x192.png'
+        badge: '/icon-72x72.png',
+        data: { url: '/', type: 'generic' },
+        actions: [
+          { action: 'view', title: 'View', icon: '/icon-72x72.png' },
+          { action: 'dismiss', title: 'Dismiss' }
+        ]
       })
     )
   }

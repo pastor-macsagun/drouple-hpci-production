@@ -42,6 +42,11 @@ export {
   type MobileNotification,
 } from './notification-manager';
 
+// Camera and native integrations
+export { CameraCapture, ImagePreview, useCameraCapture } from "./camera-capture";
+export { NativeShare, useNativeShare } from "./native-share";
+export { PushNotifications, usePushNotifications, createRichNotification } from "./push-notifications";
+
 // Lazy loading utilities
 export {
   LazyPullToRefresh,

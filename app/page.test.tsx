@@ -15,9 +15,19 @@ vi.mock('@/lib/rbac', () => ({
   getCurrentUser: vi.fn().mockResolvedValue(null)
 }))
 
-// Mock the redirect function
+// Mock next/navigation completely for this test
 vi.mock('next/navigation', () => ({
-  redirect: vi.fn()
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+  })),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => '/'),
+  redirect: vi.fn(),
 }))
 
 // Import HomePage after mocks are set up

@@ -51,7 +51,7 @@ function SignInContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
     
     try {
       // Get CSRF token for security
@@ -66,14 +66,14 @@ function SignInContent() {
       });
       
       if (result?.error) {
-        triggerHapticFeedback('heavy');
+        triggerHapticFeedback('impact-heavy');
         if (result.error.includes("too many")) {
           showError("Too Many Attempts", "Too many login attempts. Please try again later.", { duration: 0 });
         } else {
           showError("Invalid Credentials", "Invalid email or password. Please try again.");
         }
       } else if (result?.ok) {
-        triggerHapticFeedback('medium');
+        triggerHapticFeedback('impact-medium');
         showSuccess("Welcome Back!", "Signing you in...", { duration: 2000 });
         
         // Small delay for UX feedback
@@ -83,7 +83,7 @@ function SignInContent() {
       }
     } catch (error) {
       console.error("Sign in error:", error);
-      triggerHapticFeedback('heavy');
+      triggerHapticFeedback('impact-heavy');
       showError("Connection Error", "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ function SignInContent() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-    triggerHapticFeedback('light');
+    triggerHapticFeedback('impact-light');
   };
 
   const validateEmail = (value: string) => {
