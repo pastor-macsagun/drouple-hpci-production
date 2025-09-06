@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { UserRole, MemberStatus } from '@prisma/client'
 import { z } from 'zod'
 import { generateSecurePassword, hashPassword } from '@/lib/password'
+import { generateAndSendPasswordReset } from '@/lib/email'
 import { createTenantWhereClause, hasMinRole } from '@/lib/rbac'
 import { handleActionError, ApplicationError } from '@/lib/errors'
 
@@ -317,7 +318,7 @@ export async function deactivateMember(memberId: string) {
   }
 }
 
-export async function resetPassword(memberId: string) {
+export async function resetPassword(memberId: string, sendEmail: boolean = true) {
   try {
     const session = await auth()
     if (!session?.user) {
@@ -329,7 +330,13 @@ export async function resetPassword(memberId: string) {
     }
 
     const member = await prisma.user.findUnique({
-      where: { id: memberId }
+      where: { id: memberId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        tenantId: true
+      }
     })
 
     if (!member) {
@@ -340,8 +347,28 @@ export async function resetPassword(memberId: string) {
       return { success: false, error: 'Cannot reset password for member from another church' }
     }
 
-    // Generate new secure random password
-    const password = generateSecurePassword(12)
+    let password: string
+    let emailSent = false
+
+    if (sendEmail && member.email) {
+      // Generate password and send email
+      const emailResult = await generateAndSendPasswordReset(
+        member.email,
+        member.name || 'Member'
+      )
+      
+      if (emailResult.success && emailResult.newPassword) {
+        password = emailResult.newPassword
+        emailSent = true
+      } else {
+        // Fall back to manual password generation if email fails
+        password = generateSecurePassword(12)
+      }
+    } else {
+      // Manual password generation (no email)
+      password = generateSecurePassword(12)
+    }
+
     const passwordHash = await hashPassword(password)
 
     await prisma.user.update({
@@ -356,7 +383,9 @@ export async function resetPassword(memberId: string) {
     revalidatePath('/admin/members')
     return { 
       success: true,
-      password // Return the new password for admin to share
+      password: emailSent ? undefined : password, // Only return password if email wasn't sent
+      emailSent,
+      memberEmail: member.email
     }
   } catch (error) {
     console.error('Reset password error:', error)

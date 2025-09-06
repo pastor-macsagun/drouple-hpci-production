@@ -235,10 +235,28 @@ export function MembersManager({
 
   const handleResetPassword = useCallback((memberId: string) => {
     startTransition(async () => {
-      const result = await resetPassword(memberId)
-      if (result.success && result.password) {
-        setGeneratedPassword(result.password)
-        setShowPassword(true)
+      const result = await resetPassword(memberId, true) // Default to sending email
+      if (result.success) {
+        if (result.emailSent && result.memberEmail) {
+          toast({
+            title: 'Password Reset Complete',
+            description: `New password sent to ${result.memberEmail}. The member will be required to change it on first login.`,
+          })
+        } else if (result.password) {
+          // Email failed, show password manually
+          setGeneratedPassword(result.password)
+          setShowPassword(true)
+          toast({
+            title: 'Password Reset (Email Failed)',
+            description: 'Email service unavailable. Please share the password manually with the member.',
+            variant: 'destructive'
+          })
+        } else {
+          toast({
+            title: 'Password Reset Complete',
+            description: 'Password has been reset. Contact the member to provide their new login credentials.',
+          })
+        }
         handleSearch()
       } else {
         toast({

@@ -115,9 +115,12 @@ function SignInContent() {
     <main className="min-h-screen bg-gradient-to-br from-accent/5 via-bg to-accent/10 flex flex-col">
       {/* Native App Header */}
       <div className="relative flex items-center justify-between p-4 pt-safe-area-top">
-        <Link href="/" className="p-2 -ml-2 rounded-full hover:bg-elevated transition-colors">
+        <button 
+          onClick={() => router.back()} 
+          className="p-2 -ml-2 rounded-full hover:bg-elevated transition-colors"
+        >
           <ArrowLeft className="w-6 h-6 text-ink-muted" />
-        </Link>
+        </button>
         <div className="absolute inset-x-0 flex justify-center">
           <div className="text-lg font-semibold text-ink">Sign In</div>
         </div>
@@ -201,12 +204,9 @@ function SignInContent() {
 
         {/* Additional Options */}
         <div className="mt-8 text-center space-y-4">
-          <Link 
-            href="/auth/forgot-password" 
-            className="text-accent font-medium hover:text-accent/80 transition-colors block py-2"
-          >
-            Forgot Password?
-          </Link>
+          <p className="text-sm text-ink-muted">
+            Forgot your password? Contact your church administrator for help.
+          </p>
         </div>
       </div>
 
