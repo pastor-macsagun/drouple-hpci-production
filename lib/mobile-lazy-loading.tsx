@@ -85,7 +85,7 @@ export function createMobileLazyRoute<T extends ComponentType<any>>(
 ) {
   const LazyComponent = lazy(importFn);
   
-  return function MobileLazyRoute(props: Parameters<T>[0]) {
+  return function MobileLazyRoute(props: any) {
     return (
       <MobileLazyWrapper type={fallbackType}>
         <LazyComponent {...props} />

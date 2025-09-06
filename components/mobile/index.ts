@@ -55,7 +55,7 @@ export {
   createMobileLazyRoute,
   preloadMobileComponents,
   measureMobileComponentPerformance,
-} from '../lib/mobile-lazy-loading';
+} from '../../lib/mobile-lazy-loading';
 
 // Utilities and hooks
 export {
@@ -67,7 +67,7 @@ export {
   addRippleEffect,
   debounce,
   throttle,
-} from '../lib/mobile-utils';
+} from '../../lib/mobile-utils';
 
 // Caching strategies
 export {
@@ -78,7 +78,7 @@ export {
   prefetchData,
   SmartMobileCache,
   smartCache,
-} from '../lib/mobile-cache-strategies';
+} from '../../lib/mobile-cache-strategies';
 
 /**
  * Quick Setup Guide:

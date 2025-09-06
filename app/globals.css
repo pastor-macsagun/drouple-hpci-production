@@ -37,6 +37,15 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Safe area utility classes */
+  .pt-safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .pb-safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   /* Mobile interaction animations */
   @keyframes ripple {
     0% {
