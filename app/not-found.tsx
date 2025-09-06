@@ -20,12 +20,6 @@ export default function NotFound() {
           </p>
           <div className="flex gap-2 justify-center pt-4">
             <BackButton />
-            <Link href="/dashboard">
-              <Button variant="outline">
-                <Home className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
           </div>
         </CardContent>
       </Card>

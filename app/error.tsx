@@ -40,10 +40,6 @@ export default function Error({
               <RotateCcw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = '/dashboard'}>
-              <Home className="mr-2 h-4 w-4" />
-              Go Home
-            </Button>
           </div>
         </CardContent>
       </Card>

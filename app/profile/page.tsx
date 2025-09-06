@@ -241,11 +241,6 @@ export default async function ProfilePage() {
             </CardContent>
           </Card>
 
-          <div className="flex gap-2">
-            <Button asChild variant="outline">
-              <Link href="/dashboard">Back to Dashboard</Link>
-            </Button>
-          </div>
           </div>
         </div>
       </div>

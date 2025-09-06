@@ -20,14 +20,6 @@ export default function ForbiddenPage() {
           <p className="text-sm text-ink-muted">
             If you believe this is an error, please contact your administrator.
           </p>
-          <div className="pt-4">
-            <Link href="/dashboard">
-              <Button>
-                <Home className="mr-2 h-4 w-4" />
-                Back to Dashboard
-              </Button>
-            </Link>
-          </div>
         </CardContent>
       </Card>
     </div>
