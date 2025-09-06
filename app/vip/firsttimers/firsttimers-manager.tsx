@@ -7,6 +7,7 @@ import {
   updateFirstTimer,
   deleteFirstTimer,
   markBelieverInactive,
+  setBelieverStatus,
 } from '@/app/actions/firsttimers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -37,7 +38,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { UserPlus, CheckCircle, Circle, Trash2, Edit, XCircle } from 'lucide-react'
+import { UserPlus, CheckCircle, Circle, Trash2, Edit, XCircle, Filter, Users, UserCheck } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 
@@ -99,6 +100,7 @@ export function FirstTimersManager({
   const [gospelFilter, setGospelFilter] = useState<'all' | 'yes' | 'no'>('all')
   const [rootsFilter, setRootsFilter] = useState<'all' | 'yes' | 'no'>('all')
   const [assignedFilter, setAssignedFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<BelieverStatus | 'all'>('all')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -122,6 +124,11 @@ export function FirstTimersManager({
     if (assignedFilter !== 'all') {
       if (assignedFilter === 'unassigned' && ft.assignedVip) return false
       if (assignedFilter !== 'unassigned' && ft.assignedVip?.id !== assignedFilter) return false
+    }
+    // US-VIP-003: Believer status filter
+    if (statusFilter !== 'all') {
+      const membership = ft.member.memberships?.[0]
+      if (!membership || membership.believerStatus !== statusFilter) return false
     }
     return true
   })
@@ -283,6 +290,18 @@ export function FirstTimersManager({
                   {vip.name || vip.email}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as BelieverStatus | 'all')}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Believer Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value={BelieverStatus.ACTIVE}>Active</SelectItem>
+              <SelectItem value={BelieverStatus.INACTIVE}>Inactive</SelectItem>
+              <SelectItem value={BelieverStatus.COMPLETED}>Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>

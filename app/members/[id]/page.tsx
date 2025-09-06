@@ -5,7 +5,7 @@ import { redirect, notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Mail, Phone, Calendar, MapPin, User as UserIcon, Shield } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Calendar, MapPin, User as UserIcon, Shield, Activity, Users, Church, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ProfileVisibility } from '@prisma/client'
@@ -58,6 +58,96 @@ async function getMemberProfile(memberId: string, viewerId: string, viewerRole: 
   return member
 }
 
+async function getMemberActivitySnapshot(memberId: string, tenantId: string) {
+  // Get activity counts in parallel for performance
+  const [
+    checkinsCount,
+    eventRsvpsCount, 
+    lifeGroupsCount,
+    pathwaysCount,
+    recentCheckins,
+    recentRsvps
+  ] = await Promise.all([
+    // Total check-ins count
+    prisma.checkin.count({
+      where: { 
+        userId: memberId,
+        service: { localChurch: { churchId: tenantId } }
+      }
+    }),
+    
+    // Total event RSVPs count
+    prisma.eventRsvp.count({
+      where: { 
+        userId: memberId,
+        event: { localChurch: { churchId: tenantId } }
+      }
+    }),
+    
+    // Active life groups count
+    prisma.lifeGroupMembership.count({
+      where: {
+        userId: memberId,
+        status: 'ACTIVE',
+        lifeGroup: { localChurch: { churchId: tenantId } }
+      }
+    }),
+    
+    // Pathway enrollments count
+    prisma.pathwayEnrollment.count({
+      where: {
+        userId: memberId,
+        pathway: { localChurch: { churchId: tenantId } }
+      }
+    }),
+    
+    // Recent check-ins (last 5)
+    prisma.checkin.findMany({
+      where: {
+        userId: memberId,
+        service: { localChurch: { churchId: tenantId } }
+      },
+      include: {
+        service: {
+          select: {
+            date: true,
+            localChurch: { select: { name: true } }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    }),
+    
+    // Recent event RSVPs (last 5)
+    prisma.eventRsvp.findMany({
+      where: {
+        userId: memberId,
+        event: { localChurch: { churchId: tenantId } }
+      },
+      include: {
+        event: {
+          select: {
+            title: true,
+            startDate: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    })
+  ])
+
+  return {
+    checkinsCount,
+    eventRsvpsCount,
+    lifeGroupsCount,
+    pathwaysCount,
+    recentCheckins,
+    recentRsvps
+  }
+}
+
 export default async function MemberProfilePage({
   params,
 }: {
@@ -69,12 +159,15 @@ export default async function MemberProfilePage({
     redirect('/auth/signin')
   }
 
-  const member = await getMemberProfile(
-    resolvedParams.id,
-    session.user.id,
-    session.user.role,
-    session.user.tenantId!
-  )
+  const [member, activitySnapshot] = await Promise.all([
+    getMemberProfile(
+      resolvedParams.id,
+      session.user.id,
+      session.user.role,
+      session.user.tenantId!
+    ),
+    getMemberActivitySnapshot(resolvedParams.id, session.user.tenantId!)
+  ])
 
   if (!member) {
     notFound()
@@ -215,6 +308,91 @@ export default async function MemberProfilePage({
               )}
             </CardContent>
           </Card>
+
+          {/* Activity Snapshot - Only show if not restricted */}
+          {!isRestricted && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Activity Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center justify-center mb-2">
+                      <Church className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-blue-600">{activitySnapshot.checkinsCount}</div>
+                    <div className="text-sm text-blue-700">Check-ins</div>
+                  </div>
+                  
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="flex items-center justify-center mb-2">
+                      <Calendar className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-green-600">{activitySnapshot.eventRsvpsCount}</div>
+                    <div className="text-sm text-green-700">Event RSVPs</div>
+                  </div>
+                  
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <div className="flex items-center justify-center mb-2">
+                      <Users className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-purple-600">{activitySnapshot.lifeGroupsCount}</div>
+                    <div className="text-sm text-purple-700">Life Groups</div>
+                  </div>
+                  
+                  <div className="text-center p-3 bg-orange-50 rounded-lg">
+                    <div className="flex items-center justify-center mb-2">
+                      <BookOpen className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-orange-600">{activitySnapshot.pathwaysCount}</div>
+                    <div className="text-sm text-orange-700">Pathways</div>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Recent Check-ins */}
+                  {activitySnapshot.recentCheckins.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-3 text-sm">Recent Check-ins</h4>
+                      <div className="space-y-2">
+                        {activitySnapshot.recentCheckins.map((checkin, index) => (
+                          <div key={index} className="flex justify-between text-sm text-gray-600">
+                            <span>{checkin.service?.localChurch?.name || 'Service'}</span>
+                            <span>{new Date(checkin.service?.date || checkin.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Recent Event RSVPs */}
+                  {activitySnapshot.recentRsvps.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-3 text-sm">Recent Event RSVPs</h4>
+                      <div className="space-y-2">
+                        {activitySnapshot.recentRsvps.map((rsvp, index) => (
+                          <div key={index} className="flex justify-between text-sm text-gray-600">
+                            <span>{rsvp.event?.title || 'Event'}</span>
+                            <span>{new Date(rsvp.event?.startDate || rsvp.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {activitySnapshot.recentCheckins.length === 0 && activitySnapshot.recentRsvps.length === 0 && (
+                  <div className="text-center text-gray-500 py-4">
+                    No recent activity found
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
       </div>

@@ -289,13 +289,18 @@ export async function deleteFirstTimer(id: string) {
   return { success: true }
 }
 
-export async function markBelieverInactive(membershipId: string) {
+// US-VIP-006: Complete believer status management
+export async function setBelieverStatus(
+  membershipId: string, 
+  status: BelieverStatus,
+  note?: string
+) {
   const session = await auth()
   if (!session?.user?.email) throw new Error('Unauthorized')
   
   const user = await db.user.findUnique({
     where: { email: session.user.email },
-    select: { role: true, tenantId: true }
+    select: { role: true, tenantId: true, id: true }
   })
   
   if (!user) throw new Error('User not found')
@@ -331,17 +336,41 @@ export async function markBelieverInactive(membershipId: string) {
     throw new Error('Access denied')
   }
   
-  // Update the membership believer status
+  const previousStatus = membership.believerStatus
+  
+  // Update the membership believer status (preserves ROOTS progress)
   const updated = await db.membership.update({
     where: { id: membershipId },
     data: {
-      believerStatus: BelieverStatus.INACTIVE,
+      believerStatus: status,
       updatedAt: new Date()
+    }
+  })
+  
+  // Create audit log for status change
+  await db.auditLog.create({
+    data: {
+      actorId: user.id,
+      action: 'BELIEVER_STATUS_CHANGE',
+      entity: 'Membership',
+      entityId: membershipId,
+      localChurchId: membership.localChurchId,
+      meta: {
+        previousStatus,
+        newStatus: status,
+        userId: membership.userId,
+        note
+      }
     }
   })
   
   revalidatePath('/vip/firsttimers')
   return updated
+}
+
+// Backward compatibility function
+export async function markBelieverInactive(membershipId: string) {
+  return setBelieverStatus(membershipId, BelieverStatus.INACTIVE)
 }
 
 export async function getVipTeamMembers() {
@@ -371,4 +400,200 @@ export async function getVipTeamMembers() {
   })
   
   return vipMembers
+}
+
+// US-VIP-003: Enhanced filtering for VIP dashboard
+export async function getFirstTimersWithFilters(filters?: {
+  assignmentFilter?: 'all' | 'assigned' | 'unassigned' | 'my_assigned'
+  statusFilter?: BelieverStatus | 'all'
+  currentUserId?: string
+}) {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error('Unauthorized')
+  
+  const user = await db.user.findUnique({
+    where: { email: session.user.email },
+    select: { role: true, tenantId: true, id: true }
+  })
+  
+  if (!user) throw new Error('User not found')
+  
+  const hasVipAccess = [
+    UserRole.SUPER_ADMIN,
+    UserRole.PASTOR,
+    UserRole.ADMIN,
+    UserRole.VIP
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ].includes(user.role as any)
+  
+  if (!hasVipAccess) {
+    throw new Error('Access denied. VIP role or higher required.')
+  }
+
+  // Build filter conditions
+  const whereConditions: any = {
+    ...(user.role !== UserRole.SUPER_ADMIN && {
+      member: { tenantId: user.tenantId }
+    })
+  }
+
+  // Assignment filters
+  if (filters?.assignmentFilter) {
+    switch (filters.assignmentFilter) {
+      case 'assigned':
+        whereConditions.assignedVipId = { not: null }
+        break
+      case 'unassigned':
+        whereConditions.assignedVipId = null
+        break
+      case 'my_assigned':
+        whereConditions.assignedVipId = user.id
+        break
+      // 'all' adds no filter
+    }
+  }
+
+  const firstTimers = await db.firstTimer.findMany({
+    where: whereConditions,
+    include: {
+      member: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          createdAt: true,
+          pathwayEnrollments: {
+            where: {
+              pathway: { type: PathwayType.ROOTS }
+            },
+            select: {
+              status: true,
+              completedAt: true
+            }
+          },
+          memberships: {
+            select: {
+              id: true,
+              localChurchId: true,
+              believerStatus: true
+            }
+          }
+        }
+      },
+      assignedVip: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  // Apply status filter after query (since believerStatus is on membership)
+  let filteredTimers = firstTimers
+  if (filters?.statusFilter && filters.statusFilter !== 'all') {
+    filteredTimers = firstTimers.filter(ft => 
+      ft.member.memberships.some(m => m.believerStatus === filters.statusFilter)
+    )
+  }
+
+  return filteredTimers
+}
+
+// US-VIP-008: Admin reporting analytics
+export async function getVipAnalytics() {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error('Unauthorized')
+  
+  const user = await db.user.findUnique({
+    where: { email: session.user.email },
+    select: { role: true, tenantId: true }
+  })
+  
+  if (!user) throw new Error('User not found')
+  
+  // Only ADMIN+ roles can access analytics
+  const hasAdminAccess = [
+    UserRole.SUPER_ADMIN,
+    UserRole.PASTOR,
+    UserRole.ADMIN
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ].includes(user.role as any)
+  
+  if (!hasAdminAccess) {
+    throw new Error('Access denied. Admin role or higher required.')
+  }
+
+  // Parallel queries for analytics
+  const [
+    totalFirstTimers,
+    gospelSharedCount,
+    rootsCompletedCount,
+    statusBreakdown,
+    assignmentBreakdown
+  ] = await Promise.all([
+    // Total first-timers
+    db.firstTimer.count({
+      where: user.role !== UserRole.SUPER_ADMIN 
+        ? { member: { tenantId: user.tenantId } }
+        : {}
+    }),
+
+    // Gospel shared count
+    db.firstTimer.count({
+      where: {
+        gospelShared: true,
+        ...(user.role !== UserRole.SUPER_ADMIN && {
+          member: { tenantId: user.tenantId }
+        })
+      }
+    }),
+
+    // ROOTS completed count
+    db.firstTimer.count({
+      where: {
+        rootsCompleted: true,
+        ...(user.role !== UserRole.SUPER_ADMIN && {
+          member: { tenantId: user.tenantId }
+        })
+      }
+    }),
+
+    // Believer status breakdown
+    db.membership.groupBy({
+      by: ['believerStatus'],
+      _count: { believerStatus: true },
+      where: {
+        isNewBeliever: true,
+        ...(user.role !== UserRole.SUPER_ADMIN && { 
+          user: { tenantId: user.tenantId }
+        })
+      }
+    }),
+
+    // Assignment breakdown  
+    db.firstTimer.groupBy({
+      by: ['assignedVipId'],
+      _count: { assignedVipId: true },
+      where: user.role !== UserRole.SUPER_ADMIN 
+        ? { member: { tenantId: user.tenantId } }
+        : {}
+    })
+  ])
+
+  return {
+    totalFirstTimers,
+    gospelSharedCount,
+    rootsCompletedCount,
+    gospelSharedRate: totalFirstTimers > 0 ? (gospelSharedCount / totalFirstTimers * 100) : 0,
+    rootsCompletionRate: totalFirstTimers > 0 ? (rootsCompletedCount / totalFirstTimers * 100) : 0,
+    statusBreakdown,
+    assignmentBreakdown: {
+      assigned: assignmentBreakdown.filter(a => a.assignedVipId !== null).reduce((sum, a) => sum + a._count.assignedVipId, 0),
+      unassigned: assignmentBreakdown.find(a => a.assignedVipId === null)?._count.assignedVipId || 0
+    }
+  }
 }

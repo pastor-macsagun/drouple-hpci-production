@@ -528,6 +528,7 @@ async function main() {
         name: 'Attendance',
         description: 'Attend the retreat',
         orderIndex: 2,
+        requiresAttendance: true,
       },
     }),
   ])

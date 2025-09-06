@@ -7,6 +7,7 @@ import { startOfDay, endOfDay } from 'date-fns'
 import { z } from 'zod'
 import { hasMinRole, createTenantWhereClause } from '@/lib/rbac'
 import { UserRole } from '@prisma/client'
+import { rateLimiter } from '@/lib/rate-limiter'
 
 const checkInSchema = z.object({
   serviceId: z.string().min(1),
@@ -72,6 +73,13 @@ export async function checkIn(formData: FormData) {
     const session = await auth()
     if (!session?.user?.id) {
       return { success: false, error: 'Not authenticated' }
+    }
+
+    // Rate limiting - prevent rapid check-in attempts (US-CHK-002)
+    const rateLimitKey = `checkin:${session.user.id}`
+    const rateLimitResult = await rateLimiter.checkLimit(rateLimitKey, 'API')
+    if (!rateLimitResult.allowed) {
+      return { success: false, error: 'Please wait before trying to check in again' }
     }
 
     // Validate input

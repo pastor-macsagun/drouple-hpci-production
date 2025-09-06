@@ -1,0 +1,5 @@
+"Name","Email","Status","Payment Status","RSVP Date"
+"Manila Member 1","member1@test.com","GOING","PAID","10/15/2024"
+"Manila Member 2","member2@test.com","GOING","UNPAID","10/16/2024"
+"Manila Member 3","member3@test.com","WAITLIST","UNPAID","10/17/2024"
+"Manila Leader","leader1@test.com","GOING","PAID","10/14/2024"

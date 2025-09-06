@@ -45,6 +45,13 @@ export default async function PathwaysPage() {
     p => !enrolledPathwayIds.has(p.id)
   )
 
+  // Check for completed ROOTS pathway to show VINES recommendation
+  const completedRoots = progressData.find(p => 
+    p.enrollment.pathway.type === 'ROOTS' && p.enrollment.status === 'COMPLETED'
+  )
+  const vinesPathway = unenrolledPathways.find(p => p.type === 'VINES')
+  const shouldShowRecommendation = completedRoots && vinesPathway
+
   return (
     <AppLayout user={user}>
       <div className="page-container">
@@ -58,6 +65,40 @@ export default async function PathwaysPage() {
                 Start your spiritual growth journey by enrolling in a pathway below.
               </CardDescription>
             </CardHeader>
+          </Card>
+        )}
+
+        {/* Recommendation Banner for ROOTS completion */}
+        {shouldShowRecommendation && (
+          <Card className="mb-6 border-green-200 bg-green-50">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-100">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-green-900">Congratulations! 🎉</CardTitle>
+                  <CardDescription className="text-green-700">
+                    You've completed the ROOTS pathway! Ready to grow deeper in your faith?
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium text-green-900 mb-1">Recommended Next Step: VINES</h4>
+                  <p className="text-sm text-green-700">
+                    Continue your discipleship journey with spiritual growth and ministry preparation.
+                  </p>
+                </div>
+                <Button asChild className="bg-green-600 hover:bg-green-700">
+                  <Link href={`/pathways/${vinesPathway?.id}/enroll`}>
+                    Enroll in VINES
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
           </Card>
         )}
 

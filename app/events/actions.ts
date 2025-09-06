@@ -204,8 +204,64 @@ export async function rsvpToEvent(eventId: string) {
       isolationLevel: 'Serializable'
     })
 
+    // US-PWY-006: Handle attendance-based pathway completion for RETREAT events
+    if (rsvp.status === RsvpStatus.GOING) {
+      try {
+        // Find any RETREAT pathways that might be linked to this event type
+        const retreatPathways = await prisma.pathway.findMany({
+          where: {
+            type: 'RETREAT',
+            tenantId: session.user.tenantId || undefined,
+            isActive: true
+          }
+        })
+
+        // Mark attendance-based steps complete for applicable pathways
+        for (const pathway of retreatPathways) {
+          const attendanceSteps = await prisma.pathwayStep.findMany({
+            where: {
+              pathwayId: pathway.id,
+              requiresAttendance: true
+            }
+          })
+
+          for (const step of attendanceSteps) {
+            // Check if user is enrolled in this pathway
+            const enrollment = await prisma.pathwayEnrollment.findFirst({
+              where: {
+                userId: session.user.id,
+                pathwayId: pathway.id,
+                status: 'ENROLLED'
+              }
+            })
+
+            if (enrollment) {
+              // Check if step is not already completed
+              const existing = await prisma.pathwayProgress.findFirst({
+                where: { stepId: step.id, userId: session.user.id }
+              })
+
+              if (!existing) {
+                await prisma.pathwayProgress.create({
+                  data: {
+                    stepId: step.id,
+                    userId: session.user.id,
+                    notes: `Auto-completed via RSVP to event: ${event.name}`
+                  }
+                })
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Pathway completion error:', error)
+        // Don't fail the RSVP if pathway completion fails
+      }
+    }
+
     revalidatePath('/events')
     revalidatePath(`/events/${eventId}`)
+    revalidatePath('/pathways')
     return { success: true, data: rsvp }
   } catch (error) {
     console.error('RSVP error:', error)
@@ -484,6 +540,243 @@ export async function markAsPaid(rsvpId: string) {
   } catch (error) {
     console.error('Mark as paid error:', error)
     return { success: false, error: 'Failed to update payment status' }
+  }
+}
+
+export async function markAsUnpaid(rsvpId: string) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    // Only admins can update payment status
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    const rsvp = await prisma.eventRsvp.update({
+      where: { id: rsvpId },
+      data: { hasPaid: false },
+    })
+
+    revalidatePath('/events')
+    revalidatePath('/admin/events')
+    return { success: true, data: rsvp }
+  } catch (error) {
+    console.error('Mark as unpaid error:', error)
+    return { success: false, error: 'Failed to update payment status' }
+  }
+}
+
+/**
+ * Manually promotes the next waitlisted person to GOING status.
+ * Used by admins to manually manage waitlist or when capacity is increased.
+ * Implements FIFO promotion policy with race condition protection.
+ * 
+ * @param eventId Event ID to promote waitlist for
+ * @returns Success/failure result with promoted user info
+ */
+export async function promoteFromWaitlist(eventId: string) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    // Only admins can manually promote
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { capacity: true, localChurchId: true, scope: true }
+    })
+
+    if (!event) {
+      return { success: false, error: 'Event not found' }
+    }
+
+    // Verify admin has access to this event
+    if (event.scope === EventScope.LOCAL_CHURCH) {
+      const whereClause = await createTenantWhereClause(
+        session.user, 
+        {}, 
+        undefined, 
+        'localChurchId'
+      )
+      if (session.user.role !== UserRole.SUPER_ADMIN && 
+          whereClause.localChurchId !== event.localChurchId) {
+        return { success: false, error: 'Unauthorized' }
+      }
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      // Check current capacity
+      const currentCount = await tx.eventRsvp.count({
+        where: {
+          eventId,
+          status: RsvpStatus.GOING,
+        },
+      })
+
+      if (currentCount >= event.capacity) {
+        throw new Error('Event is at capacity')
+      }
+
+      // Find first waitlisted person
+      const firstWaitlisted = await tx.eventRsvp.findFirst({
+        where: {
+          eventId,
+          status: RsvpStatus.WAITLIST,
+        },
+        orderBy: { rsvpAt: 'asc' },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      if (!firstWaitlisted) {
+        throw new Error('No one on waitlist')
+      }
+
+      // Promote to GOING
+      const promoted = await tx.eventRsvp.update({
+        where: { id: firstWaitlisted.id },
+        data: { status: RsvpStatus.GOING },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      return promoted
+    })
+
+    revalidatePath('/events')
+    revalidatePath(`/events/${eventId}`)
+    return { success: true, data: result }
+  } catch (error) {
+    console.error('Promote waitlist error:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to promote from waitlist' 
+    }
+  }
+}
+
+/**
+ * Gets comprehensive event analytics for admin dashboard.
+ * Provides real-time counts and statistics with tenant scoping.
+ * Optimized queries with proper indexing for performance.
+ * 
+ * @param eventId Event ID to get analytics for
+ * @returns Event statistics including going, waitlisted, cancelled counts and payment info
+ */
+export async function getEventAnalytics(eventId: string) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    // Only admins can view analytics
+    if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: {
+        id: true,
+        name: true,
+        capacity: true,
+        scope: true,
+        localChurchId: true,
+        requiresPayment: true,
+        feeAmount: true,
+      }
+    })
+
+    if (!event) {
+      return { success: false, error: 'Event not found' }
+    }
+
+    // Verify admin has access to this event
+    if (event.scope === EventScope.LOCAL_CHURCH) {
+      const whereClause = await createTenantWhereClause(
+        session.user, 
+        {}, 
+        undefined, 
+        'localChurchId'
+      )
+      if (session.user.role !== UserRole.SUPER_ADMIN && 
+          whereClause.localChurchId !== event.localChurchId) {
+        return { success: false, error: 'Unauthorized' }
+      }
+    }
+
+    // Get aggregated counts using optimized queries
+    const [goingCount, waitlistCount, cancelledCount, paidCount] = await Promise.all([
+      prisma.eventRsvp.count({
+        where: { eventId, status: RsvpStatus.GOING }
+      }),
+      prisma.eventRsvp.count({
+        where: { eventId, status: RsvpStatus.WAITLIST }
+      }),
+      prisma.eventRsvp.count({
+        where: { eventId, status: RsvpStatus.CANCELLED }
+      }),
+      event.requiresPayment ? prisma.eventRsvp.count({
+        where: { 
+          eventId, 
+          status: { not: RsvpStatus.CANCELLED },
+          hasPaid: true 
+        }
+      }) : 0
+    ])
+
+    const totalRsvps = goingCount + waitlistCount
+    const availableSpots = Math.max(0, event.capacity - goingCount)
+    const paymentRate = totalRsvps > 0 ? (paidCount / totalRsvps * 100) : 0
+
+    const analytics = {
+      event: {
+        id: event.id,
+        name: event.name,
+        capacity: event.capacity,
+        requiresPayment: event.requiresPayment,
+        feeAmount: event.feeAmount,
+      },
+      counts: {
+        going: goingCount,
+        waitlist: waitlistCount,
+        cancelled: cancelledCount,
+        total: totalRsvps,
+        paid: paidCount,
+      },
+      metrics: {
+        availableSpots,
+        capacityUtilization: (goingCount / event.capacity * 100),
+        paymentRate: Math.round(paymentRate),
+        waitlistLength: waitlistCount,
+      }
+    }
+
+    return { success: true, data: analytics }
+  } catch (error) {
+    console.error('Get event analytics error:', error)
+    return { success: false, error: 'Failed to get analytics' }
   }
 }
 

@@ -53,6 +53,14 @@ model User {
   pathwayProgress         PathwayProgress[]
   pushSubscriptions       PushSubscription[]
   sessions                Session[]
+  
+  // Communications enhancements
+  announcementReads       AnnouncementRead[]
+  createdThreads          MessageThread[]          @relation("CreatedThreads")
+  threadParticipations    MessageParticipant[]     @relation("MessageParticipants")
+  threadMessages          MessageThreadMessage[]   @relation("AuthoredMessages")
+  messageReads            MessageRead[]            @relation("MessageReads")
+  notificationPreferences NotificationPreference[]
 
   @@index([tenantId])
   @@index([tenantId, role])
@@ -138,6 +146,7 @@ model LocalChurch {
   church        Church         @relation(fields: [churchId], references: [id], onDelete: Cascade)
   memberships   Membership[]
   services      Service[]
+  messageThreads MessageThread[]
 
   @@unique([churchId, name])
   @@index([churchId])
@@ -369,15 +378,16 @@ model Pathway {
 }
 
 model PathwayStep {
-  id          String            @id @default(cuid())
-  pathwayId   String
-  name        String
-  description String?
-  orderIndex  Int
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  progress    PathwayProgress[]
-  pathway     Pathway           @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
+  id                 String            @id @default(cuid())
+  pathwayId          String
+  name               String
+  description        String?
+  orderIndex         Int
+  requiresAttendance Boolean           @default(false)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  progress           PathwayProgress[]
+  pathway            Pathway           @relation(fields: [pathwayId], references: [id], onDelete: Cascade)
 
   @@unique([pathwayId, orderIndex])
   @@index([pathwayId])
@@ -436,6 +446,7 @@ model Announcement {
   updatedAt     DateTime             @updatedAt
   author        User                 @relation(fields: [authorId], references: [id])
   localChurch   LocalChurch          @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
+  reads         AnnouncementRead[]
 
   @@index([localChurchId])
   @@index([authorId])
@@ -591,4 +602,82 @@ enum AnnouncementPriority {
   NORMAL
   HIGH
   URGENT
+}
+
+// Communication enhancements for US-COM-002: Read tracking
+model AnnouncementRead {
+  id             String       @id @default(cuid())
+  announcementId String
+  userId         String
+  readAt         DateTime     @default(now())
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@index([userId])
+}
+
+// Enhanced messaging with thread support for US-COM-005, US-COM-006
+model MessageThread {
+  id            String                @id @default(cuid())
+  localChurchId String
+  createdBy     String
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  creator       User                  @relation("CreatedThreads", fields: [createdBy], references: [id], onDelete: Cascade)
+  localChurch   LocalChurch           @relation(fields: [localChurchId], references: [id], onDelete: Cascade)
+  participants  MessageParticipant[]
+  messages      MessageThreadMessage[]
+
+  @@index([localChurchId])
+  @@index([createdBy])
+}
+
+model MessageParticipant {
+  id       String        @id @default(cuid())
+  threadId String
+  userId   String
+  joinedAt DateTime      @default(now())
+  thread   MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user     User          @relation("MessageParticipants", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, userId])
+  @@index([userId])
+}
+
+model MessageThreadMessage {
+  id        String          @id @default(cuid())
+  threadId  String
+  authorId  String
+  body      String
+  createdAt DateTime        @default(now())
+  thread    MessageThread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author    User            @relation("AuthoredMessages", fields: [authorId], references: [id], onDelete: Cascade)
+  reads     MessageRead[]
+
+  @@index([threadId, createdAt])
+  @@index([authorId])
+}
+
+model MessageRead {
+  id        String               @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime             @default(now())
+  message   MessageThreadMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User                 @relation("MessageReads", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId])
+}
+
+// Communication preferences for US-COM-004
+model NotificationPreference {
+  id      String   @id @default(cuid())
+  userId  String   @unique
+  email   Boolean  @default(true)
+  push    Boolean  @default(true)
+  inApp   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

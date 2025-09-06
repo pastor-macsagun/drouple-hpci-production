@@ -426,69 +426,164 @@ export async function getLocalChurches() {
   }
 }
 
-export async function exportMembersCsv({ churchId }: { churchId?: string } = {}) {
+// Bulk operations for member status management
+export async function bulkSetMemberStatus(memberIds: string[], status: MemberStatus) {
   try {
     const session = await auth()
     if (!session?.user) {
-      return new Response('Unauthorized', { status: 401 })
+      return { success: false, error: 'Not authenticated' }
     }
 
     if (!hasMinRole(session.user.role, UserRole.ADMIN)) {
-      return new Response('Forbidden', { status: 403 })
+      return { success: false, error: 'Unauthorized' }
     }
 
-    // Apply tenant scoping using repository guard
-    const whereClause = await createTenantWhereClause(
-      session.user, 
-      {}, 
-      churchId // church override for super admin filtering
-    )
+    // Validate all members belong to the user's tenant (except SUPER_ADMIN)
+    if (session.user.role !== 'SUPER_ADMIN') {
+      const members = await prisma.user.findMany({
+        where: { 
+          id: { in: memberIds },
+          tenantId: session.user.tenantId
+        },
+        select: { id: true }
+      })
 
-    const members = await prisma.user.findMany({
-      where: whereClause,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        memberStatus: true,
-        tenantId: true,
-        createdAt: true
-      },
-      orderBy: {
-        createdAt: 'desc'
+      if (members.length !== memberIds.length) {
+        return { success: false, error: 'Cannot modify members from another church' }
       }
+    }
+
+    // Perform bulk update within transaction
+    const result = await prisma.$transaction(async (tx) => {
+      const updated = await tx.user.updateMany({
+        where: { 
+          id: { in: memberIds },
+          ...(session.user.role !== 'SUPER_ADMIN' && { tenantId: session.user.tenantId })
+        },
+        data: { memberStatus: status }
+      })
+
+      // Create audit log entries for each member
+      await tx.auditLog.createMany({
+        data: memberIds.map(memberId => ({
+          actorId: session.user.id,
+          action: 'MEMBER_STATUS_CHANGE',
+          entity: 'User',
+          entityId: memberId,
+          localChurchId: session.user.tenantId,
+          meta: {
+            previousStatus: 'UNKNOWN', // We could query this first if needed
+            newStatus: status,
+            bulkOperation: true
+          }
+        }))
+      })
+
+      return updated
     })
 
-    const csvHeaders = ['Name', 'Email', 'Role', 'Status', 'Tenant ID', 'Created At']
-    const csvRows = members.map(member => [
-      member.name || '',
-      member.email,
-      member.role,
-      member.memberStatus,
-      member.tenantId || '',
-      new Date(member.createdAt).toLocaleDateString()
+    revalidatePath('/admin/members')
+    return { 
+      success: true, 
+      data: { 
+        updatedCount: result.count,
+        status 
+      } 
+    }
+  } catch (error) {
+    console.error('Bulk set member status error:', error)
+    return { success: false, error: 'Failed to update member status' }
+  }
+}
+
+// Church transfer for SUPER_ADMIN only
+export async function transferMemberChurch(
+  userId: string, 
+  fromChurchId: string, 
+  toChurchId: string
+) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    if (session.user.role !== 'SUPER_ADMIN') {
+      return { success: false, error: 'Only SUPER_ADMIN can transfer members between churches' }
+    }
+
+    // Validate churches exist
+    const [fromChurch, toChurch, member] = await Promise.all([
+      prisma.localChurch.findUnique({ where: { id: fromChurchId } }),
+      prisma.localChurch.findUnique({ where: { id: toChurchId } }),
+      prisma.user.findUnique({ 
+        where: { id: userId },
+        include: { memberships: true }
+      })
     ])
 
-    const csvContent = [
-      csvHeaders.join(','),
-      ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n')
+    if (!fromChurch || !toChurch) {
+      return { success: false, error: 'Invalid church IDs' }
+    }
 
-    const churchName = churchId ? 
-      (await prisma.localChurch.findUnique({ where: { id: churchId } }))?.name || 'Unknown' :
-      'All_Churches'
-    
-    const filename = `members-${churchName.replace(/\s+/g, '_')}-${new Date().toISOString().split('T')[0]}.csv`
+    if (!member) {
+      return { success: false, error: 'Member not found' }
+    }
 
-    return new Response(csvContent, {
-      headers: {
-        'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="${filename}"`
-      }
+    // Perform transfer within transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Update user's primary tenant
+      await tx.user.update({
+        where: { id: userId },
+        data: { tenantId: toChurchId }
+      })
+
+      // Remove old membership
+      await tx.membership.deleteMany({
+        where: {
+          userId: userId,
+          localChurchId: fromChurchId
+        }
+      })
+
+      // Create new membership
+      const newMembership = await tx.membership.create({
+        data: {
+          userId: userId,
+          localChurchId: toChurchId,
+          role: member.role,
+          isNewBeliever: member.isNewBeliever
+        }
+      })
+
+      // Create audit log
+      await tx.auditLog.create({
+        data: {
+          actorId: session.user.id,
+          action: 'MEMBER_CHURCH_TRANSFER',
+          entity: 'User',
+          entityId: userId,
+          localChurchId: toChurchId,
+          meta: {
+            fromChurchId,
+            toChurchId,
+            fromChurchName: fromChurch.name,
+            toChurchName: toChurch.name,
+            memberName: member.name
+          }
+        }
+      })
+
+      return newMembership
     })
+
+    revalidatePath('/admin/members')
+    revalidatePath(`/(super)/super/local-churches/${fromChurchId}`)
+    revalidatePath(`/(super)/super/local-churches/${toChurchId}`)
+
+    return { success: true, data: result }
   } catch (error) {
-    console.error('Export members CSV error:', error)
-    return new Response('Internal Server Error', { status: 500 })
+    console.error('Transfer member church error:', error)
+    return { success: false, error: 'Failed to transfer member' }
   }
 }
