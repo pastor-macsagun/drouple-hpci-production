@@ -38,7 +38,10 @@ export interface NativeListItemProps
   interactive?: boolean;
   hapticFeedback?: boolean;
   showArrow?: boolean;
+  showChevron?: boolean;
+  title?: string;
   subtitle?: string;
+  icon?: React.ReactNode;
   leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   variant?: "default" | "inset";
@@ -51,7 +54,10 @@ const NativeListItem = forwardRef<HTMLDivElement, NativeListItemProps>(
     interactive = false,
     hapticFeedback = true,
     showArrow = false,
+    showChevron = false,
+    title,
     subtitle,
+    icon,
     leftContent,
     rightContent,
     variant = "default",
@@ -115,9 +121,9 @@ const NativeListItem = forwardRef<HTMLDivElement, NativeListItemProps>(
         onMouseLeave={handleTouchEnd}
         {...props}
       >
-        {leftContent && (
+        {(icon || leftContent) && (
           <div className="flex-shrink-0">
-            {leftContent}
+            {icon || leftContent}
           </div>
         )}
         
@@ -125,7 +131,7 @@ const NativeListItem = forwardRef<HTMLDivElement, NativeListItemProps>(
           <div className="flex items-center justify-between">
             <div className="min-w-0 flex-1">
               <div className="text-ink font-medium truncate">
-                {children}
+                {title || children}
               </div>
               {subtitle && (
                 <div className="text-sm text-ink-muted truncate">
@@ -142,7 +148,7 @@ const NativeListItem = forwardRef<HTMLDivElement, NativeListItemProps>(
           </div>
         )}
         
-        {(showArrow || (interactive && !rightContent)) && (
+        {(showArrow || showChevron || (interactive && !rightContent)) && (
           <ChevronRight 
             className="flex-shrink-0 w-5 h-5 text-ink-muted ml-2" 
           />
