@@ -230,7 +230,7 @@ export function usePWA(): PWAState & PWAActions {
   const triggerSync = useCallback(async () => {
     if (!syncManager) return
     try {
-      await syncManager.forceSync()
+      await syncManager.startSync()
       await updateSyncStatus()
     } catch (error) {
       console.error('Error triggering sync:', error)
@@ -311,6 +311,10 @@ export function usePWA(): PWAState & PWAActions {
       throw new Error('User not authenticated')
     }
     
+    if (!backgroundSyncManager) {
+      throw new Error('Background sync manager not available')
+    }
+    
     return await backgroundSyncManager.queueCheckin(
       serviceId,
       session.user.id,
@@ -321,6 +325,10 @@ export function usePWA(): PWAState & PWAActions {
   const queueEventRSVP = useCallback(async (eventId: string, status: string): Promise<string> => {
     if (!session?.user?.id || !session?.user?.tenantId) {
       throw new Error('User not authenticated')
+    }
+    
+    if (!backgroundSyncManager) {
+      throw new Error('Background sync manager not available')
     }
     
     return await backgroundSyncManager.queueEventRSVP(
@@ -336,6 +344,10 @@ export function usePWA(): PWAState & PWAActions {
       throw new Error('User not authenticated')
     }
     
+    if (!backgroundSyncManager) {
+      throw new Error('Background sync manager not available')
+    }
+    
     return await backgroundSyncManager.queueLifeGroupJoin(
       lifeGroupId,
       session.user.id,
@@ -348,6 +360,10 @@ export function usePWA(): PWAState & PWAActions {
       throw new Error('User not authenticated')
     }
     
+    if (!backgroundSyncManager) {
+      throw new Error('Background sync manager not available')
+    }
+    
     return await backgroundSyncManager.queuePathwayProgress(
       pathwayId,
       stepId,
@@ -358,6 +374,7 @@ export function usePWA(): PWAState & PWAActions {
 
   // Push notification actions
   const subscribeToPushNotifications = useCallback(async (): Promise<boolean> => {
+    if (!pushNotificationManager) return false
     try {
       await pushNotificationManager.initialize()
       const subscription = await pushNotificationManager.subscribe()
@@ -369,6 +386,7 @@ export function usePWA(): PWAState & PWAActions {
   }, [pushNotificationManager])
 
   const unsubscribeFromPushNotifications = useCallback(async (): Promise<void> => {
+    if (!pushNotificationManager) return
     try {
       await pushNotificationManager.unsubscribe()
     } catch (error) {
@@ -378,6 +396,7 @@ export function usePWA(): PWAState & PWAActions {
   }, [pushNotificationManager])
 
   const getPushNotificationStatus = useCallback(() => {
+    if (!pushNotificationManager) return { isSubscribed: false, permission: 'default' as NotificationPermission }
     return {
       isSubscribed: pushNotificationManager.isSubscribed(),
       permission: pushNotificationManager.getPermissionStatus()
