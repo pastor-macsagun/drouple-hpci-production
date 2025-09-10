@@ -17,7 +17,8 @@ import {
   createMember, 
   updateMember, 
   deactivateMember,
-  resetPassword
+  resetPassword,
+  exportMembersCsv
 } from './actions'
 
 interface Member {

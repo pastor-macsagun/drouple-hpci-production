@@ -6,9 +6,10 @@ import { UserRole, EventScope, RsvpStatus } from '@prisma/client'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
+    const { eventId } = await params
     const session = await auth()
     if (!session?.user) {
       return new Response('Not authenticated', { status: 401 })
@@ -20,7 +21,7 @@ export async function GET(
     }
 
     const event = await prisma.event.findUnique({
-      where: { id: params.eventId },
+      where: { id: eventId },
       select: {
         id: true,
         name: true,
@@ -50,7 +51,7 @@ export async function GET(
 
     const rsvps = await prisma.eventRsvp.findMany({
       where: { 
-        eventId: params.eventId,
+        eventId: eventId,
         status: { not: RsvpStatus.CANCELLED },
       },
       select: {

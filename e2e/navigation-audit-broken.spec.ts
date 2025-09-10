@@ -175,9 +175,9 @@ test.describe('Navigation Audit - @navigation', () => {
         }
         
         // Check admin navigation (if applicable)
-        if ([UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN].includes(user.role as any)) {
+        if ([UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN].includes(user.role as UserRole)) {
           for (const navItem of SIDEBAR_NAVIGATION.admin) {
-            if (navItem.roles.includes(user.role as any)) {
+            if (navItem.roles.includes(user.role as UserRole)) {
               const status = await checkPageExists(page, navItem.href);
               results.push({
                 role: user.role,

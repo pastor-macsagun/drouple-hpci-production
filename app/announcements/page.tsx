@@ -19,7 +19,7 @@ export default async function AnnouncementsPage() {
 
   // Use enhanced server action for targeted announcements
   const result = await getTargetedAnnouncements(session.user.id)
-  const announcements = result.success ? result.data : []
+  const announcements = result.success && result.data ? result.data : []
   const isAdmin = ['ADMIN', 'PASTOR', 'SUPER_ADMIN'].includes(session.user.role)
 
   // Get full user details for sidebar

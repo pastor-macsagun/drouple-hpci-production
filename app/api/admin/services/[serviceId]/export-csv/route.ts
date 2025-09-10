@@ -3,7 +3,8 @@ import { exportAttendanceCsv } from '@/app/admin/services/actions'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { serviceId: string } }
+  { params }: { params: Promise<{ serviceId: string }> }
 ) {
-  return await exportAttendanceCsv({ serviceId: params.serviceId })
+  const { serviceId } = await params
+  return await exportAttendanceCsv({ serviceId })
 }

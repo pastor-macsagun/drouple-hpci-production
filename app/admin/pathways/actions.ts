@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { PathwayType, UserRole } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
+import { hasMinRole } from '@/lib/rbac'
 import { z } from 'zod'
 
 export async function createPathway(data: {
@@ -169,7 +170,7 @@ export async function verifyStepCompletion(
     where: { email: session.user.email! },
   })
 
-  if (!user || ![UserRole.LEADER, UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN].includes(user.role)) {
+  if (!user || !hasMinRole(user.role, UserRole.LEADER)) {
     throw new Error('Insufficient privileges - Leader access required')
   }
 
@@ -235,7 +236,7 @@ export async function getPathwayAnalytics(tenantId: string) {
     where: { email: session.user.email! },
   })
 
-  if (!user || ![UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN].includes(user.role)) {
+  if (!user || !hasMinRole(user.role, UserRole.ADMIN)) {
     throw new Error('Admin access required')
   }
 

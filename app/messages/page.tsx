@@ -34,7 +34,7 @@ export default async function MessagesPage({
 
   // Get message threads using new server action
   const result = await getMessageThreads()
-  const threads = result.success ? result.data : []
+  const threads = result.success && result.data ? result.data : []
   const unreadCount = threads.reduce((sum, thread) => sum + thread.unreadCount, 0)
   
   const errorMessage = resolvedSearchParams.error === 'rate_limited'

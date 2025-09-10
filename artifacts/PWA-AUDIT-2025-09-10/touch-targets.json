@@ -1,0 +1,52 @@
+[
+  {
+    "device": "iPhone 16 Pro",
+    "elements": [
+      {
+        "tagName": "BUTTON",
+        "text": "Check In",
+        "width": 120,
+        "height": 48,
+        "meetsMinSize": true,
+        "area": 5760
+      },
+      {
+        "tagName": "A",
+        "text": "Events",
+        "width": 44,
+        "height": 44,
+        "meetsMinSize": true,
+        "area": 1936
+      },
+      {
+        "tagName": "BUTTON",
+        "text": "×",
+        "width": 32,
+        "height": 32,
+        "meetsMinSize": false,
+        "area": 1024
+      }
+    ]
+  },
+  {
+    "device": "Pixel 8",
+    "elements": [
+      {
+        "tagName": "BUTTON",
+        "text": "Check In",
+        "width": 128,
+        "height": 52,
+        "meetsMinSize": true,
+        "area": 6656
+      },
+      {
+        "tagName": "A",
+        "text": "Events",
+        "width": 48,
+        "height": 48,
+        "meetsMinSize": true,
+        "area": 2304
+      }
+    ]
+  }
+]

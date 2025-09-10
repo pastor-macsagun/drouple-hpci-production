@@ -1,0 +1,19 @@
+=== iPhone 16 Pro Offline Test ===
+Service Worker installed: ✅
+📵 Network set to offline
+Route /: ✅ Cached
+Route /checkin: ✅ Cached
+Route /events: ✅ Cached
+Mutation queue test: ✅ Message queued for sync
+📶 Network restored
+Sync window completed
+
+=== Pixel 8 Offline Test ===
+Service Worker installed: ✅
+📵 Network set to offline
+Route /: ✅ Cached
+Route /checkin: ✅ Cached
+Route /events: ✅ Cached
+Mutation queue test: ✅ Message queued for sync
+📶 Network restored
+Sync window completed

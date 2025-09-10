@@ -3,7 +3,8 @@ import { exportAttendanceCsv } from '@/app/admin/lifegroups/actions'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { lifeGroupId: string } }
+  { params }: { params: Promise<{ lifeGroupId: string }> }
 ) {
-  return await exportAttendanceCsv({ lifeGroupId: params.lifeGroupId })
+  const { lifeGroupId } = await params
+  return await exportAttendanceCsv({ lifeGroupId })
 }

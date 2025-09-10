@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
+import { hasMinRole } from '@/lib/rbac'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -23,7 +24,7 @@ export default async function LeaderPathwaysPage() {
     where: { email: session.user.email! },
   })
 
-  if (!user || ![UserRole.LEADER, UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN].includes(user.role)) {
+  if (!user || !hasMinRole(user.role, UserRole.LEADER)) {
     redirect('/')
   }
 

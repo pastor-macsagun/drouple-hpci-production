@@ -1,0 +1,22 @@
+{
+  "manifest": {
+    "exists": true,
+    "standalone": true,
+    "orientationPortrait": true,
+    "hasThemeColor": true,
+    "hasBackgroundColor": true,
+    "hasMaskableIcon192": true,
+    "hasMaskableIcon512": true,
+    "hasShortcuts": true,
+    "hasProtocolHandlers": false
+  },
+  "serviceWorker": {
+    "exists": true,
+    "hasCacheFirst": true,
+    "hasStaleWhileRevalidate": true,
+    "hasNetworkFirst": true,
+    "hasBackgroundSync": true,
+    "hasPushNotifications": true
+  },
+  "timestamp": "2025-09-10T08:37:56.467Z"
+}

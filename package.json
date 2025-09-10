@@ -56,6 +56,9 @@
     "test:production:admins": "tsx scripts/production-testing/run-production-tests.ts --accounts \"admin.manila@test.com,admin.cebu@test.com\"",
     "test:production:auth": "tsx scripts/production-testing/run-production-tests.ts --scenarios \"Authentication Flow\"",
     "test:production:setup": "cd scripts/production-testing && npm install",
+    "test:pwa:lighthouse": "node tests/run-lighthouse.js",
+    "test:pwa:playwright": "playwright test tests/pwa.spec.ts --config tests/playwright.config.ts",
+    "test:pwa": "node tests/run-pwa-audit.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {

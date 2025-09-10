@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { hasMinRole } from '@/lib/rbac'
 import { UserRole } from '@prisma/client'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -39,7 +40,7 @@ export default async function PathwayAnalyticsPage() {
     where: { email: session.user.email! },
   })
 
-  if (!user || ![UserRole.ADMIN, UserRole.PASTOR, UserRole.SUPER_ADMIN].includes(user.role)) {
+  if (!user || !hasMinRole(user.role, UserRole.ADMIN)) {
     redirect('/admin')
   }
 

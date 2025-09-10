@@ -1,0 +1,27 @@
+{
+  "url": "https://app.drouple.app",
+  "date": "2025-09-10",
+  "lighthouse": {
+    "pwaScore": 0,
+    "performanceScore": 0,
+    "pwaPass": false,
+    "perfPass": false
+  },
+  "touchTargets": {
+    "total": 5,
+    "failing": 1
+  },
+  "offline": {
+    "success": true,
+    "swPresent": true
+  },
+  "artifacts": {
+    "lighthouse": false,
+    "pwaSanity": false,
+    "screenshots": false,
+    "videos": false,
+    "touchTargets": true,
+    "offlineLog": true,
+    "checklist": true
+  }
+}

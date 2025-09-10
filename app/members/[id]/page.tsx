@@ -97,7 +97,7 @@ async function getMemberActivitySnapshot(memberId: string, tenantId: string) {
     prisma.pathwayEnrollment.count({
       where: {
         userId: memberId,
-        pathway: { localChurch: { churchId: tenantId } }
+        pathway: { tenantId: tenantId }
       }
     }),
     
@@ -115,7 +115,7 @@ async function getMemberActivitySnapshot(memberId: string, tenantId: string) {
           }
         }
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { checkedInAt: 'desc' },
       take: 5
     }),
     
@@ -128,12 +128,12 @@ async function getMemberActivitySnapshot(memberId: string, tenantId: string) {
       include: {
         event: {
           select: {
-            title: true,
-            startDate: true
+            name: true,
+            startDateTime: true
           }
         }
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { rsvpAt: 'desc' },
       take: 5
     })
   ])
@@ -362,7 +362,7 @@ export default async function MemberProfilePage({
                         {activitySnapshot.recentCheckins.map((checkin, index) => (
                           <div key={index} className="flex justify-between text-sm text-gray-600">
                             <span>{checkin.service?.localChurch?.name || 'Service'}</span>
-                            <span>{new Date(checkin.service?.date || checkin.createdAt).toLocaleDateString()}</span>
+                            <span>{new Date(checkin.service?.date || checkin.checkedInAt).toLocaleDateString()}</span>
                           </div>
                         ))}
                       </div>
@@ -376,8 +376,8 @@ export default async function MemberProfilePage({
                       <div className="space-y-2">
                         {activitySnapshot.recentRsvps.map((rsvp, index) => (
                           <div key={index} className="flex justify-between text-sm text-gray-600">
-                            <span>{rsvp.event?.title || 'Event'}</span>
-                            <span>{new Date(rsvp.event?.startDate || rsvp.createdAt).toLocaleDateString()}</span>
+                            <span>{rsvp.event?.name || 'Event'}</span>
+                            <span>{new Date(rsvp.event?.startDateTime || rsvp.rsvpAt).toLocaleDateString()}</span>
                           </div>
                         ))}
                       </div>
