@@ -128,8 +128,8 @@ export function NativeAnalytics({
         `${item.label}: ${item.value.toLocaleString()}`
       ).join('\n')
       
-      if ('clipboard' in navigator) {
-        await navigator.clipboard.writeText(`${title}\n\n${summaryText}`)
+      if ('clipboard' in navigator && navigator.clipboard) {
+        await (navigator as any).clipboard.writeText(`${title}\n\n${summaryText}`)
         triggerHaptic('success')
       }
     }
@@ -339,7 +339,7 @@ export function NativeAnalytics({
   }
 
   return (
-    <PullToRefresh onRefresh={onRefresh} className={className}>
+    <PullToRefresh onRefresh={onRefresh || (async () => {})} className={className}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -351,7 +351,7 @@ export function NativeAnalytics({
               variant="ghost"
               size="sm"
               onClick={handleShare}
-              hapticFeedback="light"
+              hapticFeedback={"light" as any}
             >
               <Share className="w-4 h-4" />
             </MobileButton>
@@ -359,7 +359,7 @@ export function NativeAnalytics({
               variant="ghost"
               size="sm"
               onClick={() => setShowValues(!showValues)}
-              hapticFeedback="light"
+              hapticFeedback={"light" as any}
             >
               {showValues ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </MobileButton>
@@ -406,26 +406,26 @@ export function NativeAnalytics({
         <div className="flex items-center justify-between gap-4">
           <div className="flex gap-2">
             <MobileButton
-              variant={chartType === 'line' ? 'primary' : 'outline'}
+              variant={chartType === 'line' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChartTypeChange('line')}
-              hapticFeedback="light"
+              hapticFeedback={"light" as any}
             >
               <LineChart className="w-4 h-4" />
             </MobileButton>
             <MobileButton
-              variant={chartType === 'bar' ? 'primary' : 'outline'}
+              variant={chartType === 'bar' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChartTypeChange('bar')}
-              hapticFeedback="light"
+              hapticFeedback={"light" as any}
             >
               <BarChart3 className="w-4 h-4" />
             </MobileButton>
             <MobileButton
-              variant={chartType === 'pie' ? 'primary' : 'outline'}
+              variant={chartType === 'pie' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChartTypeChange('pie')}
-              hapticFeedback="light"
+              hapticFeedback={"light" as any}
             >
               <PieChart className="w-4 h-4" />
             </MobileButton>
