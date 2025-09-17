@@ -190,7 +190,7 @@ export function NativeDataTable<T extends { id: string | number }>({
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleRowActions(item.id)}
-                      hapticFeedback="light"
+                      hapticFeedback
                     >
                       <MoreVertical className="w-4 h-4" />
                     </MobileButton>
@@ -207,7 +207,7 @@ export function NativeDataTable<T extends { id: string | number }>({
                           variant="outline"
                           size="sm"
                           onClick={() => handleRowAction(action.key, item)}
-                          hapticFeedback="medium"
+                          hapticFeedback
                         >
                           {action.icon && <span className="mr-1">{action.icon}</span>}
                           {action.label}
@@ -240,7 +240,7 @@ export function NativeDataTable<T extends { id: string | number }>({
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleRowActions(item.id)}
-                      hapticFeedback="light"
+                      hapticFeedback
                     >
                       <MoreVertical className="w-4 h-4" />
                     </MobileButton>
@@ -277,7 +277,7 @@ export function NativeDataTable<T extends { id: string | number }>({
               triggerHaptic('medium')
               onRefresh()
             }}
-            hapticFeedback="medium"
+            hapticFeedback
           >
             Refresh Data
           </MobileButton>

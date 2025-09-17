@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { Send, Mic, MicOff, Smile, Paperclip, MoreVertical, Reply, Heart, ThumbsUp, Laugh, Sad, Angry } from 'lucide-react'
+import { Send, Mic, MicOff, Smile, Paperclip, MoreVertical, Reply, Heart, ThumbsUp, Laugh, Frown, Angry } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileButton } from '@/components/mobile/mobile-button'
 import { useHaptic } from '@/hooks/use-haptic'
@@ -40,7 +40,7 @@ const REACTION_EMOJIS = [
   { emoji: '❤️', key: 'heart', icon: Heart },
   { emoji: '👍', key: 'thumbs_up', icon: ThumbsUp },
   { emoji: '😂', key: 'laugh', icon: Laugh },
-  { emoji: '😢', key: 'sad', icon: Sad },
+  { emoji: '😢', key: 'sad', icon: Frown },
   { emoji: '😠', key: 'angry', icon: Angry }
 ]
 
@@ -65,7 +65,7 @@ export function NativeChat({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const { triggerHaptic } = useHaptic()
 
   // Auto-scroll to bottom when new messages arrive
@@ -92,7 +92,7 @@ export function NativeChat({
         setIsTyping(false)
         onStopTyping()
       }
-    }, 1000)
+    }, 1000) as NodeJS.Timeout
   }, [isTyping, onStartTyping, onStopTyping])
 
   const handleSendText = useCallback(() => {
@@ -225,9 +225,21 @@ export function NativeChat({
                 ? "bg-blue-500 text-white rounded-br-md"
                 : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-md"
             )}
-            onLongPress={() => {
-              triggerHaptic('medium')
-              setShowReactions(message.id)
+            onPointerDown={(e) => {
+              // Simple long press simulation
+              const timeoutId = setTimeout(() => {
+                triggerHaptic('medium')
+                setShowReactions(message.id)
+              }, 500)
+
+              const cleanup = () => {
+                clearTimeout(timeoutId)
+                document.removeEventListener('pointerup', cleanup)
+                document.removeEventListener('pointercancel', cleanup)
+              }
+
+              document.addEventListener('pointerup', cleanup)
+              document.addEventListener('pointercancel', cleanup)
             }}
           >
             {message.type === 'text' && message.content}
@@ -303,7 +315,7 @@ export function NativeChat({
             variant="ghost"
             size="sm"
             onClick={() => setReplyTo(message.id)}
-            hapticFeedback="light"
+            hapticFeedback
           >
             <Reply className="w-3 h-3" />
           </MobileButton>
@@ -311,7 +323,7 @@ export function NativeChat({
             variant="ghost"
             size="sm"
             onClick={() => setShowReactions(message.id)}
-            hapticFeedback="light"
+            hapticFeedback
           >
             <Smile className="w-3 h-3" />
           </MobileButton>
@@ -364,7 +376,7 @@ export function NativeChat({
               variant="ghost"
               size="sm"
               onClick={() => setReplyTo(null)}
-              hapticFeedback="light"
+              hapticFeedback
             >
               ×
             </MobileButton>
@@ -403,7 +415,7 @@ export function NativeChat({
               size="sm"
               className="absolute right-1 top-1"
               onClick={() => triggerHaptic('light')}
-              hapticFeedback="light"
+              hapticFeedback
             >
               <Paperclip className="w-4 h-4" />
             </MobileButton>
@@ -412,25 +424,25 @@ export function NativeChat({
           {/* Voice/Send button */}
           {inputText.trim() ? (
             <MobileButton
-              variant="primary"
+              variant="default"
               size="sm"
               onClick={handleSendText}
               disabled={disabled}
-              hapticFeedback="medium"
+              hapticFeedback
               className="rounded-full w-10 h-10"
             >
               <Send className="w-4 h-4" />
             </MobileButton>
           ) : (
             <MobileButton
-              variant={isRecording ? "danger" : "secondary"}
+              variant={isRecording ? "destructive" : "secondary"}
               size="sm"
               onTouchStart={handleStartRecording}
               onTouchEnd={handleStopRecording}
               onMouseDown={handleStartRecording}
               onMouseUp={handleStopRecording}
               disabled={disabled}
-              hapticFeedback="medium"
+              hapticFeedback
               className="rounded-full w-10 h-10"
             >
               {isRecording ? (
@@ -463,7 +475,7 @@ export function NativeChat({
                 variant="outline"
                 onClick={() => setShowReactions(null)}
                 className="w-full"
-                hapticFeedback="light"
+                hapticFeedback
               >
                 Cancel
               </MobileButton>

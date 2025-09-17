@@ -1,10 +1,8 @@
 'use client'
 
-import { 
-  NativeCard, 
-  NativeCardContent, 
-  NativeCardHeader, 
-  NativeCardTitle 
+import {
+  NativeCard,
+  NativeCardContent
 } from '@/components/ui/native'
 import { ShieldOff } from 'lucide-react'
 
@@ -33,7 +31,7 @@ export default function ForbiddenPage() {
           <NativeCardContent className="text-center space-y-6">
             <div className="space-y-3">
               <p className="text-ink">
-                You don't have permission to access this resource.
+                You don&apos;t have permission to access this resource.
               </p>
               <p className="text-sm text-ink-muted">
                 If you believe this is an error, please contact your administrator.

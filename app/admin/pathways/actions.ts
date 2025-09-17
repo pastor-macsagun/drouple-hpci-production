@@ -5,7 +5,6 @@ import { PathwayType, UserRole } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { hasMinRole } from '@/lib/rbac'
-import { z } from 'zod'
 
 export async function createPathway(data: {
   name: string

@@ -3,13 +3,10 @@
 import { Suspense } from 'react';
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { 
+import {
   NativeButton,
   NativeCard,
-  NativeCardContent,
-  NativeCardDescription,
-  NativeCardHeader,
-  NativeCardTitle
+  NativeCardContent
 } from "@/components/ui/native";
 
 function AuthErrorContent() {

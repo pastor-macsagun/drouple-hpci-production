@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/native'
 import { 
   Users, UserCheck, Calendar,
-  Activity, Download, Filter 
+  Activity, Download 
 } from 'lucide-react'
 import Link from 'next/link'
 

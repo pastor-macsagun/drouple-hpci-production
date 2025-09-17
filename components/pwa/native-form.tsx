@@ -321,10 +321,10 @@ export function NativeForm({
           </div>
           <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
             <MobileButton
-              variant="primary"
+              variant="default"
               onClick={() => setActiveSheet(null)}
               className="w-full"
-              hapticFeedback="medium"
+              hapticFeedback
             >
               Done ({currentValues.length} selected)
             </MobileButton>
@@ -386,18 +386,17 @@ export function NativeForm({
             }}
             disabled={loading || isSubmitting}
             className="flex-1"
-            hapticFeedback="light"
+            hapticFeedback
           >
             {cancelLabel}
           </MobileButton>
         )}
         <MobileButton
-          variant="primary"
+          variant="default"
           onClick={handleSubmit}
           disabled={loading || isSubmitting}
-          loading={isSubmitting}
           className="flex-1"
-          hapticFeedback="medium"
+          hapticFeedback
         >
           {submitLabel}
         </MobileButton>

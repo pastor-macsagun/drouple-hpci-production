@@ -7,7 +7,6 @@ import {
   updateFirstTimer,
   deleteFirstTimer,
   markBelieverInactive,
-  setBelieverStatus,
 } from '@/app/actions/firsttimers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,7 +37,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { UserPlus, CheckCircle, Circle, Trash2, Edit, XCircle, Filter, Users, UserCheck } from 'lucide-react'
+import { UserPlus, CheckCircle, Circle, Trash2, Edit, XCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 

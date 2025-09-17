@@ -8,8 +8,6 @@ import { hasMinRole } from '@/lib/rbac'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Progress } from '@/components/ui/progress'
 import { CheckCircle2, Circle, User, Calendar } from 'lucide-react'
 import { StepVerificationForm } from './step-verification-form'
@@ -172,7 +170,7 @@ export default async function LeaderPathwaysPage() {
                           )}
                           {step.completed && step.progress?.notes && (
                             <p className="text-xs text-ink-muted mt-1 italic">
-                              "{step.progress.notes}"
+                              &quot;{step.progress.notes}&quot;
                             </p>
                           )}
                         </div>

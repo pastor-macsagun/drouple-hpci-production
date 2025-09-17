@@ -155,7 +155,7 @@ export async function getNotificationPreferences() {
   }
 }
 
-export async function updateNotificationPreferences(formData: FormData) {
+export async function updateNotificationPreferences() {
   // Authentication check
   const user = await getCurrentUser()
   if (!user) {

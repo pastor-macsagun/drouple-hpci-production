@@ -20,7 +20,7 @@ import { setup2FA, enable2FA, disable2FA, get2FAStatus } from './actions'
 import { useMobileNotifications } from '@/components/mobile/notification-manager'
 
 export default function TwoFactorAuthPage() {
-  const { showSuccess, showError } = useMobileNotifications()
+  const { showSuccess } = useMobileNotifications()
   const [status, setStatus] = useState<{
     enabled: boolean
     required: boolean

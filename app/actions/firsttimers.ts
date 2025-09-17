@@ -431,7 +431,7 @@ export async function getFirstTimersWithFilters(filters?: {
   }
 
   // Build filter conditions
-  const whereConditions: any = {
+  const whereConditions: Record<string, unknown> = {
     ...(user.role !== UserRole.SUPER_ADMIN && {
       member: { tenantId: user.tenantId }
     })

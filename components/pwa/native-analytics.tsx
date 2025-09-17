@@ -128,7 +128,7 @@ export function NativeAnalytics({
         `${item.label}: ${item.value.toLocaleString()}`
       ).join('\n')
       
-      if ('clipboard' in navigator && navigator.clipboard) {
+      if ('clipboard' in navigator && (navigator as any).clipboard) {
         await (navigator as any).clipboard.writeText(`${title}\n\n${summaryText}`)
         triggerHaptic('success')
       }
@@ -351,7 +351,7 @@ export function NativeAnalytics({
               variant="ghost"
               size="sm"
               onClick={handleShare}
-              hapticFeedback={"light" as any}
+              hapticFeedback
             >
               <Share className="w-4 h-4" />
             </MobileButton>
@@ -359,7 +359,7 @@ export function NativeAnalytics({
               variant="ghost"
               size="sm"
               onClick={() => setShowValues(!showValues)}
-              hapticFeedback={"light" as any}
+              hapticFeedback
             >
               {showValues ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </MobileButton>
@@ -409,7 +409,7 @@ export function NativeAnalytics({
               variant={chartType === 'line' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChartTypeChange('line')}
-              hapticFeedback={"light" as any}
+              hapticFeedback
             >
               <LineChart className="w-4 h-4" />
             </MobileButton>
@@ -417,7 +417,7 @@ export function NativeAnalytics({
               variant={chartType === 'bar' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChartTypeChange('bar')}
-              hapticFeedback={"light" as any}
+              hapticFeedback
             >
               <BarChart3 className="w-4 h-4" />
             </MobileButton>
@@ -425,7 +425,7 @@ export function NativeAnalytics({
               variant={chartType === 'pie' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleChartTypeChange('pie')}
-              hapticFeedback={"light" as any}
+              hapticFeedback
             >
               <PieChart className="w-4 h-4" />
             </MobileButton>
@@ -437,7 +437,7 @@ export function NativeAnalytics({
               variant="outline"
               size="sm"
               onClick={() => handleExport('csv')}
-              hapticFeedback="medium"
+              hapticFeedback
             >
               CSV
             </MobileButton>
@@ -445,7 +445,7 @@ export function NativeAnalytics({
               variant="outline"
               size="sm"
               onClick={() => handleExport('json')}
-              hapticFeedback="medium"
+              hapticFeedback
             >
               JSON
             </MobileButton>
@@ -453,7 +453,7 @@ export function NativeAnalytics({
               variant="outline"
               size="sm"
               onClick={() => handleExport('image')}
-              hapticFeedback="medium"
+              hapticFeedback
             >
               IMG
             </MobileButton>

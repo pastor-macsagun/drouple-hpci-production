@@ -79,7 +79,7 @@ export default async function PathwaysPage() {
                 <div className="flex-1">
                   <CardTitle className="text-green-900">Congratulations! 🎉</CardTitle>
                   <CardDescription className="text-green-700">
-                    You've completed the ROOTS pathway! Ready to grow deeper in your faith?
+                    You&apos;ve completed the ROOTS pathway! Ready to grow deeper in your faith?
                   </CardDescription>
                 </div>
               </div>

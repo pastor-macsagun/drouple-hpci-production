@@ -1,9 +1,7 @@
-import { 
-  NativeCard, 
-  NativeCardContent, 
-  NativeCardHeader, 
-  NativeCardTitle,
-  NativeButton 
+import {
+  NativeCard,
+  NativeCardContent,
+  NativeButton
 } from '@/components/ui/native'
 import Link from 'next/link'
 import { CheckCircle, Mail } from 'lucide-react'
@@ -35,7 +33,7 @@ export default function RegistrationSuccessPage() {
           <NativeCardContent className="text-center space-y-6">
             <div className="space-y-3">
               <p className="text-ink">
-                Thank you for registering! We've sent you a welcome email.
+                Thank you for registering! We&apos;ve sent you a welcome email.
               </p>
               <div className="flex items-center justify-center gap-2 text-sm text-ink-muted">
                 <Mail className="h-4 w-4" />
@@ -64,7 +62,7 @@ export default function RegistrationSuccessPage() {
             </div>
 
             <p className="text-xs text-ink-muted pt-4">
-              Didn't receive the email? Check your spam folder or try signing in 
+              Didn&apos;t receive the email? Check your spam folder or try signing in 
               with your email address to request a new magic link.
             </p>
           </NativeCardContent>

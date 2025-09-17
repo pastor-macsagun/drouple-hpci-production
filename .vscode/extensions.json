@@ -1,0 +1,36 @@
+{
+  "recommendations": [
+    // TypeScript & JavaScript
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+
+    // React & Next.js
+    "burkeholland.simple-react-snippets",
+    "pulkitgangwar.nextjs-snippets",
+
+    // Tailwind CSS
+    "bradlc.vscode-tailwindcss",
+
+    // Prisma
+    "prisma.prisma",
+
+    // Git
+    "eamodio.gitlens",
+
+    // Testing
+    "vitest.explorer",
+    "ms-playwright.playwright",
+
+    // Utilities
+    "christian-kohler.path-intellisense",
+    "formulahendry.auto-rename-tag",
+    "naumovs.color-highlight",
+    "streetsidesoftware.code-spell-checker",
+
+    // Environment Variables
+    "mikestead.dotenv",
+
+    // PWA
+    "johnpapa.vscode-peacock"
+  ]
+}

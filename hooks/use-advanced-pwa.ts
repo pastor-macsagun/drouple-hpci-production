@@ -14,39 +14,50 @@ interface ContactProperty {
   tel?: string[]
 }
 
+// Type declarations for experimental Web APIs
+interface ContactsManager {
+  select(properties: string[], options?: ContactsSelectOptions): Promise<ContactProperty[]>
+  getProperties(): Promise<string[]>
+}
+
+interface AppBadgeAPI {
+  setAppBadge?: (count?: number) => Promise<void>
+  clearAppBadge?: () => Promise<void>
+}
+
+interface WakeLockAPI {
+  request(type: 'screen'): Promise<WakeLockSentinel>
+}
+
+interface CustomWakeLockSentinel {
+  type: string
+  released: boolean
+  release(): Promise<void>
+  addEventListener(type: 'release', listener: () => void): void
+  removeEventListener(type: 'release', listener: () => void): void
+}
+
 declare global {
   interface Navigator {
-    contacts?: {
-      select(properties: string[], options?: ContactsSelectOptions): Promise<ContactProperty[]>
-      getProperties(): Promise<string[]>
-    }
+    contacts?: ContactsManager
     setAppBadge?: (count?: number) => Promise<void>
     clearAppBadge?: () => Promise<void>
-    wakeLock?: {
-      request(type: 'screen'): Promise<WakeLockSentinel>
-    }
-  }
-
-  interface WakeLockSentinel {
-    type: string
-    released: boolean
-    release(): Promise<void>
-    addEventListener(type: 'release', listener: () => void): void
-    removeEventListener(type: 'release', listener: () => void): void
   }
 }
 
 // Background Fetch API
-interface ServiceWorkerRegistration {
-  backgroundFetch?: {
-    fetch(
-      id: string,
-      requests: RequestInfo | RequestInfo[],
-      options?: BackgroundFetchOptions
-    ): Promise<BackgroundFetchRegistration>
-    get(id: string): Promise<BackgroundFetchRegistration | undefined>
-    getIds(): Promise<string[]>
-  }
+interface BackgroundFetchManager {
+  fetch(
+    id: string,
+    requests: RequestInfo | RequestInfo[],
+    options?: BackgroundFetchOptions
+  ): Promise<BackgroundFetchRegistration>
+  get(id: string): Promise<BackgroundFetchRegistration | undefined>
+  getIds(): Promise<string[]>
+}
+
+interface CustomServiceWorkerRegistration extends ServiceWorkerRegistration {
+  backgroundFetch?: BackgroundFetchManager
 }
 
 interface BackgroundFetchOptions {
@@ -145,16 +156,16 @@ export function useAdvancedPWA() {
     typeof navigator !== 'undefined' && 'wakeLock' in navigator
   )
   
-  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null)
+  const [wakeLock, setWakeLock] = useState<CustomWakeLockSentinel | null>(null)
 
   const requestWakeLock = useCallback(async (): Promise<boolean> => {
-    if (!wakeLockSupported || !navigator.wakeLock) {
+    if (!wakeLockSupported || !(navigator as any).wakeLock) {
       return false
     }
 
     try {
-      const sentinel = await navigator.wakeLock.request('screen')
-      setWakeLock(sentinel)
+      const sentinel = await (navigator as any).wakeLock.request('screen')
+      setWakeLock(sentinel as CustomWakeLockSentinel)
       
       // Handle wake lock release
       sentinel.addEventListener('release', () => {
@@ -199,7 +210,7 @@ export function useAdvancedPWA() {
     }
 
     try {
-      const registration = await navigator.serviceWorker.ready
+      const registration = await navigator.serviceWorker.ready as CustomServiceWorkerRegistration
       if (!registration.backgroundFetch) {
         return false
       }
@@ -223,7 +234,7 @@ export function useAdvancedPWA() {
     }
 
     try {
-      const registration = await navigator.serviceWorker.ready
+      const registration = await navigator.serviceWorker.ready as CustomServiceWorkerRegistration
       if (!registration.backgroundFetch) {
         return null
       }
@@ -253,7 +264,7 @@ export function useAdvancedPWA() {
     await setBadge(count)
     
     // Haptic feedback
-    triggerHaptic('notification')
+    triggerHaptic('medium')
   }, [setBadge, triggerHaptic])
 
   const downloadWithProgress = useCallback(async (
@@ -297,7 +308,7 @@ export function useAdvancedPWA() {
         }
       }
 
-      const blob = new Blob(chunks)
+      const blob = new Blob(chunks as BlobPart[])
       const downloadUrl = URL.createObjectURL(blob)
       
       const a = document.createElement('a')

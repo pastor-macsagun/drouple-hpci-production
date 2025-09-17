@@ -2,14 +2,11 @@
 
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
-import { 
+import {
   NativeButton,
   NativeInput,
   NativeCard,
-  NativeCardContent,
-  NativeCardDescription,
-  NativeCardHeader,
-  NativeCardTitle
+  NativeCardContent
 } from '@/components/ui/native'
 import { useToast } from '@/components/ui/use-toast'
 import { Lock } from 'lucide-react'

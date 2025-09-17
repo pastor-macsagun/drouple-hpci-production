@@ -1,11 +1,9 @@
 import { prisma } from '@/lib/prisma'
-import { 
-  NativeCard, 
-  NativeCardContent, 
-  NativeCardHeader, 
-  NativeCardTitle,
+import {
+  NativeCard,
+  NativeCardContent,
   NativeButton,
-  NativeInput 
+  NativeInput
 } from '@/components/ui/native'
 import { registerMember } from './actions'
 import Link from 'next/link'
