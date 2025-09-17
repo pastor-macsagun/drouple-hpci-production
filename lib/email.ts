@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import { generateSecurePassword } from './password'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 export async function sendPasswordResetEmail(
   userEmail: string,
@@ -9,7 +9,7 @@ export async function sendPasswordResetEmail(
   newPassword: string,
   fromEmail: string = 'noreply@drouple.app'
 ) {
-  if (!process.env.RESEND_API_KEY) {
+  if (!process.env.RESEND_API_KEY || !resend) {
     console.warn('RESEND_API_KEY not configured - email not sent')
     return { success: false, error: 'Email service not configured' }
   }
