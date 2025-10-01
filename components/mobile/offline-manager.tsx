@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback, ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { WifiOff, Wifi, Cloud, CloudOff, RefreshCw, AlertCircle } from "lucide-react";
+import { WifiOff, Cloud, CloudOff, RefreshCw, AlertCircle } from "lucide-react";
 import { triggerHapticFeedback } from "@/lib/mobile-utils";
 
 interface OfflineManagerProps {
   children: ReactNode;
-  onOfflineAction?: (action: string, data: any) => void;
+  onOfflineAction?: (action: string, data: unknown) => void;
   enableQueueIndicator?: boolean;
 }
 
@@ -15,7 +15,7 @@ interface QueuedAction {
   id: string;
   type: string;
   timestamp: number;
-  data: any;
+  data: unknown;
   retryCount: number;
 }
 
@@ -28,6 +28,33 @@ export function OfflineManager({
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error'>('idle');
   const [queuedActions, setQueuedActions] = useState<QueuedAction[]>([]);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+
+  // Process queued actions when online
+  const processSyncQueue = useCallback(async () => {
+    if (!isOnline || queuedActions.length === 0) return;
+
+    setSyncStatus('syncing');
+
+    try {
+      for (const action of queuedActions) {
+        try {
+          await onOfflineAction?.(action.type, action.data);
+          // Remove successful action from queue
+          setQueuedActions(prev => prev.filter(a => a.id !== action.id));
+        } catch (actionError) {
+          console.error('Failed to sync action:', actionError);
+          // Keep action in queue for retry
+        }
+      }
+
+      setSyncStatus('idle');
+      setLastSyncTime(new Date());
+
+    } catch (error) {
+      console.error('Sync queue error:', error);
+      setSyncStatus('error');
+    }
+  }, [isOnline, queuedActions, onOfflineAction]);
 
   // Monitor online/offline status
   useEffect(() => {
@@ -55,63 +82,10 @@ export function OfflineManager({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [queuedActions.length]);
+  }, [queuedActions.length, processSyncQueue]);
 
-  // Process queued actions when online
-  const processSyncQueue = useCallback(async () => {
-    if (!isOnline || queuedActions.length === 0) return;
-    
-    setSyncStatus('syncing');
-    
-    try {
-      for (const action of queuedActions) {
-        try {
-          await onOfflineAction?.(action.type, action.data);
-          // Remove successful action from queue
-          setQueuedActions(prev => prev.filter(a => a.id !== action.id));
-        } catch (error) {
-          // Increment retry count
-          setQueuedActions(prev => 
-            prev.map(a => 
-              a.id === action.id 
-                ? { ...a, retryCount: a.retryCount + 1 }
-                : a
-            )
-          );
-          
-          // Remove after 3 failed attempts
-          if (action.retryCount >= 3) {
-            setQueuedActions(prev => prev.filter(a => a.id !== action.id));
-          }
-        }
-      }
-      
-      setLastSyncTime(new Date());
-      setSyncStatus('idle');
-    } catch (error) {
-      setSyncStatus('error');
-      setTimeout(() => setSyncStatus('idle'), 3000);
-    }
-  }, [isOnline, queuedActions, onOfflineAction]);
-
-  // Add action to queue when offline
-  const queueAction = useCallback((type: string, data: any) => {
-    if (isOnline) {
-      onOfflineAction?.(type, data);
-      return;
-    }
-    
-    const action: QueuedAction = {
-      id: Date.now().toString(),
-      type,
-      timestamp: Date.now(),
-      data,
-      retryCount: 0,
-    };
-    
-    setQueuedActions(prev => [...prev, action]);
-    triggerHapticFeedback('impact-light');
-  }, [isOnline, onOfflineAction]);
+  // Note: queueAction function removed as it was unused
+  // If needed in the future, it can be re-added and exposed via a hook
 
   return (
     <div className="relative">

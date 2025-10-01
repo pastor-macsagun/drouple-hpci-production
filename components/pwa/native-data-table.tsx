@@ -93,11 +93,15 @@ export function NativeDataTable<T extends { id: string | number }>({
         {searchable && (
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+            <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" data-testid="native-data-table-loading" />
           </div>
         )}
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="bg-white dark:bg-gray-900 rounded-lg p-4 animate-pulse">
+          <div
+            key={i}
+            className="bg-white dark:bg-gray-900 rounded-lg p-4 animate-pulse"
+            data-testid="native-data-table-loading"
+          >
             <div className="space-y-2">
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
@@ -120,6 +124,7 @@ export function NativeDataTable<T extends { id: string | number }>({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-10 pl-10 pr-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            data-testid="native-data-table-search"
           />
         </div>
       )}
@@ -166,6 +171,7 @@ export function NativeDataTable<T extends { id: string | number }>({
                 "bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-200",
                 activeRowId === item.id && "ring-2 ring-blue-500"
               )}
+              data-testid="native-data-table-row"
             >
               {/* Mobile Card Layout */}
               <div className="md:hidden p-4">

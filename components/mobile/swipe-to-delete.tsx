@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface SwipeToDeleteProps {
   children: ReactNode;

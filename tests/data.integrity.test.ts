@@ -1,9 +1,16 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { PrismaClient } from '@prisma/client'
+import { isDatabaseAvailable } from './utils/db-availability'
 
 const prisma = new PrismaClient()
+const dbAvailable = await isDatabaseAvailable()
+if (!dbAvailable) {
+  console.warn('[vitest] Skipping Data Integrity Constraints tests because the Postgres test database is unavailable.')
+  await prisma.$disconnect().catch(() => undefined)
+}
+const describeIfDb = dbAvailable ? describe : describe.skip
 
-describe('Data Integrity Constraints', () => {
+describeIfDb('Data Integrity Constraints', () => {
   beforeAll(async () => {
     // Clean up test data
     await prisma.$transaction([

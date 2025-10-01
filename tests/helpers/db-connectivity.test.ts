@@ -1,7 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { prisma } from '../../lib/prisma'
+import { isDatabaseAvailable } from '../utils/db-availability'
 
-describe('Database Connectivity', () => {
+const dbAvailable = await isDatabaseAvailable()
+if (!dbAvailable) {
+  console.warn('[vitest] Skipping Database Connectivity tests because the Postgres test database is unavailable.')
+  await prisma.$disconnect().catch(() => undefined)
+}
+const describeIfDb = dbAvailable ? describe : describe.skip
+
+describeIfDb('Database Connectivity', () => {
   it('should connect to database successfully', async () => {
     const result = await prisma.$queryRaw`SELECT 1 as connected`
     expect(result).toBeDefined()

@@ -6,13 +6,6 @@ import { MobileButton } from "./mobile-button";
 import { useMobileNotifications } from "./notification-manager";
 import { triggerHapticFeedback } from "@/lib/mobile-utils";
 
-interface PushSubscription {
-  endpoint: string;
-  keys: {
-    p256dh: string;
-    auth: string;
-  };
-}
 
 interface NotificationPermissionState {
   permission: NotificationPermission;
@@ -39,11 +32,6 @@ export function PushNotifications({
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useMobileNotifications();
 
-  // Check notification support and permission on mount
-  useEffect(() => {
-    checkNotificationSupport();
-  }, []);
-
   const checkNotificationSupport = useCallback(async () => {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !('Notification' in window)) {
       setState(prev => ({ ...prev, supported: false }));
@@ -57,8 +45,8 @@ export function PushNotifications({
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
       subscribed = !!subscription;
-    } catch (error) {
-      console.warn('Failed to check push subscription:', error);
+    } catch {
+      // Silently handle subscription check failure
     }
 
     setState({
@@ -67,6 +55,11 @@ export function PushNotifications({
       subscribed,
     });
   }, []);
+
+  // Check notification support and permission on mount
+  useEffect(() => {
+    checkNotificationSupport();
+  }, [checkNotificationSupport]);
 
   const requestNotificationPermission = useCallback(async (): Promise<boolean> => {
     if (!state.supported) {
@@ -92,7 +85,7 @@ export function PushNotifications({
       }
 
       return false;
-    } catch (error) {
+    } catch {
       showError("Permission Error", "Failed to request notification permission");
       return false;
     }
@@ -301,7 +294,7 @@ export function usePushNotifications() {
       const subscribed = !!subscription;
       setIsSubscribed(subscribed);
       return subscribed;
-    } catch (error) {
+    } catch {
       return false;
     }
   }, []);
@@ -317,7 +310,7 @@ export function usePushNotifications() {
 
       showSuccess("Test Sent", "Check your notifications");
       triggerHapticFeedback('success');
-    } catch (error) {
+    } catch {
       showError("Test Failed", "Unable to send test notification");
       triggerHapticFeedback('error');
     }
@@ -362,7 +355,7 @@ export interface NotificationContent {
     title: string;
     icon?: string;
   }>;
-  data?: any;
+  data?: unknown;
   tag?: string;
   requireInteraction?: boolean;
   silent?: boolean;
@@ -379,7 +372,7 @@ export function createRichNotification(content: NotificationContent): Notificati
     data: {
       url: '/',
       timestamp: Date.now(),
-      ...content.data,
+      ...(content.data || {}),
     },
   };
 }

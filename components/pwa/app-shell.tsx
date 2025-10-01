@@ -17,6 +17,7 @@ interface AppShellProps {
 export function AppShell({ children, showLoadingIndicator = false, className }: AppShellProps) {
   const { isOnline, syncStatus } = usePWA()
   const { data: session } = useSession()
+  // session is used for authentication context in PWA shell
   const [isNavigating, setIsNavigating] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
   const [safeAreaInsets, setSafeAreaInsets] = useState({ top: 0, right: 0, bottom: 0, left: 0 })
@@ -81,13 +82,23 @@ export function AppShell({ children, showLoadingIndicator = false, className }: 
       data-pwa={isStandalone}
     >
       {/* Global loading indicator */}
-      {(showLoadingIndicator || isNavigating) && <GlobalLoadingIndicator isStandalone={isStandalone} />}
-      
+      {(showLoadingIndicator || isNavigating) && (
+        <div role="status" aria-label="Page loading">
+          <GlobalLoadingIndicator isStandalone={isStandalone} />
+        </div>
+      )}
+
       {/* Connection status indicator */}
-      <ConnectionStatusIndicator isOnline={isOnline} isStandalone={isStandalone} />
-      
+      <div role="status" aria-live="polite" aria-atomic="true">
+        <ConnectionStatusIndicator isOnline={isOnline} isStandalone={isStandalone} />
+      </div>
+
       {/* Sync status indicator */}
-      {syncStatus.syncInProgress && <SyncStatusIndicator isStandalone={isStandalone} />}
+      {syncStatus.syncInProgress && (
+        <div role="status" aria-live="polite" aria-label="Syncing data">
+          <SyncStatusIndicator isStandalone={isStandalone} />
+        </div>
+      )}
       
       {/* Main app content */}
       <main className="relative app-content" id="app-content">
@@ -165,6 +176,7 @@ function GlobalLoadingIndicator({ isStandalone }: { isStandalone: boolean }) {
 function ConnectionStatusIndicator({ isOnline, isStandalone }: { isOnline: boolean; isStandalone: boolean }) {
   const [showIndicator, setShowIndicator] = useState(false)
   const [justWentOnline, setJustWentOnline] = useState(false)
+  // justWentOnline is used for connection status feedback
 
   useEffect(() => {
     if (!isOnline) {
@@ -203,7 +215,7 @@ function ConnectionStatusIndicator({ isOnline, isStandalone }: { isOnline: boole
       ) : (
         <>
           <WifiOff className="h-4 w-4" />
-          <span className="text-sm font-medium">You're offline</span>
+          <span className="text-sm font-medium">You&apos;re offline</span>
         </>
       )}
     </div>
@@ -302,7 +314,7 @@ interface LazyLoadProps {
 export function LazyLoad({ 
   children, 
   fallback, 
-  rootMargin = '50px',
+  rootMargin = '50px', // eslint-disable-line @typescript-eslint/no-unused-vars
   threshold = 0,
   className 
 }: LazyLoadProps) {

@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const PLAYWRIGHT_HOST = process.env.PLAYWRIGHT_HOST ?? '127.0.0.1';
+const PLAYWRIGHT_PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3100);
+const PLAYWRIGHT_BASE_URL = `http://${PLAYWRIGHT_HOST}:${PLAYWRIGHT_PORT}`;
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -15,10 +19,13 @@ export default defineConfig({
   timeout: 120_000, // 2 minutes per test (increased from 30s for axe-core scans)
   expect: {
     timeout: 20_000, // 20s for expect assertions (increased from 8s for stability)
+    // Visual regression settings
+    toHaveScreenshot: { maxDiffPixelRatio: 0.2 },
+    // Update screenshots with `npx playwright test --update-snapshots`
   },
   
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: PLAYWRIGHT_BASE_URL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -37,11 +44,44 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+
+    // Mobile tests for PWA
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+    },
+
+    // Visual regression tests
+    {
+      name: 'visual-regression',
+      testDir: './tests/visual',
+      use: {
+        ...devices['Pixel 5'],
+        // Specific settings for visual tests
+        colorScheme: 'light',
+      },
+    },
+
+    // PWA-specific tests
+    {
+      name: 'pwa-tests',
+      testMatch: '**/pwa*.spec.ts',
+      use: {
+        ...devices['Pixel 5'],
+        // Enable service worker for PWA tests
+        serviceWorkers: 'allow',
+      },
+    }
   ],
 
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
+    command: `npm run dev -- --hostname ${PLAYWRIGHT_HOST} --port ${PLAYWRIGHT_PORT}`,
+    url: PLAYWRIGHT_BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

@@ -114,18 +114,33 @@ describe('Advanced PWA APIs', () => {
       mockShowSaveFilePicker.mockRejectedValue(new Error('API not available'))
       
       // Mock traditional download elements
-      const mockLink = {
-        click: vi.fn(),
-        href: '',
-        download: ''
-      }
-      const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink as any)
-      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any)
-      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any)
+      const mockLink = document.createElement('a')
+      const clickSpy = vi.spyOn(mockLink, 'click').mockImplementation(() => undefined)
+      const originalCreateElement = document.createElement.bind(document)
+      const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+        if (tagName.toLowerCase() === 'a') {
+          return mockLink
+        }
+        return originalCreateElement(tagName)
+      })
+      const originalAppendChild = document.body.appendChild.bind(document.body)
+      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation((element: Node) => {
+        return originalAppendChild(element)
+      })
+      const originalRemoveChild = document.body.removeChild.bind(document.body)
+      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation((element: Node) => {
+        return originalRemoveChild(element)
+      })
       
       // Mock URL methods
-      const createObjectURLSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test')
-      const revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+      Object.defineProperty(URL, 'createObjectURL', {
+        value: vi.fn().mockReturnValue('blob:test'),
+        writable: true
+      })
+      Object.defineProperty(URL, 'revokeObjectURL', {
+        value: vi.fn(),
+        writable: true
+      })
       
       const { result } = renderHook(() => useNativeFileSystem())
       
@@ -138,15 +153,13 @@ describe('Advanced PWA APIs', () => {
       })
       
       expect(createElementSpy).toHaveBeenCalledWith('a')
-      expect(mockLink.click).toHaveBeenCalled()
-      expect(createObjectURLSpy).toHaveBeenCalled()
-      expect(revokeObjectURLSpy).toHaveBeenCalled()
-      
+      expect(clickSpy).toHaveBeenCalled()
+      expect(URL.createObjectURL).toHaveBeenCalled()
+      expect(URL.revokeObjectURL).toHaveBeenCalled()
+
       createElementSpy.mockRestore()
       appendChildSpy.mockRestore()
       removeChildSpy.mockRestore()
-      createObjectURLSpy.mockRestore()
-      revokeObjectURLSpy.mockRestore()
     })
 
     it('opens files using native API', async () => {
@@ -376,11 +389,11 @@ describe('Advanced PWA APIs', () => {
     it('requests and releases wake lock', async () => {
       const mockSentinel = {
         released: false,
-        release: vi.fn(),
+        release: vi.fn().mockResolvedValue(undefined),
         addEventListener: vi.fn(),
         removeEventListener: vi.fn()
       }
-      
+
       mockWakeLock.request.mockResolvedValue(mockSentinel)
       
       const { result } = renderHook(() => useAdvancedPWA())
@@ -441,12 +454,31 @@ describe('Advanced PWA APIs', () => {
       const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(mockResponse as any)
       
       // Mock URL and DOM methods
-      const createObjectURLSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test')
-      const revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
-      const mockLink = { click: vi.fn(), href: '', download: '' }
-      const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink as any)
-      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any)
-      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any)
+      Object.defineProperty(URL, 'createObjectURL', {
+        value: vi.fn().mockReturnValue('blob:test'),
+        writable: true
+      })
+      Object.defineProperty(URL, 'revokeObjectURL', {
+        value: vi.fn(),
+        writable: true
+      })
+      const mockLink = document.createElement('a')
+      const clickSpy = vi.spyOn(mockLink, 'click').mockImplementation(() => undefined)
+      const originalCreateElement = document.createElement.bind(document)
+      const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
+        if (tagName.toLowerCase() === 'a') {
+          return mockLink
+        }
+        return originalCreateElement(tagName)
+      })
+      const originalAppendChild = document.body.appendChild.bind(document.body)
+      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation((element: Node) => {
+        return originalAppendChild(element)
+      })
+      const originalRemoveChild = document.body.removeChild.bind(document.body)
+      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation((element: Node) => {
+        return originalRemoveChild(element)
+      })
       
       const { result } = renderHook(() => useAdvancedPWA())
       const onProgress = vi.fn()
@@ -464,12 +496,10 @@ describe('Advanced PWA APIs', () => {
       expect(fetchSpy).toHaveBeenCalledWith('https://example.com/file.zip')
       expect(onProgress).toHaveBeenCalledWith(0.5) // First chunk
       expect(onProgress).toHaveBeenCalledWith(1.0)   // Complete
-      expect(mockLink.click).toHaveBeenCalled()
-      
+      expect(clickSpy).toHaveBeenCalled()
+
       // Cleanup
       fetchSpy.mockRestore()
-      createObjectURLSpy.mockRestore()
-      revokeObjectURLSpy.mockRestore()
       createElementSpy.mockRestore()
       appendChildSpy.mockRestore()
       removeChildSpy.mockRestore()

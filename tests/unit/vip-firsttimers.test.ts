@@ -51,7 +51,8 @@ vi.mock('@/lib/prisma', () => ({
     pathwayEnrollment: {
       create: vi.fn(),
       findFirst: vi.fn(),
-      update: vi.fn()
+      update: vi.fn(),
+      delete: vi.fn()
     },
     auditLog: {
       create: vi.fn()
@@ -114,12 +115,28 @@ describe('VIP First-Timer Management System', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+
+    mockPrisma.user.findUnique.mockImplementation(async (args: any) => {
+      const { where } = args || {}
+      if (where?.id === mockVipUser.id || where?.email === mockVipUser.email) {
+        return mockVipUser
+      }
+      if (where?.id === mockAdminUser.id || where?.email === mockAdminUser.email) {
+        return mockAdminUser
+      }
+      if (where?.id === mockMemberUser.id || where?.email === mockMemberUser.email) {
+        return mockMemberUser
+      }
+      return null
+    })
+
+    mockPrisma.pathwayEnrollment.delete.mockResolvedValue(undefined)
+    mockPrisma.pathwayEnrollment.update.mockResolvedValue(undefined)
   })
 
   describe('US-VIP-001: Immediate member creation', () => {
     it('should create User and FirstTimer in a single transaction', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       const mockCreatedUser = { 
         id: 'new_user_1', 
@@ -158,7 +175,8 @@ describe('VIP First-Timer Management System', () => {
 
     it('should enforce RBAC for VIP+ roles only', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'member@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockMemberUser)
+      mockPrisma.user.findUnique
+        .mockImplementationOnce(async () => mockMemberUser)
 
       await expect(createFirstTimer({
         name: 'Jane Doe',
@@ -169,8 +187,8 @@ describe('VIP First-Timer Management System', () => {
     it('should prevent duplicate email creation', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
       mockPrisma.user.findUnique
-        .mockResolvedValueOnce(mockVipUser)
-        .mockResolvedValueOnce({ id: 'existing_user', email: 'jane@test.com' })
+        .mockImplementationOnce(async () => mockVipUser)
+        .mockImplementationOnce(async () => ({ id: 'existing_user', email: 'jane@test.com' }))
 
       await expect(createFirstTimer({
         name: 'Jane Doe',
@@ -182,7 +200,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-002: ROOTS auto-enrollment', () => {
     it('should auto-enroll in ROOTS pathway during creation', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       const mockTransaction = vi.fn().mockImplementation(async (callback) => {
         const tx = {
@@ -230,7 +247,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-003: VIP Dashboard with filters', () => {
     it('should return filtered first-timers by assignment', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       mockPrisma.firstTimer.findMany.mockResolvedValue([mockFirstTimer])
 
@@ -251,7 +267,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should filter by believer status', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       const activeFirstTimer = {
         ...mockFirstTimer,
@@ -273,7 +288,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should enforce tenant isolation', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       mockPrisma.firstTimer.findMany.mockResolvedValue([])
 
       await getFirstTimersWithFilters()
@@ -291,7 +305,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-004: Gospel Shared toggle', () => {
     it('should update gospel shared status', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       mockPrisma.firstTimer.findUnique.mockResolvedValue(mockFirstTimer)
       mockPrisma.firstTimer.update.mockResolvedValue({
         ...mockFirstTimer,
@@ -316,7 +329,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should be idempotent', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       mockPrisma.firstTimer.findUnique.mockResolvedValue({
         ...mockFirstTimer,
         gospelShared: true
@@ -335,7 +347,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-005: ROOTS Completed mark', () => {
     it('should sync with pathway enrollment when marked complete', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       mockPrisma.firstTimer.findUnique.mockResolvedValue(mockFirstTimer)
       mockPrisma.firstTimer.update.mockResolvedValue({
         ...mockFirstTimer,
@@ -365,7 +376,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should not update if pathway already completed', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       mockPrisma.firstTimer.findUnique.mockResolvedValue(mockFirstTimer)
       mockPrisma.firstTimer.update.mockResolvedValue(mockFirstTimer)
       
@@ -383,7 +393,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-006: Believer Status management', () => {
     it('should change believer status with audit logging', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       const mockMembership = {
         id: 'membership_1',
@@ -431,7 +440,6 @@ describe('VIP First-Timer Management System', () => {
       // This test verifies that ROOTS pathway progress is NOT deleted
       // when believer status changes to INACTIVE
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       const mockMembership = {
         id: 'membership_1',
@@ -456,7 +464,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should enforce VIP+ role access', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'member@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockMemberUser)
 
       await expect(setBelieverStatus('membership_1', BelieverStatus.INACTIVE))
         .rejects.toThrow('Access denied. VIP role or higher required.')
@@ -466,7 +473,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-007: Assignments & notes', () => {
     it('should assign first-timer to VIP member', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       mockPrisma.firstTimer.findUnique.mockResolvedValue(mockFirstTimer)
       mockPrisma.firstTimer.update.mockResolvedValue({
         ...mockFirstTimer,
@@ -485,7 +491,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should enforce tenant isolation for assignments', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       const crossTenantFirstTimer = {
         ...mockFirstTimer,
@@ -501,7 +506,6 @@ describe('VIP First-Timer Management System', () => {
   describe('US-VIP-008: Admin reporting', () => {
     it('should return comprehensive analytics for admin users', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'admin@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockAdminUser)
       
       // Mock analytics data
       mockPrisma.firstTimer.count
@@ -543,7 +547,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should enforce admin+ role access', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
 
       await expect(getVipAnalytics())
         .rejects.toThrow('Access denied. Admin role or higher required.')
@@ -551,7 +554,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should respect tenant scoping for non-super admins', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'admin@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockAdminUser)
       
       mockPrisma.firstTimer.count.mockResolvedValue(0)
       mockPrisma.membership.groupBy.mockResolvedValue([])
@@ -569,7 +571,6 @@ describe('VIP First-Timer Management System', () => {
   describe('Performance and Security', () => {
     it('should handle concurrent first-timer creation', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
       
       // Mock transaction to ensure atomic operations
       mockPrisma.$transaction.mockImplementation(async (callback) => {
@@ -594,7 +595,6 @@ describe('VIP First-Timer Management System', () => {
 
     it('should validate all user inputs', async () => {
       mockAuth.mockResolvedValue({ user: { email: 'vip@test.com' } })
-      mockPrisma.user.findUnique.mockResolvedValue(mockVipUser)
 
       // Test empty name
       await expect(createFirstTimer({ name: '', email: 'test@test.com' }))

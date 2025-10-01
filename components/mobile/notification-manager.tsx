@@ -35,6 +35,13 @@ export function NotificationManager({
 }: NotificationManagerProps) {
   const [visibleNotifications, setVisibleNotifications] = useState<MobileNotification[]>([]);
 
+  const handleDismiss = useCallback((id: string) => {
+    const notification = notifications.find(n => n.id === id);
+    notification?.onDismiss?.();
+    onRemove(id);
+    triggerHapticFeedback('impact-light');
+  }, [notifications, onRemove]);
+
   useEffect(() => {
     // Show only the most recent notifications
     const recent = notifications.slice(-maxVisible);
@@ -48,14 +55,7 @@ export function NotificationManager({
         }, notification.duration);
       }
     });
-  }, [notifications, maxVisible]);
-
-  const handleDismiss = useCallback((id: string) => {
-    const notification = notifications.find(n => n.id === id);
-    notification?.onDismiss?.();
-    onRemove(id);
-    triggerHapticFeedback('impact-light');
-  }, [notifications, onRemove]);
+  }, [notifications, maxVisible, handleDismiss]);
 
   const handleAction = useCallback((notification: MobileNotification) => {
     notification.action?.onClick();

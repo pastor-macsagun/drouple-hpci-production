@@ -47,7 +47,7 @@ export class SyncManager {
   async queueOperation(
     type: SyncOperation['type'],
     entity: string,
-    data: any,
+    data: unknown,
     url: string,
     method: string,
     headers: Record<string, string> = {}
@@ -161,14 +161,14 @@ export class SyncManager {
     
     if (responseData && operation.type === 'CREATE' && responseData.data?.id) {
       // Update local record with server-generated ID
-      await this.updateLocalRecord(operation.entity, operation.data, responseData.data)
+      await this.updateLocalRecord(operation.entity, operation.data as Record<string, unknown>, responseData.data as Record<string, unknown>)
     }
   }
 
-  private async updateLocalRecord(entity: string, localData: any, serverData: any): Promise<void> {
+  private async updateLocalRecord(entity: string, localData: Record<string, unknown>, serverData: Record<string, unknown>): Promise<void> {
     try {
       // Get tenant ID from the local data or current session
-      const tenantId = localData.tenantId || await this.getStorage().getMetadata('currentTenantId')
+      const tenantId = (localData.tenantId as string) || (await this.getStorage().getMetadata('currentTenantId') as string)
       
       if (!tenantId) {
         console.warn('No tenant ID available for local record update')
@@ -206,8 +206,8 @@ export class SyncManager {
     syncInProgress: boolean
   }> {
     const operations = await this.getStorage().getSyncQueue()
-    const lastSync = await this.getStorage().getMetadata('lastSyncAttempt')
-    const lastSuccessfulSync = await this.getStorage().getMetadata('lastSuccessfulSync')
+    const lastSync = (await this.getStorage().getMetadata('lastSyncAttempt')) as number | null
+    const lastSuccessfulSync = (await this.getStorage().getMetadata('lastSuccessfulSync')) as number | null
 
     return {
       queuedOperations: operations.length,
@@ -229,7 +229,7 @@ export class SyncManager {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  private notifyClient(type: string, data: any): void {
+  private notifyClient(type: string, data: unknown): void {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({
         type: `client-${type}`,
@@ -266,7 +266,7 @@ export function getSyncManager(): SyncManager {
 }
 
 // Utility function to queue common operations
-export async function queueCheckin(checkinData: any, tenantId: string): Promise<string> {
+export async function queueCheckin(checkinData: Record<string, unknown>, tenantId: string): Promise<string> {
   const syncManager = getSyncManager()
   
   return syncManager.queueOperation(
@@ -279,7 +279,7 @@ export async function queueCheckin(checkinData: any, tenantId: string): Promise<
   )
 }
 
-export async function queueEventRSVP(rsvpData: any, eventId: string, tenantId: string): Promise<string> {
+export async function queueEventRSVP(rsvpData: Record<string, unknown>, eventId: string, tenantId: string): Promise<string> {
   const syncManager = getSyncManager()
   
   return syncManager.queueOperation(
@@ -292,7 +292,7 @@ export async function queueEventRSVP(rsvpData: any, eventId: string, tenantId: s
   )
 }
 
-export async function queueLifeGroupJoin(joinData: any, lifegroupId: string, tenantId: string): Promise<string> {
+export async function queueLifeGroupJoin(joinData: Record<string, unknown>, lifegroupId: string, tenantId: string): Promise<string> {
   const syncManager = getSyncManager()
   
   return syncManager.queueOperation(
@@ -305,7 +305,7 @@ export async function queueLifeGroupJoin(joinData: any, lifegroupId: string, ten
   )
 }
 
-export async function queuePathwayProgress(progressData: any, pathwayId: string, tenantId: string): Promise<string> {
+export async function queuePathwayProgress(progressData: Record<string, unknown>, pathwayId: string, tenantId: string): Promise<string> {
   const syncManager = getSyncManager()
   
   return syncManager.queueOperation(

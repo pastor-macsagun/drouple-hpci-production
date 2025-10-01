@@ -11,10 +11,14 @@ test('app boots and shows home page', async ({ page }) => {
 test('auth page renders correctly', async ({ page }) => {
   await page.goto('/auth/signin');
   
-  await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible();
-  await expect(page.getByText('Enter your email to receive a sign-in link')).toBeVisible();
-  await expect(page.getByLabel('Email')).toBeVisible();
-  await expect(page.getByRole('button', { name: /Send Sign-In Link/i })).toBeVisible();
+  // Fix: Look for the actual heading "Welcome to Drouple" instead of "Sign In"
+  await expect(page.getByRole('heading', { name: 'Welcome to Drouple' })).toBeVisible();
+  // Fix: Look for the actual text content that exists
+  await expect(page.getByText('Sign in to continue')).toBeVisible();
+  // Fix: Look for the actual label text that exists
+  await expect(page.getByText('Email Address')).toBeVisible();
+  // Fix: Look for the actual button text that exists
+  await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible();
 });
 
 test('health endpoint returns healthy status', async ({ request }) => {

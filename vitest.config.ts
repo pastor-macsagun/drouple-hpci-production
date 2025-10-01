@@ -96,6 +96,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './'),
       'next/server': path.resolve(__dirname, './node_modules/next/dist/server/web/exports/index.js'),
+      '@testing-library/user-event': path.resolve(__dirname, './tests/stubs/user-event.ts'),
     },
   },
 })

@@ -1,6 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
 import { useSession } from 'next-auth/react'
 import { getSyncManager } from './sync-manager'
 import { getOfflineStorage, onlineStatusChanged } from './offline-storage'
@@ -18,11 +23,11 @@ export interface PWAState {
     syncInProgress: boolean
   }
   offlineData: {
-    members: any[]
-    events: any[]
-    lifegroups: any[]
-    checkins: any[]
-    pathways: any[]
+    members: unknown[]
+    events: unknown[]
+    lifegroups: unknown[]
+    checkins: unknown[]
+    pathways: unknown[]
   }
 }
 
@@ -30,8 +35,8 @@ export interface PWAActions {
   installApp: () => Promise<void>
   triggerSync: () => Promise<void>
   clearOfflineData: () => Promise<void>
-  storeOfflineData: (entity: string, data: any[]) => Promise<void>
-  getOfflineData: (entity: string) => Promise<any[]>
+  storeOfflineData: (entity: string, data: unknown[]) => Promise<void>
+  getOfflineData: (entity: string) => Promise<unknown[]>
   // Background sync actions
   queueCheckin: (serviceId: string) => Promise<string>
   queueEventRSVP: (eventId: string, status: string) => Promise<string>
@@ -48,7 +53,7 @@ export function usePWA(): PWAState & PWAActions {
   const [isOnline, setIsOnline] = useState(true)
   const [isInstalled, setIsInstalled] = useState(false)
   const [canInstall, setCanInstall] = useState(false)
-  const [installPrompt, setInstallPrompt] = useState<any>(null)
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [syncStatus, setSyncStatus] = useState({
     queuedOperations: 0,
     lastSync: null as number | null,
@@ -56,11 +61,11 @@ export function usePWA(): PWAState & PWAActions {
     syncInProgress: false
   })
   const [offlineData, setOfflineData] = useState({
-    members: [] as any[],
-    events: [] as any[],
-    lifegroups: [] as any[],
-    checkins: [] as any[],
-    pathways: [] as any[]
+    members: [] as unknown[],
+    events: [] as unknown[],
+    lifegroups: [] as unknown[],
+    checkins: [] as unknown[],
+    pathways: [] as unknown[]
   })
 
   const [syncManager, setSyncManager] = useState<ReturnType<typeof getSyncManager> | null>(null)
@@ -84,7 +89,7 @@ export function usePWA(): PWAState & PWAActions {
   const checkInstallStatus = useCallback(() => {
     if (typeof window === 'undefined') return
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-    const isInWebAppiOS = (window.navigator as any).standalone === true
+    const isInWebAppiOS = 'standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone === true
     setIsInstalled(isStandalone || isInWebAppiOS)
   }, [])
 
@@ -144,7 +149,7 @@ export function usePWA(): PWAState & PWAActions {
     checkInstallStatus()
     
     // Listen for beforeinstallprompt event
-    const handleBeforeInstallPrompt = (e: any) => {
+    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault()
       setInstallPrompt(e)
       setCanInstall(true)
@@ -157,12 +162,12 @@ export function usePWA(): PWAState & PWAActions {
       setInstallPrompt(null)
     }
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    window.addEventListener('appinstalled', handleAppInstalled)
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as any)
+    window.addEventListener('appinstalled', handleAppInstalled as any)
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      window.removeEventListener('appinstalled', handleAppInstalled)
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as any)
+      window.removeEventListener('appinstalled', handleAppInstalled as any)
     }
   }, [checkInstallStatus])
 
@@ -180,7 +185,7 @@ export function usePWA(): PWAState & PWAActions {
 
   useEffect(() => {
     // Listen for sync events
-    const handleSyncSuccess = (_event: CustomEvent) => {
+    const handleSyncSuccess = () => {
       updateSyncStatus()
       loadOfflineData() // Refresh offline data after sync
     }
@@ -251,7 +256,7 @@ export function usePWA(): PWAState & PWAActions {
     }
   }, [session?.user?.tenantId, storage, loadOfflineData])
 
-  const storeOfflineData = useCallback(async (entity: string, data: any[]) => {
+  const storeOfflineData = useCallback(async (entity: string, data: unknown[]) => {
     if (!session?.user?.tenantId || !storage) return
 
     try {
@@ -281,7 +286,7 @@ export function usePWA(): PWAState & PWAActions {
     }
   }, [session?.user?.tenantId, storage, loadOfflineData])
 
-  const getOfflineData = useCallback(async (entity: string): Promise<any[]> => {
+  const getOfflineData = useCallback(async (entity: string): Promise<unknown[]> => {
     if (!session?.user?.tenantId || !storage) return []
 
     try {
@@ -432,9 +437,9 @@ export function usePWA(): PWAState & PWAActions {
 }
 
 // Utility hook for specific PWA features
-export function useOfflineFirst(entity: string, fetchFn: () => Promise<any[]>) {
+export function useOfflineFirst(entity: string, fetchFn: () => Promise<unknown[]>) {
   const { isOnline, offlineData, storeOfflineData, getOfflineData } = usePWA()
-  const [data, setData] = useState<any[]>([])
+  const [data, setData] = useState<unknown[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

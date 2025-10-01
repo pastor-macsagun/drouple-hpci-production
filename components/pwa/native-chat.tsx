@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { Send, Mic, MicOff, Smile, Paperclip, MoreVertical, Reply, Heart, ThumbsUp, Laugh, Frown, Angry } from 'lucide-react'
+import { Send, Mic, MicOff, Smile, Paperclip, Reply, Heart, ThumbsUp, Laugh, Frown, Angry } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { MobileButton } from '@/components/mobile/mobile-button'
 import { useHaptic } from '@/hooks/use-haptic'
@@ -181,9 +182,11 @@ export function NativeChat({
         {!isOwn && (
           <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0 overflow-hidden">
             {message.sender.avatar ? (
-              <img
+              <Image
                 src={message.sender.avatar}
                 alt={message.sender.name}
+                width={32}
+                height={32}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -225,7 +228,7 @@ export function NativeChat({
                 ? "bg-blue-500 text-white rounded-br-md"
                 : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-md"
             )}
-            onPointerDown={(e) => {
+            onPointerDown={() => {
               // Simple long press simulation
               const timeoutId = setTimeout(() => {
                 triggerHaptic('medium')
@@ -263,9 +266,11 @@ export function NativeChat({
             )}
 
             {message.type === 'image' && message.imageUrl && (
-              <img
+              <Image
                 src={message.imageUrl}
-                alt="Shared image"
+                alt="Shared attachment"
+                width={300}
+                height={200}
                 className="max-w-full rounded-lg"
               />
             )}

@@ -180,13 +180,19 @@ export function useAdvancedPWA() {
   }, [wakeLockSupported])
 
   const releaseWakeLock = useCallback(async (): Promise<void> => {
-    if (wakeLock && !wakeLock.released) {
-      try {
-        await wakeLock.release()
-        setWakeLock(null)
-      } catch (error) {
-        console.warn('Failed to release wake lock:', error)
+    if (!wakeLock || wakeLock.released) {
+      return
+    }
+
+    try {
+      const releaseResult = wakeLock.release?.()
+      if (releaseResult && typeof (releaseResult as Promise<void>).then === 'function') {
+        await releaseResult
       }
+    } catch (error) {
+      console.warn('Failed to release wake lock:', error)
+    } finally {
+      setWakeLock(null)
     }
   }, [wakeLock])
 
@@ -333,10 +339,12 @@ export function useAdvancedPWA() {
   useEffect(() => {
     return () => {
       if (wakeLock && !wakeLock.released) {
-        wakeLock.release().catch(console.warn)
+        releaseWakeLock().catch((error: unknown) => {
+          console.warn('Failed to release wake lock during cleanup:', error)
+        })
       }
     }
-  }, [wakeLock])
+  }, [wakeLock, releaseWakeLock])
 
   return {
     // Contact Picker API

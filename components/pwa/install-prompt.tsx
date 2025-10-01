@@ -39,24 +39,30 @@ export function InstallPrompt() {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 p-4">
+    <div
+      className="fixed top-0 left-0 right-0 z-50 p-4"
+      role="dialog"
+      aria-labelledby="install-prompt-title"
+      aria-describedby="install-prompt-description"
+    >
       <Card className="mx-auto max-w-md border-primary/20 bg-gradient-to-r from-primary/5 to-accent-secondary/5">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Download className="h-5 w-5 text-primary" />
-              <CardTitle className="text-base">Install Drouple</CardTitle>
+              <CardTitle id="install-prompt-title" className="text-base">Install Drouple</CardTitle>
             </div>
             <Button 
               variant="ghost" 
               size="icon"
               className="h-6 w-6 -mt-1 -mr-1"
               onClick={handleDismiss}
+              aria-label="Dismiss install prompt"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <CardDescription className="text-sm">
+          <CardDescription id="install-prompt-description" className="text-sm">
             Add to your home screen for quick access like a native app. Works offline with sync when back online!
           </CardDescription>
         </CardHeader>

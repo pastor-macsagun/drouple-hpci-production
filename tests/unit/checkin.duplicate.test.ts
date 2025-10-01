@@ -1,9 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { PrismaClient } from '@prisma/client'
+import { isDatabaseAvailable } from '../utils/db-availability'
 
 const prisma = new PrismaClient()
+const dbAvailable = await isDatabaseAvailable()
+if (!dbAvailable) {
+  console.warn('[vitest] Skipping Check-in Duplicate Handling tests because the Postgres test database is unavailable.')
+  await prisma.$disconnect().catch(() => undefined)
+}
+const describeIfDb = dbAvailable ? describe : describe.skip
 
-describe('Check-in Duplicate Handling', () => {
+describeIfDb('Check-in Duplicate Handling', () => {
   const testUserId = 'test_user_duplicate_checkin'
   const testServiceId = 'test_service_duplicate'
   
@@ -94,6 +101,10 @@ describe('Check-in Duplicate Handling', () => {
     await prisma.user.deleteMany({
       where: { id: testUserId }
     })
+  })
+
+  afterAll(async () => {
+    await prisma.$disconnect()
   })
 
   it('should handle duplicate check-in gracefully', async () => {

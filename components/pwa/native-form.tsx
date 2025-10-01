@@ -102,7 +102,7 @@ export function NativeForm({
     }
   }, [values, fields, validateField, onSubmit, triggerHaptic])
 
-  const renderField = useCallback((field: FormField) => {
+  const renderField = useCallback((field: FormField, inputId: string, labelId: string) => {
     const value = values[field.key]
     const error = errors[field.key]
 
@@ -124,6 +124,8 @@ export function NativeForm({
             placeholder={field.placeholder}
             className={baseFieldClasses}
             disabled={loading || isSubmitting}
+            id={inputId}
+            aria-labelledby={labelId}
           />
         )
 
@@ -136,6 +138,8 @@ export function NativeForm({
             rows={4}
             className={cn(baseFieldClasses, "resize-none")}
             disabled={loading || isSubmitting}
+            id={inputId}
+            aria-labelledby={labelId}
           />
         )
 
@@ -154,6 +158,9 @@ export function NativeForm({
               !selectedOption && "text-gray-500"
             )}
             disabled={loading || isSubmitting}
+            id={inputId}
+            aria-labelledby={labelId}
+            aria-haspopup="dialog"
           >
             <span>{selectedOption?.label || field.placeholder || 'Select option'}</span>
             <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -176,6 +183,9 @@ export function NativeForm({
               "flex items-center justify-between text-left min-h-[44px] py-2"
             )}
             disabled={loading || isSubmitting}
+            id={inputId}
+            aria-labelledby={labelId}
+            aria-haspopup="dialog"
           >
             <div className="flex-1">
               {selectedOptions.length > 0 ? (
@@ -206,6 +216,8 @@ export function NativeForm({
               onChange={(e) => updateValue(field.key, e.target.value)}
               className={cn(baseFieldClasses, "pr-10")}
               disabled={loading || isSubmitting}
+              id={inputId}
+              aria-labelledby={labelId}
             />
             <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
@@ -220,6 +232,8 @@ export function NativeForm({
               onChange={(e) => updateValue(field.key, e.target.value)}
               className={cn(baseFieldClasses, "pr-10")}
               disabled={loading || isSubmitting}
+              id={inputId}
+              aria-labelledby={labelId}
             />
             <Clock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
@@ -230,6 +244,8 @@ export function NativeForm({
           <label className="flex items-center justify-between cursor-pointer">
             <span className="text-sm text-gray-700 dark:text-gray-300">{field.label}</span>
             <div
+              role="switch"
+              tabIndex={0}
               className={cn(
                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
                 value ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
@@ -238,6 +254,15 @@ export function NativeForm({
                 triggerHaptic('light')
                 updateValue(field.key, !value)
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  triggerHaptic('light')
+                  updateValue(field.key, !value)
+                }
+              }}
+              aria-checked={Boolean(value)}
+              id={inputId}
             >
               <span
                 className={cn(
@@ -347,17 +372,24 @@ export function NativeForm({
       <form className="space-y-4">
         {fields.map((field) => {
           const error = errors[field.key]
+          const fieldId = `native-form-${field.key}`
+          const labelId = `native-form-label-${field.key}`
+          const isLabelable = !['select', 'multiselect', 'switch'].includes(field.type)
           
           return (
             <div key={field.key} className="space-y-1">
               {field.type !== 'switch' && (
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  id={labelId}
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor={isLabelable ? fieldId : undefined}
+                >
                   {field.label}
                   {field.required && <span className="text-red-500 ml-1">*</span>}
                 </label>
               )}
               
-              {renderField(field)}
+              {renderField(field, fieldId, labelId)}
               
               {field.description && (
                 <p className="text-xs text-gray-500 dark:text-gray-400">

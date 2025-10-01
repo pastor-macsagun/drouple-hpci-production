@@ -40,8 +40,23 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [
-          // X-Frame-Options, X-Content-Type-Options, and Referrer-Policy are set in vercel.json
-          // to avoid conflicts. Vercel config takes precedence in production deployment.
+          // Development security headers (vercel.json handles production)
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',

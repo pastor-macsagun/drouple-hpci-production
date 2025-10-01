@@ -35,62 +35,12 @@ export function NativeShare({
     return typeof navigator !== 'undefined' && 'share' in navigator;
   }, []);
 
-  const handleShare = useCallback(async () => {
-    if (!canShare()) {
-      // Fallback to clipboard
-      await handleCopyToClipboard();
-      return;
-    }
-
-    setIsSharing(true);
-    triggerHapticFeedback('tap');
-
-    try {
-      // Check if data is shareable
-      const shareData: ShareData = {};
-      
-      if (data.title) shareData.title = data.title;
-      if (data.text) shareData.text = data.text;
-      if (data.url) shareData.url = data.url;
-      
-      // Check file sharing support
-      if (data.files && data.files.length > 0) {
-        if (navigator.canShare && navigator.canShare({ files: data.files })) {
-          shareData.files = data.files;
-        } else {
-          // Files not supported, share URL only
-          if (!shareData.url && !shareData.text) {
-            showError("Share Error", "File sharing not supported on this device");
-            return;
-          }
-        }
-      }
-
-      await navigator.share(shareData);
-      triggerHapticFeedback('success');
-      showSuccess("Shared!", "Content shared successfully");
-      
-    } catch (error) {
-      triggerHapticFeedback('error');
-      
-      if ((error as Error).name === 'AbortError') {
-        // User cancelled sharing - no error message needed
-        return;
-      }
-      
-      // Fallback to clipboard on other errors
-      await handleCopyToClipboard();
-    } finally {
-      setIsSharing(false);
-    }
-  }, [data, canShare, showSuccess, showError]);
-
   const handleCopyToClipboard = useCallback(async () => {
     try {
       const textToShare = data.url || data.text || data.title || "";
-      
-      if ((navigator as any).clipboard) {
-        await (navigator as any).clipboard.writeText(textToShare);
+
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(textToShare);
         triggerHapticFeedback('success');
         showSuccess("Copied!", "Link copied to clipboard");
       } else {
@@ -112,6 +62,56 @@ export function NativeShare({
       showError("Copy Failed", "Unable to copy to clipboard");
     }
   }, [data, showSuccess, showError]);
+
+  const handleShare = useCallback(async () => {
+    if (!canShare()) {
+      // Fallback to clipboard
+      await handleCopyToClipboard();
+      return;
+    }
+
+    setIsSharing(true);
+    triggerHapticFeedback('tap');
+
+    try {
+      // Check if data is shareable
+      const shareData: ShareData = {};
+
+      if (data.title) shareData.title = data.title;
+      if (data.text) shareData.text = data.text;
+      if (data.url) shareData.url = data.url;
+
+      // Check file sharing support
+      if (data.files && data.files.length > 0) {
+        if (navigator.canShare && navigator.canShare({ files: data.files })) {
+          shareData.files = data.files;
+        } else {
+          // Files not supported, share URL only
+          if (!shareData.url && !shareData.text) {
+            showError("Share Error", "File sharing not supported on this device");
+            return;
+          }
+        }
+      }
+
+      await navigator.share(shareData);
+      triggerHapticFeedback('success');
+      showSuccess("Shared!", "Content shared successfully");
+
+    } catch (error) {
+      triggerHapticFeedback('error');
+
+      if ((error as Error).name === 'AbortError') {
+        // User cancelled sharing - no error message needed
+        return;
+      }
+
+      // Fallback to clipboard on other errors
+      await handleCopyToClipboard();
+    } finally {
+      setIsSharing(false);
+    }
+  }, [data, canShare, showSuccess, showError, handleCopyToClipboard]);
 
   if (variant === "icon") {
     return (
@@ -191,7 +191,7 @@ export function useNativeShare() {
     // Fallback to clipboard
     try {
       const textToShare = data.url || data.text || data.title || "";
-      if ((navigator as any).clipboard) {
+      if ('clipboard' in navigator && (navigator as any).clipboard) {
         await (navigator as any).clipboard.writeText(textToShare);
         triggerHapticFeedback('success');
         showSuccess("Copied!", "Link copied to clipboard");

@@ -44,8 +44,8 @@ const DataTableComponent = <T extends { id?: string | number }>({
   caption,
   ariaLabel,
   swipeActions = [],
-  onRefresh,
-  refreshing = false,
+  onRefresh, // TODO: Implement refresh functionality
+  refreshing = false, // TODO: Implement refreshing state
 }: DataTableProps<T>) => {
   const { triggerHaptic } = useHaptic();
   if (data.length === 0 && emptyState) {

@@ -21,7 +21,7 @@ export interface SyncOperation {
   id: string
   type: 'CREATE' | 'UPDATE' | 'DELETE'
   entity: string
-  data: any
+  data: unknown
   url: string
   method: string
   headers: Record<string, string>
@@ -134,14 +134,14 @@ class OfflineStorage {
   }
 
   // Generic CRUD operations with tenant isolation
-  async store(storeName: string, data: any[], tenantId: string): Promise<void> {
+  async store(storeName: string, data: unknown[], tenantId: string): Promise<void> {
     const db = await this.getDB()
     const transaction = db.transaction([storeName], 'readwrite')
     const store = transaction.objectStore(storeName)
 
     // Add tenantId to all records for isolation
     const recordsWithTenant = data.map(record => ({
-      ...record,
+      ...(typeof record === 'object' && record !== null ? record : {}),
       tenantId,
       _lastUpdated: Date.now()
     }))
@@ -155,7 +155,7 @@ class OfflineStorage {
     }
   }
 
-  async get(storeName: string, tenantId: string, key?: string): Promise<any[]> {
+  async get(storeName: string, tenantId: string, key?: string): Promise<unknown[]> {
     const db = await this.getDB()
     const transaction = db.transaction([storeName], 'readonly')
     const store = transaction.objectStore(storeName)
@@ -189,13 +189,13 @@ class OfflineStorage {
     const store = transaction.objectStore(storeName)
 
     // Verify tenant ownership before deletion
-    const existing = await new Promise<any>((resolve, reject) => {
+    const existing = await new Promise<unknown>((resolve, reject) => {
       const request = store.get(id)
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(request.error)
     })
 
-    if (!existing || existing.tenantId !== tenantId) {
+    if (!existing || (existing as any).tenantId !== tenantId) {
       throw new Error('Record not found or access denied')
     }
 
@@ -272,7 +272,7 @@ class OfflineStorage {
   }
 
   // Metadata operations
-  async setMetadata(key: string, value: any): Promise<void> {
+  async setMetadata(key: string, value: unknown): Promise<void> {
     const db = await this.getDB()
     const transaction = db.transaction([CONFIG.stores.metadata], 'readwrite')
     const store = transaction.objectStore(CONFIG.stores.metadata)
@@ -284,7 +284,7 @@ class OfflineStorage {
     })
   }
 
-  async getMetadata(key: string): Promise<any> {
+  async getMetadata(key: string): Promise<unknown> {
     const db = await this.getDB()
     const transaction = db.transaction([CONFIG.stores.metadata], 'readonly')
     const store = transaction.objectStore(CONFIG.stores.metadata)
@@ -297,43 +297,43 @@ class OfflineStorage {
   }
 
   // Convenience methods for specific entities
-  async storeMembers(members: any[], tenantId: string): Promise<void> {
+  async storeMembers(members: unknown[], tenantId: string): Promise<void> {
     return this.store(CONFIG.stores.members, members, tenantId)
   }
 
-  async getMembers(tenantId: string): Promise<any[]> {
+  async getMembers(tenantId: string): Promise<unknown[]> {
     return this.get(CONFIG.stores.members, tenantId)
   }
 
-  async storeEvents(events: any[], tenantId: string): Promise<void> {
+  async storeEvents(events: unknown[], tenantId: string): Promise<void> {
     return this.store(CONFIG.stores.events, events, tenantId)
   }
 
-  async getEvents(tenantId: string): Promise<any[]> {
+  async getEvents(tenantId: string): Promise<unknown[]> {
     return this.get(CONFIG.stores.events, tenantId)
   }
 
-  async storeLifeGroups(lifegroups: any[], tenantId: string): Promise<void> {
+  async storeLifeGroups(lifegroups: unknown[], tenantId: string): Promise<void> {
     return this.store(CONFIG.stores.lifegroups, lifegroups, tenantId)
   }
 
-  async getLifeGroups(tenantId: string): Promise<any[]> {
+  async getLifeGroups(tenantId: string): Promise<unknown[]> {
     return this.get(CONFIG.stores.lifegroups, tenantId)
   }
 
-  async storeCheckins(checkins: any[], tenantId: string): Promise<void> {
+  async storeCheckins(checkins: unknown[], tenantId: string): Promise<void> {
     return this.store(CONFIG.stores.checkins, checkins, tenantId)
   }
 
-  async getCheckins(tenantId: string): Promise<any[]> {
+  async getCheckins(tenantId: string): Promise<unknown[]> {
     return this.get(CONFIG.stores.checkins, tenantId)
   }
 
-  async storePathways(pathways: any[], tenantId: string): Promise<void> {
+  async storePathways(pathways: unknown[], tenantId: string): Promise<void> {
     return this.store(CONFIG.stores.pathways, pathways, tenantId)
   }
 
-  async getPathways(tenantId: string): Promise<any[]> {
+  async getPathways(tenantId: string): Promise<unknown[]> {
     return this.get(CONFIG.stores.pathways, tenantId)
   }
 

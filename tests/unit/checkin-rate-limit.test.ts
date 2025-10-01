@@ -3,13 +3,12 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { checkIn } from '@/app/checkin/actions'
-import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
-import { rateLimiter } from '@/lib/rate-limiter'
 
-// Mock dependencies
-vi.mock('@/lib/auth')
+// Mock dependencies before importing modules under test
+vi.mock('@/lib/auth', () => ({
+  auth: vi.fn(),
+}))
+
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     service: {
@@ -31,7 +30,20 @@ vi.mock('@/lib/prisma', () => ({
   }
 }))
 
-vi.mock('@/lib/rate-limiter')
+vi.mock('@/lib/rate-limiter', () => ({
+  rateLimiter: {
+    checkLimit: vi.fn(),
+  }
+}))
+
+vi.mock('next/cache', () => ({
+  revalidatePath: vi.fn(),
+}))
+
+const { checkIn } = await import('@/app/checkin/actions')
+const { prisma } = await import('@/lib/prisma')
+const { auth } = await import('@/lib/auth')
+const { rateLimiter } = await import('@/lib/rate-limiter')
 
 describe('Check-in Rate Limiting', () => {
   const mockUser = {

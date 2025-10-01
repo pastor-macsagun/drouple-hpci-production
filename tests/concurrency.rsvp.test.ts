@@ -1,9 +1,16 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { PrismaClient } from '@prisma/client'
+import { isDatabaseAvailable } from './utils/db-availability'
 
 const prisma = new PrismaClient()
+const dbAvailable = await isDatabaseAvailable()
+if (!dbAvailable) {
+  console.warn('[vitest] Skipping RSVP Concurrency Tests because the Postgres test database is unavailable.')
+  await prisma.$disconnect().catch(() => undefined)
+}
+const describeIfDb = dbAvailable ? describe : describe.skip
 
-describe('RSVP Concurrency Tests', () => {
+describeIfDb('RSVP Concurrency Tests', () => {
   let testEvent: any
   let testUsers: any[] = []
 
